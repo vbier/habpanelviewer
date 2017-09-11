@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_goto_start_url"
+        android:orderInCategory="100"
+        android:title="@string/action_goto_start_url"
+        android:icon="@drawable/ic_home_black_24dp" />
+    <item
+        android:id="@+id/action_reload"
+        android:orderInCategory="100"
+        android:title="@string/action_reload"
+        android:icon="@drawable/ic_refresh_black_24dp" />
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_settings_black_24dp" />
+    <item
+        android:id="@+id/action_start_app"
+        android:orderInCategory="100"
+        android:title="@string/action_start_app"
+        android:icon="@drawable/ic_play_arrow_black_24dp" />
+    <item
+        android:id="@+id/action_exit"
+        android:orderInCategory="100"
+        android:title="@string/action_exit"
+        android:icon="@drawable/ic_power_black_24dp" />
+</menu>

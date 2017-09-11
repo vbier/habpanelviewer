@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:key="pref_key_settings"
+        android:title="@string/pref_settings_title">
+        <PreferenceScreen
+            android:key="pref_app"
+            android:persistent="false"
+            android:title="@string/pref_app">
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref_app_enabled"
+                android:summary="@string/pref_app_enabled_summ"
+                android:title="@string/pref_app_enabled" />
+            <EditTextPreference
+                android:defaultValue="@string/pref_app_name_default"
+                android:key="pref_app_name"
+                android:dependency="pref_app_enabled"
+                android:summary="@string/pref_app_name_summ"
+                android:title="@string/pref_app_name" />
+            <EditTextPreference
+                android:defaultValue="@string/pref_app_package_default"
+                android:dependency="pref_app_enabled"
+                android:key="pref_app_package"
+                android:summary="@string/pref_app_package_summ"
+                android:title="@string/pref_app" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_key_habpanel_settings"
+        android:title="@string/pref_habpanel_title">
+        <EditTextPreference
+            android:defaultValue="@string/pref_url_default"
+            android:key="pref_url"
+            android:summary="@string/pref_url_summ"
+            android:title="@string/pref_url" />
+        <EditTextPreference
+            android:defaultValue="@string/pref_panel_default"
+            android:key="pref_panel"
+            android:summary="@string/pref_panel_summ"
+            android:title="@string/pref_panel" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_kiosk_mode"
+            android:summary="@string/pref_kiosk_mode_summ"
+            android:title="@string/pref_kiosk_mode" />
+        <PreferenceScreen
+            android:key="pref_flash"
+            android:persistent="false"
+            android:title="@string/pref_flash">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref_flash_enabled"
+                android:summary="@string/pref_flash_enabled_summ"
+                android:title="@string/pref_flash_enabled" />
+            <EditTextPreference
+                android:defaultValue="@string/pref_flash_item_default"
+                android:dependency="pref_flash_enabled"
+                android:key="pref_flash_item"
+                android:summary="@string/pref_flash_item_summ"
+                android:title="@string/pref_flash_item" />
+            <EditTextPreference
+                android:defaultValue="@string/pref_flash_pulse_regex_default"
+                android:dependency="pref_flash_enabled"
+                android:key="pref_flash_pulse_regex"
+                android:summary="@string/pref_flash_pulse_regex_summ"
+                android:title="@string/pref_flash_pulse_regex" />
+            <EditTextPreference
+                android:defaultValue="@string/pref_flash_steady_regex_default"
+                android:dependency="pref_flash_enabled"
+                android:key="pref_flash_steady_regex"
+                android:summary="@string/pref_flash_steady_regex_summ"
+                android:title="@string/pref_flash_steady_regex" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:key="pref_screen"
+            android:persistent="false"
+            android:title="@string/pref_screen">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref_screen_enabled"
+                android:summary="@string/pref_screen_enabled_summ"
+                android:title="@string/pref_screen_enabled" />
+            <EditTextPreference
+                android:defaultValue="@string/pref_screen_item_default"
+                android:dependency="pref_screen_enabled"
+                android:key="pref_screen_item"
+                android:summary="@string/pref_screen_item_summ"
+                android:title="@string/pref_screen_item" />
+            <EditTextPreference
+                android:defaultValue="@string/pref_scren_on_regex_default"
+                android:dependency="pref_flash_enabled"
+                android:key="pref_screen_on_regex"
+                android:summary="@string/pref_screen_on_regex_summ"
+                android:title="@string/pref_screen_on_regex" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_key_webview_settings"
+        android:title="@string/pref_webview_title">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_desktop_mode"
+            android:summary="@string/pref_desktop_mode_summ"
+            android:title="@string/pref_desktop_mode" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_scrolling"
+            android:summary="@string/pref_scrolling_summ"
+            android:title="@string/pref_scrolling" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_javascript"
+            android:summary="@string/pref_javascript_summ"
+            android:title="@string/pref_javascript" />
+    </PreferenceCategory>
+</PreferenceScreen>

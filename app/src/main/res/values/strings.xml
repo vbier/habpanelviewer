@@ -1,0 +1,58 @@
+<resources>
+    <string name="app_name">HabPanelViewer</string>
+
+    <string name="action_goto_start_url">Goto Start URL</string>
+    <string name="action_reload">Reload current page</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_start_app">Start App</string>
+    <string name="action_exit">Exit</string>
+
+    <string name="pref_url">openHAB URL</string>
+    <string name="pref_url_summ">URL of the openHAB server</string>
+    <string name="pref_url_default">http://openhabianpi:8080</string>
+    <string name="pref_desktop_mode">Desktop mode</string>
+    <string name="pref_desktop_mode_summ">Show pages in desktop mode instead of mobile mode</string>
+    <string name="pref_scrolling">Allow Scrolling</string>
+    <string name="pref_scrolling_summ">Allows scrolling in the WebView</string>
+    <string name="pref_javascript">Enable Javascript</string>
+    <string name="pref_javascript_summ">Enables Javascript in the WebView</string>
+    <string name="pref_kiosk_mode">Kiosk Mode</string>
+    <string name="pref_kiosk_mode_summ">Use Habpanel in Kiosk Mode. This hides the title bar and the menu</string>
+    <string name="pref_habpanel_title">HabPanel</string>
+    <string name="pref_webview_title">Browsing</string>
+    <string name="pref_screen_enabled">Toggle screen backlight dependent on item</string>
+    <string name="pref_screen_enabled_summ">Allows to enable/disable the screen backlight depending on the actual value of an openHAB item</string>
+    <string name="pref_screen_item">Backlight on Item</string>
+    <string name="pref_screen_item_summ">Name of the Item from which to derive the backlight state</string>
+    <string name="pref_screen_item_default">gDoors</string>
+    <string name="pref_screen_on_regex">Enabled Regexp</string>
+    <string name="pref_screen_on_regex_summ">Regexp that triggers the backlight</string>
+    <string name="pref_scren_on_regex_default">OPEN</string>
+    <string name="pref_screen">Screen Backlight Control</string>
+    <string name="pref_flash_enabled">Toggle flashlight dependent on item</string>
+    <string name="pref_flash_enabled_summ">Allows to enable/disable or pulse the flashlight depending on the actual value of an openHAB item</string>
+    <string name="pref_flash_item">Flash Item</string>
+    <string name="pref_flash_item_summ">Name of the Item from which to derive the flashlight state</string>
+    <string name="pref_flash_item_default">Alarm_State</string>
+    <string name="pref_flash_pulse_regex">Pulsating Regexp</string>
+    <string name="pref_flash_pulse_regex_summ">Regexp that triggers a pulsating lash light</string>
+    <string name="pref_flash_pulse_regex_default">(AKTIVIERT|AUSGELÖST)</string>
+    <string name="pref_flash_steady_regex">Enabled Regexp</string>
+    <string name="pref_flash_steady_regex_summ">Regexp that triggers a steady lash light</string>
+    <string name="pref_flash_steady_regex_default">(IN|EX)TERN</string>
+    <string name="pref_flash">Flashlight Control</string>
+    <string name="pref_panel_default">Alarmpanel</string>
+    <string name="pref_panel">Start Panel</string>
+    <string name="pref_panel_summ">The panel to load on start</string>
+    <string name="pref_app">App Shortcut</string>
+    <string name="pref_app_name">Application Name</string>
+    <string name="pref_app_name_summ">The name of the application that will be shown in the menu</string>
+    <string name="pref_app_name_default">Explorer</string>
+    <string name="pref_app_package_summ">Package name of the main menu app shortcut</string>
+    <string name="pref_app_package_default">com.alphainventor.filemanager</string>
+
+    <string name="not_connected">not connected</string>
+    <string name="pref_settings_title">HabpanelViewer</string>
+    <string name="pref_app_enabled">Show application shortcut in menu</string>
+    <string name="pref_app_enabled_summ">Allows to launch an application with a shortcut from the menu</string>
+</resources>
