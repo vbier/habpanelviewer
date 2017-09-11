@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="eventsource-1.2.11">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.android/build-cache/345749ab24b4cbc49a41c0bbe73510f7423b55dd/output/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.android/build-cache/345749ab24b4cbc49a41c0bbe73510f7423b55dd/output/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.tylerjroach/eventsource/1.2.11/e50ab7252ee0715974fcdae8cb63460503dd8c4/eventsource-1.2.11-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
