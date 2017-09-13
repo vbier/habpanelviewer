@@ -41,7 +41,9 @@
             android:name=".SetPreferenceActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Settings"></activity>
-
+        <activity android:name=".InfoActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="Information"></activity>
     </application>
 
 </manifest>

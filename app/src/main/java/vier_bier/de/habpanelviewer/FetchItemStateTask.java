@@ -7,6 +7,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -14,11 +15,11 @@ import java.util.Set;
  */
 public class FetchItemStateTask extends AsyncTask<Set<String>, Void, Void> {
     private String serverUrl;
-    private StateListener listener;
+    private ArrayList<StateListener> listeners;
 
-    public FetchItemStateTask(String url, StateListener l) {
+    public FetchItemStateTask(String url, ArrayList<StateListener> l) {
         serverUrl = url;
-        listener = l;
+        listeners = l;
     }
 
     @Override
@@ -46,7 +47,9 @@ public class FetchItemStateTask extends AsyncTask<Set<String>, Void, Void> {
                     Log.e("Habpanelview", "Failed to obtain value for flash Item!", e);
                 }
 
-                listener.updateState(itemName, response);
+                for (StateListener l : listeners) {
+                    l.updateState(itemName, response);
+                }
 
                 if (isCancelled()) {
                     return null;

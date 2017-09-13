@@ -17,8 +17,4 @@ So I wrote this app that fixes the above mentioned problems. It features:
 - **screen on control**: allows to configure an openHAB item and a regexp to enable the screen backlight
 - **app shortcut**: allows to configure the package name of an app that can then be started from the main menu
 
-The app does support android from SDK version 24, which means it will run on Android 7 (Nougat) or newer.
-
-It is a work in progress with no guarantees. Things that currently need improvement:
-- the regexps are not checked. So in case a user specifies an invalid regex, the flashlight or screen backlight will never turn on.
-- the screen backlight should be forced to on while the regexp is met. currently the screen only turns on and then turns off after the system idle time.
+The app does support android from SDK version 23, which means it will run on Android 6 (Marshmallow) or newer.

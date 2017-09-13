@@ -1,15 +1,17 @@
 package vier_bier.de.habpanelviewer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -24,34 +26,42 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashSet;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, StateListener, ConnectionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ConnectionListener {
 
     private WebView mWebView;
-    private String flashItemState;
-    private String screenOnItemState;
     private SSEClient sseClient;
+
     private boolean allowScrolling;
-    private Pattern screenOnPattern;
-    private Pattern flashOnPattern;
-    private Pattern flashPulsatingPattern;
 
-    private FlashControlService mFlashService;
-    private PowerManager.WakeLock screenLock;
+    private FlashController mFlashService;
+    private ScreenController mScreenService;
 
-    //TODO.vb. validate regexes
+    //TODO.vb. add info menu entries showing capabilities
+    //TODO.vb. force screen to on while regexp is met
+    //TODO.vb. load list of available panels from habpanel for selection in preferences
+    //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
+    //TODO.vb. use opencv for motion detection
+    //         https://www.codeproject.com/Articles/791145/Motion-Detection-in-Android-Howto
+    //         https://stackoverflow.com/questions/27406303/opencv-in-android-studio
+    //TODO.vb. check if proximity sensor can be used
+    //TODO.vb. check if light sensor can be used
+    //TODO.vb. adapt volume settings: System.Settings & System.Secure.Settings
+    //         https://gist.github.com/shrikant0013/fc3e67b4b898294a03e4eba1b527f898 for how to obtain a specific permission
+    //TODO.vb. restart on crash
 
     @Override
     protected void onDestroy() {
         stopEventSource();
 
-        mFlashService.terminate();
-        mFlashService = null;
+        if (mFlashService != null) {
+            mFlashService.terminate();
+            mFlashService = null;
+        }
 
         super.onDestroy();
     }
@@ -60,21 +70,32 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-
-        screenLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(
-                PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "HabpanelViewer");
-
-        setContentView(R.layout.activity_main);
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 
-        mFlashService = new FlashControlService((CameraManager) getSystemService(Context.CAMERA_SERVICE));
+        setContentView(R.layout.activity_main);
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            try {
+                mFlashService = new FlashController((CameraManager) getSystemService(Context.CAMERA_SERVICE));
+            } catch (CameraAccessException e) {
+                Log.d("Habpanelview", "Could not create flash controller");
+            }
+        }
+        if (mFlashService == null) {
+            Toast.makeText(this, "No back-facing camera with flash found on this device", Toast.LENGTH_LONG).show();
+        }
+
+        mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
+        if (mScreenService == null) {
+            Toast.makeText(this, "Unable to control screen backlight on this device", Toast.LENGTH_LONG).show();
+        }
 
         mWebView = ((WebView) findViewById(R.id.activity_main_webview));
         mWebView.setWebViewClient(new WebViewClient());
@@ -96,45 +117,26 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        boolean appEnabled = prefs.getBoolean("pref_app_enabled", false);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         MenuItem i = navigationView.getMenu().findItem(R.id.action_start_app);
-        i.setVisible(appEnabled);
-        if (appEnabled) {
-            i.setTitle("Launch " + prefs.getString("pref_app_name", ""));
+        Intent launchIntent = getLaunchIntent(this);
+        i.setVisible(launchIntent != null);
+        if (launchIntent != null) {
+            i.setTitle("Launch " + prefs.getString("pref_app_name", "App"));
         }
 
         allowScrolling = prefs.getBoolean("pref_scrolling", false);
 
-        String pulsatingRegexpStr = prefs.getString("pref_flash_pulse_regex", "");
-        flashPulsatingPattern = null;
-        if (!pulsatingRegexpStr.isEmpty()) {
-            try {
-                flashPulsatingPattern = Pattern.compile(pulsatingRegexpStr);
-            } catch (PatternSyntaxException e) {
-                // is handled in the preferences
-            }
+        if (mFlashService != null) {
+            mFlashService.updateFromPreferences(prefs);
         }
 
-        String steadyRegexpStr = prefs.getString("pref_flash_steady_regex", "");
-        flashOnPattern = null;
-        if (!steadyRegexpStr.isEmpty()) {
-            try {
-                flashOnPattern = Pattern.compile(steadyRegexpStr);
-            } catch (PatternSyntaxException e) {
-                // is handled in the preferences
-            }
-        }
+        if (mScreenService != null) {
+            mScreenService.updateFromPreferences(prefs);
 
-        String onRegexpStr = prefs.getString("pref_screen_on_regex", "");
-        screenOnPattern = null;
-        if (!onRegexpStr.isEmpty()) {
-            try {
-                screenOnPattern = Pattern.compile(onRegexpStr);
-            } catch (PatternSyntaxException e) {
-                // is handled in the preferences
-            }
+            // make sure screen lock is released on start
+            mScreenService.screenOff();
         }
 
         Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
@@ -146,12 +148,6 @@ public class MainActivity extends AppCompatActivity
         webSettings.setJavaScriptEnabled(isJavascript);
 
         loadStartUrl();
-
-        // make sure screen lock is released
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        if (screenLock.isHeld()) {
-            screenLock.release();
-        }
 
         startEventSource();
     }
@@ -179,25 +175,13 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_reload) {
             mWebView.reload();
         } else if (id == R.id.action_start_app) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-            String app = prefs.getString("pref_app_package", "");
+            Intent launchIntent = getLaunchIntent(this);
 
-            if (!app.isEmpty()) {
-                Intent launchIntent = getPackageManager().getLaunchIntentForPackage(app);
-
-                if (launchIntent != null) {
-                    startActivity(launchIntent);
-                } else {
-                    Snackbar snackbar = Snackbar
-                            .make(mWebView, "Could not find app for package " + app, Snackbar.LENGTH_LONG).setAction("CHANGE", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    showPreferences();
-                                }
-                            });
-                    snackbar.show();
-                }
+            if (launchIntent != null) {
+                startActivity(launchIntent);
             }
+        } else if (id == R.id.action_info) {
+            showInfoScreen();
         } else if (id == R.id.action_exit) {
             System.exit(0);
         }
@@ -207,9 +191,47 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private static Intent getLaunchIntent(Activity activity) {
+        Intent launchIntent = null;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.getBoolean("pref_app_enabled", false)) {
+            String app = prefs.getString("pref_app_package", "");
+
+            if (!app.isEmpty()) {
+                launchIntent = activity.getPackageManager().getLaunchIntentForPackage(app);
+            }
+        }
+
+        return launchIntent;
+    }
+
     private void showPreferences() {
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, SetPreferenceActivity.class);
+        intent.putExtra("flash_enabled", mFlashService != null);
+        startActivityForResult(intent, 0);
+    }
+
+    private void showInfoScreen() {
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, InfoActivity.class);
+
+        if (mFlashService == null) {
+            intent.putExtra("Flash Control", "unavailable");
+        } else if (mFlashService.isEnabled()) {
+            intent.putExtra("Flash Control", "enabled\n" + mFlashService.getItemName() + "=" + mFlashService.getItemState());
+        } else {
+            intent.putExtra("Flash Control", "disabled");
+        }
+        if (mScreenService == null) {
+            intent.putExtra("Backlight Control", "unavailable");
+        } else if (mScreenService.isEnabled()) {
+            intent.putExtra("Backlight Control", "enabled\n" + mScreenService.getItemName() + "=" + mScreenService.getItemState());
+        } else {
+            intent.putExtra("Backlight Control", "disabled");
+        }
+
         startActivityForResult(intent, 0);
     }
 
@@ -248,88 +270,42 @@ public class MainActivity extends AppCompatActivity
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        String url = prefs.getString("pref_url", "http://openhabianpi:8080");
+        String url = prefs.getString("pref_url", "");
 
         HashSet<String> items = new HashSet<>();
 
-        boolean flashEnabled = prefs.getBoolean("pref_flash_enabled", false);
+        boolean flashEnabled = mFlashService != null && prefs.getBoolean("pref_flash_enabled", false);
         if (flashEnabled) {
-            items.add(prefs.getString("pref_flash_item", "Alarm_State"));
+            items.add(prefs.getString("pref_flash_item", ""));
         }
 
         boolean screenOnEnabled = prefs.getBoolean("pref_screen_enabled", false);
         if (screenOnEnabled) {
-            items.add(prefs.getString("pref_screen_item", "gDoors"));
+            items.add(prefs.getString("pref_screen_item", ""));
         }
 
         sseClient = new SSEClient(url, items);
-        sseClient.setStateListener(this);
         sseClient.setConnectionListener(this);
+        if (mFlashService != null) {
+            sseClient.addStateListener(mFlashService);
+        }
+        if (mScreenService != null) {
+            sseClient.addStateListener(mScreenService);
+        }
         sseClient.connect();
         Log.i("Habpanelview", "EventSource started");
     }
 
     private synchronized void stopEventSource() {
         if (sseClient != null) {
+            if (mFlashService != null) {
+                sseClient.removeStateListener(mFlashService);
+            }
+            if (mScreenService != null) {
+                sseClient.removeStateListener(mScreenService);
+            }
             sseClient.close();
             sseClient = null;
-        }
-    }
-
-    @Override
-    public void updateState(String name, String value) {
-        SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        String flashItemName = mySharedPreferences.getString("pref_flash_item", "Alarm_State");
-        String screenOnItemName = mySharedPreferences.getString("pref_screen_item", "gDoors");
-
-        if (name.equals(flashItemName)) {
-            setFlashItemState(value);
-        }
-
-        if (name.equals(screenOnItemName)) {
-            setScreenOnItemState(value);
-        }
-    }
-
-    private void setScreenOnItemState(final String state) {
-        if (screenOnItemState != null && screenOnItemState.equals(state)) {
-            Log.i("Habpanelview", "unchanged screen on item state=" + state);
-            return;
-        }
-
-        Log.i("Habpanelview", "screen on item state=" + state + ", old state=" + screenOnItemState);
-        screenOnItemState = state;
-
-        runOnUiThread(new Runnable() {
-            public void run() {
-                if (screenOnPattern != null && screenOnPattern.matcher(state).matches()) {
-                    if (!screenLock.isHeld()) {
-                        screenLock.acquire();
-                        screenLock.release();
-                    }
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                } else {
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                }
-            }
-        });
-    }
-
-    private void setFlashItemState(String state) {
-        if (flashItemState != null && flashItemState.equals(state)) {
-            Log.i("Habpanelview", "unchanged flash item state=" + state);
-            return;
-        }
-
-        Log.i("Habpanelview", "flash item state=" + state + ", old state=" + flashItemState);
-        flashItemState = state;
-
-        if (flashOnPattern != null && flashOnPattern.matcher(state).matches()) {
-            mFlashService.enableFlash();
-        } else if (flashPulsatingPattern != null && flashPulsatingPattern.matcher(state).matches()) {
-            mFlashService.pulseFlash();
-        } else {
-            mFlashService.disableFlash();
         }
     }
 

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.WindowManager;
 
 public class SetPreferenceActivity extends Activity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -14,9 +13,9 @@ public class SetPreferenceActivity extends Activity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 
-        getFragmentManager().beginTransaction().replace(android.R.id.content,
-                new SettingsFragment()).commit();
+        SettingsFragment f = new SettingsFragment();
+        f.setArguments(getIntent().getExtras());
+        getFragmentManager().beginTransaction().replace(android.R.id.content, f).commit();
     }
-
 }
 
