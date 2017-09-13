@@ -16,6 +16,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,6 +26,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +36,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ConnectionListener {
 
     private WebView mWebView;
+    private TextView mTextView;
     private SSEClient sseClient;
+    private Thread.UncaughtExceptionHandler exceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 
     private boolean allowScrolling;
 
@@ -79,7 +83,11 @@ public class MainActivity extends AppCompatActivity
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        LinearLayout navHeader = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
+        navigationView.addHeaderView(navHeader);
+
         navigationView.setNavigationItemSelectedListener(this);
+
 
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             try {
@@ -88,14 +96,11 @@ public class MainActivity extends AppCompatActivity
                 Log.d("Habpanelview", "Could not create flash controller");
             }
         }
-        if (mFlashService == null) {
-            Toast.makeText(this, "No back-facing camera with flash found on this device", Toast.LENGTH_LONG).show();
-        }
-
         mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
-        if (mScreenService == null) {
-            Toast.makeText(this, "Unable to control screen backlight on this device", Toast.LENGTH_LONG).show();
-        }
+
+        showToastMessage();
+
+        mTextView = navHeader.findViewById(R.id.textView);
 
         mWebView = ((WebView) findViewById(R.id.activity_main_webview));
         mWebView.setWebViewClient(new WebViewClient());
@@ -112,11 +117,35 @@ public class MainActivity extends AppCompatActivity
         CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
     }
 
+    private void showToastMessage() {
+        String toastMsg = "";
+        if (getIntent().getBooleanExtra("crash", false)) {
+            toastMsg += "App restarted after crash\n";
+        }
+
+        if (mFlashService == null) {
+            toastMsg += "No back-facing camera with flash found on this device\n";
+        }
+
+        if (mScreenService == null) {
+            toastMsg += "Unable to control screen backlight on this device\n";
+        }
+
+        if (!toastMsg.isEmpty()) {
+            Toast.makeText(this, toastMsg.trim(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        if (prefs.getBoolean("pref_restart_enabled", false)) {
+            Thread.setDefaultUncaughtExceptionHandler(new AppRestartingExceptionHandler(this));
+        } else {
+            Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
+        }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         MenuItem i = navigationView.getMenu().findItem(R.id.action_start_app);
@@ -313,7 +342,7 @@ public class MainActivity extends AppCompatActivity
     public void connected(final String url) {
         runOnUiThread(new Runnable() {
             public void run() {
-                ((TextView) findViewById(R.id.textView)).setText(url);
+                mTextView.setText(url);
             }
         });
     }
@@ -322,7 +351,7 @@ public class MainActivity extends AppCompatActivity
     public void disconnected() {
         runOnUiThread(new Runnable() {
             public void run() {
-                ((TextView) findViewById(R.id.textView)).setText(R.string.not_connected);
+                mTextView.setText(R.string.not_connected);
             }
         });
     }

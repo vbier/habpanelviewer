@@ -76,6 +76,11 @@
                 android:summary="@string/pref_screen_on_regex_summ"
                 android:title="@string/pref_screen_on_regex" />
         </PreferenceScreen>
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_restart_enabled"
+            android:summary="@string/pref_restart_enabled_summ"
+            android:title="@string/pref_restart_enabled" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_habpanel_settings"

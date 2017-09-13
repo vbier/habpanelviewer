@@ -1,13 +1,11 @@
 package vier_bier.de.habpanelviewer;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.support.v7.app.AlertDialog;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -60,19 +58,6 @@ public class SettingsFragment extends PreferenceFragment {
         pkgPreference.setOnPreferenceChangeListener(new PackageValidatingListener());
     }
 
-    public static void showDialog(final Activity activity, final String title, final String text) {
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setTitle(title);
-                builder.setMessage(text);
-                builder.setPositiveButton(android.R.string.ok, null);
-                builder.show();
-            }
-        });
-    }
-
     class PackageValidatingListener implements Preference.OnPreferenceChangeListener {
         @Override
         public boolean onPreferenceChange(Preference preference, Object o) {
@@ -81,7 +66,7 @@ public class SettingsFragment extends PreferenceFragment {
             if (!pkg.isEmpty()) {
                 Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage(pkg);
                 if (launchIntent == null) {
-                    showDialog(getActivity(), preference.getTitle() + " invalid", "Could not find app for package " + pkg);
+                    UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", "Could not find app for package " + pkg);
                 }
             }
             return true;
@@ -103,9 +88,9 @@ public class SettingsFragment extends PreferenceFragment {
                         urlConnection.connect();
                         urlConnection.disconnect();
                     } catch (MalformedURLException e) {
-                        showDialog(getActivity(), preference.getTitle() + " invalid", urls[0] + " is not a valid URL");
+                        UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", urls[0] + " is not a valid URL");
                     } catch (IOException e) {
-                        showDialog(getActivity(), preference.getTitle() + " invalid", "Could not connect to openHAB at URL " + urls[0]);
+                        UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", "Could not connect to openHAB at URL " + urls[0]);
                     }
 
                     return null;
@@ -124,7 +109,7 @@ public class SettingsFragment extends PreferenceFragment {
             try {
                 Pattern.compile(text);
             } catch (PatternSyntaxException e) {
-                showDialog(getActivity(), preference.getTitle() + " invalid", e.getMessage());
+                UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", e.getMessage());
             }
 
             return true;
