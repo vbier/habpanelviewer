@@ -13,9 +13,11 @@ import android.util.Log;
 
 public class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
     private final Activity myContext;
+    private final int count;
 
-    public AppRestartingExceptionHandler(Activity context) {
+    public AppRestartingExceptionHandler(Activity context, int restartCount) {
         myContext = context;
+        count = restartCount;
     }
 
     public void uncaughtException(Thread thread, Throwable exception) {
@@ -24,6 +26,7 @@ public class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHa
         Intent mStartActivity = myContext.getPackageManager().getLaunchIntentForPackage("vier_bier.de.habpanelviewer");
         mStartActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mStartActivity.putExtra("crash", true);
+        mStartActivity.putExtra("restartCount", count + 1);
 
         int mPendingIntentId = 123456;
         PendingIntent mPendingIntent = PendingIntent.getActivity(myContext, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);

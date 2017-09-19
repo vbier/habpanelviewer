@@ -38,6 +38,14 @@ public class ScreenController implements StateListener {
         }
     }
 
+    public void screenOn() {
+        if (!screenLock.isHeld()) {
+            screenLock.acquire();
+            screenLock.release();
+        }
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
+
     public String getItemName() {
         return screenOnItemName;
     }
@@ -64,11 +72,7 @@ public class ScreenController implements StateListener {
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     if (screenOnPattern != null && screenOnPattern.matcher(screenOnItemState).matches()) {
-                        if (!screenLock.isHeld()) {
-                            screenLock.acquire();
-                            screenLock.release();
-                        }
-                        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        screenOn();
                     } else {
                         screenOff();
                     }
@@ -80,6 +84,7 @@ public class ScreenController implements StateListener {
     public void updateFromPreferences(SharedPreferences prefs) {
         screenOnPattern = null;
         screenOnItemName = prefs.getString("pref_screen_item", "");
+        screenOnItemState = null;
         enabled = prefs.getBoolean("pref_screen_enabled", false);
 
         String onRegexpStr = prefs.getString("pref_screen_on_regex", "");
@@ -91,4 +96,5 @@ public class ScreenController implements StateListener {
             }
         }
     }
+
 }

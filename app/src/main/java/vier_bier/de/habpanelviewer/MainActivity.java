@@ -32,6 +32,9 @@ import android.widget.Toast;
 
 import java.util.HashSet;
 
+import vier_bier.de.habpanelviewer.motion.MotionDetector;
+import vier_bier.de.habpanelviewer.motion.MotionListener;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ConnectionListener {
 
@@ -44,19 +47,18 @@ public class MainActivity extends AppCompatActivity
 
     private FlashController mFlashService;
     private ScreenController mScreenService;
+    private MotionDetector mMotionDetector;
 
-    //TODO.vb. add info menu entries showing capabilities
+    private int mRestartCount;
+
+    //TODO.vb. add more info menu entries showing capabilities
     //TODO.vb. force screen to on while regexp is met
     //TODO.vb. load list of available panels from habpanel for selection in preferences
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
-    //TODO.vb. use opencv for motion detection
-    //         https://www.codeproject.com/Articles/791145/Motion-Detection-in-Android-Howto
-    //         https://stackoverflow.com/questions/27406303/opencv-in-android-studio
     //TODO.vb. check if proximity sensor can be used
     //TODO.vb. check if light sensor can be used
     //TODO.vb. adapt volume settings: System.Settings & System.Secure.Settings
     //         https://gist.github.com/shrikant0013/fc3e67b4b898294a03e4eba1b527f898 for how to obtain a specific permission
-    //TODO.vb. restart on crash
 
     @Override
     protected void onDestroy() {
@@ -65,6 +67,11 @@ public class MainActivity extends AppCompatActivity
         if (mFlashService != null) {
             mFlashService.terminate();
             mFlashService = null;
+        }
+
+        if (mMotionDetector != null) {
+            mMotionDetector.shutdown();
+            mMotionDetector = null;
         }
 
         super.onDestroy();
@@ -82,12 +89,11 @@ public class MainActivity extends AppCompatActivity
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
+        // inflate navigation header to make sure the textview holding the connection text is created
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         LinearLayout navHeader = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
         navigationView.addHeaderView(navHeader);
-
         navigationView.setNavigationItemSelectedListener(this);
-
 
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             try {
@@ -95,10 +101,24 @@ public class MainActivity extends AppCompatActivity
             } catch (CameraAccessException e) {
                 Log.d("Habpanelview", "Could not create flash controller");
             }
+
+            mMotionDetector = new MotionDetector(new MotionListener() {
+                @Override
+                public void motionDetected() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mScreenService.screenOn();
+                        }
+                    });
+                }
+            });
         }
+
         mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
 
-        showToastMessage();
+        mRestartCount = getIntent().getIntExtra("restartCount", 0);
+        showInitialToastMessage(mRestartCount);
 
         mTextView = navHeader.findViewById(R.id.textView);
 
@@ -117,22 +137,24 @@ public class MainActivity extends AppCompatActivity
         CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
     }
 
-    private void showToastMessage() {
-        String toastMsg = "";
-        if (getIntent().getBooleanExtra("crash", false)) {
-            toastMsg += "App restarted after crash\n";
-        }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MotionDetector.MY_PERMISSIONS_MOTION_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
-        if (mFlashService == null) {
-            toastMsg += "No back-facing camera with flash found on this device\n";
-        }
-
-        if (mScreenService == null) {
-            toastMsg += "Unable to control screen backlight on this device\n";
-        }
-
-        if (!toastMsg.isEmpty()) {
-            Toast.makeText(this, toastMsg.trim(), Toast.LENGTH_LONG).show();
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (mMotionDetector != null) {
+                        mMotionDetector.updateFromPreferences(this, prefs);
+                    }
+                } else {
+                    SharedPreferences.Editor editor1 = prefs.edit();
+                    editor1.putBoolean("pref_motion_detection_enabled", false);
+                    editor1.apply();
+                }
+            }
         }
     }
 
@@ -141,8 +163,16 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        if (prefs.getBoolean("pref_restart_enabled", false)) {
-            Thread.setDefaultUncaughtExceptionHandler(new AppRestartingExceptionHandler(this));
+        int maxRestarts = 5;
+        try {
+            maxRestarts = Integer.parseInt(prefs.getString("pref_max_restarts", "5"));
+        } catch (NumberFormatException e) {
+            Log.e("Habpanelview", "could not parse pref_max_restarts value " + prefs.getString("pref_max_restarts", "5") + ". using default 5");
+        }
+
+        boolean restartEnabled = prefs.getBoolean("pref_restart_enabled", false);
+        if (restartEnabled && mRestartCount < maxRestarts) {
+            Thread.setDefaultUncaughtExceptionHandler(new AppRestartingExceptionHandler(this, mRestartCount));
         } else {
             Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
         }
@@ -166,6 +196,10 @@ public class MainActivity extends AppCompatActivity
 
             // make sure screen lock is released on start
             mScreenService.screenOff();
+        }
+
+        if (mMotionDetector != null) {
+            mMotionDetector.updateFromPreferences(this, prefs);
         }
 
         Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
@@ -212,12 +246,31 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_info) {
             showInfoScreen();
         } else if (id == R.id.action_exit) {
+            finishAndRemoveTask();
             System.exit(0);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void connected(final String url) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                mTextView.setText(url);
+            }
+        });
+    }
+
+    @Override
+    public void disconnected() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                mTextView.setText(R.string.not_connected);
+            }
+        });
     }
 
     private static Intent getLaunchIntent(Activity activity) {
@@ -233,6 +286,25 @@ public class MainActivity extends AppCompatActivity
         }
 
         return launchIntent;
+    }
+
+    private void showInitialToastMessage(int restartCount) {
+        String toastMsg = "";
+        if (restartCount > 0) {
+            toastMsg += "App restarted after crash";
+        }
+
+        if (mFlashService == null) {
+            toastMsg += "No back-facing camera with flash found on this device\n";
+        }
+
+        if (mScreenService == null) {
+            toastMsg += "Unable to control screen backlight on this device\n";
+        }
+
+        if (!toastMsg.isEmpty()) {
+            Toast.makeText(this, toastMsg.trim(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void showPreferences() {
@@ -259,6 +331,9 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra("Backlight Control", "enabled\n" + mScreenService.getItemName() + "=" + mScreenService.getItemState());
         } else {
             intent.putExtra("Backlight Control", "disabled");
+        }
+        if (mRestartCount != 0) {
+            intent.putExtra("Restart Counter", mRestartCount);
         }
 
         startActivityForResult(intent, 0);
@@ -336,23 +411,5 @@ public class MainActivity extends AppCompatActivity
             sseClient.close();
             sseClient = null;
         }
-    }
-
-    @Override
-    public void connected(final String url) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                mTextView.setText(url);
-            }
-        });
-    }
-
-    @Override
-    public void disconnected() {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                mTextView.setText(R.string.not_connected);
-            }
-        });
     }
 }

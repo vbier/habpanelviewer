@@ -58,4 +58,9 @@
     <string name="pref_app_enabled_summ">Allows to launch an application with a shortcut from the menu</string>
     <string name="pref_restart_enabled_summ">Habpanelviewer is automatically restarted after a crash</string>
     <string name="pref_restart_enabled">Restart on crash</string>
+    <string name="pref_motion_detection_enabled">Motion Detection</string>
+    <string name="pref_motion_detection_enabled_summ">Turn screen on when motion is detected</string>
+    <string name="pref_restart">Auto Restart</string>
+    <string name="pref_max_restarts">Number of allowed restarts</string>
+    <string name="pref_max_restarts_summ">The number of restarts until auto restart is turned off.</string>
 </resources>

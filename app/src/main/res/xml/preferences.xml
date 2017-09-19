@@ -15,8 +15,8 @@
                 android:title="@string/pref_app_enabled" />
             <EditTextPreference
                 android:defaultValue="@string/pref_app_name_default"
-                android:key="pref_app_name"
                 android:dependency="pref_app_enabled"
+                android:key="pref_app_name"
                 android:summary="@string/pref_app_name_summ"
                 android:title="@string/pref_app_name" />
             <EditTextPreference
@@ -76,11 +76,27 @@
                 android:summary="@string/pref_screen_on_regex_summ"
                 android:title="@string/pref_screen_on_regex" />
         </PreferenceScreen>
+        <PreferenceScreen
+            android:key="pref_restart"
+            android:persistent="false"
+            android:title="@string/pref_restart">
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref_restart_enabled"
+                android:summary="@string/pref_restart_enabled_summ"
+                android:title="@string/pref_restart_enabled" />
+            <EditTextPreference
+                android:key="pref_max_restarts"
+                android:maxLength="2"
+                android:numeric="integer"
+                android:summary="@string/pref_max_restarts_summ"
+                android:title="@string/pref_max_restarts" />
+        </PreferenceScreen>
         <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_restart_enabled"
-            android:summary="@string/pref_restart_enabled_summ"
-            android:title="@string/pref_restart_enabled" />
+            android:defaultValue="false"
+            android:key="pref_motion_detection_enabled"
+            android:summary="@string/pref_motion_detection_enabled_summ"
+            android:title="@string/pref_motion_detection_enabled" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_habpanel_settings"

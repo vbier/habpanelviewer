@@ -2,8 +2,6 @@ package vier_bier.de.habpanelviewer;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -54,7 +51,7 @@ public class InfoActivity extends Activity {
 
         if (b != null) {
             for (String key : b.keySet()) {
-                String value = b.getString(key);
+                String value = b.get(key).toString();
                 list.add(new InfoItem(key, value));
             }
         }

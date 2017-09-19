@@ -99,6 +99,7 @@ public class FlashController implements StateListener {
         flashPulsatingPattern = null;
         flashOnPattern = null;
         flashItemName = prefs.getString("pref_flash_item", "");
+        flashItemState = null;
         enabled = prefs.getBoolean("pref_flash_enabled", false);
 
         String pulsatingRegexpStr = prefs.getString("pref_flash_pulse_regex", "");
@@ -200,11 +201,13 @@ public class FlashController implements StateListener {
 
                 try {
                     if (torchId != null) {
-                        Log.d("Habpanelview", "Set torchmode " + flashing);
                         camManager.setTorchMode(torchId, flashing);
+                        Log.d("Habpanelview", "Set torchmode " + flashing);
                     }
                 } catch (CameraAccessException e) {
-                    Log.e("Habpanelview", "Failed to toggle flash!", e);
+                    if (e.getReason() != CameraAccessException.MAX_CAMERAS_IN_USE) {
+                        Log.e("Habpanelview", "Failed to toggle flash!", e);
+                    }
                 }
             }
         }

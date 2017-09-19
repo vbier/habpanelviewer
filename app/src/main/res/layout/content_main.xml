@@ -15,4 +15,9 @@
         tools:layout_editor_absoluteY="8dp"
         tools:layout_editor_absoluteX="8dp" />
 
+    <TextureView
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:id="@+id/surfaceView" />
+
 </android.support.constraint.ConstraintLayout>
