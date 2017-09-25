@@ -302,6 +302,10 @@ public class MainActivity extends AppCompatActivity
             toastMsg += "Unable to control screen backlight on this device\n";
         }
 
+        if (mMotionDetector == null) {
+            toastMsg += "Unable to detect motion on this device\n";
+        }
+
         if (!toastMsg.isEmpty()) {
             Toast.makeText(this, toastMsg.trim(), Toast.LENGTH_LONG).show();
         }
@@ -331,6 +335,13 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra("Backlight Control", "enabled\n" + mScreenService.getItemName() + "=" + mScreenService.getItemState());
         } else {
             intent.putExtra("Backlight Control", "disabled");
+        }
+        if (mMotionDetector == null) {
+            intent.putExtra("Motion Detection", "unavailable");
+        } else if (mMotionDetector.isEnabled()) {
+            intent.putExtra("Motion Detection", "enabled\n" + mMotionDetector.getPreviewInfo());
+        } else {
+            intent.putExtra("Motion Detection", "disabled");
         }
         if (mRestartCount != 0) {
             intent.putExtra("Restart Counter", mRestartCount);
