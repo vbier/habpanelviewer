@@ -71,7 +71,7 @@
                 android:title="@string/pref_screen_item" />
             <EditTextPreference
                 android:defaultValue="@string/pref_scren_on_regex_default"
-                android:dependency="pref_flash_enabled"
+                android:dependency="pref_screen_enabled"
                 android:key="pref_screen_on_regex"
                 android:summary="@string/pref_screen_on_regex_summ"
                 android:title="@string/pref_screen_on_regex" />
