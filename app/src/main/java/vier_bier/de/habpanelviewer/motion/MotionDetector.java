@@ -29,7 +29,9 @@ public class MotionDetector extends Thread {
     public static final int MY_PERMISSIONS_MOTION_REQUEST_CAMERA = 42;
     private boolean enabled;
     private int detectionCount = 0;
+    private int frameCount = 0;
 
+    private int mCameraId;
     private Camera mCamera;
     private TextureView mTextureView;
 
@@ -53,12 +55,15 @@ public class MotionDetector extends Thread {
 
     public synchronized void enableDetection(TextureView textureView) throws CameraAccessException {
         detectionCount = 0;
+        mCameraId = -1;
+        frameCount = 0;
 
         if (mCamera == null) {
             Camera.CameraInfo info = new Camera.CameraInfo();
             for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
                 Camera.getCameraInfo(i, info);
                 if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    mCameraId = i;
                     mCamera = Camera.open(i);
                     break;
                 }
@@ -102,8 +107,8 @@ public class MotionDetector extends Thread {
 
     public String getPreviewInfo() {
         if (mCamera != null) {
-            return "detection resolution " + mCamera.getParameters().getPreviewSize().width + "x" + mCamera.getParameters().getPreviewSize().height
-                    + ", motion has been detected " + detectionCount + " times";
+            return "camera id " + mCameraId + ", detection resolution " + mCamera.getParameters().getPreviewSize().width + "x" + mCamera.getParameters().getPreviewSize().height + "\n"
+                    + frameCount + " frames processed, motion has been detected " + detectionCount + " times";
         } else {
             return "camera could not be opened";
         }
@@ -126,6 +131,7 @@ public class MotionDetector extends Thread {
     }
 
     public void setPreview(ImageData p) {
+        frameCount++;
         fPreview.set(p);
     }
 
