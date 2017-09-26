@@ -15,9 +15,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Created by volla on 07.09.17.
+ * Fragment for preferences.
  */
-
 public class SettingsFragment extends PreferenceFragment {
     private boolean flashEnabled = false;
 
@@ -58,7 +57,7 @@ public class SettingsFragment extends PreferenceFragment {
         pkgPreference.setOnPreferenceChangeListener(new PackageValidatingListener());
     }
 
-    class PackageValidatingListener implements Preference.OnPreferenceChangeListener {
+    private class PackageValidatingListener implements Preference.OnPreferenceChangeListener {
         @Override
         public boolean onPreferenceChange(Preference preference, Object o) {
             String pkg = (String) o;
@@ -73,7 +72,7 @@ public class SettingsFragment extends PreferenceFragment {
         }
     }
 
-    class URLValidatingListener implements Preference.OnPreferenceChangeListener {
+    private class URLValidatingListener implements Preference.OnPreferenceChangeListener {
         @Override
         public boolean onPreferenceChange(final Preference preference, Object o) {
             String text = (String) o;
@@ -107,6 +106,7 @@ public class SettingsFragment extends PreferenceFragment {
         public boolean onPreferenceChange(Preference preference, Object o) {
             String text = (String) o;
             try {
+                //noinspection ResultOfMethodCallIgnored
                 Pattern.compile(text);
             } catch (PatternSyntaxException e) {
                 UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", e.getMessage());

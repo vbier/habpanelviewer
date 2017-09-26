@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * Created by volla on 10.09.17.
+ * Asynchronous task that fetches the value of an openHAB item from the openHAB rest API.
  */
-public class FetchItemStateTask extends AsyncTask<Set<String>, Void, Void> {
+class FetchItemStateTask extends AsyncTask<Set<String>, Void, Void> {
     private String serverUrl;
     private ArrayList<StateListener> listeners;
 
@@ -22,8 +22,9 @@ public class FetchItemStateTask extends AsyncTask<Set<String>, Void, Void> {
         listeners = l;
     }
 
+    @SafeVarargs
     @Override
-    protected Void doInBackground(Set<String>... itemNames) {
+    protected final Void doInBackground(Set<String>... itemNames) {
         for (Set<String> names : itemNames) {
             for (String itemName : names) {
                 String response = "";

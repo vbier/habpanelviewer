@@ -1,9 +1,10 @@
 package vier_bier.de.habpanelviewer.motion;
 
 /**
- * Created by volla on 15.09.17.
+ * Compares to images for equality. Does this by dividing the images into smaller rectangles,
+ * computing the brightness average and comparing that.
  */
-public class Comparer {
+class Comparer {
     private int xBoxes;
     private int yBoxes;
     private int xPixelsPerBox;

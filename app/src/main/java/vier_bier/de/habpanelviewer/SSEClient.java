@@ -15,16 +15,15 @@ import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * Created by volla on 10.09.17.
+ * Client for openHABs SSE service. Listens for item value changes.
  */
-
-public class SSEClient {
+class SSEClient {
     private Set<String> items;
     private String baseUrl;
     private EventSource eventSource;
     private SSEHandler client;
     private FetchItemStateTask task;
-    private ArrayList<StateListener> stateListeners = new ArrayList<>();
+    private final ArrayList<StateListener> stateListeners = new ArrayList<>();
     private ConnectionListener connectionListener;
 
     public SSEClient(String baseUrl, Set<String> items) {

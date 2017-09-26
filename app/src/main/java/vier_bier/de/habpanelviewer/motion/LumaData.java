@@ -1,7 +1,7 @@
 package vier_bier.de.habpanelviewer.motion;
 
 /**
- * Created by volla on 15.09.17.
+ * Brightness data for an image.
  */
 public class LumaData {
     private int[] data = null;

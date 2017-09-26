@@ -3,10 +3,10 @@ package vier_bier.de.habpanelviewer.motion;
 /**
  * Image data consisting of the data bytes and the image size.
  */
-public class ImageData {
-    byte[] data;
-    int width;
-    int height;
+class ImageData {
+    private byte[] data;
+    private int width;
+    private int height;
 
     public ImageData(byte[] bytes, int w, int h) {
         data = bytes.clone();

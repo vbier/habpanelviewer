@@ -1,9 +1,8 @@
 package vier_bier.de.habpanelviewer;
 
 /**
- * Created by volla on 10.09.17.
+ * Interface for being notified about state changes in openHAB items.
  */
-
-public interface StateListener {
+interface StateListener {
     void updateState(String name, String value);
 }

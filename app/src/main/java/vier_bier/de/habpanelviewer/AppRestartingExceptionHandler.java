@@ -8,10 +8,9 @@ import android.content.Intent;
 import android.util.Log;
 
 /**
- * Created by volla on 13.09.17.
+ * UncaughtExceptionHandler that restarts the app in case of exceptions.
  */
-
-public class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
+class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
     private final Activity myContext;
     private final int count;
 

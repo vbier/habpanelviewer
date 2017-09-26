@@ -6,6 +6,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +19,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * Created by volla on 12.09.17.
+ * Status Information Activity showing interesting app or hardware details.
  */
-
 public class InfoActivity extends Activity {
-    final ArrayList<InfoItem> list = new ArrayList<>();
+    private final ArrayList<InfoItem> list = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +94,9 @@ public class InfoActivity extends Activity {
             this.context = context;
         }
 
+        @NonNull
         @Override
-        public View getView(int position, View view, ViewGroup parent) {
+        public View getView(int position, View view, @NonNull ViewGroup parent) {
             LayoutInflater inflater = context.getLayoutInflater();
             View rowView= inflater.inflate(R.layout.list_info_item, null, true);
 

@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Created by volla on 07.09.17.
+ * Controller for the back-facing cameras flash light.
  */
 public class FlashController implements StateListener {
     private FlashControlThread controller;
@@ -128,7 +128,7 @@ public class FlashController implements StateListener {
 
         private boolean fFlashOn = false;
 
-        public FlashControlThread() {
+        private FlashControlThread() {
             super("FlashControlThread");
             setDaemon(true);
         }
@@ -162,7 +162,7 @@ public class FlashController implements StateListener {
             Log.d("Habpanelview", "FlashControlThread finished");
         }
 
-        public void pulseFlash() {
+        private void pulseFlash() {
             Log.d("Habpanelview", "pulseFlash");
 
             synchronized (fRunning) {
@@ -173,7 +173,7 @@ public class FlashController implements StateListener {
             }
         }
 
-        public void disableFlash() {
+        private void disableFlash() {
             Log.d("Habpanelview", "disableFlash");
 
             synchronized (fRunning) {
@@ -184,7 +184,7 @@ public class FlashController implements StateListener {
             }
         }
 
-        public void enableFlash() {
+        private void enableFlash() {
             Log.d("Habpanelview", "disableFlash");
 
             synchronized (fRunning) {

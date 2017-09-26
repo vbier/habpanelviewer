@@ -1,10 +1,9 @@
 package vier_bier.de.habpanelviewer;
 
 /**
- * Created by volla on 10.09.17.
+ * Interface to be notified about connected and disconnected state.
  */
-
-public interface ConnectionListener {
+interface ConnectionListener {
     void connected(String url);
 
     void disconnected();

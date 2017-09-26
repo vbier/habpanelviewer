@@ -42,10 +42,10 @@
         <activity
             android:name=".SetPreferenceActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="Settings"></activity>
+            android:label="Settings" />
         <activity android:name=".InfoActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:label="Information"></activity>
+            android:label="Information" />
     </application>
 
 </manifest>

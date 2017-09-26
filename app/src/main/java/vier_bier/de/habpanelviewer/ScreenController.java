@@ -10,9 +10,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Created by volla on 12.09.17.
+ * Controller for the screen backlight.
  */
-
 public class ScreenController implements StateListener {
     private final PowerManager.WakeLock screenLock;
     private final Activity activity;

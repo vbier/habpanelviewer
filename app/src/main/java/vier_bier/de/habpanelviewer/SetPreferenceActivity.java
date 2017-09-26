@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+/**
+ * Activity for setting preferences.
+ */
 public class SetPreferenceActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

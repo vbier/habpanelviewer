@@ -4,10 +4,9 @@ import android.app.Activity;
 import android.support.v7.app.AlertDialog;
 
 /**
- * Created by volla on 13.09.17.
+ * UI utility methods.
  */
-
-public class UiUtil {
+class UiUtil {
     public static void showDialog(final Activity activity, final String title, final String text) {
         activity.runOnUiThread(new Runnable() {
             @Override

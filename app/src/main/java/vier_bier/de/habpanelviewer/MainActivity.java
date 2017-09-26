@@ -35,6 +35,9 @@ import java.util.HashSet;
 import vier_bier.de.habpanelviewer.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionListener;
 
+/**
+ * Main activity showing the Webview for openHAB.
+ */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ConnectionListener {
 
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case MotionDetector.MY_PERMISSIONS_MOTION_REQUEST_CAMERA: {
                 // If request is cancelled, the result arrays are empty.
