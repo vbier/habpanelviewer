@@ -26,8 +26,9 @@ import vier_bier.de.habpanelviewer.R;
 /**
  * Motion detection thread.
  */
-public class MotionDetector extends Thread {
-    public static final int MY_PERMISSIONS_MOTION_REQUEST_CAMERA = 42;
+public class MotionDetector extends Thread implements IMotionDetector {
+    private static final String TAG = "MotionDetector";
+
     private boolean enabled;
     private boolean running;
     private int detectionCount = 0;
@@ -54,10 +55,12 @@ public class MotionDetector extends Thread {
         start();
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public String getPreviewInfo() {
         if (mCamera != null) {
             return "camera id " + mCameraId + ", detection resolution " + mCamera.getParameters().getPreviewSize().width + "x" + mCamera.getParameters().getPreviewSize().height + "\n"
@@ -67,6 +70,7 @@ public class MotionDetector extends Thread {
         }
     }
 
+    @Override
     public synchronized void shutdown() {
         stopDetection();
 
@@ -84,23 +88,24 @@ public class MotionDetector extends Thread {
             ImageData p = fPreview.getAndSet(null);
 
             if (p != null) {
-                Log.v("Habpanelview", "processing frame");
+                Log.v(TAG, "processing frame");
 
                 LumaData greyState = p.extractLumaData(mXBoxes, mYBoxes);
                 int minLuma = 1000;
                 if (greyState.isDarker(minLuma)) {
-                    Log.d("Habpanelview", "too dark");
+                    Log.v(TAG, "too dark");
                 } else if (detect(p.extractLumaData(mXBoxes, mYBoxes))) {
                     detectionCount++;
                     listener.motionDetected();
-                    Log.d("Habpanelview", "motion");
+                    Log.v(TAG, "motion");
                 }
 
-                Log.v("Habpanelview", "processing done");
+                Log.v(TAG, "processing done");
             }
         }
     }
 
+    @Override
     public synchronized void updateFromPreferences(Activity context, SharedPreferences prefs) {
         enabled = prefs.getBoolean("pref_motion_detection_enabled", false);
 
@@ -109,7 +114,7 @@ public class MotionDetector extends Thread {
                 try {
                     startDetection((TextureView) context.findViewById(R.id.surfaceView));
                 } catch (CameraAccessException e) {
-                    Log.e("Habpanelview", "Could not enable MotionDetector", e);
+                    Log.e(TAG, "Could not enable MotionDetector", e);
                 }
             } else {
                 ActivityCompat.requestPermissions(context,
@@ -164,12 +169,12 @@ public class MotionDetector extends Thread {
     }
 
     private synchronized void startDetection(TextureView textureView) throws CameraAccessException {
-        Log.d("Habpanelview", "detection ");
+        Log.d(TAG, "starting detection");
 
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-                Log.d("Habpanelview", "surface texture available: " + surfaceTexture);
+                Log.d(TAG, "surface texture available: " + surfaceTexture);
 
                 if (surfaceTexture != surface) {
                     surface = surfaceTexture;
@@ -183,7 +188,7 @@ public class MotionDetector extends Thread {
 
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-                Log.d("Habpanelview", "surface texture destroyed: " + surfaceTexture);
+                Log.d(TAG, "surface texture destroyed: " + surfaceTexture);
 
                 surface = null;
                 return false;
@@ -232,7 +237,7 @@ public class MotionDetector extends Thread {
                 parameters.setPreviewSize(pSize.width, pSize.height);
                 mCamera.setParameters(parameters);
 
-                Log.d("Habpanelview", "preview size: " + mCamera.getParameters().getPreviewSize().width + "x" + mCamera.getParameters().getPreviewSize().height);
+                Log.d(TAG, "preview size: " + mCamera.getParameters().getPreviewSize().width + "x" + mCamera.getParameters().getPreviewSize().height);
 
                 mCamera.setPreviewCallback(new Camera.PreviewCallback() {
                     @Override
@@ -244,7 +249,7 @@ public class MotionDetector extends Thread {
                 mCamera.startPreview();
                 running = true;
             } catch (IOException e) {
-                Log.e("Habpanelview", "Error setting preview texture", e);
+                Log.e(TAG, "Error setting preview texture", e);
             }
         }
     }
@@ -262,13 +267,10 @@ public class MotionDetector extends Thread {
     }
 
     private static class CompareSizesByArea implements Comparator<Camera.Size> {
-
         @Override
         public int compare(Camera.Size lhs, Camera.Size rhs) {
-            // We cast here to ensure the multiplications won't overflow
             return Long.signum((long) lhs.width * lhs.height -
                     (long) rhs.width * rhs.height);
         }
-
     }
 }

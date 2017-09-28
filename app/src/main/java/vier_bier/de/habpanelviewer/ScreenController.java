@@ -12,7 +12,7 @@ import java.util.regex.PatternSyntaxException;
 /**
  * Controller for the screen backlight.
  */
-public class ScreenController implements StateListener {
+class ScreenController implements StateListener {
     private final PowerManager.WakeLock screenLock;
     private final Activity activity;
 
@@ -22,13 +22,13 @@ public class ScreenController implements StateListener {
 
     private Pattern screenOnPattern;
 
-    public ScreenController(PowerManager pwrManager, Activity activity) {
+    ScreenController(PowerManager pwrManager, Activity activity) {
         this.activity = activity;
         screenLock = pwrManager.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "HabpanelViewer");
     }
 
-    public void screenOff() {
+    void screenOff() {
         // make sure screen lock is released
         activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -37,7 +37,7 @@ public class ScreenController implements StateListener {
         }
     }
 
-    public void screenOn() {
+    void screenOn() {
         if (!screenLock.isHeld()) {
             screenLock.acquire();
             screenLock.release();
@@ -45,15 +45,15 @@ public class ScreenController implements StateListener {
         activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    public String getItemName() {
+    String getItemName() {
         return screenOnItemName;
     }
 
-    public String getItemState() {
+    String getItemState() {
         return screenOnItemState;
     }
 
-    public boolean isEnabled() {
+    boolean isEnabled() {
         return enabled;
     }
 
@@ -70,7 +70,7 @@ public class ScreenController implements StateListener {
 
             activity.runOnUiThread(new Runnable() {
                 public void run() {
-                    if (screenOnPattern != null && screenOnPattern.matcher(screenOnItemState).matches()) {
+                    if (screenOnPattern != null && screenOnItemState != null && screenOnPattern.matcher(screenOnItemState).matches()) {
                         screenOn();
                     } else {
                         screenOff();
@@ -80,7 +80,7 @@ public class ScreenController implements StateListener {
         }
     }
 
-    public void updateFromPreferences(SharedPreferences prefs) {
+    void updateFromPreferences(SharedPreferences prefs) {
         screenOnPattern = null;
         screenOnItemName = prefs.getString("pref_screen_item", "");
         screenOnItemState = null;

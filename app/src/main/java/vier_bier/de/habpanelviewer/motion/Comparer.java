@@ -13,7 +13,7 @@ class Comparer {
     private int yPixelsLastBox;
     private int leniency;
 
-    public Comparer(int width, int height, int xBoxes, int yBoxes, int leniency) {
+    Comparer(int width, int height, int xBoxes, int yBoxes, int leniency) {
         this.xBoxes = xBoxes;
         this.yBoxes = yBoxes;
         this.leniency = leniency;
@@ -33,7 +33,7 @@ class Comparer {
     /**
      * Compare two images for difference
      */
-    public boolean isDifferent(LumaData s1, LumaData s2) {
+    boolean isDifferent(LumaData s1, LumaData s2) {
         boolean different = false;
 
         int b1;
@@ -56,7 +56,7 @@ class Comparer {
             return luma.getAverage(xBox, yBox);
         }
 
-        int[] data = luma.getData();
+        byte[] data = luma.getData();
         if (data == null) throw new NullPointerException();
 
         int yPix = (yBox == yBoxes - 1 && yPixelsLastBox > 0) ? yPixelsLastBox : yPixelsPerBox;
@@ -71,7 +71,7 @@ class Comparer {
             idx += luma.getWidth() - xPix;
         }
 
-        int result = (i / (xPix * yPix));
+        byte result = (byte) (i / (xPix * yPix));
         luma.setAverage(xBox, yBox, result);
 
         return result;

@@ -26,12 +26,12 @@ class SSEClient {
     private final ArrayList<StateListener> stateListeners = new ArrayList<>();
     private ConnectionListener connectionListener;
 
-    public SSEClient(String baseUrl, Set<String> items) {
+    SSEClient(String baseUrl, Set<String> items) {
         this.items = items;
         this.baseUrl = baseUrl;
     }
 
-    public void addStateListener(StateListener listener) {
+    void addStateListener(StateListener listener) {
         synchronized (stateListeners) {
             if (!stateListeners.contains(listener)) {
                 stateListeners.add(listener);
@@ -39,17 +39,17 @@ class SSEClient {
         }
     }
 
-    public void removeStateListener(StateListener listener) {
+    void removeStateListener(StateListener listener) {
         synchronized (stateListeners) {
             stateListeners.remove(listener);
         }
     }
 
-    public void setConnectionListener(ConnectionListener l) {
+    void setConnectionListener(ConnectionListener l) {
         connectionListener = l;
     }
 
-    public void connect() {
+    void connect() {
         if (!baseUrl.isEmpty()) {
             StringBuilder topic = new StringBuilder();
             for (String item : items) {
@@ -85,7 +85,7 @@ class SSEClient {
         Log.d("Habpanelview", "EventSource connection skipped");
     }
 
-    public boolean close() {
+    boolean close() {
         boolean closed = false;
 
         if (eventSource != null) {

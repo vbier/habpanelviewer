@@ -19,6 +19,8 @@ import java.util.regex.PatternSyntaxException;
  */
 public class SettingsFragment extends PreferenceFragment {
     private boolean flashEnabled = false;
+    private boolean motionEnabled = false;
+    private boolean screenEnabled = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,15 +29,25 @@ public class SettingsFragment extends PreferenceFragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             flashEnabled = bundle.getBoolean("flash_enabled");
+            motionEnabled = bundle.getBoolean("motion_enabled");
+            screenEnabled = bundle.getBoolean("screen_enabled");
         }
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
 
-        // disable flash preferences if flash not available
+        // disable preferences if functionality is not available
         if (!flashEnabled) {
             findPreference("pref_flash").setEnabled(false);
             findPreference("pref_flash").setSummary("Flash control is not available because no back camera with flash has been found");
+        }
+        if (!motionEnabled) {
+            findPreference("pref_motion").setEnabled(false);
+            findPreference("pref_motion").setSummary("Motion detection is not available because no front camera has been found");
+        }
+        if (!screenEnabled) {
+            findPreference("pref_screen").setEnabled(false);
+            findPreference("pref_screen").setSummary("Backlight control is not available on this device");
         }
 
         // add validation to the regexps
@@ -101,7 +113,7 @@ public class SettingsFragment extends PreferenceFragment {
         }
     }
 
-    class PatternValidatingListener implements Preference.OnPreferenceChangeListener {
+    private class PatternValidatingListener implements Preference.OnPreferenceChangeListener {
         @Override
         public boolean onPreferenceChange(Preference preference, Object o) {
             String text = (String) o;

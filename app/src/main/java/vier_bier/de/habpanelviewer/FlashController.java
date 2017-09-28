@@ -13,7 +13,7 @@ import java.util.regex.PatternSyntaxException;
 /**
  * Controller for the back-facing cameras flash light.
  */
-public class FlashController implements StateListener {
+class FlashController implements StateListener {
     private FlashControlThread controller;
     private CameraManager camManager;
     private String torchId;
@@ -25,7 +25,7 @@ public class FlashController implements StateListener {
     private Pattern flashOnPattern;
     private Pattern flashPulsatingPattern;
 
-    public FlashController(CameraManager cameraManager) throws CameraAccessException {
+    FlashController(CameraManager cameraManager) throws CameraAccessException {
         camManager = cameraManager;
 
         for (String camId : camManager.getCameraIdList()) {
@@ -44,19 +44,19 @@ public class FlashController implements StateListener {
         }
     }
 
-    public String getItemName() {
+    String getItemName() {
         return flashItemName;
     }
 
-    public String getItemState() {
+    String getItemState() {
         return flashItemState;
     }
 
-    public boolean isEnabled() {
+    boolean isEnabled() {
         return enabled;
     }
 
-    public void terminate() {
+    void terminate() {
         if (controller != null) {
             controller.terminate();
             controller = null;
@@ -83,9 +83,9 @@ public class FlashController implements StateListener {
             Log.i("Habpanelview", "flash item state=" + state + ", old state=" + flashItemState);
             flashItemState = state;
 
-            if (flashOnPattern != null && flashOnPattern.matcher(state).matches()) {
+            if (flashOnPattern != null && state != null && flashOnPattern.matcher(state).matches()) {
                 createController().enableFlash();
-            } else if (flashPulsatingPattern != null && flashPulsatingPattern.matcher(state).matches()) {
+            } else if (flashPulsatingPattern != null && state != null && flashPulsatingPattern.matcher(state).matches()) {
                 createController().pulseFlash();
             } else {
                 if (controller != null) {
@@ -95,7 +95,7 @@ public class FlashController implements StateListener {
         }
     }
 
-    public void updateFromPreferences(SharedPreferences prefs) {
+    void updateFromPreferences(SharedPreferences prefs) {
         flashPulsatingPattern = null;
         flashOnPattern = null;
         flashItemName = prefs.getString("pref_flash_item", "");

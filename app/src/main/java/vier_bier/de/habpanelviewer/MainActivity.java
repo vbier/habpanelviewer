@@ -32,7 +32,9 @@ import android.widget.Toast;
 
 import java.util.HashSet;
 
+import vier_bier.de.habpanelviewer.motion.IMotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetector;
+import vier_bier.de.habpanelviewer.motion.MotionDetectorCamera2;
 import vier_bier.de.habpanelviewer.motion.MotionListener;
 
 /**
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity
 
     private FlashController mFlashService;
     private ScreenController mScreenService;
-    private MotionDetector mMotionDetector;
+    private IMotionDetector mMotionDetector;
 
     private int mRestartCount;
 
@@ -61,10 +63,15 @@ public class MainActivity extends AppCompatActivity
     //TODO.vb. check if proximity sensor can be used
     //TODO.vb. check if light sensor can be used
     //TODO.vb. adapt volume settings: System.Settings & System.Secure.Settings
-    //         https://gist.github.com/shrikant0013/fc3e67b4b898294a03e4eba1b527f898 for how to obtain a specific permission
 
     @Override
     protected void onDestroy() {
+        destroy();
+
+        super.onDestroy();
+    }
+
+    protected void destroy() {
         stopEventSource();
 
         if (mFlashService != null) {
@@ -76,8 +83,6 @@ public class MainActivity extends AppCompatActivity
             mMotionDetector.shutdown();
             mMotionDetector = null;
         }
-
-        super.onDestroy();
     }
 
     @Override
@@ -105,17 +110,30 @@ public class MainActivity extends AppCompatActivity
                 Log.d("Habpanelview", "Could not create flash controller");
             }
 
-            mMotionDetector = new MotionDetector(new MotionListener() {
-                @Override
-                public void motionDetected() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mScreenService.screenOn();
-                        }
-                    });
+            try {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                boolean oldApi = prefs.getBoolean("pref_motion_detection_old_api", false);
+
+                MotionListener ml = new MotionListener() {
+                    @Override
+                    public void motionDetected() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mScreenService.screenOn();
+                            }
+                        });
+                    }
+                };
+
+                if (oldApi) {
+                    mMotionDetector = new MotionDetector(ml);
+                } else {
+                    mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), ml);
                 }
-            });
+            } catch (CameraAccessException e) {
+                Log.d("Habpanelview", "Could not create motion detector");
+            }
         }
 
         mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
@@ -248,6 +266,8 @@ public class MainActivity extends AppCompatActivity
             }
         } else if (id == R.id.action_info) {
             showInfoScreen();
+        } else if (id == R.id.action_restart) {
+            AppRestartingExceptionHandler.restartApp(this, -1);
         } else if (id == R.id.action_exit) {
             finishAndRemoveTask();
             System.exit(0);
@@ -318,6 +338,8 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, SetPreferenceActivity.class);
         intent.putExtra("flash_enabled", mFlashService != null);
+        intent.putExtra("motion_enabled", mMotionDetector != null);
+        intent.putExtra("screen_enabled", mScreenService != null);
         startActivityForResult(intent, 0);
     }
 

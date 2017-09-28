@@ -17,7 +17,7 @@ class FetchItemStateTask extends AsyncTask<Set<String>, Void, Void> {
     private String serverUrl;
     private ArrayList<StateListener> listeners;
 
-    public FetchItemStateTask(String url, ArrayList<StateListener> l) {
+    FetchItemStateTask(String url, ArrayList<StateListener> l) {
         serverUrl = url;
         listeners = l;
     }

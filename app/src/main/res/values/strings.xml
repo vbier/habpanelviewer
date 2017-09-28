@@ -42,7 +42,6 @@
     <string name="pref_flash_steady_regex_summ">Regexp that triggers a steady lash light</string>
     <string name="pref_flash_steady_regex_default">(IN|EX)TERN</string>
     <string name="pref_flash">Flashlight Control</string>
-    <string name="pref_panel_default">Alarmpanel</string>
     <string name="pref_panel">Start Panel</string>
     <string name="pref_panel_summ">The panel to load on start</string>
     <string name="pref_app">App Shortcut</string>
@@ -63,4 +62,8 @@
     <string name="pref_restart">Auto Restart</string>
     <string name="pref_max_restarts">Number of allowed restarts</string>
     <string name="pref_max_restarts_summ">The number of restarts until auto restart is turned off.</string>
+    <string name="pref_motion">Motion Detection</string>
+    <string name="pref_motion_detection_old_api_summ">Use old Camera API from Kitkat. Try this only in case motion detection does not work with the new API. A restart is required for the changes to take effect.</string>
+    <string name="pref_motion_detection_old_api">Use pre-Lollipop camera API</string>
+    <string name="action_restart">Restart App</string>
 </resources>
