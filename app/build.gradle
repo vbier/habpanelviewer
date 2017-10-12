@@ -30,5 +30,6 @@ dependencies {
     compile 'com.android.support:design:26.+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.tylerjroach:eventsource:1.2.11'
+    compile 'com.jakewharton:process-phoenix:2.0.0'
     testCompile 'junit:junit:4.12'
 }

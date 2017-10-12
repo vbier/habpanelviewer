@@ -30,6 +30,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jakewharton.processphoenix.ProcessPhoenix;
+
 import java.util.HashSet;
 
 import vier_bier.de.habpanelviewer.motion.IMotionDetector;
@@ -66,12 +68,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        destroy();
-
-        super.onDestroy();
-    }
-
-    protected void destroy() {
         stopEventSource();
 
         if (mFlashService != null) {
@@ -83,10 +79,16 @@ public class MainActivity extends AppCompatActivity
             mMotionDetector.shutdown();
             mMotionDetector = null;
         }
+
+        super.onDestroy();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (ProcessPhoenix.isPhoenixProcess(this)) {
+            return;
+        }
+
         super.onCreate(savedInstanceState);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -267,10 +269,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_info) {
             showInfoScreen();
         } else if (id == R.id.action_restart) {
-            AppRestartingExceptionHandler.restartApp(this, -1);
+            ProcessPhoenix.triggerRebirth(this);
         } else if (id == R.id.action_exit) {
             finishAndRemoveTask();
-            System.exit(0);
+            Runtime.getRuntime().exit(0);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

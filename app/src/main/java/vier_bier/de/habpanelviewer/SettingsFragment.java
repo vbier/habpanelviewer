@@ -3,9 +3,12 @@ package vier_bier.de.habpanelviewer;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -21,6 +24,8 @@ public class SettingsFragment extends PreferenceFragment {
     private boolean flashEnabled = false;
     private boolean motionEnabled = false;
     private boolean screenEnabled = false;
+
+    private boolean oldApi = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +72,20 @@ public class SettingsFragment extends PreferenceFragment {
         // add validation to the openHAB url
         EditTextPreference pkgPreference = (EditTextPreference) findPreference("pref_app_package");
         pkgPreference.setOnPreferenceChangeListener(new PackageValidatingListener());
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        oldApi = ((CheckBoxPreference) findPreference("pref_motion_detection_old_api")).isChecked();
+    }
+
+    @Override
+    public void onStop() {
+        if (oldApi != ((CheckBoxPreference) findPreference("pref_motion_detection_old_api")).isChecked()) {
+            ProcessPhoenix.triggerRebirth(getContext());
+        }
+        super.onStop();
     }
 
     private class PackageValidatingListener implements Preference.OnPreferenceChangeListener {
