@@ -58,13 +58,12 @@ public class MainActivity extends AppCompatActivity
 
     private int mRestartCount;
 
-    //TODO.vb. add more info menu entries showing capabilities
+    //TODO.vb. adapt volume settings: AudioManager
     //TODO.vb. force screen to on while regexp is met
     //TODO.vb. load list of available panels from habpanel for selection in preferences
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
     //TODO.vb. check if proximity sensor can be used
     //TODO.vb. check if light sensor can be used
-    //TODO.vb. adapt volume settings: System.Settings & System.Secure.Settings
 
     @Override
     protected void onDestroy() {
@@ -233,6 +232,11 @@ public class MainActivity extends AppCompatActivity
         webSettings.setLoadWithOverviewMode(isDesktop);
         webSettings.setJavaScriptEnabled(isJavascript);
 
+        /**
+         AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+         int max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+         **/
         loadStartUrl();
 
         startEventSource();
