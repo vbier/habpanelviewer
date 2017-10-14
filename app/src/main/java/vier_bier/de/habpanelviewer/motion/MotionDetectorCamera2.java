@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.RectF;
+import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -19,6 +22,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
+import android.util.SparseIntArray;
+import android.view.Surface;
+import android.view.TextureView;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -29,12 +35,24 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import vier_bier.de.habpanelviewer.R;
+
 /**
  * Motion detection thread using Camera2 API.
  */
 public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
     private static final String TAG = "MotionDetectorCamera2";
 
+    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+
+    static {
+        ORIENTATIONS.append(Surface.ROTATION_0, 90);
+        ORIENTATIONS.append(Surface.ROTATION_90, 0);
+        ORIENTATIONS.append(Surface.ROTATION_180, 270);
+        ORIENTATIONS.append(Surface.ROTATION_270, 180);
+    }
+
+    private Activity activity;
     private CameraManager camManager;
 
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
@@ -42,6 +60,8 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
     private CaptureRequest mPreviewRequest;
     private CameraCaptureSession mCaptureSession;
     private ImageReader mImageReader;
+    private SurfaceTexture surface;
+    private Size mPreviewSize;
 
     private CameraDevice mCamera;
     private String cameraId;
@@ -59,11 +79,12 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
     private int detectionCount = 0;
     private int frameCount = 0;
 
-    public MotionDetectorCamera2(CameraManager manager, MotionListener l) throws CameraAccessException {
+    public MotionDetectorCamera2(CameraManager manager, MotionListener l, Activity act) throws CameraAccessException {
         Log.d(TAG, "instantiating motion detection");
 
         camManager = manager;
         listener = l;
+        activity = act;
 
         for (String camId : camManager.getCameraIdList()) {
             CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
@@ -105,8 +126,11 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
 
         if (enabled) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                int rotation = context.getWindowManager().getDefaultDisplay()
+                        .getRotation();
+
                 try {
-                    startDetection();
+                    startDetection((TextureView) context.findViewById(R.id.previewView), rotation);
                 } catch (CameraAccessException e) {
                     Log.e(TAG, "Could not enable MotionDetector", e);
                 }
@@ -154,9 +178,42 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
         }
     }
 
-    private void startDetection() throws CameraAccessException {
+    private void startDetection(final TextureView textureView, final int rotation) throws CameraAccessException {
         Log.d(TAG, "starting motion detection");
-        openCamera();
+
+        textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+            @Override
+            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+                Log.d(TAG, "surface texture available: " + surfaceTexture);
+
+                if (surfaceTexture != surface) {
+                    surface = surfaceTexture;
+                    openCamera(textureView);
+                }
+            }
+
+            @Override
+            public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
+            }
+
+            @Override
+            public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+                Log.d(TAG, "surface texture destroyed: " + surfaceTexture);
+
+                surface = null;
+                return false;
+            }
+
+            @Override
+            public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+            }
+        });
+
+        if (textureView.isAvailable()) {
+            surface = textureView.getSurfaceTexture();
+            openCamera(textureView);
+        }
+
     }
 
     private void stopDetection() {
@@ -166,7 +223,7 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
         }
     }
 
-    private void openCamera() {
+    private void openCamera(final TextureView previewView) {
         try {
             camManager.openCamera(cameraId, new CameraDevice.StateCallback() {
                 @Override
@@ -174,7 +231,7 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
                     Log.d(TAG, "mCamera opened: " + cameraDevice);
                     mCameraOpenCloseLock.release();
                     mCamera = cameraDevice;
-                    createCameraPreviewSession();
+                    createCameraPreviewSession(previewView);
                 }
 
                 @Override
@@ -196,15 +253,41 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
         }
     }
 
-    private void createCameraPreviewSession() {
+    private void configureTransform(TextureView textureView) {
+        if (null == textureView || null == mPreviewSize || null == activity) {
+            return;
+        }
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        Matrix matrix = new Matrix();
+        RectF viewRect = new RectF(0, 0, textureView.getWidth(), textureView.getHeight());
+        RectF bufferRect = new RectF(0, 0, mPreviewSize.getHeight(), mPreviewSize.getWidth());
+        float centerX = viewRect.centerX();
+        float centerY = viewRect.centerY();
+        if (Surface.ROTATION_90 == rotation || Surface.ROTATION_270 == rotation) {
+            bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
+            matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
+            float scale = Math.max(
+                    (float) textureView.getHeight() / mPreviewSize.getHeight(),
+                    (float) textureView.getWidth() / mPreviewSize.getWidth());
+            matrix.postScale(scale, scale, centerX, centerY);
+            matrix.postRotate(90 * (rotation - 2), centerX, centerY);
+        } else if (Surface.ROTATION_180 == rotation) {
+            matrix.postRotate(180, centerX, centerY);
+        }
+        textureView.setTransform(matrix);
+    }
+
+    private void createCameraPreviewSession(final TextureView previewView) {
         try {
             CameraCharacteristics characteristics
                     = camManager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(
                     CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
-            Size mPreviewSize = chooseOptimalSize(map.getOutputSizes(ImageFormat.YUV_420_888), 640, 480, new Size(4, 3));
+            mPreviewSize = chooseOptimalSize(map.getOutputSizes(ImageFormat.YUV_420_888), 640, 480, new Size(4, 3));
             Log.v(TAG, "preview image size is " + mPreviewSize.getWidth() + "x" + mPreviewSize.getHeight());
+
+            configureTransform(previewView);
 
             mImageReader = ImageReader.newInstance(mPreviewSize.getWidth(), mPreviewSize.getHeight(),
                     ImageFormat.YUV_420_888, 2);
@@ -232,9 +315,15 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
             mPreviewRequestBuilder
                     = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             mPreviewRequestBuilder.addTarget(mImageReader.getSurface());
+            Surface previewSurface = new Surface(surface);
+            mPreviewRequestBuilder.addTarget(previewSurface);
+
+            ArrayList<Surface> surfaces = new ArrayList<>();
+            surfaces.add(mImageReader.getSurface());
+            surfaces.add(previewSurface);
 
             // Here, we create a CameraCaptureSession for mCamera preview.
-            mCamera.createCaptureSession(Collections.singletonList(mImageReader.getSurface()),
+            mCamera.createCaptureSession(surfaces,
                     new CameraCaptureSession.StateCallback() {
                         @Override
                         public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {

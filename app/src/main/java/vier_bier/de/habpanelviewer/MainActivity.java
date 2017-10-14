@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity
 
     private int mRestartCount;
 
+    //TODO.vb. show where motion is detected in the preview
     //TODO.vb. adapt volume settings: AudioManager
     //TODO.vb. force screen to on while regexp is met
     //TODO.vb. load list of available panels from habpanel for selection in preferences
@@ -130,7 +132,7 @@ public class MainActivity extends AppCompatActivity
                 if (oldApi) {
                     mMotionDetector = new MotionDetector(ml);
                 } else {
-                    mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), ml);
+                    mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), ml, this);
                 }
             } catch (CameraAccessException e) {
                 Log.d("Habpanelview", "Could not create motion detector");
@@ -231,6 +233,15 @@ public class MainActivity extends AppCompatActivity
         webSettings.setUseWideViewPort(isDesktop);
         webSettings.setLoadWithOverviewMode(isDesktop);
         webSettings.setJavaScriptEnabled(isJavascript);
+
+        TextureView previewView = ((TextureView) findViewById(R.id.previewView));
+        boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
+        boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
+        if (showPreview && motionDetection) {
+            previewView.setVisibility(View.VISIBLE);
+        } else {
+            previewView.setVisibility(View.INVISIBLE);
+        }
 
         /**
          AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);

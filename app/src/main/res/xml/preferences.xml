@@ -103,6 +103,11 @@
                 android:title="@string/pref_motion_detection_enabled" />
             <CheckBoxPreference
                 android:defaultValue="false"
+                android:key="pref_motion_detection_preview"
+                android:summary="@string/pref_motion_detection_preview_summ"
+                android:title="@string/pref_motion_detection_preview" />
+            <CheckBoxPreference
+                android:defaultValue="false"
                 android:key="pref_motion_detection_old_api"
                 android:dependency="pref_motion_detection_enabled"
                 android:summary="@string/pref_motion_detection_old_api_summ"
