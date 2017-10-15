@@ -5,4 +5,8 @@ package vier_bier.de.habpanelviewer.motion;
  */
 public interface MotionListener {
     void motionDetected();
+
+    void noMotion();
+
+    void tooDark();
 }

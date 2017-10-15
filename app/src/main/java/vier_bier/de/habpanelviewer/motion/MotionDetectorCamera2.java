@@ -126,11 +126,8 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
 
         if (enabled) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                int rotation = context.getWindowManager().getDefaultDisplay()
-                        .getRotation();
-
                 try {
-                    startDetection((TextureView) context.findViewById(R.id.previewView), rotation);
+                    startDetection((TextureView) context.findViewById(R.id.previewView));
                 } catch (CameraAccessException e) {
                     Log.e(TAG, "Could not enable MotionDetector", e);
                 }
@@ -167,10 +164,13 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
                 int minLuma = 1000;
                 if (greyState.isDarker(minLuma)) {
                     Log.v(TAG, "too dark");
+                    listener.tooDark();
                 } else if (detect(greyState)) {
+                    Log.v(TAG, "motion");
                     detectionCount++;
                     listener.motionDetected();
-                    Log.v(TAG, "motion");
+                } else {
+                    listener.noMotion();
                 }
 
                 Log.v(TAG, "processing done");
@@ -178,7 +178,7 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
         }
     }
 
-    private void startDetection(final TextureView textureView, final int rotation) throws CameraAccessException {
+    private void startDetection(final TextureView textureView) throws CameraAccessException {
         Log.d(TAG, "starting motion detection");
 
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {

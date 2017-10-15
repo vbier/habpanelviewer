@@ -95,10 +95,13 @@ public class MotionDetector extends Thread implements IMotionDetector {
                 int minLuma = 1000;
                 if (greyState.isDarker(minLuma)) {
                     Log.v(TAG, "too dark");
+                    listener.tooDark();
                 } else if (detect(p.extractLumaData(mXBoxes, mYBoxes))) {
                     detectionCount++;
                     listener.motionDetected();
                     Log.v(TAG, "motion");
+                } else {
+                    listener.noMotion();
                 }
 
                 Log.v(TAG, "processing done");

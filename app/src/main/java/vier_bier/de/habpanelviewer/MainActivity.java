@@ -5,6 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
@@ -19,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
@@ -114,10 +120,20 @@ public class MainActivity extends AppCompatActivity
             }
 
             try {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                 boolean oldApi = prefs.getBoolean("pref_motion_detection_old_api", false);
 
+                final SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
+                motionView.setZOrderOnTop(true);
+                motionView.getHolder().setFormat(PixelFormat.TRANSPARENT);
+
+                final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                paint.setColor(Color.WHITE);
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setTextSize(48);
+
                 MotionListener ml = new MotionListener() {
+
                     @Override
                     public void motionDetected() {
                         runOnUiThread(new Runnable() {
@@ -126,6 +142,42 @@ public class MainActivity extends AppCompatActivity
                                 mScreenService.screenOn();
                             }
                         });
+
+                        if (motionView.getHolder().getSurface().isValid()) {
+                            final Canvas canvas = motionView.getHolder().lockCanvas();
+                            if (canvas != null) {
+                                canvas.drawText("Motion", 160, 50, paint);
+                                motionView.getHolder().unlockCanvasAndPost(canvas);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void noMotion() {
+                        boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
+                        boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
+
+                        if (showPreview && motionDetection && motionView.getHolder().getSurface().isValid()) {
+                            final Canvas canvas = motionView.getHolder().lockCanvas();
+                            if (canvas != null) {
+                                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                                motionView.getHolder().unlockCanvasAndPost(canvas);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void tooDark() {
+                        boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
+                        boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
+
+                        if (showPreview && motionDetection && motionView.getHolder().getSurface().isValid()) {
+                            final Canvas canvas = motionView.getHolder().lockCanvas();
+                            if (canvas != null) {
+                                canvas.drawText("too dark", 140, 50, paint);
+                                motionView.getHolder().unlockCanvasAndPost(canvas);
+                            }
+                        }
                     }
                 };
 
@@ -235,12 +287,15 @@ public class MainActivity extends AppCompatActivity
         webSettings.setJavaScriptEnabled(isJavascript);
 
         TextureView previewView = ((TextureView) findViewById(R.id.previewView));
+        SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
         boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
         boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
         if (showPreview && motionDetection) {
             previewView.setVisibility(View.VISIBLE);
+            motionView.setVisibility(View.VISIBLE);
         } else {
             previewView.setVisibility(View.INVISIBLE);
+            motionView.setVisibility(View.INVISIBLE);
         }
 
         /**

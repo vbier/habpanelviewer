@@ -22,4 +22,12 @@
         app:layout_constraintRight_toRightOf="@+id/activity_main_webview"
         app:layout_constraintBottom_toBottomOf="@+id/activity_main_webview" />
 
+    <SurfaceView
+        android:id="@+id/motionView"
+        android:layout_width="160dp"
+        android:layout_height="120dp"
+        android:elevation="3dp"
+        app:layout_constraintRight_toRightOf="@+id/activity_main_webview"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_main_webview" />
+
 </android.support.constraint.ConstraintLayout>
