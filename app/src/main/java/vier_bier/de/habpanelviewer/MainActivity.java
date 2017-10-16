@@ -5,6 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
@@ -19,6 +24,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
@@ -29,6 +36,8 @@ import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.util.HashSet;
 
@@ -56,22 +65,16 @@ public class MainActivity extends AppCompatActivity
 
     private int mRestartCount;
 
-    //TODO.vb. add more info menu entries showing capabilities
+    //TODO.vb. show where motion is detected in the preview
+    //TODO.vb. adapt volume settings: AudioManager
     //TODO.vb. force screen to on while regexp is met
     //TODO.vb. load list of available panels from habpanel for selection in preferences
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
     //TODO.vb. check if proximity sensor can be used
     //TODO.vb. check if light sensor can be used
-    //TODO.vb. adapt volume settings: System.Settings & System.Secure.Settings
 
     @Override
     protected void onDestroy() {
-        destroy();
-
-        super.onDestroy();
-    }
-
-    protected void destroy() {
         stopEventSource();
 
         if (mFlashService != null) {
@@ -83,10 +86,16 @@ public class MainActivity extends AppCompatActivity
             mMotionDetector.shutdown();
             mMotionDetector = null;
         }
+
+        super.onDestroy();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (ProcessPhoenix.isPhoenixProcess(this)) {
+            return;
+        }
+
         super.onCreate(savedInstanceState);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -111,10 +120,20 @@ public class MainActivity extends AppCompatActivity
             }
 
             try {
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                 boolean oldApi = prefs.getBoolean("pref_motion_detection_old_api", false);
 
+                final SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
+                motionView.setZOrderOnTop(true);
+                motionView.getHolder().setFormat(PixelFormat.TRANSPARENT);
+
+                final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                paint.setColor(Color.WHITE);
+                paint.setStyle(Paint.Style.STROKE);
+                paint.setTextSize(48);
+
                 MotionListener ml = new MotionListener() {
+
                     @Override
                     public void motionDetected() {
                         runOnUiThread(new Runnable() {
@@ -123,13 +142,49 @@ public class MainActivity extends AppCompatActivity
                                 mScreenService.screenOn();
                             }
                         });
+
+                        if (motionView.getHolder().getSurface().isValid()) {
+                            final Canvas canvas = motionView.getHolder().lockCanvas();
+                            if (canvas != null) {
+                                canvas.drawText("Motion", 160, 50, paint);
+                                motionView.getHolder().unlockCanvasAndPost(canvas);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void noMotion() {
+                        boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
+                        boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
+
+                        if (showPreview && motionDetection && motionView.getHolder().getSurface().isValid()) {
+                            final Canvas canvas = motionView.getHolder().lockCanvas();
+                            if (canvas != null) {
+                                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                                motionView.getHolder().unlockCanvasAndPost(canvas);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void tooDark() {
+                        boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
+                        boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
+
+                        if (showPreview && motionDetection && motionView.getHolder().getSurface().isValid()) {
+                            final Canvas canvas = motionView.getHolder().lockCanvas();
+                            if (canvas != null) {
+                                canvas.drawText("too dark", 140, 50, paint);
+                                motionView.getHolder().unlockCanvasAndPost(canvas);
+                            }
+                        }
                     }
                 };
 
                 if (oldApi) {
                     mMotionDetector = new MotionDetector(ml);
                 } else {
-                    mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), ml);
+                    mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), ml, this);
                 }
             } catch (CameraAccessException e) {
                 Log.d("Habpanelview", "Could not create motion detector");
@@ -231,6 +286,23 @@ public class MainActivity extends AppCompatActivity
         webSettings.setLoadWithOverviewMode(isDesktop);
         webSettings.setJavaScriptEnabled(isJavascript);
 
+        TextureView previewView = ((TextureView) findViewById(R.id.previewView));
+        SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
+        boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
+        boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
+        if (showPreview && motionDetection) {
+            previewView.setVisibility(View.VISIBLE);
+            motionView.setVisibility(View.VISIBLE);
+        } else {
+            previewView.setVisibility(View.INVISIBLE);
+            motionView.setVisibility(View.INVISIBLE);
+        }
+
+        /**
+         AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+         int max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+         **/
         loadStartUrl();
 
         startEventSource();
@@ -267,10 +339,10 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_info) {
             showInfoScreen();
         } else if (id == R.id.action_restart) {
-            AppRestartingExceptionHandler.restartApp(this, -1);
+            ProcessPhoenix.triggerRebirth(this);
         } else if (id == R.id.action_exit) {
             finishAndRemoveTask();
-            System.exit(0);
+            Runtime.getRuntime().exit(0);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

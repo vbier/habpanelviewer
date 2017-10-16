@@ -10,14 +10,24 @@
 
     <WebView
         android:id="@+id/activity_main_webview"
+        android:elevation="1dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp" />
+        android:layout_height="match_parent" />
 
     <TextureView
-        android:layout_width="1dp"
-        android:layout_height="1dp"
-        android:id="@+id/surfaceView" />
+        android:id="@+id/previewView"
+        android:layout_width="160dp"
+        android:layout_height="120dp"
+        android:elevation="2dp"
+        app:layout_constraintRight_toRightOf="@+id/activity_main_webview"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_main_webview" />
+
+    <SurfaceView
+        android:id="@+id/motionView"
+        android:layout_width="160dp"
+        android:layout_height="120dp"
+        android:elevation="3dp"
+        app:layout_constraintRight_toRightOf="@+id/activity_main_webview"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_main_webview" />
 
 </android.support.constraint.ConstraintLayout>

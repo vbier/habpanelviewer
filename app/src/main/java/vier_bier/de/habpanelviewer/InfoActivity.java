@@ -47,7 +47,7 @@ public class InfoActivity extends Activity {
 
     private void populateList(Bundle b) {
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
-        list.add(new InfoItem("Habpanelviewer", "Version: " + BuildConfig.VERSION_NAME + "\nBuild date: " + buildDate.toString()));
+        list.add(new InfoItem("HABPanelViewer", "Version: " + BuildConfig.VERSION_NAME + "\nBuild date: " + buildDate.toString()));
 
         if (b != null) {
             for (String key : b.keySet()) {

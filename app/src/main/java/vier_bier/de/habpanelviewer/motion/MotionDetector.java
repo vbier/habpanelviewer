@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
+import android.view.Surface;
 import android.view.TextureView;
 
 import java.io.IOException;
@@ -94,10 +95,13 @@ public class MotionDetector extends Thread implements IMotionDetector {
                 int minLuma = 1000;
                 if (greyState.isDarker(minLuma)) {
                     Log.v(TAG, "too dark");
+                    listener.tooDark();
                 } else if (detect(p.extractLumaData(mXBoxes, mYBoxes))) {
                     detectionCount++;
                     listener.motionDetected();
                     Log.v(TAG, "motion");
+                } else {
+                    listener.noMotion();
                 }
 
                 Log.v(TAG, "processing done");
@@ -111,8 +115,26 @@ public class MotionDetector extends Thread implements IMotionDetector {
 
         if (enabled) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                int rotation = context.getWindowManager().getDefaultDisplay()
+                        .getRotation();
+                int degrees = 0;
+                switch (rotation) {
+                    case Surface.ROTATION_0:
+                        degrees = 0;
+                        break;
+                    case Surface.ROTATION_90:
+                        degrees = 90;
+                        break;
+                    case Surface.ROTATION_180:
+                        degrees = 180;
+                        break;
+                    case Surface.ROTATION_270:
+                        degrees = 270;
+                        break;
+                }
+
                 try {
-                    startDetection((TextureView) context.findViewById(R.id.surfaceView));
+                    startDetection((TextureView) context.findViewById(R.id.previewView), degrees);
                 } catch (CameraAccessException e) {
                     Log.e(TAG, "Could not enable MotionDetector", e);
                 }
@@ -168,7 +190,7 @@ public class MotionDetector extends Thread implements IMotionDetector {
         return isDifferent;
     }
 
-    private synchronized void startDetection(TextureView textureView) throws CameraAccessException {
+    private synchronized void startDetection(TextureView textureView, int deviceDegrees) throws CameraAccessException {
         Log.d(TAG, "starting detection");
 
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
@@ -210,6 +232,11 @@ public class MotionDetector extends Thread implements IMotionDetector {
                 if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                     mCameraId = i;
                     mCamera = Camera.open(i);
+
+                    int result = (info.orientation + deviceDegrees) % 360;
+                    result = (360 - result) % 360;  // compensate the mirror
+                    mCamera.setDisplayOrientation(result);
+
                     break;
                 }
             }
@@ -242,7 +269,9 @@ public class MotionDetector extends Thread implements IMotionDetector {
                 mCamera.setPreviewCallback(new Camera.PreviewCallback() {
                     @Override
                     public void onPreviewFrame(byte[] bytes, Camera camera) {
-                        setPreview(new ImageData(bytes, camera.getParameters().getPreviewSize().width, camera.getParameters().getPreviewSize().height));
+                        if (mCamera == camera) {
+                            setPreview(new ImageData(bytes, camera.getParameters().getPreviewSize().width, camera.getParameters().getPreviewSize().height));
+                        }
                     }
                 });
 
@@ -256,6 +285,7 @@ public class MotionDetector extends Thread implements IMotionDetector {
 
     private synchronized void stopDetection() {
         if (mCamera != null) {
+            mCamera.setPreviewCallback(null);
             mCamera.stopPreview();
 
             Camera c = mCamera;

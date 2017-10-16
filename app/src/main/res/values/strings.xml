@@ -63,7 +63,9 @@
     <string name="pref_max_restarts">Number of allowed restarts</string>
     <string name="pref_max_restarts_summ">The number of restarts until auto restart is turned off.</string>
     <string name="pref_motion">Motion Detection</string>
-    <string name="pref_motion_detection_old_api_summ">Use old Camera API from Kitkat. Try this only in case motion detection does not work with the new API. A restart is required for the changes to take effect.</string>
+    <string name="pref_motion_detection_old_api_summ">Use old Camera API from Kitkat. Try this only in case motion detection does not work with the new API. On change, a restart will be performed when you exit the settings.</string>
     <string name="pref_motion_detection_old_api">Use pre-Lollipop camera API</string>
     <string name="action_restart">Restart App</string>
+    <string name="pref_motion_detection_preview_summ">Shows a camera preview overlay</string>
+    <string name="pref_motion_detection_preview">Camera Preview</string>
 </resources>
