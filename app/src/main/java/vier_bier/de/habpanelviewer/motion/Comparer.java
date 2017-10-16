@@ -1,5 +1,9 @@
 package vier_bier.de.habpanelviewer.motion;
 
+import android.graphics.Point;
+
+import java.util.ArrayList;
+
 /**
  * Compares to images for equality. Does this by dividing the images into smaller rectangles,
  * computing the brightness average and comparing that.
@@ -33,8 +37,8 @@ class Comparer {
     /**
      * Compare two images for difference
      */
-    boolean isDifferent(LumaData s1, LumaData s2) {
-        boolean different = false;
+    ArrayList<Point> isDifferent(LumaData s1, LumaData s2) {
+        ArrayList<Point> differing = new ArrayList<>();
 
         int b1;
         int b2;
@@ -45,10 +49,12 @@ class Comparer {
                 b2 = calcAverage(s2, x, y);
                 diff = Math.abs(b1 - b2);
 
-                if (diff > leniency) different = true;
+                if (diff > leniency) {
+                    differing.add(new Point(x, y));
+                }
             }
         }
-        return different;
+        return differing;
     }
 
     private int calcAverage(LumaData luma, int xBox, int yBox) {

@@ -5,11 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
+import android.graphics.Point;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
@@ -39,6 +38,7 @@ import android.widget.Toast;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import vier_bier.de.habpanelviewer.motion.IMotionDetector;
@@ -133,27 +133,45 @@ public class MainActivity extends AppCompatActivity
                 paint.setTextSize(48);
 
                 MotionListener ml = new MotionListener() {
-
                     @Override
-                    public void motionDetected() {
+                    public void motionDetected(ArrayList<Point> differing) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 mScreenService.screenOn();
                             }
                         });
+/**
+ boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
+ boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
 
-                        if (motionView.getHolder().getSurface().isValid()) {
+ if (showPreview && motionDetection && motionView.getHolder().getSurface().isValid()) {
                             final Canvas canvas = motionView.getHolder().lockCanvas();
+
+ int width = canvas.getWidth();
+ int height = canvas.getHeight();
+
+ int xsize = width / 10;
+ int ysize = height / 10;
+
                             if (canvas != null) {
+ canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
                                 canvas.drawText("Motion", 160, 50, paint);
+
+ //canvas.rotate(270, 240, 280);
+ for (Point p : differing) {
+ canvas.drawRect(p.x * xsize, p.y * ysize, p.x* xsize + xsize, p.y * ysize + ysize, paint);
+ }
+
                                 motionView.getHolder().unlockCanvasAndPost(canvas);
                             }
                         }
+ **/
                     }
 
                     @Override
                     public void noMotion() {
+/**
                         boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
                         boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
 
@@ -164,10 +182,12 @@ public class MainActivity extends AppCompatActivity
                                 motionView.getHolder().unlockCanvasAndPost(canvas);
                             }
                         }
+ **/
                     }
 
                     @Override
                     public void tooDark() {
+/**
                         boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
                         boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
 
@@ -178,6 +198,7 @@ public class MainActivity extends AppCompatActivity
                                 motionView.getHolder().unlockCanvasAndPost(canvas);
                             }
                         }
+ **/
                     }
                 };
 
@@ -285,6 +306,7 @@ public class MainActivity extends AppCompatActivity
         webSettings.setUseWideViewPort(isDesktop);
         webSettings.setLoadWithOverviewMode(isDesktop);
         webSettings.setJavaScriptEnabled(isJavascript);
+        webSettings.setDomStorageEnabled(true);
 
         TextureView previewView = ((TextureView) findViewById(R.id.previewView));
         SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));

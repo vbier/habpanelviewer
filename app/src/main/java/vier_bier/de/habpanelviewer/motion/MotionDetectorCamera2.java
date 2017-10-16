@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
+import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -165,12 +166,15 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
                 if (greyState.isDarker(minLuma)) {
                     Log.v(TAG, "too dark");
                     listener.tooDark();
-                } else if (detect(greyState)) {
-                    Log.v(TAG, "motion");
-                    detectionCount++;
-                    listener.motionDetected();
                 } else {
-                    listener.noMotion();
+                    ArrayList<Point> differing = detect(greyState);
+                    if (differing != null && !differing.isEmpty()) {
+                        detectionCount++;
+                        listener.motionDetected(differing);
+                        Log.v(TAG, "motion");
+                    } else {
+                        listener.noMotion();
+                    }
                 }
 
                 Log.v(TAG, "processing done");
@@ -283,6 +287,7 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
                     = camManager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(
                     CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
 
             mPreviewSize = chooseOptimalSize(map.getOutputSizes(ImageFormat.YUV_420_888), 640, 480, new Size(4, 3));
             Log.v(TAG, "preview image size is " + mPreviewSize.getWidth() + "x" + mPreviewSize.getHeight());
@@ -368,23 +373,23 @@ public class MotionDetectorCamera2 extends Thread implements IMotionDetector {
         fPreview.set(p);
     }
 
-    private synchronized boolean detect(LumaData s) {
+    private synchronized ArrayList<Point> detect(LumaData s) {
         if (comparer == null) {
-            comparer = new Comparer(s.getWidth(), s.getHeight(), mXBoxes, mYBoxes, 20);
+            comparer = new Comparer(s.getWidth(), s.getHeight(), mXBoxes, mYBoxes, 50);
         }
 
         if (mPreviousState == null) {
             mPreviousState = s;
-            return false;
+            return null;
         }
 
         if (s.getWidth() != mPreviousState.getWidth() || s.getHeight() != mPreviousState.getHeight())
-            return true;
+            return null;
 
-        boolean isDifferent = comparer.isDifferent(s, mPreviousState);
+        ArrayList<Point> differing = comparer.isDifferent(s, mPreviousState);
         mPreviousState = s;
 
-        return isDifferent;
+        return differing;
     }
 
     private static Size chooseOptimalSize(Size[] choices, int textureViewWidth,

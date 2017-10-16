@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
@@ -96,12 +97,15 @@ public class MotionDetector extends Thread implements IMotionDetector {
                 if (greyState.isDarker(minLuma)) {
                     Log.v(TAG, "too dark");
                     listener.tooDark();
-                } else if (detect(p.extractLumaData(mXBoxes, mYBoxes))) {
-                    detectionCount++;
-                    listener.motionDetected();
-                    Log.v(TAG, "motion");
                 } else {
-                    listener.noMotion();
+                    ArrayList<Point> differing = detect(p.extractLumaData(mXBoxes, mYBoxes));
+                    if (differing != null && !differing.isEmpty()) {
+                        detectionCount++;
+                        listener.motionDetected(differing);
+                        Log.v(TAG, "motion");
+                    } else {
+                        listener.noMotion();
+                    }
                 }
 
                 Log.v(TAG, "processing done");
@@ -171,23 +175,23 @@ public class MotionDetector extends Thread implements IMotionDetector {
         fPreview.set(p);
     }
 
-    private synchronized boolean detect(LumaData s) {
+    private synchronized ArrayList<Point> detect(LumaData s) {
         if (comparer == null) {
-            comparer = new Comparer(s.getWidth(), s.getHeight(), mXBoxes, mYBoxes, 20);
+            comparer = new Comparer(s.getWidth(), s.getHeight(), mXBoxes, mYBoxes, 50);
         }
 
         if (mPreviousState == null) {
             mPreviousState = s;
-            return false;
+            return null;
         }
 
         if (s.getWidth() != mPreviousState.getWidth() || s.getHeight() != mPreviousState.getHeight())
-            return true;
+            return null;
 
-        boolean isDifferent = comparer.isDifferent(s, mPreviousState);
+        ArrayList<Point> differing = comparer.isDifferent(s, mPreviousState);
         mPreviousState = s;
 
-        return isDifferent;
+        return differing;
     }
 
     private synchronized void startDetection(TextureView textureView, int deviceDegrees) throws CameraAccessException {
