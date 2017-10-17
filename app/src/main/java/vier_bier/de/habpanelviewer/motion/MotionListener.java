@@ -13,4 +13,18 @@ public interface MotionListener {
     void noMotion();
 
     void tooDark();
+
+    class MotionAdapter implements MotionListener {
+        @Override
+        public void motionDetected(ArrayList<Point> differing) {
+        }
+
+        @Override
+        public void noMotion() {
+        }
+
+        @Override
+        public void tooDark() {
+        }
+    }
 }

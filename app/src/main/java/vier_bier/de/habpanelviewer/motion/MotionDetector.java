@@ -1,271 +1,78 @@
 package vier_bier.de.habpanelviewer.motion;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Point;
-import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
-import android.view.Surface;
-import android.view.TextureView;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-
-import vier_bier.de.habpanelviewer.R;
 
 /**
- * Motion detection thread.
+ * Motion detection using the old Camera API.
  */
-public class MotionDetector extends Thread implements IMotionDetector {
+@SuppressWarnings("deprecation")
+public class MotionDetector extends AbstractMotionDetector<ImageData> {
     private static final String TAG = "MotionDetector";
 
-    private boolean enabled;
     private boolean running;
-    private int detectionCount = 0;
-    private int frameCount = 0;
-
-    private int mCameraId;
     private Camera mCamera;
-    private SurfaceTexture surface;
-
-    private final AtomicReference<ImageData> fPreview = new AtomicReference<>();
-    private final AtomicBoolean fStopped = new AtomicBoolean(false);
-
-    private static final int mXBoxes = 10;
-    private static final int mYBoxes = 10;
-    private LumaData mPreviousState = null;
-    private Comparer comparer = null;
-
-    private MotionListener listener;
 
     public MotionDetector(MotionListener l) {
-        listener = l;
-
-        setDaemon(true);
-        start();
+        super(l);
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
+    protected int getSensorOrientation() {
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        Camera.getCameraInfo(Integer.parseInt(mCameraId), info);
+
+        return info.orientation;
     }
 
     @Override
-    public String getPreviewInfo() {
-        if (mCamera != null) {
-            return "camera id " + mCameraId + ", detection resolution " + mCamera.getParameters().getPreviewSize().width + "x" + mCamera.getParameters().getPreviewSize().height + "\n"
-                    + frameCount + " frames processed, motion has been detected " + detectionCount + " times";
-        } else {
-            return "camera could not be opened";
-        }
-    }
-
-    @Override
-    public synchronized void shutdown() {
-        stopDetection();
-
-        fStopped.set(true);
-    }
-
-    public void run() {
-        while (!fStopped.get()) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-
-            ImageData p = fPreview.getAndSet(null);
-
-            if (p != null) {
-                Log.v(TAG, "processing frame");
-
-                LumaData greyState = p.extractLumaData(mXBoxes, mYBoxes);
-                int minLuma = 1000;
-                if (greyState.isDarker(minLuma)) {
-                    Log.v(TAG, "too dark");
-                    listener.tooDark();
-                } else {
-                    ArrayList<Point> differing = detect(p.extractLumaData(mXBoxes, mYBoxes));
-                    if (differing != null && !differing.isEmpty()) {
-                        detectionCount++;
-                        listener.motionDetected(differing);
-                        Log.v(TAG, "motion");
-                    } else {
-                        listener.noMotion();
-                    }
-                }
-
-                Log.v(TAG, "processing done");
-            }
-        }
-    }
-
-    @Override
-    public synchronized void updateFromPreferences(Activity context, SharedPreferences prefs) {
-        enabled = prefs.getBoolean("pref_motion_detection_enabled", false);
-
-        if (enabled) {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                int rotation = context.getWindowManager().getDefaultDisplay()
-                        .getRotation();
-                int degrees = 0;
-                switch (rotation) {
-                    case Surface.ROTATION_0:
-                        degrees = 0;
-                        break;
-                    case Surface.ROTATION_90:
-                        degrees = 90;
-                        break;
-                    case Surface.ROTATION_180:
-                        degrees = 180;
-                        break;
-                    case Surface.ROTATION_270:
-                        degrees = 270;
-                        break;
-                }
-
-                try {
-                    startDetection((TextureView) context.findViewById(R.id.previewView), degrees);
-                } catch (CameraAccessException e) {
-                    Log.e(TAG, "Could not enable MotionDetector", e);
-                }
-            } else {
-                ActivityCompat.requestPermissions(context,
-                        new String[]{Manifest.permission.CAMERA},
-                        MY_PERMISSIONS_MOTION_REQUEST_CAMERA);
-            }
-        } else {
-            stopDetection();
-        }
-    }
-
-    private static Camera.Size chooseOptimalSize(List<Camera.Size> choices, int width, int height, Size aspectRatio) {
-        List<Camera.Size> bigEnough = new ArrayList<>();
-        int w = aspectRatio.getWidth();
-        int h = aspectRatio.getHeight();
-        for (Camera.Size option : choices) {
-            if (option.height == option.width * h / w &&
-                    option.width >= width && option.height >= height) {
-                bigEnough.add(option);
-            }
+    protected LumaData getPreviewLumaData() {
+        ImageData p = fPreview.getAndSet(null);
+        if (p != null) {
+            return p.extractLumaData(mBoxes);
         }
 
-        if (bigEnough.size() > 0) {
-            return Collections.min(bigEnough, new CompareSizesByArea());
-        } else {
-            return Collections.max(choices, new CompareSizesByArea());
-        }
+        return null;
     }
 
-    private void setPreview(ImageData p) {
-        frameCount++;
-        fPreview.set(p);
-    }
-
-    private synchronized ArrayList<Point> detect(LumaData s) {
-        if (comparer == null) {
-            comparer = new Comparer(s.getWidth(), s.getHeight(), mXBoxes, mYBoxes, 50);
-        }
-
-        if (mPreviousState == null) {
-            mPreviousState = s;
-            return null;
-        }
-
-        if (s.getWidth() != mPreviousState.getWidth() || s.getHeight() != mPreviousState.getHeight())
-            return null;
-
-        ArrayList<Point> differing = comparer.isDifferent(s, mPreviousState);
-        mPreviousState = s;
-
-        return differing;
-    }
-
-    private synchronized void startDetection(TextureView textureView, int deviceDegrees) throws CameraAccessException {
-        Log.d(TAG, "starting detection");
-
-        textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-            @Override
-            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-                Log.d(TAG, "surface texture available: " + surfaceTexture);
-
-                if (surfaceTexture != surface) {
-                    surface = surfaceTexture;
-                    startPreview();
-                }
-            }
-
-            @Override
-            public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
-            }
-
-            @Override
-            public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-                Log.d(TAG, "surface texture destroyed: " + surfaceTexture);
-
-                surface = null;
-                return false;
-            }
-
-            @Override
-            public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-            }
-        });
-
-        detectionCount = 0;
-        mCameraId = -1;
-        frameCount = 0;
-
+    protected String createCamera(int deviceDegrees) throws CameraAccessException {
         if (mCamera == null) {
             Camera.CameraInfo info = new Camera.CameraInfo();
             for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
                 Camera.getCameraInfo(i, info);
                 if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    mCameraId = i;
                     mCamera = Camera.open(i);
 
                     int result = (info.orientation + deviceDegrees) % 360;
-                    result = (360 - result) % 360;  // compensate the mirror
+                    result = (360 - result) % 360;
                     mCamera.setDisplayOrientation(result);
 
-                    break;
+                    return String.valueOf(i);
                 }
             }
 
-            if (mCamera == null) {
-                throw new CameraAccessException(CameraAccessException.CAMERA_ERROR, "Could not find front facing camera!");
-            }
+            throw new CameraAccessException(CameraAccessException.CAMERA_ERROR, "Could not find front facing camera!");
         }
 
-        if (textureView.isAvailable()) {
-            surface = textureView.getSurfaceTexture();
-            startPreview();
-        }
+        return null;
     }
 
-    private synchronized void startPreview() {
+    protected synchronized void startPreview() {
         if (enabled && !running && mCamera != null && surface != null) {
             try {
                 mCamera.stopPreview();
                 mCamera.setPreviewTexture(surface);
 
                 Camera.Parameters parameters = mCamera.getParameters();
-                Camera.Size pSize = chooseOptimalSize(parameters.getSupportedPictureSizes(), 640, 480, new Size(640, 480));
+                chooseOptimalSize(toSizeArray(parameters.getSupportedPictureSizes()), 640, 480, new Size(640, 480));
 
-                parameters.setPreviewSize(pSize.width, pSize.height);
+                parameters.setPreviewSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
                 mCamera.setParameters(parameters);
 
                 Log.d(TAG, "preview size: " + mCamera.getParameters().getPreviewSize().width + "x" + mCamera.getParameters().getPreviewSize().height);
@@ -287,7 +94,16 @@ public class MotionDetector extends Thread implements IMotionDetector {
         }
     }
 
-    private synchronized void stopDetection() {
+    private Size[] toSizeArray(List<Camera.Size> supportedPictureSizes) {
+        ArrayList<Size> result = new ArrayList<>();
+        for (Camera.Size s : supportedPictureSizes) {
+            result.add(new Size(s.width, s.height));
+        }
+        return result.toArray(new Size[result.size()]);
+    }
+
+    @Override
+    protected synchronized void stopPreview() {
         if (mCamera != null) {
             mCamera.setPreviewCallback(null);
             mCamera.stopPreview();
@@ -297,14 +113,6 @@ public class MotionDetector extends Thread implements IMotionDetector {
             c.release();
 
             running = false;
-        }
-    }
-
-    private static class CompareSizesByArea implements Comparator<Camera.Size> {
-        @Override
-        public int compare(Camera.Size lhs, Camera.Size rhs) {
-            return Long.signum((long) lhs.width * lhs.height -
-                    (long) rhs.width * rhs.height);
         }
     }
 }

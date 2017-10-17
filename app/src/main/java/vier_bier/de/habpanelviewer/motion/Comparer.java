@@ -9,28 +9,26 @@ import java.util.ArrayList;
  * computing the brightness average and comparing that.
  */
 class Comparer {
-    private int xBoxes;
-    private int yBoxes;
+    private int boxes;
     private int xPixelsPerBox;
     private int yPixelsPerBox;
     private int xPixelsLastBox;
     private int yPixelsLastBox;
     private int leniency;
 
-    Comparer(int width, int height, int xBoxes, int yBoxes, int leniency) {
-        this.xBoxes = xBoxes;
-        this.yBoxes = yBoxes;
+    Comparer(int width, int height, int boxes, int leniency) {
+        this.boxes = boxes;
         this.leniency = leniency;
 
         // how many points per box
-        xPixelsPerBox = width / this.xBoxes;
-        yPixelsPerBox = height / this.yBoxes;
+        xPixelsPerBox = width / this.boxes;
+        yPixelsPerBox = height / this.boxes;
 
-        if (yBoxes * yPixelsPerBox < height) {
-            yPixelsLastBox = height - (yBoxes - 1) * yPixelsPerBox;
+        if (boxes * yPixelsPerBox < height) {
+            yPixelsLastBox = height - (boxes - 1) * yPixelsPerBox;
         }
-        if (xBoxes * xPixelsPerBox < width) {
-            xPixelsLastBox = width - (xBoxes - 1) * xPixelsPerBox;
+        if (boxes * xPixelsPerBox < width) {
+            xPixelsLastBox = width - (boxes - 1) * xPixelsPerBox;
         }
     }
 
@@ -43,13 +41,13 @@ class Comparer {
         int b1;
         int b2;
         int diff;
-        for (int y = 0; y < yBoxes; y++) {
-            for (int x = 0; x < xBoxes; x++) {
+        for (int y = 0; y < boxes; y++) {
+            for (int x = 0; x < boxes; x++) {
                 b1 = calcAverage(s1, x, y);
                 b2 = calcAverage(s2, x, y);
                 diff = Math.abs(b1 - b2);
 
-                if (diff > leniency) {
+                if (diff > leniency * 2.55f) {
                     differing.add(new Point(x, y));
                 }
             }
@@ -65,8 +63,8 @@ class Comparer {
         byte[] data = luma.getData();
         if (data == null) throw new NullPointerException();
 
-        int yPix = (yBox == yBoxes - 1 && yPixelsLastBox > 0) ? yPixelsLastBox : yPixelsPerBox;
-        int xPix = (xBox == xBoxes - 1 && xPixelsLastBox > 0) ? xPixelsLastBox : xPixelsPerBox;
+        int yPix = (yBox == boxes - 1 && yPixelsLastBox > 0) ? yPixelsLastBox : yPixelsPerBox;
+        int xPix = (xBox == boxes - 1 && xPixelsLastBox > 0) ? xPixelsLastBox : xPixelsPerBox;
 
         int i = 0;
         int idx = yBox * yPixelsPerBox * luma.getWidth() + xBox * xPixelsPerBox;

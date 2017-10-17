@@ -9,16 +9,16 @@ class LumaData {
     private int width;
     private int height;
 
-    LumaData(byte[] data, int width, int height, int mXBoxes, int mYBoxes) {
+    LumaData(byte[] data, int width, int height, int mBoxes) {
         if (data == null) throw new NullPointerException();
 
         this.data = data.clone();
         this.width = width;
         this.height = height;
 
-        average = new byte[mXBoxes][mYBoxes];
-        for (int x = 0; x < mXBoxes; x++) {
-            for (int y = 0; y < mYBoxes; y++) {
+        average = new byte[mBoxes][mBoxes];
+        for (int x = 0; x < mBoxes; x++) {
+            for (int y = 0; y < mBoxes; y++) {
                 average[x][y] = -1;
             }
         }

@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
@@ -45,6 +42,7 @@ import vier_bier.de.habpanelviewer.motion.IMotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetectorCamera2;
 import vier_bier.de.habpanelviewer.motion.MotionListener;
+import vier_bier.de.habpanelviewer.motion.MotionVisualizer;
 
 /**
  * Main activity showing the Webview for openHAB.
@@ -65,7 +63,6 @@ public class MainActivity extends AppCompatActivity
 
     private int mRestartCount;
 
-    //TODO.vb. show where motion is detected in the preview
     //TODO.vb. adapt volume settings: AudioManager
     //TODO.vb. force screen to on while regexp is met
     //TODO.vb. load list of available panels from habpanel for selection in preferences
@@ -75,6 +72,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        destroy();
+
+        super.onDestroy();
+    }
+
+    void destroy() {
         stopEventSource();
 
         if (mFlashService != null) {
@@ -86,16 +89,10 @@ public class MainActivity extends AppCompatActivity
             mMotionDetector.shutdown();
             mMotionDetector = null;
         }
-
-        super.onDestroy();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (ProcessPhoenix.isPhoenixProcess(this)) {
-            return;
-        }
-
         super.onCreate(savedInstanceState);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -121,18 +118,9 @@ public class MainActivity extends AppCompatActivity
 
             try {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                boolean oldApi = prefs.getBoolean("pref_motion_detection_old_api", false);
-
                 final SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
-                motionView.setZOrderOnTop(true);
-                motionView.getHolder().setFormat(PixelFormat.TRANSPARENT);
 
-                final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                paint.setColor(Color.WHITE);
-                paint.setStyle(Paint.Style.STROKE);
-                paint.setTextSize(48);
-
-                MotionListener ml = new MotionListener() {
+                MotionListener ml = new MotionListener.MotionAdapter() {
                     @Override
                     public void motionDetected(ArrayList<Point> differing) {
                         runOnUiThread(new Runnable() {
@@ -141,71 +129,16 @@ public class MainActivity extends AppCompatActivity
                                 mScreenService.screenOn();
                             }
                         });
-/**
- boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
- boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
-
- if (showPreview && motionDetection && motionView.getHolder().getSurface().isValid()) {
-                            final Canvas canvas = motionView.getHolder().lockCanvas();
-
- int width = canvas.getWidth();
- int height = canvas.getHeight();
-
- int xsize = width / 10;
- int ysize = height / 10;
-
-                            if (canvas != null) {
- canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                                canvas.drawText("Motion", 160, 50, paint);
-
- //canvas.rotate(270, 240, 280);
- for (Point p : differing) {
- canvas.drawRect(p.x * xsize, p.y * ysize, p.x* xsize + xsize, p.y * ysize + ysize, paint);
- }
-
-                                motionView.getHolder().unlockCanvasAndPost(canvas);
-                            }
-                        }
- **/
-                    }
-
-                    @Override
-                    public void noMotion() {
-/**
-                        boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
-                        boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
-
-                        if (showPreview && motionDetection && motionView.getHolder().getSurface().isValid()) {
-                            final Canvas canvas = motionView.getHolder().lockCanvas();
-                            if (canvas != null) {
-                                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                                motionView.getHolder().unlockCanvasAndPost(canvas);
-                            }
-                        }
- **/
-                    }
-
-                    @Override
-                    public void tooDark() {
-/**
-                        boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
-                        boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
-
-                        if (showPreview && motionDetection && motionView.getHolder().getSurface().isValid()) {
-                            final Canvas canvas = motionView.getHolder().lockCanvas();
-                            if (canvas != null) {
-                                canvas.drawText("too dark", 140, 50, paint);
-                                motionView.getHolder().unlockCanvasAndPost(canvas);
-                            }
-                        }
- **/
                     }
                 };
 
+                MotionVisualizer mv = new MotionVisualizer(motionView, prefs, ml);
+
+                boolean oldApi = prefs.getBoolean("pref_motion_detection_old_api", false);
                 if (oldApi) {
-                    mMotionDetector = new MotionDetector(ml);
+                    mMotionDetector = new MotionDetector(mv);
                 } else {
-                    mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), ml, this);
+                    mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), mv, this);
                 }
             } catch (CameraAccessException e) {
                 Log.d("Habpanelview", "Could not create motion detector");
@@ -361,6 +294,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.action_info) {
             showInfoScreen();
         } else if (id == R.id.action_restart) {
+            destroy();
             ProcessPhoenix.triggerRebirth(this);
         } else if (id == R.id.action_exit) {
             finishAndRemoveTask();

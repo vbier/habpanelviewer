@@ -31,6 +31,7 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
             mStartActivity.putExtra("restartCount", count + 1);
         }
 
+        context.destroy();
         ProcessPhoenix.triggerRebirth(context, mStartActivity);
     }
 }

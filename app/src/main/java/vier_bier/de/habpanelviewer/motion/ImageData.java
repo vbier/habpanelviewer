@@ -15,7 +15,7 @@ class ImageData {
         height = h;
     }
 
-    LumaData extractLumaData(int xBoxCount, int yBoxCount) {
+    LumaData extractLumaData(int boxCount) {
         final int frameSize = width * height;
         byte[] hsl = new byte[frameSize];
 
@@ -27,6 +27,6 @@ class ImageData {
             }
         }
 
-        return new LumaData(hsl, width, height, xBoxCount, yBoxCount);
+        return new LumaData(hsl, width, height, boxCount);
     }
 }

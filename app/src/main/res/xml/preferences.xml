@@ -113,6 +113,22 @@
                 android:dependency="pref_motion_detection_enabled"
                 android:summary="@string/pref_motion_detection_old_api_summ"
                 android:title="@string/pref_motion_detection_old_api" />
+            <ListPreference
+                android:defaultValue="20"
+                android:key="pref_motion_detection_granularity"
+                android:entries="@array/granularity"
+                android:entryValues="@array/granularity"
+                android:dependency="pref_motion_detection_enabled"
+                android:summary="@string/pref_motion_detection_granularity_summ"
+                android:title="@string/pref_motion_detection_granularity" />
+            <ListPreference
+                android:defaultValue="20"
+                android:key="pref_motion_detection_leniency"
+                android:entries="@array/leniency"
+                android:entryValues="@array/leniency"
+                android:dependency="pref_motion_detection_enabled"
+                android:summary="@string/pref_motion_detection_leniency_summ"
+                android:title="@string/pref_motion_detection_leniency" />
         </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory

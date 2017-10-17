@@ -68,4 +68,8 @@
     <string name="action_restart">Restart App</string>
     <string name="pref_motion_detection_preview_summ">Shows a camera preview overlay</string>
     <string name="pref_motion_detection_preview">Camera Preview</string>
+    <string name="pref_motion_detection_granularity">Detection granularity</string>
+    <string name="pref_motion_detection_granularity_summ">The number of rectangles per axis the image is divided into to detect changes.</string>
+    <string name="pref_motion_detection_leniency">Detection leniency</string>
+    <string name="pref_motion_detection_leniency_summ">Threshold of changed pixels in a single detection are that triggers motion</string>
 </resources>
