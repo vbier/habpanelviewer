@@ -80,6 +80,8 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
     @Override
     public synchronized void updateFromPreferences(Activity context, SharedPreferences prefs) {
+        stopDetection();
+
         enabled = prefs.getBoolean("pref_motion_detection_enabled", false);
         mBoxes = Integer.parseInt(prefs.getString("pref_motion_detection_granularity", "20"));
         mLeniency = Integer.parseInt(prefs.getString("pref_motion_detection_leniency", "20"));
@@ -101,7 +103,6 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
                         MY_PERMISSIONS_MOTION_REQUEST_CAMERA);
             }
         } else {
-            stopDetection();
             comparer = null;
         }
     }
@@ -284,9 +285,8 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     protected synchronized void stopDetection() {
         stopPreview();
         comparer = null;
+        mPreviousState = null;
     }
-
-    ;
 
     protected abstract void stopPreview();
 

@@ -10,10 +10,9 @@ import java.util.ArrayList;
  */
 class Comparer {
     private int boxes;
-    private int xPixelsPerBox;
-    private int yPixelsPerBox;
-    private int xPixelsLastBox;
-    private int yPixelsLastBox;
+
+    private Point[] boxStart;
+    private Point[] boxEnd;
     private int leniency;
 
     Comparer(int width, int height, int boxes, int leniency) {
@@ -21,14 +20,21 @@ class Comparer {
         this.leniency = leniency;
 
         // how many points per box
-        xPixelsPerBox = width / this.boxes;
-        yPixelsPerBox = height / this.boxes;
+        float xPixelsPerBox = width / (float) boxes;
+        float yPixelsPerBox = height / (float) boxes;
 
-        if (boxes * yPixelsPerBox < height) {
-            yPixelsLastBox = height - (boxes - 1) * yPixelsPerBox;
-        }
-        if (boxes * xPixelsPerBox < width) {
-            xPixelsLastBox = width - (boxes - 1) * xPixelsPerBox;
+        boxStart = new Point[boxes];
+        boxEnd = new Point[boxes];
+
+        for (int i = 0; i < boxes; i++) {
+            int startX = (int) (i * xPixelsPerBox);
+            int endX = i == (boxes - 1) ? width - 1 : (int) ((i + 1) * xPixelsPerBox) - 1;
+
+            int startY = (int) (i * yPixelsPerBox);
+            int endY = i == (boxes - 1) ? height - 1 : (int) ((i + 1) * yPixelsPerBox) - 1;
+
+            boxStart[i] = new Point(startX, startY);
+            boxEnd[i] = new Point(endX, endY);
         }
     }
 
@@ -63,12 +69,12 @@ class Comparer {
         byte[] data = luma.getData();
         if (data == null) throw new NullPointerException();
 
-        int yPix = (yBox == boxes - 1 && yPixelsLastBox > 0) ? yPixelsLastBox : yPixelsPerBox;
-        int xPix = (xBox == boxes - 1 && xPixelsLastBox > 0) ? xPixelsLastBox : xPixelsPerBox;
+        int yPix = boxEnd[yBox].y - boxStart[yBox].y + 1;
+        int xPix = boxEnd[xBox].x - boxStart[xBox].x + 1;
 
         int i = 0;
-        int idx = yBox * yPixelsPerBox * luma.getWidth() + xBox * xPixelsPerBox;
-        for (int y = 0; y < yPix; y++) {
+        int idx = boxStart[yBox].y * luma.getWidth() + boxStart[xBox].x;
+        for (int y = boxStart[yBox].y; y <= boxEnd[yBox].y; y++) {
             for (int x = 0; x < xPix; x++) {
                 i += data[idx++];
             }

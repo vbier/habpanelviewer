@@ -7,6 +7,8 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
+import android.support.design.widget.NavigationView;
 import android.view.SurfaceView;
 
 import java.util.ArrayList;
@@ -16,12 +18,16 @@ import java.util.ArrayList;
  */
 public class MotionVisualizer implements MotionListener {
     private final SurfaceView mMotionView;
+    private final NavigationView mNavigationView;
     private final SharedPreferences mPreferences;
     private final MotionListener mListener;
     private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final int mMotionTextWidth;
+    private final int mDarkTextWidth;
 
-    public MotionVisualizer(SurfaceView motionView, SharedPreferences preferences, MotionListener listener) {
+    public MotionVisualizer(SurfaceView motionView, NavigationView navigationView, SharedPreferences preferences, MotionListener listener, int scaledSize) {
         mMotionView = motionView;
+        mNavigationView = navigationView;
         mPreferences = preferences;
         mListener = listener;
 
@@ -30,7 +36,14 @@ public class MotionVisualizer implements MotionListener {
 
         mPaint.setColor(Color.WHITE);
         mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setTextSize(48);
+        mPaint.setTextSize(scaledSize);
+
+        Rect bounds = new Rect();
+        mPaint.getTextBounds("Motion", 0, 6, bounds);
+        mMotionTextWidth = bounds.width();
+
+        mPaint.getTextBounds("too dark", 0, 8, bounds);
+        mDarkTextWidth = bounds.width();
     }
 
     @Override
@@ -47,7 +60,21 @@ public class MotionVisualizer implements MotionListener {
                 float ysize = canvas.getHeight() / (float) boxes;
 
                 canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                canvas.drawText("Motion", 160, 50, mPaint);
+
+                if (mNavigationView.isShown()) {
+                    Rect r1 = new Rect();
+                    mNavigationView.getGlobalVisibleRect(r1);
+
+                    Rect r2 = new Rect();
+                    mMotionView.getGlobalVisibleRect(r2);
+
+                    if (r1.intersect(r2)) {
+                        int clipLeft = r1.right - r2.left;
+                        canvas.clipRect(clipLeft, 0, canvas.getWidth(), canvas.getHeight());
+                    }
+                }
+
+                canvas.drawText("Motion", (canvas.getWidth() - mMotionTextWidth) / 2, 50, mPaint);
 
                 for (Point p : differing) {
                     canvas.drawRect(p.x * xsize, p.y * ysize, p.x * xsize + xsize, p.y * ysize + ysize, mPaint);
@@ -84,7 +111,7 @@ public class MotionVisualizer implements MotionListener {
         if (showPreview && motionDetection && mMotionView.getHolder().getSurface().isValid()) {
             final Canvas canvas = mMotionView.getHolder().lockCanvas();
             if (canvas != null) {
-                canvas.drawText("too dark", 140, 50, mPaint);
+                canvas.drawText("too dark", (canvas.getWidth() - mDarkTextWidth) / 2, 50, mPaint);
                 mMotionView.getHolder().unlockCanvasAndPost(canvas);
             }
         }

@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity
     private WebView mWebView;
     private TextView mTextView;
     private SSEClient sseClient;
+    private DrawerLayout drawerLayout;
     private Thread.UncaughtExceptionHandler exceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 
     private boolean allowScrolling;
@@ -132,7 +133,8 @@ public class MainActivity extends AppCompatActivity
                     }
                 };
 
-                MotionVisualizer mv = new MotionVisualizer(motionView, prefs, ml);
+                int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
+                MotionVisualizer mv = new MotionVisualizer(motionView, navigationView, prefs, ml, scaledSize);
 
                 boolean oldApi = prefs.getBoolean("pref_motion_detection_old_api", false);
                 if (oldApi) {
