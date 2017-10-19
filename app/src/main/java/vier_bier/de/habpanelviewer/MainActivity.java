@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity
     private int mRestartCount;
 
     //TODO.vb. adapt volume settings: AudioManager
-    //TODO.vb. force screen to on while regexp is met
     //TODO.vb. load list of available panels from habpanel for selection in preferences
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
     //TODO.vb. check if proximity sensor can be used

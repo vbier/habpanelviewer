@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.PowerManager;
 import android.util.Log;
-import android.view.WindowManager;
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -13,7 +12,8 @@ import java.util.regex.PatternSyntaxException;
  * Controller for the screen backlight.
  */
 class ScreenController implements StateListener {
-    private final PowerManager.WakeLock screenLock;
+    private final PowerManager.WakeLock screenOnLock;
+    private final PowerManager pwrManager;
     private final Activity activity;
 
     private boolean enabled;
@@ -24,25 +24,23 @@ class ScreenController implements StateListener {
 
     ScreenController(PowerManager pwrManager, Activity activity) {
         this.activity = activity;
-        screenLock = pwrManager.newWakeLock(
+        this.pwrManager = pwrManager;
+
+        screenOnLock = pwrManager.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "HabpanelViewer");
     }
 
     void screenOff() {
-        // make sure screen lock is released
-        activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        if (screenLock.isHeld()) {
-            screenLock.release();
-        }
+        activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(false);
     }
 
-    void screenOn() {
-        if (!screenLock.isHeld()) {
-            screenLock.acquire();
-            screenLock.release();
+    synchronized void screenOn() {
+        if (!screenOnLock.isHeld()) {
+            screenOnLock.acquire();
+            screenOnLock.release();
         }
-        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(true);
     }
 
     String getItemName() {
