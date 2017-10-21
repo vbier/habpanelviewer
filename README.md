@@ -1,4 +1,5 @@
-# HABPanelViewer
+# <img alt="Logo" src="app/src/main/res/mipmap-hdpi/ic_launcher.png" border="0"> HABPanelViewer
+
 An android homescreen app as a HABPanel client.
 
 This is an app with very limited functionality that addresses the problems I had when using other WebView based apps for browsing habpanel:
