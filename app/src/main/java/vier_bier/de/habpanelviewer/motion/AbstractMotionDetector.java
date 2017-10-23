@@ -28,11 +28,11 @@ import vier_bier.de.habpanelviewer.R;
 abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetector {
     private static final String TAG = "AbstractMotionDetector";
 
-    final AtomicReference<D> fPreview = new AtomicReference<>();
-    private final AtomicBoolean fStopped = new AtomicBoolean(false);
+    final AtomicReference<D> mPreview = new AtomicReference<>();
+    private final AtomicBoolean mStopped = new AtomicBoolean(false);
 
-    SurfaceTexture surface;
-    boolean enabled;
+    SurfaceTexture mSurface;
+    boolean mEnabled;
     Size mPreviewSize;
     String mCameraId;
     int mBoxes = 50;
@@ -40,16 +40,16 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     private int mLeniency = 20;
     private int mRotationCorrection;
     private int mDeviceRotation;
-    private MotionListener listener;
-    private int detectionCount = 0;
-    private int frameCount = 0;
+    private MotionListener mListener;
+    private int mDetectionCount = 0;
+    private int mFrameCount = 0;
 
     private LumaData mPreviousState;
-    private Comparer comparer;
+    private Comparer mComparer;
 
 
     AbstractMotionDetector(MotionListener l) {
-        listener = l;
+        mListener = l;
 
         setDaemon(true);
         start();
@@ -60,7 +60,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         if (mCameraId != null) {
             return "camera id " + mCameraId + ", detection resolution " + mPreviewSize.getWidth() + "x" + mPreviewSize.getHeight() + "\n"
                     + mBoxes + " detection boxes, leniency is " + mLeniency + "\n"
-                    + frameCount + " frames processed, motion has been detected " + detectionCount + " times";
+                    + mFrameCount + " frames processed, motion has been detected " + mDetectionCount + " times";
         } else {
             return "camera could not be opened";
         }
@@ -68,42 +68,48 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return mEnabled;
     }
 
     @Override
     public synchronized void shutdown() {
         stopDetection();
 
-        fStopped.set(true);
+        mStopped.set(true);
     }
 
     @Override
     public synchronized void updateFromPreferences(Activity context, SharedPreferences prefs) {
-        stopDetection();
+        boolean newEnabled = prefs.getBoolean("pref_motion_detection_enabled", false);
+        int newBoxes = Integer.parseInt(prefs.getString("pref_motion_detection_granularity", "20"));
+        int newLeniency = Integer.parseInt(prefs.getString("pref_motion_detection_leniency", "20"));
+        int newDeviceRotation = context.getWindowManager().getDefaultDisplay().getRotation();
 
-        enabled = prefs.getBoolean("pref_motion_detection_enabled", false);
-        mBoxes = Integer.parseInt(prefs.getString("pref_motion_detection_granularity", "20"));
-        mLeniency = Integer.parseInt(prefs.getString("pref_motion_detection_leniency", "20"));
+        if (newEnabled) {
+            boolean changed = newBoxes != mBoxes || newLeniency != mLeniency || newDeviceRotation != mDeviceRotation;
 
-        mDeviceRotation = context.getWindowManager().getDefaultDisplay().getRotation();
+            if (changed && mEnabled) {
+                stopDetection();
+            }
 
-        if (enabled) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                int degrees = context.getWindowManager().getDefaultDisplay().getRotation() * 90;
-
                 try {
-                    startDetection((TextureView) context.findViewById(R.id.previewView), degrees);
+                    mBoxes = newBoxes;
+                    mLeniency = newLeniency;
+                    mDeviceRotation = newDeviceRotation;
+
+                    startDetection((TextureView) context.findViewById(R.id.previewView), newDeviceRotation * 90);
+                    mEnabled = true;
                 } catch (CameraAccessException e) {
                     Log.e(TAG, "Could not enable MotionDetector", e);
                 }
             } else {
-                ActivityCompat.requestPermissions(context,
-                        new String[]{Manifest.permission.CAMERA},
+                ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.CAMERA},
                         MY_PERMISSIONS_MOTION_REQUEST_CAMERA);
             }
-        } else {
-            comparer = null;
+        } else if (mEnabled) {
+            stopDetection();
+            mEnabled = false;
         }
     }
 
@@ -111,7 +117,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
     public void run() {
         try {
-            while (!fStopped.get()) {
+            while (!mStopped.get()) {
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
@@ -130,15 +136,15 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
                     int minLuma = 1000;
                     if (greyState.isDarker(minLuma)) {
                         Log.v(TAG, "too dark");
-                        listener.tooDark();
+                        mListener.tooDark();
                     } else {
                         ArrayList<Point> differing = detect(greyState);
                         if (differing != null && !differing.isEmpty()) {
-                            detectionCount++;
-                            listener.motionDetected(differing);
+                            mDetectionCount++;
+                            mListener.motionDetected(differing);
                             Log.v(TAG, "motion");
                         } else {
-                            listener.noMotion();
+                            mListener.noMotion();
                         }
                     }
 
@@ -151,13 +157,13 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     }
 
     void setPreview(D p) {
-        frameCount++;
-        fPreview.set(p);
+        mFrameCount++;
+        mPreview.set(p);
     }
 
     private synchronized ArrayList<Point> detect(LumaData s) {
-        if (comparer == null) {
-            comparer = new Comparer(s.getWidth(), s.getHeight(), mBoxes, mLeniency);
+        if (mComparer == null) {
+            mComparer = new Comparer(s.getWidth(), s.getHeight(), mBoxes, mLeniency);
         }
 
         if (mPreviousState == null) {
@@ -169,7 +175,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
             return null;
         }
 
-        ArrayList<Point> differing = comparer.isDifferent(s, mPreviousState);
+        ArrayList<Point> differing = mComparer.isDifferent(s, mPreviousState);
         mPreviousState = s;
 
         return correctSensorRotation(differing);
@@ -183,10 +189,10 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-                Log.d(TAG, "surface texture available: " + surfaceTexture);
+                Log.d(TAG, "mSurface texture available: " + surfaceTexture);
 
-                if (surfaceTexture != surface) {
-                    surface = surfaceTexture;
+                if (surfaceTexture != mSurface) {
+                    mSurface = surfaceTexture;
                     startPreview();
                 }
             }
@@ -197,9 +203,9 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-                Log.d(TAG, "surface texture destroyed: " + surfaceTexture);
+                Log.d(TAG, "mSurface texture destroyed: " + surfaceTexture);
 
-                surface = null;
+                mSurface = null;
                 return false;
             }
 
@@ -208,8 +214,8 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
             }
         });
 
-        detectionCount = 0;
-        frameCount = 0;
+        mDetectionCount = 0;
+        mFrameCount = 0;
 
         mCameraId = createCamera(deviceDegrees);
 
@@ -217,7 +223,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         mRotationCorrection = (rotation + 360) % 360;
 
         if (textureView.isAvailable()) {
-            surface = textureView.getSurfaceTexture();
+            mSurface = textureView.getSurfaceTexture();
             startPreview();
         }
     }
@@ -282,9 +288,9 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
     protected abstract LumaData getPreviewLumaData();
 
-    protected synchronized void stopDetection() {
+    synchronized void stopDetection() {
         stopPreview();
-        comparer = null;
+        mComparer = null;
         mPreviousState = null;
     }
 

@@ -1,13 +1,17 @@
 package vier_bier.de.habpanelviewer;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -53,8 +57,23 @@ public class MainActivity extends AppCompatActivity
     private WebView mWebView;
     private TextView mTextView;
     private SSEClient sseClient;
-    private DrawerLayout drawerLayout;
     private Thread.UncaughtExceptionHandler exceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+
+    private BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                loadStartUrl();
+                startEventSource();
+            } else {
+                mWebView.loadData("<html><body><h1>Waiting for network connnection...</h1><h2>The device is currently not connected to the network. Once the connection has been established, the configured HabPanel page will automatically be loaded.</h2></body></html>", "text/html", "UTF-8");
+                stopEventSource();
+            }
+        }
+    };
 
     private boolean allowScrolling;
 
@@ -78,7 +97,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     void destroy() {
-        stopEventSource();
+        unregisterReceiver(mNetworkReceiver);
 
         if (mFlashService != null) {
             mFlashService.terminate();
@@ -166,6 +185,10 @@ public class MainActivity extends AppCompatActivity
 
         CookieManager.getInstance().setAcceptCookie(true);
         CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
+
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mNetworkReceiver, intentFilter);
     }
 
     @Override
@@ -259,9 +282,8 @@ public class MainActivity extends AppCompatActivity
          audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
          int max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
          **/
-        loadStartUrl();
 
-        startEventSource();
+        loadStartUrl();
     }
 
     @Override
@@ -418,18 +440,14 @@ public class MainActivity extends AppCompatActivity
         Boolean isKiosk = mySharedPreferences.getBoolean("pref_kiosk_mode", false);
         if (isKiosk) {
             url += "?kiosk=on";
+        } else {
+            url += "?kiosk=off";
         }
 
         if (!url.equals(mWebView.getUrl())) {
-            // reload when kiosk mode changed
-            boolean reload = mWebView.getUrl() != null && mWebView.getUrl().contains("?kiosk=on") != isKiosk;
-
             mWebView.clearCache(true);
+            mWebView.clearHistory();
             mWebView.loadUrl(url);
-
-            if (reload) {
-                mWebView.reload();
-            }
         }
     }
 

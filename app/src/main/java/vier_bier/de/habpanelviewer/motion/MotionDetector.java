@@ -16,7 +16,7 @@ import java.util.List;
 public class MotionDetector extends AbstractMotionDetector<ImageData> {
     private static final String TAG = "MotionDetector";
 
-    private boolean running;
+    private boolean mRunning;
     private Camera mCamera;
 
     public MotionDetector(MotionListener l) {
@@ -33,7 +33,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
 
     @Override
     protected LumaData getPreviewLumaData() {
-        ImageData p = fPreview.getAndSet(null);
+        ImageData p = mPreview.getAndSet(null);
         if (p != null) {
             return p.extractLumaData(mBoxes);
         }
@@ -64,10 +64,10 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
     }
 
     protected synchronized void startPreview() {
-        if (enabled && !running && mCamera != null && surface != null) {
+        if (mEnabled && !mRunning && mCamera != null && mSurface != null) {
             try {
                 mCamera.stopPreview();
-                mCamera.setPreviewTexture(surface);
+                mCamera.setPreviewTexture(mSurface);
 
                 Camera.Parameters parameters = mCamera.getParameters();
                 chooseOptimalSize(toSizeArray(parameters.getSupportedPictureSizes()), 640, 480, new Size(640, 480));
@@ -87,7 +87,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
                 });
 
                 mCamera.startPreview();
-                running = true;
+                mRunning = true;
             } catch (IOException e) {
                 Log.e(TAG, "Error setting preview texture", e);
             }
@@ -112,7 +112,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
             mCamera = null;
             c.release();
 
-            running = false;
+            mRunning = false;
         }
     }
 }

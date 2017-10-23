@@ -14,7 +14,7 @@ import android.view.SurfaceView;
 import java.util.ArrayList;
 
 /**
- * Visualizes motion areas on the given surface view.
+ * Visualizes motion areas on the given mSurface view.
  */
 public class MotionVisualizer implements MotionListener {
     private final SurfaceView mMotionView;

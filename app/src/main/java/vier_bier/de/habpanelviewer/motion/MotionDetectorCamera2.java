@@ -38,9 +38,9 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-    private Activity activity;
-    private CameraManager camManager;
-    private TextureView previewView;
+    private Activity mActivity;
+    private CameraManager mCamManager;
+    private TextureView mPreviewView;
 
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
@@ -54,25 +54,25 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
         Log.d(TAG, "instantiating motion detection");
 
-        camManager = manager;
-        activity = act;
+        mCamManager = manager;
+        mActivity = act;
     }
 
     @Override
     protected LumaData getPreviewLumaData() {
-        return fPreview.getAndSet(null);
+        return mPreview.getAndSet(null);
     }
 
     @Override
     protected synchronized void startDetection(TextureView textureView, int deviceDegrees) throws CameraAccessException {
-        previewView = textureView;
+        mPreviewView = textureView;
         super.startDetection(textureView, deviceDegrees);
     }
 
     @Override
     protected String createCamera(int deviceDegrees) throws CameraAccessException {
-        for (String camId : camManager.getCameraIdList()) {
-            CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
+        for (String camId : mCamManager.getCameraIdList()) {
+            CameraCharacteristics characteristics = mCamManager.getCameraCharacteristics(camId);
             Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
             if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
@@ -94,18 +94,18 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
     protected void startPreview() {
         try {
             CameraCharacteristics characteristics
-                    = camManager.getCameraCharacteristics(String.valueOf(mCameraId));
+                    = mCamManager.getCameraCharacteristics(String.valueOf(mCameraId));
             StreamConfigurationMap map = characteristics.get(
                     CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
             chooseOptimalSize(map.getOutputSizes(ImageFormat.YUV_420_888), 640, 480, new Size(4, 3));
 
-            camManager.openCamera(mCameraId, new CameraDevice.StateCallback() {
+            mCamManager.openCamera(mCameraId, new CameraDevice.StateCallback() {
                 @Override
                 public void onOpened(@NonNull CameraDevice cameraDevice) {
                     Log.d(TAG, "mCamera opened: " + cameraDevice);
                     mCamera = cameraDevice;
-                    createCameraPreviewSession(previewView);
+                    createCameraPreviewSession(mPreviewView);
                 }
 
                 @Override
@@ -126,10 +126,10 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
     }
 
     private void configureTransform(TextureView textureView) {
-        if (null == textureView || null == mPreviewSize || null == activity) {
+        if (null == textureView || null == mPreviewSize || null == mActivity) {
             return;
         }
-        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        int rotation = mActivity.getWindowManager().getDefaultDisplay().getRotation();
         Matrix matrix = new Matrix();
         RectF viewRect = new RectF(0, 0, textureView.getWidth(), textureView.getHeight());
         RectF bufferRect = new RectF(0, 0, mPreviewSize.getHeight(), mPreviewSize.getWidth());
@@ -161,7 +161,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
                     Image i = reader.acquireLatestImage();
 
                     if (i != null) {
-                        if (fPreview.get() == null) {
+                        if (mPreview.get() == null) {
                             Log.v(TAG, "preview image available: size " + i.getWidth() + "x" + i.getHeight());
                         }
 
@@ -179,7 +179,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
             mPreviewRequestBuilder
                     = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             mPreviewRequestBuilder.addTarget(mImageReader.getSurface());
-            Surface previewSurface = new Surface(surface);
+            Surface previewSurface = new Surface(mSurface);
             mPreviewRequestBuilder.addTarget(previewSurface);
 
             ArrayList<Surface> surfaces = new ArrayList<>();
@@ -231,7 +231,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
     protected int getSensorOrientation() {
         try {
             CameraCharacteristics characteristics
-                    = camManager.getCameraCharacteristics(String.valueOf(mCameraId));
+                    = mCamManager.getCameraCharacteristics(String.valueOf(mCameraId));
             return characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
         } catch (CameraAccessException e) {
             Log.e(TAG, "Couldn't find out camera sensor orientation");
