@@ -12,6 +12,7 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -128,40 +129,42 @@ public class MainActivity extends AppCompatActivity
         navigationView.addHeaderView(navHeader);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            try {
-                mFlashService = new FlashController((CameraManager) getSystemService(Context.CAMERA_SERVICE));
-            } catch (CameraAccessException e) {
-                Log.d("Habpanelview", "Could not create flash controller");
-            }
-
-            try {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                final SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
-
-                MotionListener ml = new MotionListener.MotionAdapter() {
-                    @Override
-                    public void motionDetected(ArrayList<Point> differing) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mScreenService.screenOn();
-                            }
-                        });
-                    }
-                };
-
-                int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
-                MotionVisualizer mv = new MotionVisualizer(motionView, navigationView, prefs, ml, scaledSize);
-
-                boolean oldApi = prefs.getBoolean("pref_motion_detection_old_api", false);
-                if (oldApi) {
-                    mMotionDetector = new MotionDetector(mv);
-                } else {
-                    mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), mv, this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+                try {
+                    mFlashService = new FlashController((CameraManager) getSystemService(Context.CAMERA_SERVICE));
+                } catch (CameraAccessException e) {
+                    Log.d("Habpanelview", "Could not create flash controller");
                 }
-            } catch (CameraAccessException e) {
-                Log.d("Habpanelview", "Could not create motion detector");
+
+                try {
+                    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    final SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
+
+                    MotionListener ml = new MotionListener.MotionAdapter() {
+                        @Override
+                        public void motionDetected(ArrayList<Point> differing) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mScreenService.screenOn();
+                                }
+                            });
+                        }
+                    };
+
+                    int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
+                    MotionVisualizer mv = new MotionVisualizer(motionView, navigationView, prefs, ml, scaledSize);
+
+                    boolean oldApi = prefs.getBoolean("pref_motion_detection_old_api", false);
+                    if (oldApi) {
+                        mMotionDetector = new MotionDetector(mv);
+                    } else {
+                        mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), mv, this);
+                    }
+                } catch (CameraAccessException e) {
+                    Log.d("Habpanelview", "Could not create motion detector");
+                }
             }
         }
 
@@ -184,8 +187,9 @@ public class MainActivity extends AppCompatActivity
         });
 
         CookieManager.getInstance().setAcceptCookie(true);
-        CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
+        }
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mNetworkReceiver, intentFilter);
@@ -320,7 +324,9 @@ public class MainActivity extends AppCompatActivity
             destroy();
             ProcessPhoenix.triggerRebirth(this);
         } else if (id == R.id.action_exit) {
-            finishAndRemoveTask();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+                finishAndRemoveTask();
+            }
             Runtime.getRuntime().exit(0);
         }
 
