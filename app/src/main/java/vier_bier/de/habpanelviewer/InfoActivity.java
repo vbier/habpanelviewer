@@ -5,6 +5,7 @@ import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -57,22 +58,24 @@ public class InfoActivity extends Activity {
         }
 
         String camStr = "";
-        CameraManager camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        try {
-            for (String camId : camManager.getCameraIdList()) {
-                camStr += "Camera " + camId + ": ";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            CameraManager camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+            try {
+                for (String camId : camManager.getCameraIdList()) {
+                    camStr += "Camera " + camId + ": ";
 
-                CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
-                Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-                Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+                    CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
+                    Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                    Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-                camStr += (hasFlash ? "has" : "no") + " flash, ";
-                camStr += (facing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front") + "-facing\n";
+                    camStr += (hasFlash ? "has" : "no") + " flash, ";
+                    camStr += (facing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front") + "-facing\n";
+                }
+            } catch (CameraAccessException e) {
+                camStr = "failed to access camera service: " + e.getMessage();
             }
-        } catch (CameraAccessException e) {
-            camStr = "failed to access camera service: " + e.getMessage();
+            list.add(new InfoItem("Cameras", camStr.trim()));
         }
-        list.add(new InfoItem("Cameras", camStr.trim()));
 
     }
 

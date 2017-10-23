@@ -1,9 +1,11 @@
 package vier_bier.de.habpanelviewer;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,6 +27,7 @@ class FlashController implements StateListener {
     private Pattern flashOnPattern;
     private Pattern flashPulsatingPattern;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     FlashController(CameraManager cameraManager) throws CameraAccessException {
         camManager = cameraManager;
 
