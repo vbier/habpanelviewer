@@ -16,4 +16,6 @@ public interface IMotionDetector {
     void shutdown();
 
     void updateFromPreferences(Activity context, SharedPreferences prefs);
+
+    String getCameraInfo(Activity context);
 }

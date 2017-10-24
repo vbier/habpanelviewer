@@ -25,7 +25,7 @@ public class SettingsFragment extends PreferenceFragment {
     private boolean motionEnabled = false;
     private boolean screenEnabled = false;
 
-    private boolean oldApi = false;
+    private boolean newApi = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,13 +77,13 @@ public class SettingsFragment extends PreferenceFragment {
     @Override
     public void onStart() {
         super.onStart();
-        oldApi = ((CheckBoxPreference) findPreference("pref_motion_detection_old_api")).isChecked();
+        newApi = ((CheckBoxPreference) findPreference("pref_motion_detection_new_api")).isChecked();
     }
 
     @Override
     public void onStop() {
-        if (oldApi != ((CheckBoxPreference) findPreference("pref_motion_detection_old_api")).isChecked()) {
-            ProcessPhoenix.triggerRebirth(getContext());
+        if (newApi != ((CheckBoxPreference) findPreference("pref_motion_detection_new_api")).isChecked()) {
+            ProcessPhoenix.triggerRebirth(getActivity());
         }
         super.onStop();
     }

@@ -6,11 +6,9 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.util.Size;
 import android.view.TextureView;
 
 import java.util.ArrayList;
@@ -20,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import vier_bier.de.habpanelviewer.CameraException;
 import vier_bier.de.habpanelviewer.R;
 
 /**
@@ -33,7 +32,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
     SurfaceTexture mSurface;
     boolean mEnabled;
-    Size mPreviewSize;
+    Point mPreviewSize;
     String mCameraId;
     int mBoxes = 50;
 
@@ -58,7 +57,11 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     @Override
     public String getPreviewInfo() {
         if (mCameraId != null) {
-            return "camera id " + mCameraId + ", detection resolution " + mPreviewSize.getWidth() + "x" + mPreviewSize.getHeight() + "\n"
+            String retVal = "camera id " + mCameraId;
+            if (mPreviewSize != null) {
+                retVal += ", detection resolution " + mPreviewSize.x + "x" + mPreviewSize.y;
+            }
+            return retVal + "\n"
                     + mBoxes + " detection boxes, leniency is " + mLeniency + "\n"
                     + mFrameCount + " frames processed, motion has been detected " + mDetectionCount + " times";
         } else {
@@ -100,7 +103,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
                     startDetection((TextureView) context.findViewById(R.id.previewView), newDeviceRotation * 90);
                     mEnabled = true;
-                } catch (CameraAccessException e) {
+                } catch (CameraException e) {
                     Log.e(TAG, "Could not enable MotionDetector", e);
                 }
             } else {
@@ -130,7 +133,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
                     Log.v(TAG, "processing frame");
 
                     if (mPreviewSize == null) {
-                        mPreviewSize = new Size(greyState.getWidth(), greyState.getHeight());
+                        mPreviewSize = new Point(greyState.getWidth(), greyState.getHeight());
                     }
 
                     int minLuma = 1000;
@@ -181,7 +184,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         return correctSensorRotation(differing);
     }
 
-    protected synchronized void startDetection(TextureView textureView, int deviceDegrees) throws CameraAccessException {
+    protected synchronized void startDetection(TextureView textureView, int deviceDegrees) throws CameraException {
         stopDetection();
 
         Log.d(TAG, "starting detection");
@@ -245,19 +248,19 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         return corrected;
     }
 
-    void chooseOptimalSize(Size[] choices, int textureViewWidth,
-                           int textureViewHeight, Size aspectRatio) {
+    void chooseOptimalSize(Point[] choices, int textureViewWidth,
+                           int textureViewHeight, Point aspectRatio) {
 
         // Collect the supported resolutions that are at least as big as the preview Surface
-        List<Size> bigEnough = new ArrayList<>();
+        List<Point> bigEnough = new ArrayList<>();
         // Collect the supported resolutions that are smaller than the preview Surface
-        List<Size> notBigEnough = new ArrayList<>();
-        int w = aspectRatio.getWidth();
-        int h = aspectRatio.getHeight();
-        for (Size option : choices) {
-            if (option.getHeight() == option.getWidth() * h / w) {
-                if (option.getWidth() >= textureViewWidth &&
-                        option.getHeight() >= textureViewHeight) {
+        List<Point> notBigEnough = new ArrayList<>();
+        int w = aspectRatio.x;
+        int h = aspectRatio.y;
+        for (Point option : choices) {
+            if (option.y == option.x * h / w) {
+                if (option.x >= textureViewWidth &&
+                        option.y >= textureViewHeight) {
                     bigEnough.add(option);
                 } else {
                     notBigEnough.add(option);
@@ -277,11 +280,11 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         }
     }
 
-    private static class CompareSizesByArea implements Comparator<Size> {
+    private static class CompareSizesByArea implements Comparator<Point> {
         @Override
-        public int compare(Size lhs, Size rhs) {
-            return Long.signum((long) lhs.getWidth() * lhs.getHeight() -
-                    (long) rhs.getWidth() * rhs.getHeight());
+        public int compare(Point lhs, Point rhs) {
+            return Long.signum((long) lhs.x * lhs.y -
+                    (long) rhs.x * rhs.y);
         }
 
     }
@@ -298,5 +301,5 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
     protected abstract void startPreview();
 
-    protected abstract String createCamera(int deviceDegrees) throws CameraAccessException;
+    protected abstract String createCamera(int deviceDegrees) throws CameraException;
 }

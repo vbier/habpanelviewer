@@ -8,10 +8,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -42,6 +42,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import vier_bier.de.habpanelviewer.flash.FlashController;
 import vier_bier.de.habpanelviewer.motion.IMotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetectorCamera2;
@@ -129,39 +130,37 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            try {
-                mFlashService = new FlashController((CameraManager) getSystemService(Context.CAMERA_SERVICE));
-            } catch (CameraAccessException e) {
-                Log.d("Habpanelview", "Could not create flash controller");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                try {
+                    mFlashService = new FlashController((CameraManager) getSystemService(Context.CAMERA_SERVICE));
+                } catch (CameraException e) {
+                    Log.d("Habpanelview", "Could not create flash controller");
+                }
             }
 
-            try {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                final SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            final SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
 
-                MotionListener ml = new MotionListener.MotionAdapter() {
-                    @Override
-                    public void motionDetected(ArrayList<Point> differing) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mScreenService.screenOn();
-                            }
-                        });
-                    }
-                };
-
-                int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
-                MotionVisualizer mv = new MotionVisualizer(motionView, navigationView, prefs, ml, scaledSize);
-
-                boolean oldApi = prefs.getBoolean("pref_motion_detection_old_api", false);
-                if (oldApi) {
-                    mMotionDetector = new MotionDetector(mv);
-                } else {
-                    mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), mv, this);
+            MotionListener ml = new MotionListener.MotionAdapter() {
+                @Override
+                public void motionDetected(ArrayList<Point> differing) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mScreenService.screenOn();
+                        }
+                    });
                 }
-            } catch (CameraAccessException e) {
-                Log.d("Habpanelview", "Could not create motion detector");
+            };
+
+            int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
+            MotionVisualizer mv = new MotionVisualizer(motionView, navigationView, prefs, ml, scaledSize);
+
+            boolean newApi = prefs.getBoolean("pref_motion_detection_new_api", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+            if (newApi && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), mv, this);
+            } else {
+                mMotionDetector = new MotionDetector(mv);
             }
         }
 
@@ -184,7 +183,9 @@ public class MainActivity extends AppCompatActivity
         });
 
         CookieManager.getInstance().setAcceptCookie(true);
-        CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
+        }
 
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -269,9 +270,24 @@ public class MainActivity extends AppCompatActivity
         SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
         boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
         boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
-        if (showPreview && motionDetection) {
-            previewView.setVisibility(View.VISIBLE);
-            motionView.setVisibility(View.VISIBLE);
+        if (motionDetection) {
+            if (showPreview) {
+                previewView.getLayoutParams().height = 480;
+                previewView.getLayoutParams().width = 640;
+
+                motionView.setVisibility(View.VISIBLE);
+            } else {
+                // if we have no preview, we still have to have a visible
+                // TextureView in order to have a working motion detection.
+                // Resize it to 1x1pxs so it does not get in the way.
+                previewView.getLayoutParams().height = 1;
+                previewView.getLayoutParams().width = 1;
+
+                motionView.setVisibility(View.INVISIBLE);
+            }
+
+            previewView.setLayoutParams(previewView.getLayoutParams());
+            motionView.setLayoutParams(motionView.getLayoutParams());
         } else {
             previewView.setVisibility(View.INVISIBLE);
             motionView.setVisibility(View.INVISIBLE);
@@ -283,7 +299,12 @@ public class MainActivity extends AppCompatActivity
          int max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
          **/
 
-        loadStartUrl();
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+            loadStartUrl();
+        }
     }
 
     @Override
@@ -320,7 +341,11 @@ public class MainActivity extends AppCompatActivity
             destroy();
             ProcessPhoenix.triggerRebirth(this);
         } else if (id == R.id.action_exit) {
-            finishAndRemoveTask();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                finishAndRemoveTask();
+            } else {
+                finish();
+            }
             Runtime.getRuntime().exit(0);
         }
 
@@ -411,6 +436,9 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra("Backlight Control", "enabled\n" + mScreenService.getItemName() + "=" + mScreenService.getItemState());
         } else {
             intent.putExtra("Backlight Control", "disabled");
+        }
+        if (mMotionDetector != null) {
+            intent.putExtra("Cameras", mMotionDetector.getCameraInfo(this));
         }
         if (mMotionDetector == null) {
             intent.putExtra("Motion Detection", "unavailable");

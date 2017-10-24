@@ -17,15 +17,15 @@
 
     <TextureView
         android:id="@+id/previewView"
-        android:layout_width="320dp"
-        android:layout_height="240dp"
+        android:layout_width="640px"
+        android:layout_height="480px"
         app:layout_constraintRight_toRightOf="@+id/activity_main_webview"
         app:layout_constraintBottom_toBottomOf="@+id/activity_main_webview" />
 
     <SurfaceView
         android:id="@+id/motionView"
-        android:layout_width="320dp"
-        android:layout_height="240dp"
+        android:layout_width="640px"
+        android:layout_height="480px"
         app:layout_constraintRight_toRightOf="@+id/activity_main_webview"
         app:layout_constraintBottom_toBottomOf="@+id/activity_main_webview" />
 

@@ -1,10 +1,6 @@
 package vier_bier.de.habpanelviewer;
 
 import android.app.Activity;
-import android.content.Context;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -51,45 +47,26 @@ public class InfoActivity extends Activity {
 
         if (b != null) {
             for (String key : b.keySet()) {
-                String value = b.get(key).toString();
+                String value = b.get(key) == null ? "" : b.get(key).toString();
                 list.add(new InfoItem(key, value));
             }
         }
-
-        String camStr = "";
-        CameraManager camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-        try {
-            for (String camId : camManager.getCameraIdList()) {
-                camStr += "Camera " + camId + ": ";
-
-                CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
-                Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-                Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
-
-                camStr += (hasFlash ? "has" : "no") + " flash, ";
-                camStr += (facing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front") + "-facing\n";
-            }
-        } catch (CameraAccessException e) {
-            camStr = "failed to access camera service: " + e.getMessage();
-        }
-        list.add(new InfoItem("Cameras", camStr.trim()));
-
     }
 
     private class InfoItem {
         private String name;
         private String value;
 
-        public InfoItem(String name, String value) {
+        InfoItem(String name, String value) {
             this.name = name;
             this.value = value;
         }
     }
 
-    class InfoItemAdapter extends ArrayAdapter<InfoItem> {
+    private class InfoItemAdapter extends ArrayAdapter<InfoItem> {
         private final Activity context;
 
-        public InfoItemAdapter(Activity context, ArrayList<InfoItem> items) {
+        InfoItemAdapter(Activity context, ArrayList<InfoItem> items) {
             super(context, R.layout.list_info_item, items);
             this.context = context;
         }

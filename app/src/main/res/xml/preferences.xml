@@ -29,6 +29,7 @@
         <PreferenceScreen
             android:key="pref_flash"
             android:persistent="false"
+            android:enabled="@bool/is_post_api_23"
             android:title="@string/pref_flash">
             <CheckBoxPreference
                 android:defaultValue="true"
@@ -108,11 +109,12 @@
                 android:summary="@string/pref_motion_detection_preview_summ"
                 android:title="@string/pref_motion_detection_preview" />
             <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref_motion_detection_old_api"
+                android:defaultValue="true"
+                android:key="pref_motion_detection_new_api"
+                android:enabled="@bool/is_post_api_21"
                 android:dependency="pref_motion_detection_enabled"
-                android:summary="@string/pref_motion_detection_old_api_summ"
-                android:title="@string/pref_motion_detection_old_api" />
+                android:summary="@string/pref_motion_detection_new_api_summ"
+                android:title="@string/pref_motion_detection_new_api" />
             <ListPreference
                 android:defaultValue="20"
                 android:key="pref_motion_detection_granularity"

@@ -5,10 +5,10 @@ android {
     buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "vier_bier.de.habpanelviewer"
-        minSdkVersion 23
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
-        versionName "0.9"
+        versionName "0.9.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
     }

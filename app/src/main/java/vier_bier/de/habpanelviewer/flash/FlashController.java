@@ -1,19 +1,25 @@
-package vier_bier.de.habpanelviewer;
+package vier_bier.de.habpanelviewer.flash;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import vier_bier.de.habpanelviewer.CameraException;
+import vier_bier.de.habpanelviewer.StateListener;
+
 /**
  * Controller for the back-facing cameras flash light.
  */
-class FlashController implements StateListener {
+@TargetApi(Build.VERSION_CODES.M)
+public class FlashController implements StateListener {
     private FlashControlThread controller;
     private CameraManager camManager;
     private String torchId;
@@ -25,38 +31,42 @@ class FlashController implements StateListener {
     private Pattern flashOnPattern;
     private Pattern flashPulsatingPattern;
 
-    FlashController(CameraManager cameraManager) throws CameraAccessException {
+    public FlashController(CameraManager cameraManager) throws CameraException {
         camManager = cameraManager;
 
-        for (String camId : camManager.getCameraIdList()) {
-            CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
-            Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-            Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+        try {
+            for (String camId : camManager.getCameraIdList()) {
+                CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
+                Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-            if (facing == CameraCharacteristics.LENS_FACING_BACK && hasFlash) {
-                torchId = camId;
-                break;
+                if (facing == CameraCharacteristics.LENS_FACING_BACK && hasFlash) {
+                    torchId = camId;
+                    break;
+                }
             }
+        } catch (CameraAccessException e) {
+            throw new CameraException(e);
         }
 
         if (torchId == null) {
-            throw new CameraAccessException(CameraAccessException.CAMERA_ERROR, "Could not find back facing camera with flash!");
+            throw new CameraException("Could not find back facing camera with flash!");
         }
     }
 
-    String getItemName() {
+    public String getItemName() {
         return flashItemName;
     }
 
-    String getItemState() {
+    public String getItemState() {
         return flashItemState;
     }
 
-    boolean isEnabled() {
+    public boolean isEnabled() {
         return enabled;
     }
 
-    void terminate() {
+    public void terminate() {
         if (controller != null) {
             controller.terminate();
             controller = null;
@@ -95,7 +105,7 @@ class FlashController implements StateListener {
         }
     }
 
-    void updateFromPreferences(SharedPreferences prefs) {
+    public void updateFromPreferences(SharedPreferences prefs) {
         flashPulsatingPattern = null;
         flashOnPattern = null;
         flashItemName = prefs.getString("pref_flash_item", "");

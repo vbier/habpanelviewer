@@ -12,9 +12,9 @@ So I wrote this app that fixes the above mentioned problems. It features:
 - **openHAB URL and panel name configuration**: the configured panel is then shown on start
 - **configurable kiosk mode activation**: simply check or uncheck to enable/disable kiosk mode
 - **configurable scrolling prevention**: when checked, scrolling is completely disabled
-- **flashlight control**: allows to configure an openHAB item and regexps to enable/disable or pulse the cameras flash
-- **screen on control**: allows to configure an openHAB item and a regexp to enable the screen backlight
 - **app shortcut**: allows to configure the package name of an app that can then be started from the main menu
-- **motion detection**: turns the screen on when motion is detected (does not work at the same time as flashlight control). 
+- **flashlight control**: allows to configure an openHAB item and regexps to enable/disable or pulse the cameras flash (_available on Android 6+_)
+- **screen on control**: allows to configure an openHAB item and a regexp to enable the screen backlight
+- **motion detection**: turns the screen on when motion is detected (_does not work at the same time as flashlight control. there are two different implementations, one using the old camera API and one using the Camera 2 API on Android 5+_). 
 
-The app does support android from SDK version 23, which means it will run on Android 6 (Marshmallow) or newer.
+The app does support android from SDK version 19, which means it will run on devices running Android 4.4+ (Kitkat).

@@ -1,13 +1,16 @@
 package vier_bier.de.habpanelviewer.motion;
 
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.hardware.Camera;
-import android.hardware.camera2.CameraAccessException;
 import android.util.Log;
-import android.util.Size;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import vier_bier.de.habpanelviewer.CameraException;
 
 /**
  * Motion detection using the old Camera API.
@@ -41,7 +44,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
         return null;
     }
 
-    protected String createCamera(int deviceDegrees) throws CameraAccessException {
+    protected String createCamera(int deviceDegrees) throws CameraException {
         if (mCamera == null) {
             Camera.CameraInfo info = new Camera.CameraInfo();
             for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
@@ -57,7 +60,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
                 }
             }
 
-            throw new CameraAccessException(CameraAccessException.CAMERA_ERROR, "Could not find front facing camera!");
+            throw new CameraException("Could not find front facing camera!");
         }
 
         return null;
@@ -70,9 +73,9 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
                 mCamera.setPreviewTexture(mSurface);
 
                 Camera.Parameters parameters = mCamera.getParameters();
-                chooseOptimalSize(toSizeArray(parameters.getSupportedPictureSizes()), 640, 480, new Size(640, 480));
+                chooseOptimalSize(toPointArray(parameters.getSupportedPictureSizes()), 640, 480, new Point(640, 480));
 
-                parameters.setPreviewSize(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+                parameters.setPreviewSize(mPreviewSize.x, mPreviewSize.y);
                 mCamera.setParameters(parameters);
 
                 Log.d(TAG, "preview size: " + mCamera.getParameters().getPreviewSize().width + "x" + mCamera.getParameters().getPreviewSize().height);
@@ -94,12 +97,12 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
         }
     }
 
-    private Size[] toSizeArray(List<Camera.Size> supportedPictureSizes) {
-        ArrayList<Size> result = new ArrayList<>();
+    private Point[] toPointArray(List<Camera.Size> supportedPictureSizes) {
+        ArrayList<Point> result = new ArrayList<>();
         for (Camera.Size s : supportedPictureSizes) {
-            result.add(new Size(s.width, s.height));
+            result.add(new Point(s.width, s.height));
         }
-        return result.toArray(new Size[result.size()]);
+        return result.toArray(new Point[result.size()]);
     }
 
     @Override
@@ -114,5 +117,23 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
 
             mRunning = false;
         }
+    }
+
+    @Override
+    public String getCameraInfo(Activity act) {
+        String camStr = "Camera API (Pre-Lollipop)\n";
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
+            Camera.getCameraInfo(i, info);
+            camStr += "Camera " + i + ": ";
+
+            boolean hasFlash = act.getApplicationContext().getPackageManager()
+                    .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+
+            camStr += (hasFlash ? "has" : "no") + " flash, ";
+            camStr += (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK ? "back" : "front") + "-facing\n";
+        }
+
+        return camStr;
     }
 }
