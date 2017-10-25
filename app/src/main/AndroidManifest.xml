@@ -44,7 +44,8 @@
             android:name=".SetPreferenceActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Settings" />
-        <activity android:name=".InfoActivity"
+        <activity
+            android:name=".status.StatusInfoActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Information" />
     </application>

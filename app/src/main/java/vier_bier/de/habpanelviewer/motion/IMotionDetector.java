@@ -1,6 +1,5 @@
 package vier_bier.de.habpanelviewer.motion;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 
 /**
@@ -9,13 +8,7 @@ import android.content.SharedPreferences;
 public interface IMotionDetector {
     int MY_PERMISSIONS_MOTION_REQUEST_CAMERA = 42;
 
-    boolean isEnabled();
-
-    String getPreviewInfo();
-
     void shutdown();
 
-    void updateFromPreferences(Activity context, SharedPreferences prefs);
-
-    String getCameraInfo(Activity context);
+    void updateFromPreferences(SharedPreferences prefs);
 }

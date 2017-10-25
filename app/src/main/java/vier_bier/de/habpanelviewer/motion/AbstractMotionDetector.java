@@ -11,6 +11,10 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.TextureView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import vier_bier.de.habpanelviewer.CameraException;
 import vier_bier.de.habpanelviewer.R;
+import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Base class for motion detectors.
@@ -30,6 +35,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     final AtomicReference<D> mPreview = new AtomicReference<>();
     private final AtomicBoolean mStopped = new AtomicBoolean(false);
 
+    Activity mContext;
     SurfaceTexture mSurface;
     boolean mEnabled;
     Point mPreviewSize;
@@ -45,17 +51,37 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
     private LumaData mPreviousState;
     private Comparer mComparer;
+    private ApplicationStatus mStatus;
 
-
-    AbstractMotionDetector(MotionListener l) {
+    AbstractMotionDetector(Activity context, MotionListener l) {
+        mContext = context;
         mListener = l;
+        EventBus.getDefault().register(this);
 
         setDaemon(true);
         start();
     }
 
-    @Override
-    public String getPreviewInfo() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ApplicationStatus status) {
+        mStatus = status;
+        addStatusItems();
+    }
+
+    private void addStatusItems() {
+        if (mStatus == null) {
+            return;
+        }
+
+        mStatus.set("Cameras", getCameraInfo());
+        if (mEnabled) {
+            mStatus.set("Motion Detection", "enabled\n" + getPreviewInfo());
+        } else {
+            mStatus.set("Motion Detection", "disabled");
+        }
+    }
+
+    private String getPreviewInfo() {
         if (mCameraId != null) {
             String retVal = "camera id " + mCameraId;
             if (mPreviewSize != null) {
@@ -70,11 +96,6 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     }
 
     @Override
-    public boolean isEnabled() {
-        return mEnabled;
-    }
-
-    @Override
     public synchronized void shutdown() {
         stopDetection();
 
@@ -82,11 +103,11 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     }
 
     @Override
-    public synchronized void updateFromPreferences(Activity context, SharedPreferences prefs) {
+    public synchronized void updateFromPreferences(SharedPreferences prefs) {
         boolean newEnabled = prefs.getBoolean("pref_motion_detection_enabled", false);
         int newBoxes = Integer.parseInt(prefs.getString("pref_motion_detection_granularity", "20"));
         int newLeniency = Integer.parseInt(prefs.getString("pref_motion_detection_leniency", "20"));
-        int newDeviceRotation = context.getWindowManager().getDefaultDisplay().getRotation();
+        int newDeviceRotation = mContext.getWindowManager().getDefaultDisplay().getRotation();
 
         if (newEnabled) {
             boolean changed = newBoxes != mBoxes || newLeniency != mLeniency || newDeviceRotation != mDeviceRotation;
@@ -95,19 +116,19 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
                 stopDetection();
             }
 
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                 try {
                     mBoxes = newBoxes;
                     mLeniency = newLeniency;
                     mDeviceRotation = newDeviceRotation;
 
-                    startDetection((TextureView) context.findViewById(R.id.previewView), newDeviceRotation * 90);
+                    startDetection((TextureView) mContext.findViewById(R.id.previewView), newDeviceRotation * 90);
                     mEnabled = true;
                 } catch (CameraException e) {
                     Log.e(TAG, "Could not enable MotionDetector", e);
                 }
             } else {
-                ActivityCompat.requestPermissions(context, new String[]{Manifest.permission.CAMERA},
+                ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA},
                         MY_PERMISSIONS_MOTION_REQUEST_CAMERA);
             }
         } else if (mEnabled) {
@@ -149,6 +170,9 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
                         } else {
                             mListener.noMotion();
                         }
+                    }
+                    if (mStatus != null) {
+                        mStatus.set("Motion Detection", "enabled\n" + getPreviewInfo());
                     }
 
                     Log.v(TAG, "processing done");
@@ -300,6 +324,8 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     protected abstract void stopPreview();
 
     protected abstract void startPreview();
+
+    protected abstract String getCameraInfo();
 
     protected abstract String createCamera(int deviceDegrees) throws CameraException;
 }

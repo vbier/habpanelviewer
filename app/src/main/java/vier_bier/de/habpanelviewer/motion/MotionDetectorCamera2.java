@@ -52,12 +52,12 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
     private CameraCaptureSession mCaptureSession;
-    private ImageReader mImageReader;
+    private ImageReader mImageReader; // do not use local variable, as this gets garbage collected
 
     private CameraDevice mCamera;
 
-    public MotionDetectorCamera2(CameraManager manager, MotionListener l, Activity act) {
-        super(l);
+    public MotionDetectorCamera2(Activity context, CameraManager manager, MotionListener l, Activity act) {
+        super(context, l);
 
         Log.d(TAG, "instantiating motion detection");
 
@@ -260,9 +260,9 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
     }
 
     @Override
-    public String getCameraInfo(Activity act) {
+    protected String getCameraInfo() {
         String camStr = "Camera API 2 (Lollipop)\n";
-        CameraManager camManager = (CameraManager) act.getSystemService(Context.CAMERA_SERVICE);
+        CameraManager camManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         try {
             for (String camId : camManager.getCameraIdList()) {
                 camStr += "Camera " + camId + ": ";

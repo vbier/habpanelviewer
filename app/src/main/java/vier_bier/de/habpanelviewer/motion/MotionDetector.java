@@ -22,8 +22,8 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
     private boolean mRunning;
     private Camera mCamera;
 
-    public MotionDetector(MotionListener l) {
-        super(l);
+    public MotionDetector(Activity context, MotionListener l) {
+        super(context, l);
     }
 
     @Override
@@ -120,14 +120,14 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
     }
 
     @Override
-    public String getCameraInfo(Activity act) {
+    protected String getCameraInfo() {
         String camStr = "Camera API (Pre-Lollipop)\n";
         Camera.CameraInfo info = new Camera.CameraInfo();
         for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
             Camera.getCameraInfo(i, info);
             camStr += "Camera " + i + ": ";
 
-            boolean hasFlash = act.getApplicationContext().getPackageManager()
+            boolean hasFlash = mContext.getApplicationContext().getPackageManager()
                     .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 
             camStr += (hasFlash ? "has" : "no") + " flash, ";

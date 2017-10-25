@@ -8,12 +8,17 @@ import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import vier_bier.de.habpanelviewer.CameraException;
 import vier_bier.de.habpanelviewer.StateListener;
+import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Controller for the back-facing cameras flash light.
@@ -31,8 +36,11 @@ public class FlashController implements StateListener {
     private Pattern flashOnPattern;
     private Pattern flashPulsatingPattern;
 
+    private ApplicationStatus mStatus;
+
     public FlashController(CameraManager cameraManager) throws CameraException {
         camManager = cameraManager;
+        EventBus.getDefault().register(this);
 
         try {
             for (String camId : camManager.getCameraIdList()) {
@@ -54,15 +62,25 @@ public class FlashController implements StateListener {
         }
     }
 
-    public String getItemName() {
-        return flashItemName;
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ApplicationStatus status) {
+        mStatus = status;
+        addStatusItems();
     }
 
-    public String getItemState() {
-        return flashItemState;
+    private void addStatusItems() {
+        if (mStatus == null) {
+            return;
+        }
+
+        if (isEnabled()) {
+            mStatus.set("Flash Control", "enabled\n" + flashItemName + "=" + flashItemState);
+        } else {
+            mStatus.set("Flash Control", "disabled");
+        }
     }
 
-    public boolean isEnabled() {
+    private boolean isEnabled() {
         return enabled;
     }
 
@@ -92,6 +110,7 @@ public class FlashController implements StateListener {
 
             Log.i("Habpanelview", "flash item state=" + state + ", old state=" + flashItemState);
             flashItemState = state;
+            addStatusItems();
 
             if (flashOnPattern != null && state != null && flashOnPattern.matcher(state).matches()) {
                 createController().enableFlash();
@@ -129,6 +148,8 @@ public class FlashController implements StateListener {
                 // is handled in the preferences
             }
         }
+
+        addStatusItems();
     }
 
     private class FlashControlThread extends Thread {

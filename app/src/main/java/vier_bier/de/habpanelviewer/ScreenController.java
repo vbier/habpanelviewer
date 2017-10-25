@@ -5,15 +5,20 @@ import android.content.SharedPreferences;
 import android.os.PowerManager;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Controller for the screen backlight.
  */
 class ScreenController implements StateListener {
     private final PowerManager.WakeLock screenOnLock;
-    private final PowerManager pwrManager;
     private final Activity activity;
 
     private boolean enabled;
@@ -22,9 +27,11 @@ class ScreenController implements StateListener {
 
     private Pattern screenOnPattern;
 
+    private ApplicationStatus mStatus;
+
     ScreenController(PowerManager pwrManager, Activity activity) {
         this.activity = activity;
-        this.pwrManager = pwrManager;
+        EventBus.getDefault().register(this);
 
         screenOnLock = pwrManager.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "HabpanelViewer");
@@ -43,16 +50,26 @@ class ScreenController implements StateListener {
         activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(true);
     }
 
-    String getItemName() {
-        return screenOnItemName;
-    }
-
-    String getItemState() {
-        return screenOnItemState;
-    }
-
     boolean isEnabled() {
         return enabled;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ApplicationStatus status) {
+        mStatus = status;
+        addStatusItems();
+    }
+
+    private void addStatusItems() {
+        if (mStatus == null) {
+            return;
+        }
+
+        if (isEnabled()) {
+            mStatus.set("Backlight Control", "enabled\n" + screenOnItemName + "=" + screenOnItemState);
+        } else {
+            mStatus.set("Backlight Control", "disabled");
+        }
     }
 
     @Override
@@ -65,6 +82,7 @@ class ScreenController implements StateListener {
 
             Log.i("Habpanelview", "screen on item state=" + state + ", old state=" + screenOnItemState);
             screenOnItemState = state;
+            addStatusItems();
 
             activity.runOnUiThread(new Runnable() {
                 public void run() {

@@ -39,7 +39,12 @@ import android.widget.Toast;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 
 import vier_bier.de.habpanelviewer.flash.FlashController;
@@ -48,6 +53,8 @@ import vier_bier.de.habpanelviewer.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetectorCamera2;
 import vier_bier.de.habpanelviewer.motion.MotionListener;
 import vier_bier.de.habpanelviewer.motion.MotionVisualizer;
+import vier_bier.de.habpanelviewer.status.ApplicationStatus;
+import vier_bier.de.habpanelviewer.status.StatusInfoActivity;
 
 /**
  * Main activity showing the Webview for openHAB.
@@ -81,6 +88,7 @@ public class MainActivity extends AppCompatActivity
     private FlashController mFlashService;
     private ScreenController mScreenService;
     private IMotionDetector mMotionDetector;
+    private ApplicationStatus mStatus;
 
     private int mRestartCount;
 
@@ -114,6 +122,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -158,9 +167,9 @@ public class MainActivity extends AppCompatActivity
 
             boolean newApi = prefs.getBoolean("pref_motion_detection_new_api", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
             if (newApi && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mMotionDetector = new MotionDetectorCamera2((CameraManager) getSystemService(Context.CAMERA_SERVICE), mv, this);
+                mMotionDetector = new MotionDetectorCamera2(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE), mv, this);
             } else {
-                mMotionDetector = new MotionDetector(mv);
+                mMotionDetector = new MotionDetector(this, mv);
             }
         }
 
@@ -192,6 +201,13 @@ public class MainActivity extends AppCompatActivity
         registerReceiver(mNetworkReceiver, intentFilter);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ApplicationStatus status) {
+        mStatus = status;
+
+        addStatusItems();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
@@ -202,7 +218,7 @@ public class MainActivity extends AppCompatActivity
 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (mMotionDetector != null) {
-                        mMotionDetector.updateFromPreferences(this, prefs);
+                        mMotionDetector.updateFromPreferences(prefs);
                     }
                 } else {
                     SharedPreferences.Editor editor1 = prefs.edit();
@@ -254,7 +270,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (mMotionDetector != null) {
-            mMotionDetector.updateFromPreferences(this, prefs);
+            mMotionDetector.updateFromPreferences(prefs);
         }
 
         Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
@@ -304,6 +320,7 @@ public class MainActivity extends AppCompatActivity
 
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
             loadStartUrl();
+            startEventSource();
         }
     }
 
@@ -411,8 +428,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showPreferences() {
-        Intent intent = new Intent();
-        intent.setClass(MainActivity.this, SetPreferenceActivity.class);
+        Intent intent = new Intent(MainActivity.this, SetPreferenceActivity.class);
         intent.putExtra("flash_enabled", mFlashService != null);
         intent.putExtra("motion_enabled", mMotionDetector != null);
         intent.putExtra("screen_enabled", mScreenService != null);
@@ -421,37 +437,33 @@ public class MainActivity extends AppCompatActivity
 
     private void showInfoScreen() {
         Intent intent = new Intent();
-        intent.setClass(MainActivity.this, InfoActivity.class);
+        intent.setClass(MainActivity.this, StatusInfoActivity.class);
 
-        if (mFlashService == null) {
-            intent.putExtra("Flash Control", "unavailable");
-        } else if (mFlashService.isEnabled()) {
-            intent.putExtra("Flash Control", "enabled\n" + mFlashService.getItemName() + "=" + mFlashService.getItemState());
-        } else {
-            intent.putExtra("Flash Control", "disabled");
-        }
-        if (mScreenService == null) {
-            intent.putExtra("Backlight Control", "unavailable");
-        } else if (mScreenService.isEnabled()) {
-            intent.putExtra("Backlight Control", "enabled\n" + mScreenService.getItemName() + "=" + mScreenService.getItemState());
-        } else {
-            intent.putExtra("Backlight Control", "disabled");
-        }
-        if (mMotionDetector != null) {
-            intent.putExtra("Cameras", mMotionDetector.getCameraInfo(this));
-        }
-        if (mMotionDetector == null) {
-            intent.putExtra("Motion Detection", "unavailable");
-        } else if (mMotionDetector.isEnabled()) {
-            intent.putExtra("Motion Detection", "enabled\n" + mMotionDetector.getPreviewInfo());
-        } else {
-            intent.putExtra("Motion Detection", "disabled");
-        }
-        if (mRestartCount != 0) {
-            intent.putExtra("Restart Counter", mRestartCount);
-        }
+        addStatusItems();
 
         startActivityForResult(intent, 0);
+    }
+
+    private void addStatusItems() {
+        if (mStatus == null) {
+            return;
+        }
+
+        Date buildDate = new Date(BuildConfig.TIMESTAMP);
+        mStatus.set("HABPanelViewer", "Version: " + BuildConfig.VERSION_NAME + "\nBuild date: " + buildDate.toString());
+
+        if (mFlashService == null) {
+            mStatus.set("Flash Control", "unavailable");
+        }
+        if (mScreenService == null) {
+            mStatus.set("Backlight Control", "unavailable");
+        }
+        if (mMotionDetector == null) {
+            mStatus.set("Motion Detection", "unavailable");
+        }
+        if (mRestartCount != 0) {
+            mStatus.set("Restart Counter", String.valueOf(mRestartCount));
+        }
     }
 
     private void loadStartUrl() {
