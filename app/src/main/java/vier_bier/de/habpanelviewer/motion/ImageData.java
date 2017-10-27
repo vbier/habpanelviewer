@@ -9,7 +9,7 @@ class ImageData {
     private int height;
 
     ImageData(byte[] bytes, int w, int h) {
-        data = bytes.clone();
+        data = bytes;
 
         width = w;
         height = h;

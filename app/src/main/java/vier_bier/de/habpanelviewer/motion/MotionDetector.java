@@ -78,13 +78,13 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
                 parameters.setPreviewSize(mPreviewSize.x, mPreviewSize.y);
                 mCamera.setParameters(parameters);
 
-                Log.d(TAG, "preview size: " + mCamera.getParameters().getPreviewSize().width + "x" + mCamera.getParameters().getPreviewSize().height);
-
                 mCamera.setPreviewCallback(new Camera.PreviewCallback() {
                     @Override
                     public void onPreviewFrame(byte[] bytes, Camera camera) {
-                        if (mCamera == camera) {
-                            setPreview(new ImageData(bytes, camera.getParameters().getPreviewSize().width, camera.getParameters().getPreviewSize().height));
+                        if (mCamera == camera && mPreview.get() == null) {
+                            Log.v(TAG, "preview image available: size " + mPreviewSize.x + "x" + mPreviewSize.y);
+
+                            setPreview(new ImageData(bytes, mPreviewSize.x, mPreviewSize.y));
                         }
                     }
                 });

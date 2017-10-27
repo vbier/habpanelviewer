@@ -180,15 +180,16 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
                     Image i = reader.acquireLatestImage();
 
                     if (i != null) {
+                        // only process if we do not yet have a buffered preview image
                         if (mPreview.get() == null) {
                             Log.v(TAG, "preview image available: size " + i.getWidth() + "x" + i.getHeight());
+
+                            ByteBuffer luma = i.getPlanes()[0].getBuffer();
+                            final byte[] data = new byte[luma.capacity()];
+                            luma.get(data);
+
+                            setPreview(new LumaData(data, i.getWidth(), i.getHeight(), mBoxes));
                         }
-
-                        ByteBuffer luma = i.getPlanes()[0].getBuffer();
-                        final byte[] data = new byte[luma.capacity()];
-                        luma.get(data);
-
-                        setPreview(new LumaData(data, i.getWidth(), i.getHeight(), mBoxes));
                         i.close();
                     }
                 }

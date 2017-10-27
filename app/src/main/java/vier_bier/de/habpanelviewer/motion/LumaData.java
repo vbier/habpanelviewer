@@ -12,7 +12,7 @@ class LumaData {
     LumaData(byte[] data, int width, int height, int mBoxes) {
         if (data == null) throw new NullPointerException();
 
-        this.data = data.clone();
+        this.data = data;
         this.width = width;
         this.height = height;
 
