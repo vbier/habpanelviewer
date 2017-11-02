@@ -29,13 +29,16 @@ public class ApplicationStatus {
             item.setValue(value);
         }
 
-        if (mAdapter != null) {
-            mContext.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAdapter.notifyDataSetChanged();
-                }
-            });
+        synchronized (mAdapter) {
+            if (mAdapter != null) {
+                final BaseAdapter adapter = mAdapter;
+                mContext.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
         }
     }
 
@@ -48,6 +51,8 @@ public class ApplicationStatus {
     }
 
     public void registerAdapter(BaseAdapter adapter) {
-        mAdapter = adapter;
+        synchronized (mAdapter) {
+            mAdapter = adapter;
+        }
     }
 }
