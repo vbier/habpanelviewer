@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -20,6 +21,9 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * WebView
@@ -40,7 +44,7 @@ public class ClientWebView extends WebView {
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
                 loadStartUrl();
             } else {
-                loadData("<html><body><h1>Waiting for network connection...</h1><h2>The device is currently not connected to the network. Once the connection has been established, the configured HabPanel page will automatically be loaded.</h2></body></html>", "text/html", "UTF-8");
+                loadData("<html><body><h1>Waiting for network connection...</h1><h2>The device is currently not connected to the network. Once the connection has been established, the configured HABPanel page will automatically be loaded.</h2></body></html>", "text/html", "UTF-8");
             }
         }
     };
@@ -76,7 +80,37 @@ public class ClientWebView extends WebView {
                         handler.proceed();
                     }
                 } else {
-                    loadData("<html><body><h1>SSL Certificate Invalid!</h1><h2>The SSL Certificate is not valid.</h2></body></html>", "text/html", "UTF-8");
+                    String host = "unknown host";
+                    try {
+                        URL url = new URL(error.getUrl());
+                        host = url.getHost();
+                    } catch (MalformedURLException e) {
+                    }
+
+                    String reason = "is not valid";
+                    switch (error.getPrimaryError()) {
+                        case SslError.SSL_DATE_INVALID:
+                            reason = "has an invalid date";
+                            break;
+                        case SslError.SSL_EXPIRED:
+                            reason = "has expired";
+                            break;
+                        case SslError.SSL_IDMISMATCH:
+                            reason = "has a hostname mismatch";
+                            break;
+                        case SslError.SSL_NOTYETVALID:
+                            reason = "is not yet valid";
+                            break;
+                        case SslError.SSL_UNTRUSTED:
+                            reason = "is untrusted";
+                            break;
+                    }
+
+                    SslCertificate cert = error.getCertificate();
+                    String certInfo = cert.toString().replaceAll(";", "<br/>");
+                    certInfo += "Valid from: " + cert.getValidNotBefore() + "<br/>";
+                    certInfo += "Valid until: " + cert.getValidNotAfter() + "<br/>";
+                    loadData("<html><body><h1>SSL Certificate Invalid!</h1><h2>The SSL Certificate served by https://" + host + " " + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8");
                 }
             }
         });
@@ -156,12 +190,12 @@ public class ClientWebView extends WebView {
 
         boolean loadStartUrl = false;
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_url", "!$%"))) {
-            mServerURL = prefs.getString("pref_url", "!$%");
+            mServerURL = prefs.getString("pref_url", "");
             loadStartUrl = true;
         }
 
         if (mStartPanel == null || !mStartPanel.equalsIgnoreCase(prefs.getString("pref_panel", "!$%"))) {
-            mStartPanel = prefs.getString("pref_panel", "!$%");
+            mStartPanel = prefs.getString("pref_panel", "");
             loadStartUrl = true;
         }
 
@@ -175,7 +209,7 @@ public class ClientWebView extends WebView {
                 loadStartUrl();
             }
         } else {
-            loadData("<html><body><h1>Waiting for network connection...</h1><h2>The device is currently not connected to the network. Once the connection has been established, the configured HabPanel page will automatically be loaded.</h2></body></html>", "text/html", "UTF-8");
+            loadData("<html><body><h1>Waiting for network connection...</h1><h2>The device is currently not connected to the network. Once the connection has been established, the configured HABPanel page will automatically be loaded.</h2></body></html>", "text/html", "UTF-8");
         }
     }
 

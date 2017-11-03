@@ -120,6 +120,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.addHeaderView(navHeader);
         navigationView.setNavigationItemSelectedListener(this);
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 try {
@@ -129,7 +130,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
 
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
             final SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
 
             MotionListener ml = new MotionListener.MotionAdapter() {
@@ -156,6 +156,28 @@ public class MainActivity extends AppCompatActivity
         }
 
         mDiscovery = new ServerDiscovery((NsdManager) getSystemService(Context.NSD_SERVICE));
+
+        if (prefs.getBoolean("pref_first_start", true)) {
+            SharedPreferences.Editor editor1 = prefs.edit();
+            editor1.putBoolean("pref_first_start", false);
+            editor1.apply();
+
+            if (prefs.getString("pref_url", "").isEmpty()) {
+                mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
+                    @Override
+                    public void found(String serverUrl) {
+                        SharedPreferences.Editor editor1 = prefs.edit();
+                        editor1.putString("pref_url", serverUrl);
+                        editor1.apply();
+                    }
+
+                    @Override
+                    public void notFound() {
+                        Toast.makeText(MainActivity.this, "Could not find openHAB server!", Toast.LENGTH_LONG).show();
+                    }
+                }, true, true);
+            }
+        }
 
         mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
         mSseClient = new SSEClient(this);
@@ -222,21 +244,6 @@ public class MainActivity extends AppCompatActivity
             Thread.setDefaultUncaughtExceptionHandler(new AppRestartingExceptionHandler(this, mRestartCount));
         } else {
             Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
-        }
-
-        if (prefs.getString("pref_url", "").isEmpty()) {
-            mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
-                @Override
-                public void found(String serverUrl) {
-                    SharedPreferences.Editor editor1 = prefs.edit();
-                    editor1.putString("pref_url", serverUrl);
-                    editor1.apply();
-                }
-
-                @Override
-                public void notFound() {
-                }
-            }, prefs.getBoolean("pref_mdns_https", true));
         }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);

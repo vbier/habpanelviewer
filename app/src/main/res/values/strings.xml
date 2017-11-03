@@ -9,8 +9,7 @@
     <string name="action_exit">Exit</string>
 
     <string name="pref_url">openHAB URL</string>
-    <string name="pref_url_summ">URL of the openHAB server. Clear this value to trigger mDNS discovery.</string>
-    <string name="pref_url_default">http://openhabianpi:8080</string>
+    <string name="pref_url_summ">URL of the openHAB server.</string>
     <string name="pref_desktop_mode">Desktop mode</string>
     <string name="pref_desktop_mode_summ">Show pages in desktop mode instead of mobile mode</string>
     <string name="pref_scrolling">Allow Scrolling</string>

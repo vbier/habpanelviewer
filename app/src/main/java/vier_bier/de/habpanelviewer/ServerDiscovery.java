@@ -4,6 +4,7 @@ import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -20,27 +21,30 @@ class ServerDiscovery {
         mNsdManager = nsdManager;
     }
 
-    synchronized void discover(final DiscoveryListener l, final boolean discoverHttps) {
+    synchronized void discover(final DiscoveryListener l, final boolean discoverHttp, final boolean discoverHttps) {
         if (mDiscoveryListener != null) {
             return;
         }
 
         Log.v(TAG, "starting discovery...");
-        mDiscoveryListener = new NsdDiscoveryListener();
         mUrl.set(null);
 
-        String[] types = new String[]{"_openhab-server._tcp"};
+        ArrayList<String> types = new ArrayList<>();
         if (discoverHttps) {
-            types = new String[]{"_openhab-server-ssl._tcp", "_openhab-server._tcp"};
+            types.add("_openhab-server-ssl._tcp");
+        } else if (discoverHttp) {
+            types.add("_openhab-server._tcp");
         }
 
         try {
             for (String serviceType : types) {
                 try {
+                    Log.v(TAG, "starting discovery for " + serviceType + "...");
+                    mDiscoveryListener = new NsdDiscoveryListener();
+                    mNsdManager.discoverServices(
+                            serviceType, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
+
                     synchronized (mUrl) {
-                        Log.v(TAG, "starting discovery for " + serviceType + "...");
-                        mNsdManager.discoverServices(
-                                serviceType, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
                         Log.v(TAG, "waiting for results...");
                         mUrl.wait(2000);
                     }
@@ -59,7 +63,6 @@ class ServerDiscovery {
             }
         } finally {
             stopDiscovery();
-            mDiscoveryListener = null;
         }
 
         l.notFound();
@@ -73,6 +76,7 @@ class ServerDiscovery {
     private synchronized void stopDiscovery() {
         if (mDiscoveryListener != null) {
             mNsdManager.stopServiceDiscovery(mDiscoveryListener);
+            mDiscoveryListener = null;
         }
     }
 
@@ -125,6 +129,7 @@ class ServerDiscovery {
         @Override
         public void onStartDiscoveryFailed(String serviceType, int errorCode) {
             Log.v(TAG, "discovery start failed: " + errorCode);
+            mDiscoveryListener = null;
         }
 
         @Override

@@ -136,7 +136,7 @@
     <PreferenceCategory
         android:key="pref_key_habpanel_settings"
         android:title="@string/pref_habpanel_title">
-        <EditTextPreference
+        <vier_bier.de.habpanelviewer.ServerPreference
             android:key="pref_url"
             android:summary="@string/pref_url_summ"
             android:title="@string/pref_url" />
@@ -149,11 +149,6 @@
             android:key="pref_kiosk_mode"
             android:summary="@string/pref_kiosk_mode_summ"
             android:title="@string/pref_kiosk_mode" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="pref_mdns_https"
-            android:summary="@string/pref_mdns_https_summ"
-            android:title="@string/pref_mdns_https" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_webview_settings"
