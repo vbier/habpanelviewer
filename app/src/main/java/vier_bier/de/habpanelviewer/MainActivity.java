@@ -1,16 +1,13 @@
 package vier_bier.de.habpanelviewer;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.camera2.CameraManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.net.nsd.NsdManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -23,16 +20,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
-import android.webkit.CookieManager;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +36,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 
 import vier_bier.de.habpanelviewer.flash.FlashController;
 import vier_bier.de.habpanelviewer.motion.IMotionDetector;
@@ -53,6 +43,7 @@ import vier_bier.de.habpanelviewer.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetectorCamera2;
 import vier_bier.de.habpanelviewer.motion.MotionListener;
 import vier_bier.de.habpanelviewer.motion.MotionVisualizer;
+import vier_bier.de.habpanelviewer.screen.ScreenController;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 import vier_bier.de.habpanelviewer.status.StatusInfoActivity;
 
@@ -62,29 +53,12 @@ import vier_bier.de.habpanelviewer.status.StatusInfoActivity;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ConnectionListener {
 
-    private WebView mWebView;
+    private ClientWebView mWebView;
     private TextView mTextView;
-    private SSEClient sseClient;
+    private SSEClient mSseClient;
     private Thread.UncaughtExceptionHandler exceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 
-    private BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                loadStartUrl();
-                startEventSource();
-            } else {
-                mWebView.loadData("<html><body><h1>Waiting for network connnection...</h1><h2>The device is currently not connected to the network. Once the connection has been established, the configured HabPanel page will automatically be loaded.</h2></body></html>", "text/html", "UTF-8");
-                stopEventSource();
-            }
-        }
-    };
-
-    private boolean allowScrolling;
-
+    private ServerDiscovery mDiscovery;
     private FlashController mFlashService;
     private ScreenController mScreenService;
     private IMotionDetector mMotionDetector;
@@ -93,7 +67,7 @@ public class MainActivity extends AppCompatActivity
     private int mRestartCount;
 
     //TODO.vb. adapt volume settings: AudioManager
-    //TODO.vb. load list of available panels from habpanel for selection in preferences
+    //TODO.vb. load list of available panels from HABPanel for selection in preferences
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
     //TODO.vb. check if proximity sensor can be used
     //TODO.vb. check if light sensor can be used
@@ -106,8 +80,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     void destroy() {
-        unregisterReceiver(mNetworkReceiver);
-
         if (mFlashService != null) {
             mFlashService.terminate();
             mFlashService = null;
@@ -116,6 +88,16 @@ public class MainActivity extends AppCompatActivity
         if (mMotionDetector != null) {
             mMotionDetector.shutdown();
             mMotionDetector = null;
+        }
+
+        if (mDiscovery != null) {
+            mDiscovery.terminate();
+            mDiscovery = null;
+        }
+
+        if (mSseClient != null) {
+            mSseClient.terminate();
+            mSseClient = null;
         }
     }
 
@@ -173,32 +155,26 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        mDiscovery = new ServerDiscovery((NsdManager) getSystemService(Context.NSD_SERVICE));
+
         mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
+        mSseClient = new SSEClient(this);
+        mSseClient.setConnectionListener(this);
+
+        if (mFlashService != null) {
+            mSseClient.addStateListener(mFlashService);
+        }
+        if (mScreenService != null) {
+            mSseClient.addStateListener(mScreenService);
+        }
 
         mRestartCount = getIntent().getIntExtra("restartCount", 0);
         showInitialToastMessage(mRestartCount);
 
         mTextView = navHeader.findViewById(R.id.textView);
 
-        mWebView = ((WebView) findViewById(R.id.activity_main_webview));
-        mWebView.setWebViewClient(new WebViewClient());
-        mWebView.setWebChromeClient(new WebChromeClient());
-
-        mWebView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return (event.getAction() == MotionEvent.ACTION_MOVE && !allowScrolling);
-            }
-        });
-
-        CookieManager.getInstance().setAcceptCookie(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(mWebView, true);
-        }
-
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mNetworkReceiver, intentFilter);
+        mWebView = ((ClientWebView) findViewById(R.id.activity_main_webview));
+        mWebView.initialize();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -233,7 +209,7 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         int maxRestarts = 5;
         try {
             maxRestarts = Integer.parseInt(prefs.getString("pref_max_restarts", "5"));
@@ -248,6 +224,21 @@ public class MainActivity extends AppCompatActivity
             Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
         }
 
+        if (prefs.getString("pref_url", "").isEmpty()) {
+            mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
+                @Override
+                public void found(String serverUrl) {
+                    SharedPreferences.Editor editor1 = prefs.edit();
+                    editor1.putString("pref_url", serverUrl);
+                    editor1.apply();
+                }
+
+                @Override
+                public void notFound() {
+                }
+            }, prefs.getBoolean("pref_mdns_https", true));
+        }
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         MenuItem i = navigationView.getMenu().findItem(R.id.action_start_app);
         Intent launchIntent = getLaunchIntent(this);
@@ -255,8 +246,6 @@ public class MainActivity extends AppCompatActivity
         if (launchIntent != null) {
             i.setTitle("Launch " + prefs.getString("pref_app_name", "App"));
         }
-
-        allowScrolling = prefs.getBoolean("pref_scrolling", false);
 
         if (mFlashService != null) {
             mFlashService.updateFromPreferences(prefs);
@@ -273,27 +262,22 @@ public class MainActivity extends AppCompatActivity
             mMotionDetector.updateFromPreferences(prefs);
         }
 
-        Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
-        Boolean isJavascript = prefs.getBoolean("pref_javascript", false);
-
-        WebSettings webSettings = mWebView.getSettings();
-        webSettings.setUseWideViewPort(isDesktop);
-        webSettings.setLoadWithOverviewMode(isDesktop);
-        webSettings.setJavaScriptEnabled(isJavascript);
-        webSettings.setDomStorageEnabled(true);
+        mWebView.updateFromPreferences(prefs);
+        mSseClient.updateFromPreferences(prefs);
 
         TextureView previewView = ((TextureView) findViewById(R.id.previewView));
         SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
         boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
         boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
         if (motionDetection) {
+            previewView.setVisibility(View.VISIBLE);
             if (showPreview) {
                 previewView.getLayoutParams().height = 480;
                 previewView.getLayoutParams().width = 640;
 
                 motionView.setVisibility(View.VISIBLE);
             } else {
-                // if we have no preview, we still have to have a visible
+                // if we have no preview, we still need a visible
                 // TextureView in order to have a working motion detection.
                 // Resize it to 1x1pxs so it does not get in the way.
                 previewView.getLayoutParams().height = 1;
@@ -314,14 +298,17 @@ public class MainActivity extends AppCompatActivity
          audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
          int max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
          **/
+    }
 
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-            loadStartUrl();
-            startEventSource();
+    @Override
+    protected void onStop() {
+        if (mDiscovery != null) {
+            // stop discover onStop, but do not set mDiscovery to null as it will be reused
+            // in onStart
+            mDiscovery.terminate();
         }
+
+        super.onStop();
     }
 
     @Override
@@ -343,7 +330,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             showPreferences();
         } else if (id == R.id.action_goto_start_url) {
-            loadStartUrl();
+            mWebView.loadStartUrl();
         } else if (id == R.id.action_reload) {
             mWebView.reload();
         } else if (id == R.id.action_start_app) {
@@ -466,73 +453,4 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void loadStartUrl() {
-        SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        String url = mySharedPreferences.getString("pref_url", "http://openhabianpi:8080");
-        String panel = mySharedPreferences.getString("pref_panel", "");
-
-        url += "/habpanel/index.html#/";
-
-        if (!panel.isEmpty()) {
-            url += "view/" + panel;
-        }
-
-        Boolean isKiosk = mySharedPreferences.getBoolean("pref_kiosk_mode", false);
-        if (isKiosk) {
-            url += "?kiosk=on";
-        } else {
-            url += "?kiosk=off";
-        }
-
-        if (!url.equals(mWebView.getUrl())) {
-            mWebView.clearCache(true);
-            mWebView.clearHistory();
-            mWebView.loadUrl(url);
-        }
-    }
-
-    private synchronized void startEventSource() {
-        if (sseClient != null) {
-            stopEventSource();
-        }
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        String url = prefs.getString("pref_url", "");
-
-        HashSet<String> items = new HashSet<>();
-
-        boolean flashEnabled = mFlashService != null && prefs.getBoolean("pref_flash_enabled", false);
-        if (flashEnabled) {
-            items.add(prefs.getString("pref_flash_item", ""));
-        }
-
-        boolean screenOnEnabled = prefs.getBoolean("pref_screen_enabled", false);
-        if (screenOnEnabled) {
-            items.add(prefs.getString("pref_screen_item", ""));
-        }
-
-        sseClient = new SSEClient(url, items);
-        sseClient.setConnectionListener(this);
-        if (mFlashService != null) {
-            sseClient.addStateListener(mFlashService);
-        }
-        if (mScreenService != null) {
-            sseClient.addStateListener(mScreenService);
-        }
-        sseClient.connect();
-        Log.i("Habpanelview", "EventSource started");
-    }
-
-    private synchronized void stopEventSource() {
-        if (sseClient != null) {
-            if (mFlashService != null) {
-                sseClient.removeStateListener(mFlashService);
-            }
-            if (mScreenService != null) {
-                sseClient.removeStateListener(mScreenService);
-            }
-            sseClient.close();
-            sseClient = null;
-        }
-    }
 }

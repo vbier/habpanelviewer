@@ -1,7 +1,15 @@
 package vier_bier.de.habpanelviewer;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.tylerjroach.eventsource.CertificateIgnoringSSLEngineFactory;
 import com.tylerjroach.eventsource.EventSource;
 import com.tylerjroach.eventsource.EventSourceHandler;
 import com.tylerjroach.eventsource.MessageEvent;
@@ -11,24 +19,133 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Client for openHABs SSE service. Listens for item value changes.
  */
-class SSEClient {
-    private Set<String> items;
-    private String baseUrl;
-    private EventSource eventSource;
+public class SSEClient {
+    private Context mCtx;
+    private String mServerURL;
+    private EventSource mEventSource;
+    private Set<String> mItems;
+
+    private boolean mIgnoreCertErrors;
+
     private SSEHandler client;
     private FetchItemStateTask task;
     private final ArrayList<StateListener> stateListeners = new ArrayList<>();
     private ConnectionListener connectionListener;
 
-    SSEClient(String baseUrl, Set<String> items) {
-        this.items = items;
-        this.baseUrl = baseUrl;
+    private BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                connect();
+            } else {
+                close();
+            }
+        }
+    };
+
+    SSEClient(Context context) {
+        mCtx = context;
+
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        mCtx.registerReceiver(mNetworkReceiver, intentFilter);
+    }
+
+    void updateFromPreferences(SharedPreferences prefs) {
+        HashSet<String> items = new HashSet<>();
+        boolean flashEnabled = prefs.getBoolean("pref_flash_enabled", false);
+        if (flashEnabled) {
+            items.add(prefs.getString("pref_flash_item", ""));
+        }
+
+        boolean screenOnEnabled = prefs.getBoolean("pref_screen_enabled", false);
+        if (screenOnEnabled) {
+            items.add(prefs.getString("pref_screen_item", ""));
+        }
+
+        ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        // in case server url has changed reconnect
+        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_url", "!$%"))) {
+            mServerURL = prefs.getString("pref_url", "!$%");
+            close();
+        }
+
+        // in case items have changed reconnect
+        if (mItems == null || !mItems.equals(items)) {
+            mItems = items;
+
+            close();
+        }
+
+        // in case certification checking has changed reconnect
+        if (mIgnoreCertErrors != prefs.getBoolean("pref_ignore_ssl_errors", false)) {
+            mIgnoreCertErrors = prefs.getBoolean("pref_ignore_ssl_errors", false);
+
+            close();
+        }
+
+        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+            connect();
+        } else {
+            close();
+        }
+    }
+
+    public static SSLContext createSslContext(boolean ignoreCertificateErrors) {
+        SSLContext sslContext;
+        try {
+            TrustManager[] trustAllCerts = null;
+
+            if (ignoreCertificateErrors) {
+                trustAllCerts = new TrustManager[]{new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                        Log.v("TrustManager", "checkClientTrusted");
+                    }
+
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        Log.v("TrustManager", "getAcceptedIssuers");
+                        return null;
+                    }
+
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                        Log.v("TrustManager", "checkServerTrusted");
+                    }
+                }};
+            }
+
+            sslContext = SSLContext.getInstance("TLS");
+            try {
+                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+            } catch (KeyManagementException e) {
+                return null;
+            }
+        } catch (NoSuchAlgorithmException e1) {
+            return null;
+        }
+
+        return sslContext;
     }
 
     void addStateListener(StateListener listener) {
@@ -39,20 +156,14 @@ class SSEClient {
         }
     }
 
-    void removeStateListener(StateListener listener) {
-        synchronized (stateListeners) {
-            stateListeners.remove(listener);
-        }
-    }
-
     void setConnectionListener(ConnectionListener l) {
         connectionListener = l;
     }
 
     void connect() {
-        if (!baseUrl.isEmpty()) {
+        if (!mServerURL.isEmpty() && mEventSource == null) {
             StringBuilder topic = new StringBuilder();
-            for (String item : items) {
+            for (String item : mItems) {
                 if (!item.isEmpty()) {
                     if (topic.length() > 0) {
                         topic.append(",");
@@ -65,40 +176,40 @@ class SSEClient {
                 URI uri;
 
                 try {
-                    uri = new URI(baseUrl + "/rest/events?topics=" + topic.toString());
+                    uri = new URI(mServerURL + "/rest/events?topics=" + topic.toString());
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                     return;
                 }
 
                 client = new SSEHandler();
-                eventSource = new EventSource.Builder(uri)
-                        .eventHandler(client)
-                        .build();
-
-                eventSource.connect();
+                EventSource.Builder builder = new EventSource.Builder(uri).eventHandler(client);
+                if (mServerURL.startsWith("https:")) {
+                    builder = builder.sslEngineFactory(new CertificateIgnoringSSLEngineFactory(mIgnoreCertErrors));
+                }
+                mEventSource = builder.build();
+                mEventSource.connect();
                 Log.d("Habpanelview", "EventSource connected");
                 return;
             }
+        } else {
+            Log.d("Habpanelview", "EventSource connection skipped");
         }
-
-        Log.d("Habpanelview", "EventSource connection skipped");
     }
 
-    boolean close() {
-        boolean closed = false;
-
-        if (eventSource != null) {
-            EventSource oldSource = eventSource;
-            eventSource = null;
-            oldSource.close();
-            closed = true;
+    synchronized void close() {
+        if (mEventSource != null) {
+            mEventSource.close();
+            mEventSource = null;
             Log.d("Habpanelview", "EventSource closed");
         }
 
         client = null;
+    }
 
-        return closed;
+    public void terminate() {
+        mCtx.unregisterReceiver(mNetworkReceiver);
+        stateListeners.clear();
     }
 
     /**
@@ -106,18 +217,19 @@ class SSEClient {
      * If you want to update the ui from a callback, make sure to post to main thread
      */
     private class SSEHandler implements EventSourceHandler {
-        private boolean connected = false;
+        private AtomicBoolean connected = new AtomicBoolean(false);
 
         private SSEHandler() {
         }
 
         @Override
         public void onConnect() {
-            connected = true;
-            Log.v("Habpanelview", "SSE connected");
+            Log.v("Habpanelview", "SSE onConnect");
 
-            connectionListener.connected(baseUrl);
-            fetchCurrentItemsState();
+            if (!connected.getAndSet(true)) {
+                connectionListener.connected(mServerURL);
+                fetchCurrentItemsState();
+            }
         }
 
         @Override
@@ -153,14 +265,10 @@ class SSEClient {
 
         @Override
         public void onClosed(boolean willReconnect) {
-            Log.v("Habpanelview", "onClosed: reConnect=" + String.valueOf(willReconnect));
-            if (connected) {
-                connected = false;
-                connectionListener.disconnected();
+            Log.v("Habpanelview", "SSE onClosed: reConnect=" + String.valueOf(willReconnect));
 
-                if (close()) {
-                    connect();
-                }
+            if (connected.getAndSet(false)) {
+                connectionListener.disconnected();
             }
         }
 
@@ -169,9 +277,9 @@ class SSEClient {
                 task.cancel(true);
             }
 
-            task = new FetchItemStateTask(baseUrl, stateListeners);
+            task = new FetchItemStateTask(mServerURL, stateListeners, mIgnoreCertErrors);
             Log.d("Habpanelview", "Actively fetching items state");
-            task.execute(items);
+            task.execute(mItems);
         }
     }
 }

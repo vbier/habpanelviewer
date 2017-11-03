@@ -137,7 +137,6 @@
         android:key="pref_key_habpanel_settings"
         android:title="@string/pref_habpanel_title">
         <EditTextPreference
-            android:defaultValue="@string/pref_url_default"
             android:key="pref_url"
             android:summary="@string/pref_url_summ"
             android:title="@string/pref_url" />
@@ -150,6 +149,11 @@
             android:key="pref_kiosk_mode"
             android:summary="@string/pref_kiosk_mode_summ"
             android:title="@string/pref_kiosk_mode" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_mdns_https"
+            android:summary="@string/pref_mdns_https_summ"
+            android:title="@string/pref_mdns_https" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_webview_settings"
@@ -169,5 +173,10 @@
             android:key="pref_javascript"
             android:summary="@string/pref_javascript_summ"
             android:title="@string/pref_javascript" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_ignore_ssl_errors"
+            android:summary="@string/pref_ignore_ssl_errors_summ"
+            android:title="@string/pref_ignore_ssl_errors" />
     </PreferenceCategory>
 </PreferenceScreen>

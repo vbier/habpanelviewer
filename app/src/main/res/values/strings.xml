@@ -9,7 +9,7 @@
     <string name="action_exit">Exit</string>
 
     <string name="pref_url">openHAB URL</string>
-    <string name="pref_url_summ">URL of the openHAB server</string>
+    <string name="pref_url_summ">URL of the openHAB server. Clear this value to trigger mDNS discovery.</string>
     <string name="pref_url_default">http://openhabianpi:8080</string>
     <string name="pref_desktop_mode">Desktop mode</string>
     <string name="pref_desktop_mode_summ">Show pages in desktop mode instead of mobile mode</string>
@@ -18,8 +18,8 @@
     <string name="pref_javascript">Enable Javascript</string>
     <string name="pref_javascript_summ">Enables Javascript in the WebView</string>
     <string name="pref_kiosk_mode">Kiosk Mode</string>
-    <string name="pref_kiosk_mode_summ">Use Habpanel in Kiosk Mode. This hides the title bar and the menu</string>
-    <string name="pref_habpanel_title">HabPanel</string>
+    <string name="pref_kiosk_mode_summ">Use HABPanel in Kiosk Mode. This hides the title bar and the menu</string>
+    <string name="pref_habpanel_title">HABPanel</string>
     <string name="pref_webview_title">Browsing</string>
     <string name="pref_screen_enabled">Toggle screen backlight dependent on item</string>
     <string name="pref_screen_enabled_summ">Allows to enable/disable the screen backlight depending on the actual value of an openHAB item</string>
@@ -52,10 +52,10 @@
     <string name="pref_app_package_default">com.alphainventor.filemanager</string>
 
     <string name="not_connected">not connected</string>
-    <string name="pref_settings_title">HabpanelViewer</string>
+    <string name="pref_settings_title">HABPanelViewer</string>
     <string name="pref_app_enabled">Show application shortcut in menu</string>
     <string name="pref_app_enabled_summ">Allows to launch an application with a shortcut from the menu</string>
-    <string name="pref_restart_enabled_summ">Habpanelviewer is automatically restarted after a crash</string>
+    <string name="pref_restart_enabled_summ">HABPanelViewer is automatically restarted after a crash</string>
     <string name="pref_restart_enabled">Restart on crash</string>
     <string name="pref_motion_detection_enabled">Motion Detection</string>
     <string name="pref_motion_detection_enabled_summ">Turn screen on when motion is detected</string>
@@ -72,4 +72,8 @@
     <string name="pref_motion_detection_granularity_summ">The number of rectangles per axis the image is divided into to detect changes.</string>
     <string name="pref_motion_detection_leniency">Detection leniency</string>
     <string name="pref_motion_detection_leniency_summ">Threshold of changed pixels in a single detection are that triggers motion</string>
+    <string name="pref_ignore_ssl_errors">Ignore certificate errors for openHAB host</string>
+    <string name="pref_ignore_ssl_errors_summ">Ignore certificate errors for requests to the openHAB hosts. On change, a restart will be performed when you exit the settings.</string>
+    <string name="pref_mdns_https_summ">Try to find secure connection when performing discovery</string>
+    <string name="pref_mdns_https">HTTPS discovery</string>
 </resources>

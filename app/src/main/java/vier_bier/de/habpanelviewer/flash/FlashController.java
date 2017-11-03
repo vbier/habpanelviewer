@@ -127,8 +127,10 @@ public class FlashController implements StateListener {
     public void updateFromPreferences(SharedPreferences prefs) {
         flashPulsatingPattern = null;
         flashOnPattern = null;
-        flashItemName = prefs.getString("pref_flash_item", "");
-        flashItemState = null;
+        if (flashItemName == null || !flashItemName.equalsIgnoreCase(prefs.getString("pref_flash_item", ""))) {
+            flashItemName = prefs.getString("pref_flash_item", "");
+            flashItemState = null;
+        }
         enabled = prefs.getBoolean("pref_flash_enabled", false);
 
         String pulsatingRegexpStr = prefs.getString("pref_flash_pulse_regex", "");

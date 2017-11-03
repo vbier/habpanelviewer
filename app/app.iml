@@ -106,6 +106,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/split-apk" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/splits-support" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
@@ -121,12 +122,12 @@
     <orderEntry type="library" scope="TEST" name="javax.inject:javax.inject:1@jar" level="project" />
     <orderEntry type="library" scope="TEST" name="com.squareup:javawriter:2.1.1@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-v4-26.0.0-alpha1" level="project" />
-    <orderEntry type="library" name="com.tylerjroach:eventsource-1.2.11" level="project" />
     <orderEntry type="library" name="com.android.support:design-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="com.android.support:support-compat-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="com.android.support:support-core-utils-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="com.android.support.constraint:constraint-layout-solver:1.0.2@jar" level="project" />
     <orderEntry type="library" name="com.android.support.constraint:constraint-layout-1.0.2" level="project" />
+    <orderEntry type="library" name="eventsource-debug:@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="com.google.code.findbugs:jsr305:2.0.1@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-vector-drawable-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="com.android.support:animated-vector-drawable-26.0.0-alpha1" level="project" />

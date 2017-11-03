@@ -17,6 +17,10 @@ import java.net.URL;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 /**
  * Fragment for preferences.
  */
@@ -26,6 +30,7 @@ public class SettingsFragment extends PreferenceFragment {
     private boolean screenEnabled = false;
 
     private boolean newApi = false;
+    private boolean ignoreCertErrors = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,11 +83,13 @@ public class SettingsFragment extends PreferenceFragment {
     public void onStart() {
         super.onStart();
         newApi = ((CheckBoxPreference) findPreference("pref_motion_detection_new_api")).isChecked();
+        ignoreCertErrors = ((CheckBoxPreference) findPreference("pref_ignore_ssl_errors")).isChecked();
     }
 
     @Override
     public void onStop() {
-        if (newApi != ((CheckBoxPreference) findPreference("pref_motion_detection_new_api")).isChecked()) {
+        if (newApi != ((CheckBoxPreference) findPreference("pref_motion_detection_new_api")).isChecked()
+                || ignoreCertErrors != ((CheckBoxPreference) findPreference("pref_ignore_ssl_errors")).isChecked()) {
             ProcessPhoenix.triggerRebirth(getActivity());
         }
         super.onStop();
@@ -108,12 +115,28 @@ public class SettingsFragment extends PreferenceFragment {
         public boolean onPreferenceChange(final Preference preference, Object o) {
             String text = (String) o;
 
+            if (text == null || text.isEmpty()) {
+                return true;
+            }
             AsyncTask<String, Void, Void> validator = new AsyncTask<String, Void, Void>() {
                 @Override
                 protected Void doInBackground(String... urls) {
                     try {
                         URL url = new URL(urls[0]);
                         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                        if (urlConnection instanceof HttpsURLConnection) {
+                            ((HttpsURLConnection) urlConnection).setSSLSocketFactory(SSEClient.createSslContext(ignoreCertErrors).getSocketFactory());
+
+                            HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+                                @Override
+                                public boolean verify(String hostname, SSLSession session) {
+                                    HostnameVerifier hv =
+                                            HttpsURLConnection.getDefaultHostnameVerifier();
+                                    return hv.verify("openhab.org", session);
+                                }
+                            };
+                            ((HttpsURLConnection) urlConnection).setHostnameVerifier(hostnameVerifier);
+                        }
                         urlConnection.setConnectTimeout(200);
                         urlConnection.connect();
                         urlConnection.disconnect();

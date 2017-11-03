@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer;
+package vier_bier.de.habpanelviewer.screen;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -12,12 +12,14 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import vier_bier.de.habpanelviewer.R;
+import vier_bier.de.habpanelviewer.StateListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Controller for the screen backlight.
  */
-class ScreenController implements StateListener {
+public class ScreenController implements StateListener {
     private final PowerManager.WakeLock screenOnLock;
     private final Activity activity;
 
@@ -29,7 +31,7 @@ class ScreenController implements StateListener {
 
     private ApplicationStatus mStatus;
 
-    ScreenController(PowerManager pwrManager, Activity activity) {
+    public ScreenController(PowerManager pwrManager, Activity activity) {
         this.activity = activity;
         EventBus.getDefault().register(this);
 
@@ -37,11 +39,11 @@ class ScreenController implements StateListener {
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "HabpanelViewer");
     }
 
-    void screenOff() {
+    public void screenOff() {
         activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(false);
     }
 
-    synchronized void screenOn() {
+    public synchronized void screenOn() {
         if (!screenOnLock.isHeld()) {
             screenOnLock.acquire();
             screenOnLock.release();
@@ -50,26 +52,10 @@ class ScreenController implements StateListener {
         activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(true);
     }
 
-    boolean isEnabled() {
-        return enabled;
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
         mStatus = status;
         addStatusItems();
-    }
-
-    private void addStatusItems() {
-        if (mStatus == null) {
-            return;
-        }
-
-        if (isEnabled()) {
-            mStatus.set("Backlight Control", "enabled\n" + screenOnItemName + "=" + screenOnItemState);
-        } else {
-            mStatus.set("Backlight Control", "disabled");
-        }
     }
 
     @Override
@@ -96,10 +82,12 @@ class ScreenController implements StateListener {
         }
     }
 
-    void updateFromPreferences(SharedPreferences prefs) {
+    public void updateFromPreferences(SharedPreferences prefs) {
         screenOnPattern = null;
-        screenOnItemName = prefs.getString("pref_screen_item", "");
-        screenOnItemState = null;
+        if (screenOnItemName == null || !screenOnItemName.equalsIgnoreCase(prefs.getString("pref_screen_item", ""))) {
+            screenOnItemName = prefs.getString("pref_screen_item", "");
+            screenOnItemState = null;
+        }
         enabled = prefs.getBoolean("pref_screen_enabled", false);
 
         String onRegexpStr = prefs.getString("pref_screen_on_regex", "");
@@ -112,4 +100,19 @@ class ScreenController implements StateListener {
         }
     }
 
+    private boolean isEnabled() {
+        return enabled;
+    }
+
+    private void addStatusItems() {
+        if (mStatus == null) {
+            return;
+        }
+
+        if (isEnabled()) {
+            mStatus.set("Backlight Control", "enabled\n" + screenOnItemName + "=" + screenOnItemState);
+        } else {
+            mStatus.set("Backlight Control", "disabled");
+        }
+    }
 }

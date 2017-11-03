@@ -8,7 +8,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
-        versionName "0.9.2"
+        versionName "0.9.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
     }
@@ -21,16 +21,19 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support:support-v4:26.+'
-    compile 'com.android.support:design:26.+'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.tylerjroach:eventsource:1.2.11'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.jakewharton:process-phoenix:2.0.0'
-    testCompile 'junit:junit:4.12'
+
+    implementation(name:'eventsource-debug', ext:'aar')
+    implementation 'org.jboss.netty:netty:3.2.10.Final'
+
+    implementation 'com.android.support:appcompat-v7:26.+'
+    implementation 'com.android.support:support-v4:26.+'
+    implementation 'com.android.support:design:26.+'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.jakewharton:process-phoenix:2.0.0'
+    testImplementation 'junit:junit:4.12'
 }

@@ -19,7 +19,7 @@ public class ApplicationStatus {
         mContext = context;
     }
 
-    public void set(String key, String value) {
+    public synchronized void set(String key, String value) {
         StatusItem item = mIndices.get(key);
         if (item == null) {
             item = new StatusItem(key, value);
@@ -29,16 +29,14 @@ public class ApplicationStatus {
             item.setValue(value);
         }
 
-        synchronized (mAdapter) {
-            if (mAdapter != null) {
-                final BaseAdapter adapter = mAdapter;
-                mContext.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-            }
+        if (mAdapter != null) {
+            final BaseAdapter adapter = mAdapter;
+            mContext.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
         }
     }
 
@@ -50,9 +48,7 @@ public class ApplicationStatus {
         return mValues.get(i);
     }
 
-    public void registerAdapter(BaseAdapter adapter) {
-        synchronized (mAdapter) {
-            mAdapter = adapter;
-        }
+    public synchronized void registerAdapter(BaseAdapter adapter) {
+        mAdapter = adapter;
     }
 }
