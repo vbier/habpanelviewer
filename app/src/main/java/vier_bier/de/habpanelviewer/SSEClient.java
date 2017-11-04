@@ -82,6 +82,11 @@ public class SSEClient {
             items.add(prefs.getString("pref_screen_item", ""));
         }
 
+        boolean volumeEnabled = prefs.getBoolean("pref_volume_enabled", false);
+        if (volumeEnabled) {
+            items.add(prefs.getString("pref_volume_item", ""));
+        }
+
         ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 

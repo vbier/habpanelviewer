@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.camera2.CameraManager;
+import android.media.AudioManager;
 import android.net.nsd.NsdManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import vier_bier.de.habpanelviewer.screen.ScreenController;
 import vier_bier.de.habpanelviewer.settings.SetPreferenceActivity;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 import vier_bier.de.habpanelviewer.status.StatusInfoActivity;
+import vier_bier.de.habpanelviewer.volume.VolumeController;
 
 /**
  * Main activity showing the Webview for openHAB.
@@ -62,13 +64,13 @@ public class MainActivity extends AppCompatActivity
     private ServerDiscovery mDiscovery;
     private FlashController mFlashService;
     private ScreenController mScreenService;
+    private VolumeController mVolumeController;
     private IMotionDetector mMotionDetector;
     private ApplicationStatus mStatus;
 
     private int mRestartCount;
 
-    //TODO.vb. adapt volume settings: AudioManager
-    //TODO.vb. load list of available panels from HABPanel for selection in preferences
+    //TODO.vb. report battery state to openHAB
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
     //TODO.vb. check if proximity sensor can be used
     //TODO.vb. check if light sensor can be used
@@ -180,6 +182,8 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        mVolumeController = new VolumeController((AudioManager) getSystemService(Context.AUDIO_SERVICE));
+
         mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
         mSseClient = new SSEClient(this);
         mSseClient.setConnectionListener(this);
@@ -189,6 +193,9 @@ public class MainActivity extends AppCompatActivity
         }
         if (mScreenService != null) {
             mSseClient.addStateListener(mScreenService);
+        }
+        if (mVolumeController != null) {
+            mSseClient.addStateListener(mVolumeController);
         }
 
         mRestartCount = getIntent().getIntExtra("restartCount", 0);
@@ -270,6 +277,10 @@ public class MainActivity extends AppCompatActivity
             mMotionDetector.updateFromPreferences(prefs);
         }
 
+        if (mVolumeController != null) {
+            mVolumeController.updateFromPreferences(prefs);
+        }
+
         mWebView.updateFromPreferences(prefs);
         mSseClient.updateFromPreferences(prefs);
 
@@ -300,12 +311,6 @@ public class MainActivity extends AppCompatActivity
             previewView.setVisibility(View.INVISIBLE);
             motionView.setVisibility(View.INVISIBLE);
         }
-
-        /**
-         AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-         int max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-         **/
     }
 
     @Override

@@ -132,6 +132,21 @@
                 android:summary="@string/pref_motion_detection_leniency_summ"
                 android:title="@string/pref_motion_detection_leniency" />
         </PreferenceScreen>
+        <PreferenceScreen
+            android:key="pref_volume"
+            android:persistent="false"
+            android:title="@string/pref_volume">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref_volume_enabled"
+                android:summary="@string/pref_volume_enabled_summ"
+                android:title="@string/pref_volume_enabled" />
+            <EditTextPreference
+                android:dependency="pref_volume_enabled"
+                android:key="pref_volume_item"
+                android:summary="@string/pref_volume_item_summ"
+                android:title="@string/pref_volume_item" />
+        </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_habpanel_settings"
