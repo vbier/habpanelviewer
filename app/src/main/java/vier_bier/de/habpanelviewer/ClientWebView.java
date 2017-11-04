@@ -107,7 +107,7 @@ public class ClientWebView extends WebView {
                     }
 
                     SslCertificate cert = error.getCertificate();
-                    String certInfo = cert.toString().replaceAll(";", "<br/>");
+                    String certInfo = cert.toString().replaceAll(";", "<br/>").replaceAll(",", "<br/>&nbsp;");
                     certInfo += "Valid from: " + cert.getValidNotBefore() + "<br/>";
                     certInfo += "Valid until: " + cert.getValidNotAfter() + "<br/>";
                     loadData("<html><body><h1>SSL Certificate Invalid!</h1><h2>The SSL Certificate served by https://" + host + " " + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8");
@@ -194,7 +194,7 @@ public class ClientWebView extends WebView {
             loadStartUrl = true;
         }
 
-        if (mStartPanel == null || !mStartPanel.equalsIgnoreCase(prefs.getString("pref_panel", "!$%"))) {
+        if (mStartPanel == null || !mStartPanel.equalsIgnoreCase(prefs.getString("pref_panel", ""))) {
             mStartPanel = prefs.getString("pref_panel", "");
             loadStartUrl = true;
         }

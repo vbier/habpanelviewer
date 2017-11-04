@@ -10,18 +10,18 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * mDNS discovery for openHAB.
  */
-class ServerDiscovery {
+public class ServerDiscovery {
     private static final String TAG = "ServerDiscovery";
 
     private final NsdManager mNsdManager;
     private NsdManager.DiscoveryListener mDiscoveryListener;
     private final AtomicReference<String> mUrl = new AtomicReference<>();
 
-    ServerDiscovery(NsdManager nsdManager) {
+    public ServerDiscovery(NsdManager nsdManager) {
         mNsdManager = nsdManager;
     }
 
-    synchronized void discover(final DiscoveryListener l, final boolean discoverHttp, final boolean discoverHttps) {
+    public synchronized void discover(final DiscoveryListener l, final boolean discoverHttp, final boolean discoverHttps) {
         if (mDiscoveryListener != null) {
             return;
         }

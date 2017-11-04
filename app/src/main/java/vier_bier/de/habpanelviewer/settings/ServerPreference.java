@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer;
+package vier_bier.de.habpanelviewer.settings;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -15,6 +15,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import vier_bier.de.habpanelviewer.ServerDiscovery;
 
 /**
  * TextPreference with an additional button to trigger mDNS server discovery.

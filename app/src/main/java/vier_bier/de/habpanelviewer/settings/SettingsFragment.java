@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer;
+package vier_bier.de.habpanelviewer.settings;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -19,7 +19,12 @@ import java.util.regex.PatternSyntaxException;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSession;
+
+import vier_bier.de.habpanelviewer.R;
+import vier_bier.de.habpanelviewer.SSEClient;
+import vier_bier.de.habpanelviewer.UiUtil;
 
 /**
  * Fragment for preferences.
@@ -74,7 +79,7 @@ public class SettingsFragment extends PreferenceFragment {
         EditTextPreference urlPreference = (EditTextPreference) findPreference("pref_url");
         urlPreference.setOnPreferenceChangeListener(new URLValidatingListener());
 
-        // add validation to the openHAB url
+        // add validation to the package name
         EditTextPreference pkgPreference = (EditTextPreference) findPreference("pref_app_package");
         pkgPreference.setOnPreferenceChangeListener(new PackageValidatingListener());
     }
@@ -122,7 +127,7 @@ public class SettingsFragment extends PreferenceFragment {
                 @Override
                 protected Void doInBackground(String... urls) {
                     try {
-                        URL url = new URL(urls[0]);
+                        final URL url = new URL(urls[0]);
                         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                         if (urlConnection instanceof HttpsURLConnection) {
                             ((HttpsURLConnection) urlConnection).setSSLSocketFactory(SSEClient.createSslContext(ignoreCertErrors).getSocketFactory());
@@ -130,9 +135,7 @@ public class SettingsFragment extends PreferenceFragment {
                             HostnameVerifier hostnameVerifier = new HostnameVerifier() {
                                 @Override
                                 public boolean verify(String hostname, SSLSession session) {
-                                    HostnameVerifier hv =
-                                            HttpsURLConnection.getDefaultHostnameVerifier();
-                                    return hv.verify("openhab.org", session);
+                                    return hostname.equalsIgnoreCase(url.getHost());
                                 }
                             };
                             ((HttpsURLConnection) urlConnection).setHostnameVerifier(hostnameVerifier);
@@ -142,6 +145,8 @@ public class SettingsFragment extends PreferenceFragment {
                         urlConnection.disconnect();
                     } catch (MalformedURLException e) {
                         UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", urls[0] + " is not a valid URL");
+                    } catch (SSLException e) {
+                        UiUtil.showDialog(getActivity(), "Certificate invalid", "Could not connect to openHAB at URL " + urls[0]);
                     } catch (IOException e) {
                         UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", "Could not connect to openHAB at URL " + urls[0]);
                     }

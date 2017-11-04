@@ -36,7 +36,7 @@ class FetchItemStateTask extends AsyncTask<Set<String>, Void, Void> {
                 String response = "";
 
                 try {
-                    URL url = new URL(serverUrl + "/rest/items/" + itemName + "/state");
+                    final URL url = new URL(serverUrl + "/rest/items/" + itemName + "/state");
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     if (urlConnection instanceof HttpsURLConnection && ignoreCertErrors) {
                         ((HttpsURLConnection) urlConnection).setSSLSocketFactory(SSEClient.createSslContext(ignoreCertErrors).getSocketFactory());
@@ -44,9 +44,7 @@ class FetchItemStateTask extends AsyncTask<Set<String>, Void, Void> {
                         HostnameVerifier hostnameVerifier = new HostnameVerifier() {
                             @Override
                             public boolean verify(String hostname, SSLSession session) {
-                                HostnameVerifier hv =
-                                        HttpsURLConnection.getDefaultHostnameVerifier();
-                                return hv.verify("openhab.org", session);
+                                return hostname.equalsIgnoreCase(url.getHost());
                             }
                         };
                         ((HttpsURLConnection) urlConnection).setHostnameVerifier(hostnameVerifier);

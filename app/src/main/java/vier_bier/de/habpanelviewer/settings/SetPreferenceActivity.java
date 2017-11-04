@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer;
+package vier_bier.de.habpanelviewer.settings;
 
 import android.app.Activity;
 import android.os.Bundle;

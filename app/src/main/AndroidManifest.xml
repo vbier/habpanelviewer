@@ -41,7 +41,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SetPreferenceActivity"
+            android:name=".settings.SetPreferenceActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Settings" />
         <activity

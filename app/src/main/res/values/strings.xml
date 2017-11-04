@@ -18,7 +18,7 @@
     <string name="pref_javascript_summ">Enables Javascript in the WebView</string>
     <string name="pref_kiosk_mode">Kiosk Mode</string>
     <string name="pref_kiosk_mode_summ">Use HABPanel in Kiosk Mode. This hides the title bar and the menu</string>
-    <string name="pref_habpanel_title">HABPanel</string>
+    <string name="pref_habpanel_title">openHAB &amp; HABPanel</string>
     <string name="pref_webview_title">Browsing</string>
     <string name="pref_screen_enabled">Toggle screen backlight dependent on item</string>
     <string name="pref_screen_enabled_summ">Allows to enable/disable the screen backlight depending on the actual value of an openHAB item</string>

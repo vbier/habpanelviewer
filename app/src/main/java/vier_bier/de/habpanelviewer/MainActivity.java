@@ -44,6 +44,7 @@ import vier_bier.de.habpanelviewer.motion.MotionDetectorCamera2;
 import vier_bier.de.habpanelviewer.motion.MotionListener;
 import vier_bier.de.habpanelviewer.motion.MotionVisualizer;
 import vier_bier.de.habpanelviewer.screen.ScreenController;
+import vier_bier.de.habpanelviewer.settings.SetPreferenceActivity;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 import vier_bier.de.habpanelviewer.status.StatusInfoActivity;
 

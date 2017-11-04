@@ -86,8 +86,8 @@ public class SSEClient {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
         // in case server url has changed reconnect
-        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_url", "!$%"))) {
-            mServerURL = prefs.getString("pref_url", "!$%");
+        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_url", ""))) {
+            mServerURL = prefs.getString("pref_url", "");
             close();
         }
 
@@ -177,8 +177,13 @@ public class SSEClient {
 
                 try {
                     uri = new URI(mServerURL + "/rest/events?topics=" + topic.toString());
+
+                    if (uri.getPort() < 0 || uri.getPort() > 65535) {
+                        Log.e("Habpanelview", "Could not create SSE connection, port out of range: " + uri.getPort());
+                        return;
+                    }
                 } catch (URISyntaxException e) {
-                    e.printStackTrace();
+                    Log.e("Habpanelview", "Could not create SSE connection", e);
                     return;
                 }
 
