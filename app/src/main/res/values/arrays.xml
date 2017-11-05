@@ -32,4 +32,8 @@
         <item>85</item>
         <item>90</item>
     </string-array>
+    <string-array name="menupositions">
+        <item>left</item>
+        <item>right</item>
+    </string-array>
 </resources>

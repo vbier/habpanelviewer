@@ -19,6 +19,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.SurfaceView;
@@ -255,6 +256,14 @@ public class MainActivity extends AppCompatActivity
         }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
+        final String menuPos = prefs.getString("pref_menu_position", "right");
+        if (menuPos.equalsIgnoreCase("left")) {
+            params.gravity = Gravity.START;
+        } else {
+            params.gravity = Gravity.END;
+        }
+
         MenuItem i = navigationView.getMenu().findItem(R.id.action_start_app);
         Intent launchIntent = getLaunchIntent(this);
         i.setVisible(launchIntent != null);
@@ -367,7 +376,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawer.closeDrawers();
         return true;
     }
 

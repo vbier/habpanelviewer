@@ -147,6 +147,13 @@
                 android:summary="@string/pref_volume_item_summ"
                 android:title="@string/pref_volume_item" />
         </PreferenceScreen>
+        <ListPreference
+            android:defaultValue="right"
+            android:key="pref_menu_position"
+            android:entries="@array/menupositions"
+            android:entryValues="@array/menupositions"
+            android:summary="@string/pref_menu_position_summ"
+            android:title="@string/pref_menu_position" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_habpanel_settings"

@@ -55,32 +55,37 @@ public class MotionVisualizer implements MotionListener {
             final Canvas canvas = mMotionView.getHolder().lockCanvas();
 
             if (canvas != null) {
-                int boxes = Integer.parseInt(mPreferences.getString("pref_motion_detection_granularity", "20"));
-                float xsize = canvas.getWidth() / (float) boxes;
-                float ysize = canvas.getHeight() / (float) boxes;
+                try {
+                    int boxes = Integer.parseInt(mPreferences.getString("pref_motion_detection_granularity", "20"));
+                    float xsize = canvas.getWidth() / (float) boxes;
+                    float ysize = canvas.getHeight() / (float) boxes;
 
-                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
-                if (mNavigationView.isShown()) {
-                    Rect r1 = new Rect();
-                    mNavigationView.getGlobalVisibleRect(r1);
+                    if (mNavigationView.isShown()) {
+                        Rect r1 = new Rect();
+                        mNavigationView.getGlobalVisibleRect(r1);
 
-                    Rect r2 = new Rect();
-                    mMotionView.getGlobalVisibleRect(r2);
+                        Rect r2 = new Rect();
+                        mMotionView.getGlobalVisibleRect(r2);
 
-                    if (r1.intersect(r2)) {
-                        int clipLeft = r1.right - r2.left;
-                        canvas.clipRect(clipLeft, 0, canvas.getWidth(), canvas.getHeight());
+                        if (r1.left == 0) {
+                            // drawer from left
+                            canvas.clipRect(r1.right - r2.left, 0, r2.right, r2.bottom);
+                        } else {
+                            // drawer from right
+                            canvas.clipRect(0, 0, r1.left - r2.left, r2.bottom);
+                        }
                     }
+
+                    canvas.drawText("Motion", (canvas.getWidth() - mMotionTextWidth) / 2, 50, mPaint);
+
+                    for (Point p : differing) {
+                        canvas.drawRect(p.x * xsize, p.y * ysize, p.x * xsize + xsize, p.y * ysize + ysize, mPaint);
+                    }
+                } finally {
+                    mMotionView.getHolder().unlockCanvasAndPost(canvas);
                 }
-
-                canvas.drawText("Motion", (canvas.getWidth() - mMotionTextWidth) / 2, 50, mPaint);
-
-                for (Point p : differing) {
-                    canvas.drawRect(p.x * xsize, p.y * ysize, p.x * xsize + xsize, p.y * ysize + ysize, mPaint);
-                }
-
-                mMotionView.getHolder().unlockCanvasAndPost(canvas);
             }
         }
 
