@@ -1,0 +1,22 @@
+0.9.6
+=====
+- fixed crash on start
+- added dialog with new features that is shown on update
+
+0.9.5
+=====
+- main menu has been moved to the right
+- added preference entry for choosing the side from which to pull out the main menu
+
+0.9.4
+=====
+- mDNS discovery is now only performed on first start (no longer when the server url is empty) and can additionally be started from the openHAB URL preference
+- the app does now allow to change the volume depending on an openHAB item. For this to work, the item has to contain a number in the range from 0…max volume. the maximal volume depends on the hardware and can be found on the application status information screen
+- in case of invalid certificates, certificate details are now shown
+
+0.9.3
+=====
+- fixes the sometimes missing motion detection preview
+- adds mDNS discovery for the openHAB server (this is triggered on the first start and whenever the URL is made empty in the settings) and removed the URL default value
+- added HTTPS support (this worked before with a valid certificate, but not with the standard openHAB certificate. i have added an option that allows to ignore invalid vertificates coming from the configured URL)
+- improved speed of app startup and wakeup behaviour

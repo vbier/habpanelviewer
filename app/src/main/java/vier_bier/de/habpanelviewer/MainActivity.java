@@ -181,6 +181,16 @@ public class MainActivity extends AppCompatActivity
                     }
                 }, true, true);
             }
+        } else {
+            String lastVersion = prefs.getString("pref_app_version", "0.9.2");
+
+            if (!BuildConfig.VERSION_NAME.equals(lastVersion)) {
+                SharedPreferences.Editor editor1 = prefs.edit();
+                editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
+                editor1.apply();
+
+                ReleaseNotesUtil.showUpdateDialog(this, lastVersion);
+            }
         }
 
         mVolumeController = new VolumeController((AudioManager) getSystemService(Context.AUDIO_SERVICE));

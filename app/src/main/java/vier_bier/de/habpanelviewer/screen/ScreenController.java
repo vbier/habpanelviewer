@@ -41,7 +41,6 @@ public class ScreenController implements StateListener {
 
     public void screenOff() {
         activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(false);
-        activity.findViewById(R.id.info_listview).setKeepScreenOn(false);
     }
 
     public synchronized void screenOn() {
@@ -51,7 +50,6 @@ public class ScreenController implements StateListener {
         }
 
         activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(true);
-        activity.findViewById(R.id.info_listview).setKeepScreenOn(true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
