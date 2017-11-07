@@ -1,3 +1,7 @@
+0.9.7pre
+========
+- add webview version info to status information
+
 0.9.6
 =====
 - fixed crash on start

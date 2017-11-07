@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.camera2.CameraManager;
@@ -483,6 +484,25 @@ public class MainActivity extends AppCompatActivity
         if (mRestartCount != 0) {
             mStatus.set("Restart Counter", String.valueOf(mRestartCount));
         }
+
+        String webview = "";
+        PackageManager pm = getPackageManager();
+        try {
+            PackageInfo pi = pm.getPackageInfo("com.google.android.webview", 0);
+            webview += "com.google.android.webview " + pi.versionName + "/" + pi.versionCode + "\n";
+        } catch (PackageManager.NameNotFoundException e) {
+        }
+
+        try {
+            PackageInfo pi = pm.getPackageInfo("com.android.webview", 0);
+            webview += "com.android.webview " + pi.versionName + "/" + pi.versionCode + "\n";
+        } catch (PackageManager.NameNotFoundException e1) {
+        }
+
+        if (webview.isEmpty()) {
+            webview = mWebView.getSettings().getUserAgentString();
+        }
+        mStatus.set("Webview", webview.trim());
     }
 
 }
