@@ -29,7 +29,7 @@ import java.net.URL;
  * WebView
  */
 public class ClientWebView extends WebView {
-    private boolean mScrollingAllowed;
+    private boolean mDraggingPrevented;
     private boolean mIgnoreCertErrors;
     private boolean mKioskMode;
     private String mServerURL;
@@ -131,7 +131,7 @@ public class ClientWebView extends WebView {
         setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                return (event.getAction() == MotionEvent.ACTION_MOVE && !mScrollingAllowed);
+                return (event.getAction() == MotionEvent.ACTION_MOVE && mDraggingPrevented);
             }
         });
 
@@ -167,13 +167,11 @@ public class ClientWebView extends WebView {
 
         if (!panel.isEmpty()) {
             url += "view/" + panel;
-        }
 
-        Boolean isKiosk = prefs.getBoolean("pref_kiosk_mode", false);
-        if (isKiosk) {
-            url += "?kiosk=on";
-        } else {
-            url += "?kiosk=off";
+            Boolean isKiosk = prefs.getBoolean("pref_kiosk_mode", false);
+            if (isKiosk) {
+                url += "?kiosk=on";
+            }
         }
 
         final String newUrl = url;
@@ -181,6 +179,7 @@ public class ClientWebView extends WebView {
             @Override
             public void run() {
                 if (getUrl() == null || !newUrl.equalsIgnoreCase(getUrl())) {
+                    loadUrl("about:blank");
                     loadUrl(newUrl);
                 }
             }
@@ -190,7 +189,7 @@ public class ClientWebView extends WebView {
     void updateFromPreferences(SharedPreferences prefs) {
         Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
         Boolean isJavascript = prefs.getBoolean("pref_javascript", false);
-        mScrollingAllowed = prefs.getBoolean("pref_scrolling", true);
+        mDraggingPrevented = prefs.getBoolean("pref_prevent_dragging", false);
         mIgnoreCertErrors = prefs.getBoolean("pref_ignore_ssl_errors", false);
 
         WebSettings webSettings = getSettings();

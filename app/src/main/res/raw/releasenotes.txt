@@ -2,6 +2,8 @@
 ========
 - add webview version info to status information
 - use immersive mode for webview
+- changed "Allow Scrolling" preference to "Prevent Dragging". Changed default behaviour to allow scrolling
+- fixed toggling of kiosk mode with 2.2-snapshot of HABPanel
 
 0.9.6
 =====
