@@ -1,6 +1,7 @@
 0.9.7pre
 ========
 - add webview version info to status information
+- use immersive mode for webview
 
 0.9.6
 =====
