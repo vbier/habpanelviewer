@@ -273,12 +273,12 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
                 camStr += (hasFlash ? "has" : "no") + " flash, ";
-                camStr += (facing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front") + "-facing";
+                camStr += (facing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front") + "-facing\n";
             }
         } catch (CameraAccessException e) {
             camStr = "failed to access camera service: " + e.getMessage();
         }
 
-        return camStr;
+        return camStr.trim();
     }
 }

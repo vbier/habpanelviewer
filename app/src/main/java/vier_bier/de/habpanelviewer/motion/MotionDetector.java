@@ -131,9 +131,9 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
                     .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 
             camStr += (hasFlash ? "has" : "no") + " flash, ";
-            camStr += (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK ? "back" : "front") + "-facing";
+            camStr += (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK ? "back" : "front") + "-facing\n";
         }
 
-        return camStr;
+        return camStr.trim();
     }
 }
