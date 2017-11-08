@@ -51,6 +51,12 @@
                 android:key="pref_screen_enabled"
                 android:summary="@string/pref_screen_enabled_summ"
                 android:title="@string/pref_screen_enabled" />
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:dependency="pref_screen_enabled"
+                android:key="pref_screen_stay_enabled"
+                android:summary="@string/pref_screen_stay_enabled_summ"
+                android:title="@string/pref_screen_stay_enabled" />
             <EditTextPreference
                 android:defaultValue="@string/pref_screen_item_default"
                 android:dependency="pref_screen_enabled"

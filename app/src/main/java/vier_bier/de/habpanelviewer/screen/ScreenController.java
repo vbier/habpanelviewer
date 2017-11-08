@@ -24,6 +24,7 @@ public class ScreenController implements StateListener {
     private final Activity activity;
 
     private boolean enabled;
+    private boolean keepOn;
     private String screenOnItemName;
     private String screenOnItemState;
 
@@ -49,7 +50,9 @@ public class ScreenController implements StateListener {
             screenOnLock.release();
         }
 
-        activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(true);
+        if (keepOn) {
+            activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(true);
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -89,6 +92,7 @@ public class ScreenController implements StateListener {
             screenOnItemState = null;
         }
         enabled = prefs.getBoolean("pref_screen_enabled", false);
+        keepOn = prefs.getBoolean("pref_screen_stay_enabled", false);
 
         String onRegexpStr = prefs.getString("pref_screen_on_regex", "");
         if (!onRegexpStr.isEmpty()) {
