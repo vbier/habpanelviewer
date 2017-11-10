@@ -1,12 +1,11 @@
-0.9.7pre
-========
+0.9.7
+=====
 - add webview version info to status information
 - use immersive mode for webview
 - changed "Allow Scrolling" preference to "Prevent Dragging". Changed default behaviour to allow scrolling
 - fixed toggling of kiosk mode with 2.2-snapshot of HABPanel
 - add preference allowing to control whether screen shall stay on as long as regexp matches
-- disable uploading of  anonymous diagnostic data to Google by the webview
-- add newline to motion detection status information
+- disable uploading of anonymous diagnostic data to Google by the webview
 
 0.9.6
 =====
