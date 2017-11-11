@@ -165,7 +165,12 @@ public class MainActivity extends AppCompatActivity
         if (prefs.getBoolean("pref_first_start", true)) {
             SharedPreferences.Editor editor1 = prefs.edit();
             editor1.putBoolean("pref_first_start", false);
+            editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
             editor1.apply();
+
+            final String startText = ResourcesUtil.fetchFirstStart(this);
+            UiUtil.showScrollDialog(this, "HABPanelViewer", "Welcome to HABPanelViewer!",
+                    startText);
 
             if (prefs.getString("pref_url", "").isEmpty()) {
                 mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
@@ -190,7 +195,10 @@ public class MainActivity extends AppCompatActivity
                 editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
                 editor1.apply();
 
-                ReleaseNotesUtil.showUpdateDialog(this, lastVersion);
+                final String relText = ResourcesUtil.fetchReleaseNotes(this, lastVersion);
+                UiUtil.showScrollDialog(this, "HABPanelViewer Update",
+                        "The application has been updated. Find the bug fixes and new features below:",
+                        relText);
             }
         }
 

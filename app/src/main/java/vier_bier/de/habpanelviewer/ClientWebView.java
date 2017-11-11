@@ -156,7 +156,7 @@ public class ClientWebView extends WebView {
             post(new Runnable() {
                 @Override
                 public void run() {
-                    loadData("<html><body><h1>Configuration missing</h1><h2>The URL of the openHAB server has not yet been configured. Please specify it in the applications settings.</h2></body></html>", "text/html", "UTF-8");
+                    loadData("<html><body><h1>Configuration missing</h1><h2>The openHAB server could not be found. Please specify the URL in the application settings.</h2></body></html>", "text/html", "UTF-8");
                 }
             });
             return;

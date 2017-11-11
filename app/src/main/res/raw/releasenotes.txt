@@ -1,3 +1,7 @@
+0.9.8pre
+=====
+- add welcome screen shown on first start
+
 0.9.7
 =====
 - add webview version info to status information
