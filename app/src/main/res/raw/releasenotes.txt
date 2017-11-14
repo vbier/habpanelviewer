@@ -1,3 +1,7 @@
+0.9.9pre
+=====
+- reorganize settings
+
 0.9.8
 =====
 - add welcome screen shown on first start

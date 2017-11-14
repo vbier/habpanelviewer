@@ -82,8 +82,6 @@ public class MainActivity extends AppCompatActivity
     private String mBatteryItem;
     private String mBatteryState;
 
-
-    //TODO.vb. report battery state to openHAB
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
     //TODO.vb. check if proximity sensor can be used
     //TODO.vb. check if light sensor can be used

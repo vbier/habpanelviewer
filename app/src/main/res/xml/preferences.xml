@@ -20,153 +20,145 @@
                 android:title="@string/pref_max_restarts" />
         </PreferenceScreen>
         <PreferenceScreen
-            android:key="pref_app"
+            android:key="pref_control"
+            android:summary="@string/pref_control_summ"
             android:persistent="false"
-            android:title="@string/pref_app">
+            android:title="@string/pref_control">
 
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_app_enabled"
-                android:summary="@string/pref_app_enabled_summ"
-                android:title="@string/pref_app_enabled" />
-            <EditTextPreference
-                android:defaultValue="@string/pref_app_name_default"
-                android:dependency="pref_app_enabled"
-                android:key="pref_app_name"
-                android:summary="@string/pref_app_name_summ"
-                android:title="@string/pref_app_name" />
-            <EditTextPreference
-                android:defaultValue="@string/pref_app_package_default"
-                android:dependency="pref_app_enabled"
-                android:key="pref_app_package"
-                android:summary="@string/pref_app_package_summ"
-                android:title="@string/pref_app" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_screen"
-            android:persistent="false"
-            android:title="@string/pref_screen">
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_screen_enabled"
-                android:summary="@string/pref_screen_enabled_summ"
-                android:title="@string/pref_screen_enabled" />
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:dependency="pref_screen_enabled"
-                android:key="pref_screen_stay_enabled"
-                android:summary="@string/pref_screen_stay_enabled_summ"
-                android:title="@string/pref_screen_stay_enabled" />
-            <EditTextPreference
-                android:defaultValue="@string/pref_screen_item_default"
-                android:dependency="pref_screen_enabled"
-                android:key="pref_screen_item"
-                android:summary="@string/pref_screen_item_summ"
-                android:title="@string/pref_screen_item" />
-            <EditTextPreference
-                android:defaultValue="@string/pref_scren_on_regex_default"
-                android:dependency="pref_screen_enabled"
-                android:key="pref_screen_on_regex"
-                android:summary="@string/pref_screen_on_regex_summ"
-                android:title="@string/pref_screen_on_regex" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_flash"
-            android:persistent="false"
-            android:enabled="@bool/is_post_api_23"
-            android:title="@string/pref_flash">
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_flash_enabled"
-                android:summary="@string/pref_flash_enabled_summ"
-                android:title="@string/pref_flash_enabled" />
-            <EditTextPreference
-                android:defaultValue="@string/pref_flash_item_default"
-                android:dependency="pref_flash_enabled"
-                android:key="pref_flash_item"
-                android:summary="@string/pref_flash_item_summ"
-                android:title="@string/pref_flash_item" />
-            <EditTextPreference
-                android:defaultValue="@string/pref_flash_pulse_regex_default"
-                android:dependency="pref_flash_enabled"
-                android:key="pref_flash_pulse_regex"
-                android:summary="@string/pref_flash_pulse_regex_summ"
-                android:title="@string/pref_flash_pulse_regex" />
-            <EditTextPreference
-                android:defaultValue="@string/pref_flash_steady_regex_default"
-                android:dependency="pref_flash_enabled"
-                android:key="pref_flash_steady_regex"
-                android:summary="@string/pref_flash_steady_regex_summ"
-                android:title="@string/pref_flash_steady_regex" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_motion"
-            android:persistent="false"
-            android:title="@string/pref_motion">
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref_motion_detection_enabled"
-                android:summary="@string/pref_motion_detection_enabled_summ"
-                android:title="@string/pref_motion_detection_enabled" />
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref_motion_detection_preview"
-                android:dependency="pref_motion_detection_enabled"
-                android:summary="@string/pref_motion_detection_preview_summ"
-                android:title="@string/pref_motion_detection_preview" />
-            <CheckBoxPreference
-                android:defaultValue="true"
-                android:key="pref_motion_detection_new_api"
-                android:enabled="@bool/is_post_api_21"
-                android:dependency="pref_motion_detection_enabled"
-                android:summary="@string/pref_motion_detection_new_api_summ"
-                android:title="@string/pref_motion_detection_new_api" />
-            <ListPreference
-                android:defaultValue="20"
-                android:key="pref_motion_detection_granularity"
-                android:entries="@array/granularity"
-                android:entryValues="@array/granularity"
-                android:dependency="pref_motion_detection_enabled"
-                android:summary="@string/pref_motion_detection_granularity_summ"
-                android:title="@string/pref_motion_detection_granularity" />
-            <ListPreference
-                android:defaultValue="20"
-                android:key="pref_motion_detection_leniency"
-                android:entries="@array/leniency"
-                android:entryValues="@array/leniency"
-                android:dependency="pref_motion_detection_enabled"
-                android:summary="@string/pref_motion_detection_leniency_summ"
-                android:title="@string/pref_motion_detection_leniency" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_volume"
-            android:persistent="false"
-            android:title="@string/pref_volume">
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref_volume_enabled"
-                android:summary="@string/pref_volume_enabled_summ"
-                android:title="@string/pref_volume_enabled" />
-            <EditTextPreference
-                android:dependency="pref_volume_enabled"
-                android:key="pref_volume_item"
-                android:summary="@string/pref_volume_item_summ"
-                android:title="@string/pref_volume_item" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_battery"
-            android:persistent="false"
-            android:title="@string/pref_battery">
-            <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="pref_battery_enabled"
-                android:summary="@string/pref_battery_enabled_summ"
-                android:title="@string/pref_battery_enabled" />
-            <EditTextPreference
-                android:dependency="pref_battery_enabled"
-                android:key="pref_battery_item"
-                android:summary="@string/pref_battery_item_summ"
-                android:title="@string/pref_battery_item" />
+            <PreferenceScreen
+                android:key="pref_app"
+                android:persistent="false"
+                android:title="@string/pref_app">
+
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_app_enabled"
+                    android:summary="@string/pref_app_enabled_summ"
+                    android:title="@string/pref_app_enabled" />
+                <EditTextPreference
+                    android:defaultValue="@string/pref_app_name_default"
+                    android:dependency="pref_app_enabled"
+                    android:key="pref_app_name"
+                    android:summary="@string/pref_app_name_summ"
+                    android:title="@string/pref_app_name" />
+                <EditTextPreference
+                    android:defaultValue="@string/pref_app_package_default"
+                    android:dependency="pref_app_enabled"
+                    android:key="pref_app_package"
+                    android:summary="@string/pref_app_package_summ"
+                    android:title="@string/pref_app" />
+            </PreferenceScreen>
+            <PreferenceScreen
+                android:key="pref_screen"
+                android:persistent="false"
+                android:title="@string/pref_screen">
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_screen_enabled"
+                    android:summary="@string/pref_screen_enabled_summ"
+                    android:title="@string/pref_screen_enabled" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:dependency="pref_screen_enabled"
+                    android:key="pref_screen_stay_enabled"
+                    android:summary="@string/pref_screen_stay_enabled_summ"
+                    android:title="@string/pref_screen_stay_enabled" />
+                <EditTextPreference
+                    android:defaultValue="@string/pref_screen_item_default"
+                    android:dependency="pref_screen_enabled"
+                    android:key="pref_screen_item"
+                    android:summary="@string/pref_screen_item_summ"
+                    android:title="@string/pref_screen_item" />
+                <EditTextPreference
+                    android:defaultValue="@string/pref_scren_on_regex_default"
+                    android:dependency="pref_screen_enabled"
+                    android:key="pref_screen_on_regex"
+                    android:summary="@string/pref_screen_on_regex_summ"
+                    android:title="@string/pref_screen_on_regex" />
+            </PreferenceScreen>
+            <PreferenceScreen
+                android:key="pref_flash"
+                android:persistent="false"
+                android:enabled="@bool/is_post_api_23"
+                android:title="@string/pref_flash">
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_flash_enabled"
+                    android:summary="@string/pref_flash_enabled_summ"
+                    android:title="@string/pref_flash_enabled" />
+                <EditTextPreference
+                    android:defaultValue="@string/pref_flash_item_default"
+                    android:dependency="pref_flash_enabled"
+                    android:key="pref_flash_item"
+                    android:summary="@string/pref_flash_item_summ"
+                    android:title="@string/pref_flash_item" />
+                <EditTextPreference
+                    android:defaultValue="@string/pref_flash_pulse_regex_default"
+                    android:dependency="pref_flash_enabled"
+                    android:key="pref_flash_pulse_regex"
+                    android:summary="@string/pref_flash_pulse_regex_summ"
+                    android:title="@string/pref_flash_pulse_regex" />
+                <EditTextPreference
+                    android:defaultValue="@string/pref_flash_steady_regex_default"
+                    android:dependency="pref_flash_enabled"
+                    android:key="pref_flash_steady_regex"
+                    android:summary="@string/pref_flash_steady_regex_summ"
+                    android:title="@string/pref_flash_steady_regex" />
+            </PreferenceScreen>
+            <PreferenceScreen
+                android:key="pref_motion"
+                android:persistent="false"
+                android:title="@string/pref_motion">
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_enabled_summ"
+                    android:title="@string/pref_motion_detection_enabled" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_motion_detection_preview"
+                    android:dependency="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_preview_summ"
+                    android:title="@string/pref_motion_detection_preview" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_motion_detection_new_api"
+                    android:enabled="@bool/is_post_api_21"
+                    android:dependency="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_new_api_summ"
+                    android:title="@string/pref_motion_detection_new_api" />
+                <ListPreference
+                    android:defaultValue="20"
+                    android:key="pref_motion_detection_granularity"
+                    android:entries="@array/granularity"
+                    android:entryValues="@array/granularity"
+                    android:dependency="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_granularity_summ"
+                    android:title="@string/pref_motion_detection_granularity" />
+                <ListPreference
+                    android:defaultValue="20"
+                    android:key="pref_motion_detection_leniency"
+                    android:entries="@array/leniency"
+                    android:entryValues="@array/leniency"
+                    android:dependency="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_leniency_summ"
+                    android:title="@string/pref_motion_detection_leniency" />
+            </PreferenceScreen>
+            <PreferenceScreen
+                android:key="pref_volume"
+                android:persistent="false"
+                android:title="@string/pref_volume">
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_volume_enabled"
+                    android:summary="@string/pref_volume_enabled_summ"
+                    android:title="@string/pref_volume_enabled" />
+                <EditTextPreference
+                    android:dependency="pref_volume_enabled"
+                    android:key="pref_volume_item"
+                    android:summary="@string/pref_volume_item_summ"
+                    android:title="@string/pref_volume_item" />
+            </PreferenceScreen>
         </PreferenceScreen>
         <ListPreference
             android:defaultValue="right"
@@ -175,6 +167,27 @@
             android:entryValues="@array/menupositions"
             android:summary="@string/pref_menu_position_summ"
             android:title="@string/pref_menu_position" />
+        <PreferenceScreen
+            android:key="pref_reporting"
+            android:summary="@string/pref_reporting_summ"
+            android:persistent="false"
+            android:title="@string/pref_reporting">
+            <PreferenceScreen
+                android:key="pref_battery"
+                android:persistent="false"
+                android:title="@string/pref_battery">
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_battery_enabled"
+                    android:summary="@string/pref_battery_enabled_summ"
+                    android:title="@string/pref_battery_enabled" />
+                <EditTextPreference
+                    android:dependency="pref_battery_enabled"
+                    android:key="pref_battery_item"
+                    android:summary="@string/pref_battery_item_summ"
+                    android:title="@string/pref_battery_item" />
+            </PreferenceScreen>
+        </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_habpanel_settings"
