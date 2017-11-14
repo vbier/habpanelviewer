@@ -2,7 +2,7 @@ package com.tylerjroach.eventsource;
 
 import javax.net.ssl.SSLEngine;
 
-import vier_bier.de.habpanelviewer.SSEClient;
+import vier_bier.de.habpanelviewer.openhab.SSEClient;
 
 /**
  * Workaround for a bug in the eventsource implementation.

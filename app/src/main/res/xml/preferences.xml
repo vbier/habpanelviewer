@@ -153,6 +153,21 @@
                 android:summary="@string/pref_volume_item_summ"
                 android:title="@string/pref_volume_item" />
         </PreferenceScreen>
+        <PreferenceScreen
+            android:key="pref_battery"
+            android:persistent="false"
+            android:title="@string/pref_battery">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref_battery_enabled"
+                android:summary="@string/pref_battery_enabled_summ"
+                android:title="@string/pref_battery_enabled" />
+            <EditTextPreference
+                android:dependency="pref_battery_enabled"
+                android:key="pref_battery_item"
+                android:summary="@string/pref_battery_item_summ"
+                android:title="@string/pref_battery_item" />
+        </PreferenceScreen>
         <ListPreference
             android:defaultValue="right"
             android:key="pref_menu_position"

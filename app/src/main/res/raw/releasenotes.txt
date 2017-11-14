@@ -1,6 +1,7 @@
 0.9.8pre
 =====
 - add welcome screen shown on first start
+- report to openHAB when device battery state is low/not low
 
 0.9.7
 =====

@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer;
+package vier_bier.de.habpanelviewer.openhab;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -13,6 +13,8 @@ import java.util.Set;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
+
+import vier_bier.de.habpanelviewer.StateListener;
 
 /**
  * Asynchronous task that fetches the value of an openHAB item from the openHAB rest API.
@@ -62,7 +64,7 @@ class FetchItemStateTask extends AsyncTask<Set<String>, Void, Void> {
                         urlConnection.disconnect();
                     }
                 } catch (IOException e) {
-                    Log.e("Habpanelview", "Failed to obtain value for flash Item!", e);
+                    Log.e("Habpanelview", "Failed to obtain state for item " + itemName, e);
                 }
 
                 for (StateListener l : listeners) {

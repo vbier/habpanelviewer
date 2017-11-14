@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer;
+package vier_bier.de.habpanelviewer.openhab;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -32,6 +32,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import vier_bier.de.habpanelviewer.StateListener;
+
 /**
  * Client for openHABs SSE service. Listens for item value changes.
  */
@@ -62,7 +64,7 @@ public class SSEClient {
         }
     };
 
-    SSEClient(Context context) {
+    public SSEClient(Context context) {
         mCtx = context;
 
         final IntentFilter intentFilter = new IntentFilter();
@@ -70,7 +72,7 @@ public class SSEClient {
         mCtx.registerReceiver(mNetworkReceiver, intentFilter);
     }
 
-    void updateFromPreferences(SharedPreferences prefs) {
+    public void updateFromPreferences(SharedPreferences prefs) {
         HashSet<String> items = new HashSet<>();
         boolean flashEnabled = prefs.getBoolean("pref_flash_enabled", false);
         if (flashEnabled) {
@@ -85,6 +87,11 @@ public class SSEClient {
         boolean volumeEnabled = prefs.getBoolean("pref_volume_enabled", false);
         if (volumeEnabled) {
             items.add(prefs.getString("pref_volume_item", ""));
+        }
+
+        boolean batteryEnabled = prefs.getBoolean("pref_battery_enabled", false);
+        if (batteryEnabled) {
+            items.add(prefs.getString("pref_battery_item", ""));
         }
 
         ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -153,7 +160,7 @@ public class SSEClient {
         return sslContext;
     }
 
-    void addStateListener(StateListener listener) {
+    public void addStateListener(StateListener listener) {
         synchronized (stateListeners) {
             if (!stateListeners.contains(listener)) {
                 stateListeners.add(listener);
@@ -161,7 +168,7 @@ public class SSEClient {
         }
     }
 
-    void setConnectionListener(ConnectionListener l) {
+    public void setConnectionListener(ConnectionListener l) {
         connectionListener = l;
     }
 

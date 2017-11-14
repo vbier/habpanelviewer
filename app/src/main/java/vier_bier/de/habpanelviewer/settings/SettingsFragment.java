@@ -23,8 +23,8 @@ import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSession;
 
 import vier_bier.de.habpanelviewer.R;
-import vier_bier.de.habpanelviewer.SSEClient;
 import vier_bier.de.habpanelviewer.UiUtil;
+import vier_bier.de.habpanelviewer.openhab.SSEClient;
 
 /**
  * Fragment for preferences.

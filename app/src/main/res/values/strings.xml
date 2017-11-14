@@ -79,9 +79,14 @@
     <string name="pref_volume_enabled">Set volume dependent on item</string>
     <string name="pref_volume_enabled_summ">Allows to set the application volume depending on the actual value of an openHAB item.</string>
     <string name="pref_volume_item">Volume Item</string>
-    <string name="pref_volume_item_summ">Name of the Item from which to derive the volume.</string>
+    <string name="pref_volume_item_summ">Name of the item from which to derive the volume.</string>
     <string name="pref_menu_position">Menu Position</string>
     <string name="pref_menu_position_summ">The side from which the main menu can be pulled out.</string>
     <string name="pref_screen_stay_enabled_summ">Tries to keep the screen on as long as the regexp matches</string>
     <string name="pref_screen_stay_enabled">Keep screen on</string>
+    <string name="pref_battery">Battery Reporting</string>
+    <string name="pref_battery_enabled">Toggle openHAB switch item when device battery is low</string>
+    <string name="pref_battery_enabled_summ">Allows to set the state of an openHAB item to ON/OFF when the device battery level is low.</string>
+    <string name="pref_battery_item">Battery Item</string>
+    <string name="pref_battery_item_summ">Name of the item whose state shall be set.</string>
 </resources>
