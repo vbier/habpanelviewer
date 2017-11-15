@@ -8,7 +8,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import vier_bier.de.habpanelviewer.StateListener;
+import vier_bier.de.habpanelviewer.openhab.StateListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**

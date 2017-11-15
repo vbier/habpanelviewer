@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import vier_bier.de.habpanelviewer.CameraException;
-import vier_bier.de.habpanelviewer.StateListener;
+import vier_bier.de.habpanelviewer.openhab.StateListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**

@@ -1,10 +1,8 @@
 package vier_bier.de.habpanelviewer;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -50,7 +48,7 @@ import vier_bier.de.habpanelviewer.motion.MotionListener;
 import vier_bier.de.habpanelviewer.motion.MotionVisualizer;
 import vier_bier.de.habpanelviewer.openhab.ConnectionListener;
 import vier_bier.de.habpanelviewer.openhab.SSEClient;
-import vier_bier.de.habpanelviewer.openhab.SetItemStateTask;
+import vier_bier.de.habpanelviewer.reporting.BatteryMonitor;
 import vier_bier.de.habpanelviewer.screen.ScreenController;
 import vier_bier.de.habpanelviewer.settings.SetPreferenceActivity;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
@@ -61,7 +59,7 @@ import vier_bier.de.habpanelviewer.volume.VolumeController;
  * Main activity showing the Webview for openHAB.
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ConnectionListener, StateListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ConnectionListener {
 
     private ClientWebView mWebView;
     private TextView mTextView;
@@ -73,14 +71,10 @@ public class MainActivity extends AppCompatActivity
     private ScreenController mScreenService;
     private VolumeController mVolumeController;
     private IMotionDetector mMotionDetector;
+    private BatteryMonitor mBatteryMonitor;
     private ApplicationStatus mStatus;
 
     private int mRestartCount;
-
-    private BroadcastReceiver mBatteryReceiver;
-    private boolean mBatteryEnabled;
-    private String mBatteryItem;
-    private String mBatteryState;
 
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
     //TODO.vb. check if proximity sensor can be used
@@ -114,7 +108,10 @@ public class MainActivity extends AppCompatActivity
             mSseClient = null;
         }
 
-        unregisterReceiver(mBatteryReceiver);
+        if (mBatteryMonitor != null) {
+            mBatteryMonitor.terminate();
+            mBatteryMonitor = null;
+        }
     }
 
     @Override
@@ -218,7 +215,9 @@ public class MainActivity extends AppCompatActivity
         mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
         mSseClient = new SSEClient(this);
         mSseClient.setConnectionListener(this);
-        mSseClient.addStateListener(this);
+
+        mBatteryMonitor = new BatteryMonitor(this);
+        mSseClient.addStateListener(mBatteryMonitor);
 
         if (mFlashService != null) {
             mSseClient.addStateListener(mFlashService);
@@ -237,27 +236,6 @@ public class MainActivity extends AppCompatActivity
 
         mWebView = ((ClientWebView) findViewById(R.id.activity_main_webview));
         mWebView.initialize();
-
-        mBatteryReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                mBatteryState = Intent.ACTION_BATTERY_LOW.equals(intent.getAction()) ? "ON" : "OFF";
-                addStatusItems();
-
-                if (mBatteryEnabled) {
-                    final String serverURL = prefs.getString("pref_url", "");
-                    if (!"".equals(serverURL)) {
-                        SetItemStateTask t = new SetItemStateTask(serverURL, prefs.getBoolean("pref_ignore_ssl_errors", false));
-                        t.execute(new SetItemStateTask.ItemState(mBatteryItem, mBatteryState));
-                    }
-                }
-            }
-        };
-
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intent.ACTION_BATTERY_LOW);
-        intentFilter.addAction(Intent.ACTION_BATTERY_OKAY);
-        registerReceiver(mBatteryReceiver, intentFilter);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -299,9 +277,6 @@ public class MainActivity extends AppCompatActivity
         } catch (NumberFormatException e) {
             Log.e("Habpanelview", "could not parse pref_max_restarts value " + prefs.getString("pref_max_restarts", "5") + ". using default 5");
         }
-
-        mBatteryEnabled = prefs.getBoolean("pref_battery_enabled", false);
-        mBatteryItem = prefs.getString("pref_battery_item", "");
 
         boolean restartEnabled = prefs.getBoolean("pref_restart_enabled", false);
         if (restartEnabled && mRestartCount < maxRestarts) {
@@ -345,6 +320,7 @@ public class MainActivity extends AppCompatActivity
             mVolumeController.updateFromPreferences(prefs);
         }
 
+        mBatteryMonitor.updateFromPreferences(prefs);
         mWebView.updateFromPreferences(prefs);
         mSseClient.updateFromPreferences(prefs);
 
@@ -528,11 +504,6 @@ public class MainActivity extends AppCompatActivity
         if (mRestartCount != 0) {
             mStatus.set("Restart Counter", String.valueOf(mRestartCount));
         }
-        if (mBatteryEnabled) {
-            mStatus.set("Battery Reporting", "enabled\n" + mBatteryItem + "=" + mBatteryState);
-        } else {
-            mStatus.set("Battery Reporting", "disabled");
-        }
 
         String webview = "";
         PackageManager pm = getPackageManager();
@@ -552,13 +523,5 @@ public class MainActivity extends AppCompatActivity
             webview = mWebView.getSettings().getUserAgentString();
         }
         mStatus.set("Webview", webview.trim());
-    }
-
-    @Override
-    public void updateState(String name, String value) {
-        if (name.equals(mBatteryItem)) {
-            mBatteryState = value;
-            addStatusItems();
-        }
     }
 }

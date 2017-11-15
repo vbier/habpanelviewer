@@ -14,8 +14,6 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 
-import vier_bier.de.habpanelviewer.StateListener;
-
 /**
  * Asynchronous task that fetches the value of an openHAB item from the openHAB rest API.
  */
