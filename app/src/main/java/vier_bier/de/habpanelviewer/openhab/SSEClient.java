@@ -90,6 +90,7 @@ public class SSEClient {
         boolean batteryEnabled = prefs.getBoolean("pref_battery_enabled", false);
         if (batteryEnabled) {
             items.add(prefs.getString("pref_battery_item", ""));
+            items.add(prefs.getString("pref_battery_charging_item", ""));
         }
 
         ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);

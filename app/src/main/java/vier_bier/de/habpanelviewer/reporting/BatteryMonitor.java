@@ -26,8 +26,11 @@ public class BatteryMonitor implements StateListener {
 
     private BroadcastReceiver mBatteryReceiver;
     private boolean mBatteryEnabled;
+
     private String mBatteryLowItem;
     private String mBatteryLowState;
+    private String mBatteryChargingItem;
+    private String mBatteryChargingState;
 
     public BatteryMonitor(Context context) {
         mCtx = context;
@@ -36,19 +39,35 @@ public class BatteryMonitor implements StateListener {
         mBatteryReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                mBatteryLowState = Intent.ACTION_BATTERY_LOW.equals(intent.getAction()) ? "CLOSED" : "OPEN";
-                addStatusItems();
+                if (Intent.ACTION_BATTERY_LOW.equals(intent.getAction())
+                        || Intent.ACTION_BATTERY_OKAY.equals(intent.getAction())) {
+                    //TODO.vb. track charging state
+                    mBatteryLowState = Intent.ACTION_BATTERY_LOW.equals(intent.getAction()) ? "CLOSED" : "OPEN";
+                    addStatusItems();
 
-                if (mBatteryEnabled) {
-                    if (!"".equals(mServerURL)) {
-                        SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
-                        t.execute(new SetItemStateTask.ItemState(mBatteryLowItem, mBatteryLowState));
+                    if (mBatteryEnabled) {
+                        if (!"".equals(mServerURL) && !"".equals(mBatteryLowItem)) {
+                            SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
+                            t.execute(new SetItemStateTask.ItemState(mBatteryLowItem, mBatteryLowState));
+                        }
+                    }
+                } else {
+                    mBatteryChargingState = Intent.ACTION_POWER_CONNECTED.equals(intent.getAction()) ? "CLOSED" : "OPEN";
+                    addStatusItems();
+
+                    if (mBatteryEnabled) {
+                        if (!"".equals(mServerURL) && !"".equals(mBatteryChargingItem)) {
+                            SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
+                            t.execute(new SetItemStateTask.ItemState(mBatteryChargingItem, mBatteryChargingState));
+                        }
                     }
                 }
             }
         };
 
         final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
+        intentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
         intentFilter.addAction(Intent.ACTION_BATTERY_LOW);
         intentFilter.addAction(Intent.ACTION_BATTERY_OKAY);
         mCtx.registerReceiver(mBatteryReceiver, intentFilter);
@@ -60,10 +79,17 @@ public class BatteryMonitor implements StateListener {
 
     @Override
     public void updateState(String name, String value) {
-        if (name.equals(mBatteryLowItem)) {
+        if (name.equals(mBatteryLowItem)
+                && (mBatteryLowState == null || !mBatteryLowState.equals(value))) {
             mBatteryLowState = value;
-            addStatusItems();
+        } else if (name.equals(mBatteryChargingItem)
+                && (mBatteryChargingState == null || !mBatteryChargingState.equals(value))) {
+            mBatteryChargingState = value;
+        } else {
+            return;
         }
+
+        addStatusItems();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -78,7 +104,14 @@ public class BatteryMonitor implements StateListener {
         }
 
         if (mBatteryEnabled) {
-            mStatus.set("Battery Reporting", "enabled\n" + mBatteryLowItem + "=" + mBatteryLowState);
+            String state = "enabled";
+            if (!"".equals(mBatteryLowItem)) {
+                state += "\n" + mBatteryLowItem + "=" + mBatteryLowState;
+            }
+            if (!"".equals(mBatteryChargingItem)) {
+                state += "\n" + mBatteryChargingItem + "=" + mBatteryChargingState;
+            }
+            mStatus.set("Battery Reporting", state);
         } else {
             mStatus.set("Battery Reporting", "disabled");
         }
@@ -90,6 +123,11 @@ public class BatteryMonitor implements StateListener {
         if (mBatteryLowItem == null || !mBatteryLowItem.equalsIgnoreCase(prefs.getString("pref_battery_item", ""))) {
             mBatteryLowItem = prefs.getString("pref_battery_item", "");
             mBatteryLowState = null;
+        }
+
+        if (mBatteryChargingItem == null || !mBatteryChargingItem.equalsIgnoreCase(prefs.getString("pref_battery_charging_item", ""))) {
+            mBatteryChargingItem = prefs.getString("pref_battery_charging_item", "");
+            mBatteryChargingState = null;
         }
 
         mServerURL = prefs.getString("pref_url", "");
