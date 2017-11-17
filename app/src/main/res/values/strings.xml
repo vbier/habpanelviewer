@@ -90,6 +90,8 @@
     <string name="pref_battery_item_summ">Name of the contact item whose state shall be set when battery is low/not low</string>
     <string name="pref_battery_charging_item">Battery Charging Contact</string>
     <string name="pref_battery_charging_item_summ">Name of the contact item whose state shall be set when battery is charged/not charged</string>
+    <string name="pref_battery_level_item">Battery Level Item</string>
+    <string name="pref_battery_level_item_summ">Name of the number item whose state shall be set when the battery level changes.</string>
     <string name="pref_reporting">Sensor Reporting</string>
     <string name="pref_reporting_summ">Report device sensor values to openHAB items</string>
     <string name="pref_control">Device Control</string>

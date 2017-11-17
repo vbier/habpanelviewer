@@ -1,6 +1,7 @@
 0.9.9pre
 =====
 - reorganize settings
+- add reporting for battery charging state and battery level
 
 0.9.8
 =====

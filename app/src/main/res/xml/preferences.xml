@@ -191,6 +191,11 @@
                     android:key="pref_battery_charging_item"
                     android:summary="@string/pref_battery_charging_item_summ"
                     android:title="@string/pref_battery_charging_item" />
+                <EditTextPreference
+                    android:dependency="pref_battery_enabled"
+                    android:key="pref_battery_level_item"
+                    android:summary="@string/pref_battery_level_item_summ"
+                    android:title="@string/pref_battery_level_item" />
             </PreferenceScreen>
         </PreferenceScreen>
     </PreferenceCategory>
