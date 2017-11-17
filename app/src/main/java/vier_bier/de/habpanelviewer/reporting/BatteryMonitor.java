@@ -110,13 +110,13 @@ public class BatteryMonitor implements StateListener {
 
         if (mBatteryEnabled) {
             String state = "enabled";
-            if (!"".equals(mBatteryLowItem)) {
+            if (!mBatteryLowItem.isEmpty()) {
                 state += "\nBattery low: " + "CLOSED".equals(mBatteryLowState) + " [" + mBatteryLowItem + "=" + mBatteryLowState + "]";
             }
-            if (!"".equals(mBatteryChargingItem)) {
-                state += "\nBattery charging: " + "CLOSED".equals(mBatteryChargingItem) + " [" + mBatteryChargingItem + "=" + mBatteryChargingState + "]";
+            if (!mBatteryChargingItem.isEmpty()) {
+                state += "\nBattery charging: " + "CLOSED".equals(mBatteryChargingState) + " [" + mBatteryChargingItem + "=" + mBatteryChargingState + "]";
             }
-            if (!"".equals(mBatteryLevelItem)) {
+            if (!mBatteryLevelItem.isEmpty()) {
                 state += "\nBattery level: " + mBatteryLevelState + "% [" + mBatteryLevelItem + "=" + mBatteryLevelState + "]";
             }
             mStatus.set("Battery Reporting", state);

@@ -78,9 +78,10 @@ public class MainActivity extends AppCompatActivity
 
     private int mRestartCount;
 
+    //TODO.vb. add markdown help
+    //TODO.vb. report proximity sensor
+    //TODO.vb. report light sensor
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
-    //TODO.vb. check if proximity sensor can be used
-    //TODO.vb. check if light sensor can be used
 
     @Override
     protected void onDestroy() {
