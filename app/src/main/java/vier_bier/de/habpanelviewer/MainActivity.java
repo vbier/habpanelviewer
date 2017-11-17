@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.media.AudioManager;
@@ -47,6 +48,7 @@ import vier_bier.de.habpanelviewer.openhab.ConnectionListener;
 import vier_bier.de.habpanelviewer.openhab.SSEClient;
 import vier_bier.de.habpanelviewer.openhab.ServerDiscovery;
 import vier_bier.de.habpanelviewer.reporting.BatteryMonitor;
+import vier_bier.de.habpanelviewer.reporting.ProximityMonitor;
 import vier_bier.de.habpanelviewer.reporting.motion.IMotionDetector;
 import vier_bier.de.habpanelviewer.reporting.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.reporting.motion.MotionDetectorCamera2;
@@ -72,11 +74,11 @@ public class MainActivity extends AppCompatActivity
     private VolumeController mVolumeController;
     private IMotionDetector mMotionDetector;
     private BatteryMonitor mBatteryMonitor;
+    private ProximityMonitor mProximityMonitor;
     private ApplicationStatus mStatus;
 
     private int mRestartCount;
 
-    //TODO.vb. report proximity sensor
     //TODO.vb. report light sensor
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
 
@@ -111,6 +113,10 @@ public class MainActivity extends AppCompatActivity
         if (mBatteryMonitor != null) {
             mBatteryMonitor.terminate();
             mBatteryMonitor = null;
+        }
+
+        if (mProximityMonitor != null) {
+            mProximityMonitor.terminate();
         }
     }
 
@@ -198,23 +204,24 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        mVolumeController = new VolumeController((AudioManager) getSystemService(Context.AUDIO_SERVICE));
 
-        mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
         mSseClient = new SSEClient(this);
         mSseClient.setConnectionListener(this);
+
+        mVolumeController = new VolumeController((AudioManager) getSystemService(Context.AUDIO_SERVICE));
+        mSseClient.addStateListener(mVolumeController);
+
+        mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
+        mSseClient.addStateListener(mScreenService);
 
         mBatteryMonitor = new BatteryMonitor(this);
         mSseClient.addStateListener(mBatteryMonitor);
 
+        mProximityMonitor = new ProximityMonitor((SensorManager) getSystemService(Context.SENSOR_SERVICE));
+        mSseClient.addStateListener(mProximityMonitor);
+
         if (mFlashService != null) {
             mSseClient.addStateListener(mFlashService);
-        }
-        if (mScreenService != null) {
-            mSseClient.addStateListener(mScreenService);
-        }
-        if (mVolumeController != null) {
-            mSseClient.addStateListener(mVolumeController);
         }
 
         mRestartCount = getIntent().getIntExtra("restartCount", 0);
@@ -309,6 +316,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         mBatteryMonitor.updateFromPreferences(prefs);
+        mProximityMonitor.updateFromPreferences(prefs);
         mWebView.updateFromPreferences(prefs);
         mSseClient.updateFromPreferences(prefs);
 
@@ -490,9 +498,6 @@ public class MainActivity extends AppCompatActivity
 
         if (mFlashService == null) {
             mStatus.set("Flash Control", "unavailable");
-        }
-        if (mScreenService == null) {
-            mStatus.set("Screen On Control", "unavailable");
         }
         if (mMotionDetector == null) {
             mStatus.set("Motion Detection", "unavailable");

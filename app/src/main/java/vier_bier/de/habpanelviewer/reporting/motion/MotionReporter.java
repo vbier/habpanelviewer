@@ -34,7 +34,7 @@ public class MotionReporter extends MotionListener.MotionAdapter {
         mLastMotionTime = System.currentTimeMillis();
         if (!mMotion) {
             mMotion = true;
-            updateState();
+            propagateState();
         }
     }
 
@@ -44,7 +44,7 @@ public class MotionReporter extends MotionListener.MotionAdapter {
 
         if (mMotion && System.currentTimeMillis() - mLastMotionTime > 60000) {
             mMotion = false;
-            updateState();
+            propagateState();
         }
     }
 
@@ -56,15 +56,15 @@ public class MotionReporter extends MotionListener.MotionAdapter {
             mMotionItem = prefs.getString("pref_motion_item", "");
         }
 
-        updateState();
+        propagateState();
     }
 
     public void terminate() {
         mMotion = false;
-        updateState();
+        propagateState();
     }
 
-    private void updateState() {
+    private void propagateState() {
         if (!mMotionItem.isEmpty()) {
             SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
             t.execute(new SetItemStateTask.ItemState(mMotionItem, mMotion ? "CLOSED" : "OPEN"));

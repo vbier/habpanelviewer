@@ -18,7 +18,7 @@ import vier_bier.de.habpanelviewer.openhab.StateListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
- * Monitors battery state
+ * Monitors battery state and reports to openHAB.
  */
 public class BatteryMonitor implements StateListener {
     private Context mCtx;
@@ -109,7 +109,7 @@ public class BatteryMonitor implements StateListener {
         }
 
         if (mBatteryEnabled) {
-            String state = "enabled";
+            String state = "reporting enabled";
             if (!mBatteryLowItem.isEmpty()) {
                 state += "\nBattery low: " + "CLOSED".equals(mBatteryLowState) + " [" + mBatteryLowItem + "=" + mBatteryLowState + "]";
             }
@@ -119,9 +119,9 @@ public class BatteryMonitor implements StateListener {
             if (!mBatteryLevelItem.isEmpty()) {
                 state += "\nBattery level: " + mBatteryLevelState + "% [" + mBatteryLevelItem + "=" + mBatteryLevelState + "]";
             }
-            mStatus.set("Battery Reporting", state);
+            mStatus.set("Battery", state);
         } else {
-            mStatus.set("Battery Reporting", "disabled");
+            mStatus.set("Battery", "reporting disabled");
         }
     }
 
@@ -202,7 +202,7 @@ public class BatteryMonitor implements StateListener {
             }
         }
 
-        private void updateState(String item, String state) {
+        private void propagateState(String item, String state) {
             if (!item.isEmpty() && state != null) {
                 SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
                 t.execute(new SetItemStateTask.ItemState(item, state));
@@ -223,7 +223,7 @@ public class BatteryMonitor implements StateListener {
                 if (mBatteryLevelState != newBatteryLevelState) {
                     mBatteryLevelState = newBatteryLevelState;
 
-                    updateState(mBatteryLevelItem, String.valueOf(mBatteryLevelState));
+                    propagateState(mBatteryLevelItem, String.valueOf(mBatteryLevelState));
                 }
             }
 
@@ -238,12 +238,12 @@ public class BatteryMonitor implements StateListener {
 
                 if (!mBatteryChargingItem.isEmpty()) {
                     mBatteryChargingState = isCharging ? "CLOSED" : "OPEN";
-                    updateState(mBatteryChargingItem, mBatteryChargingState);
+                    propagateState(mBatteryChargingItem, mBatteryChargingState);
                 }
 
                 if (!mBatteryLowItem.isEmpty()) {
                     mBatteryLowState = mBatteryLevelState < 16 ? "CLOSED" : "OPEN";
-                    updateState(mBatteryLowItem, mBatteryLowState);
+                    propagateState(mBatteryLowItem, mBatteryLowState);
                 }
             }
 

@@ -202,6 +202,21 @@
                     android:summary="@string/pref_motion_detection_leniency_summ"
                     android:title="@string/pref_motion_detection_leniency" />
             </PreferenceScreen>
+            <PreferenceScreen
+                android:key="pref_proximity"
+                android:persistent="false"
+                android:title="@string/pref_proximity">
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_proximity_enabled"
+                    android:summary="@string/pref_proximity_enabled_summ"
+                    android:title="@string/pref_proximity_enabled" />
+                <EditTextPreference
+                    android:dependency="pref_proximity_enabled"
+                    android:key="pref_proximity_item"
+                    android:summary="@string/pref_proximity_item_summ"
+                    android:title="@string/pref_proximity_item" />
+            </PreferenceScreen>
         </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory

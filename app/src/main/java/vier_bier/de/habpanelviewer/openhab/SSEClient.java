@@ -93,6 +93,11 @@ public class SSEClient {
             items.add(prefs.getString("pref_battery_charging_item", ""));
         }
 
+        boolean proximityEnabled = prefs.getBoolean("pref_proximity_enabled", false);
+        if (proximityEnabled) {
+            items.add(prefs.getString("pref_proximity_item", ""));
+        }
+
         ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
