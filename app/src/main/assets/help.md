@@ -35,17 +35,6 @@ In order to use this, configure the name of an openHAB item and regular expressi
 ### volume control
 Allows to set the device volume depending on an openHAB item. Simply configure the name of an openHAB **Number** item. The device volume will be set to the value of this item. In order to find the valid range for your device, check the *Volume Control* section of the *Status Information* screen. Out of range values will be ignored.
 
-### motion detection
-Allows to turn on the screen when motion is detected (_does not work at the same time as flashlight control. there are two different implementations, one using the old camera API and one using the Camera 2 API on Android 5+_).
-
-The detection process works as follows: it divides the picture into smaller areas, calculates a brightness average for every area and checks if this average deviates from the last value. If the deviation is higher than the leniency, motion is detected.
-
-The detection can be enabled or disabled and detection parameters can be changed in the settings:
-- Camera Preview: wether to show a preview of the detection as on overlay. This is useful for fine-tuning the detection.
-- Use Lollipop camera API: Use the new Camera 2 API introduced with Lollipop. You should generally use this when available.
-- Detection granularity: Amount by which is axis is divided. So a granularity of 10 results in the picture being divided into 100 areas. 
-- Detection leniency: deviation threshold that triggers detected motion. 0 means every deviation results in detected motion, 255 means motion will never be detected.   
-
 [go back to top](#top)
 
 ## <a name="reporting"/>Sensor Reporting
@@ -65,6 +54,21 @@ A sample openHAB items file looks like this:
     Number Tablet_Battery_Level
 
 Leave item names empty in the settings in order to skip reporting for this specific value.
+
+### motion detection
+Allows to set the value of an openHAB item when motion is detected (_does not work at the same time as flashlight control. there are two different implementations, one using the old camera API and one using the Camera 2 API on Android 5+_).
+
+The detection process works as follows: it divides the picture into smaller areas, calculates a brightness average for every area and checks if this average deviates from the last value. If the deviation is higher than the leniency, motion is detected.
+
+The detection can be enabled or disabled and detection parameters can be changed in the settings:
+- Camera Preview: wether to show a preview of the detection as on overlay. This is useful for fine-tuning the detection.
+- Use Lollipop camera API: Use the new Camera 2 API introduced with Lollipop. You should generally use this when available.
+- Detection granularity: Amount by which is axis is divided. So a granularity of 10 results in the picture being divided into 100 areas. 
+- Detection leniency: deviation threshold that triggers detected motion. 0 means every deviation results in detected motion, 255 means motion will never be detected.   
+
+A sample openHAB items file looks like this:
+
+    Contact Tablet_Motion
 
 [go back to top](#top)
 

@@ -20,16 +20,14 @@ public class MotionVisualizer implements MotionListener {
     private final SurfaceView mMotionView;
     private final NavigationView mNavigationView;
     private final SharedPreferences mPreferences;
-    private final MotionListener mListener;
     private final Paint mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final int mMotionTextWidth;
     private final int mDarkTextWidth;
 
-    public MotionVisualizer(SurfaceView motionView, NavigationView navigationView, SharedPreferences preferences, MotionListener listener, int scaledSize) {
+    public MotionVisualizer(SurfaceView motionView, NavigationView navigationView, SharedPreferences preferences, int scaledSize) {
         mMotionView = motionView;
         mNavigationView = navigationView;
         mPreferences = preferences;
-        mListener = listener;
 
         mMotionView.setZOrderOnTop(true);
         mMotionView.getHolder().setFormat(PixelFormat.TRANSPARENT);
@@ -88,8 +86,6 @@ public class MotionVisualizer implements MotionListener {
                 }
             }
         }
-
-        mListener.motionDetected(differing);
     }
 
     @Override
@@ -104,8 +100,6 @@ public class MotionVisualizer implements MotionListener {
                 mMotionView.getHolder().unlockCanvasAndPost(canvas);
             }
         }
-
-        mListener.noMotion();
     }
 
     @Override
@@ -120,7 +114,5 @@ public class MotionVisualizer implements MotionListener {
                 mMotionView.getHolder().unlockCanvasAndPost(canvas);
             }
         }
-
-        mListener.tooDark();
     }
 }

@@ -16,7 +16,7 @@ So I wrote this app that fixes the above mentioned problems. It features:
 - **app shortcut**: allows to configure the package name of an app that can then be started from the main menu
 - **flashlight control**: allows to configure an openHAB item and regexps to enable/disable or blink the cameras flash (_available on Android 6+_)
 - **screen on control**: allows to configure an openHAB item and a regexp to turn on the screen
-- **motion detection**: turns the screen on when motion is detected (_does not work at the same time as flashlight control. there are two different implementations, one using the old camera API and one using the Camera 2 API on Android 5+_).
+- **motion detection**: reports motion to openHAB (_does not work at the same time as flashlight control. there are two different implementations, one using the old camera API and one using the Camera 2 API on Android 5+_).
 - **device sensor value reporting**: reports device sensor values to openHAB (currently only battery, more to come)
 
 The app does support android from SDK version 19, which means it will run on devices running Android 4.4+ (Kitkat).

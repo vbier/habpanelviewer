@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.media.AudioManager;
@@ -38,7 +37,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import vier_bier.de.habpanelviewer.control.FlashController;
@@ -48,7 +46,6 @@ import vier_bier.de.habpanelviewer.help.HelpActivity;
 import vier_bier.de.habpanelviewer.motion.IMotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetectorCamera2;
-import vier_bier.de.habpanelviewer.motion.MotionListener;
 import vier_bier.de.habpanelviewer.motion.MotionVisualizer;
 import vier_bier.de.habpanelviewer.openhab.ConnectionListener;
 import vier_bier.de.habpanelviewer.openhab.SSEClient;
@@ -79,7 +76,6 @@ public class MainActivity extends AppCompatActivity
 
     private int mRestartCount;
 
-    //TODO.vb. add markdown help
     //TODO.vb. report proximity sensor
     //TODO.vb. report light sensor
     //TODO.vb. add functionality to take pictures (face detection) and upload to network depending on openHAB item
@@ -98,7 +94,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (mMotionDetector != null) {
-            mMotionDetector.shutdown();
+            mMotionDetector.terminate();
             mMotionDetector = null;
         }
 
@@ -149,20 +145,8 @@ public class MainActivity extends AppCompatActivity
 
             final SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
 
-            MotionListener ml = new MotionListener.MotionAdapter() {
-                @Override
-                public void motionDetected(ArrayList<Point> differing) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mScreenService.screenOn();
-                        }
-                    });
-                }
-            };
-
             int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
-            MotionVisualizer mv = new MotionVisualizer(motionView, navigationView, prefs, ml, scaledSize);
+            MotionVisualizer mv = new MotionVisualizer(motionView, navigationView, prefs, scaledSize);
 
             boolean newApi = prefs.getBoolean("pref_motion_detection_new_api", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
             if (newApi && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

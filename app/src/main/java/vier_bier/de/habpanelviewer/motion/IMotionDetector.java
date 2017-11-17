@@ -8,7 +8,7 @@ import android.content.SharedPreferences;
 public interface IMotionDetector {
     int MY_PERMISSIONS_MOTION_REQUEST_CAMERA = 42;
 
-    void shutdown();
+    void terminate();
 
     void updateFromPreferences(SharedPreferences prefs);
 }

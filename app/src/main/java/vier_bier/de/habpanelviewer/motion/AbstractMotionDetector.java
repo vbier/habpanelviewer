@@ -44,7 +44,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     private int mLeniency = 20;
     private int mRotationCorrection;
     private int mDeviceRotation;
-    private MotionListener mListener;
+    private MotionReporter mListener;
     private int mDetectionCount = 0;
     private int mFrameCount = 0;
 
@@ -54,7 +54,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
     AbstractMotionDetector(Activity context, MotionListener l) {
         mContext = context;
-        mListener = l;
+        mListener = new MotionReporter(l);
         EventBus.getDefault().register(this);
 
         setDaemon(true);
@@ -95,7 +95,8 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     }
 
     @Override
-    public synchronized void shutdown() {
+    public synchronized void terminate() {
+        mListener.terminate();
         stopDetection();
 
         mStopped.set(true);
@@ -109,6 +110,8 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         int newDeviceRotation = mContext.getWindowManager().getDefaultDisplay().getRotation();
 
         if (newEnabled) {
+            mListener.updateFromPreferences(prefs);
+
             boolean changed = newBoxes != mBoxes || newLeniency != mLeniency || newDeviceRotation != mDeviceRotation;
 
             if (changed && mEnabled) {

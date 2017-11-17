@@ -106,45 +106,6 @@
                     android:title="@string/pref_flash_steady_regex" />
             </PreferenceScreen>
             <PreferenceScreen
-                android:key="pref_motion"
-                android:persistent="false"
-                android:title="@string/pref_motion">
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref_motion_detection_enabled"
-                    android:summary="@string/pref_motion_detection_enabled_summ"
-                    android:title="@string/pref_motion_detection_enabled" />
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:key="pref_motion_detection_preview"
-                    android:dependency="pref_motion_detection_enabled"
-                    android:summary="@string/pref_motion_detection_preview_summ"
-                    android:title="@string/pref_motion_detection_preview" />
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="pref_motion_detection_new_api"
-                    android:enabled="@bool/is_post_api_21"
-                    android:dependency="pref_motion_detection_enabled"
-                    android:summary="@string/pref_motion_detection_new_api_summ"
-                    android:title="@string/pref_motion_detection_new_api" />
-                <ListPreference
-                    android:defaultValue="20"
-                    android:key="pref_motion_detection_granularity"
-                    android:entries="@array/granularity"
-                    android:entryValues="@array/granularity"
-                    android:dependency="pref_motion_detection_enabled"
-                    android:summary="@string/pref_motion_detection_granularity_summ"
-                    android:title="@string/pref_motion_detection_granularity" />
-                <ListPreference
-                    android:defaultValue="20"
-                    android:key="pref_motion_detection_leniency"
-                    android:entries="@array/leniency"
-                    android:entryValues="@array/leniency"
-                    android:dependency="pref_motion_detection_enabled"
-                    android:summary="@string/pref_motion_detection_leniency_summ"
-                    android:title="@string/pref_motion_detection_leniency" />
-            </PreferenceScreen>
-            <PreferenceScreen
                 android:key="pref_volume"
                 android:persistent="false"
                 android:title="@string/pref_volume">
@@ -196,6 +157,50 @@
                     android:key="pref_battery_level_item"
                     android:summary="@string/pref_battery_level_item_summ"
                     android:title="@string/pref_battery_level_item" />
+            </PreferenceScreen>
+            <PreferenceScreen
+                android:key="pref_motion"
+                android:persistent="false"
+                android:title="@string/pref_motion">
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_enabled_summ"
+                    android:title="@string/pref_motion_detection_enabled" />
+                <EditTextPreference
+                    android:dependency="pref_motion_detection_enabled"
+                    android:key="pref_motion_item"
+                    android:summary="@string/pref_motion_item_summ"
+                    android:title="@string/pref_motion_item" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_motion_detection_preview"
+                    android:dependency="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_preview_summ"
+                    android:title="@string/pref_motion_detection_preview" />
+                <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="pref_motion_detection_new_api"
+                    android:enabled="@bool/is_post_api_21"
+                    android:dependency="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_new_api_summ"
+                    android:title="@string/pref_motion_detection_new_api" />
+                <ListPreference
+                    android:defaultValue="20"
+                    android:key="pref_motion_detection_granularity"
+                    android:entries="@array/granularity"
+                    android:entryValues="@array/granularity"
+                    android:dependency="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_granularity_summ"
+                    android:title="@string/pref_motion_detection_granularity" />
+                <ListPreference
+                    android:defaultValue="20"
+                    android:key="pref_motion_detection_leniency"
+                    android:entries="@array/leniency"
+                    android:entryValues="@array/leniency"
+                    android:dependency="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_leniency_summ"
+                    android:title="@string/pref_motion_detection_leniency" />
             </PreferenceScreen>
         </PreferenceScreen>
     </PreferenceCategory>

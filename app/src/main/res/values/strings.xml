@@ -27,9 +27,9 @@
     <string name="pref_screen_item_summ">Name of the Item from which to derive the screen state</string>
     <string name="pref_screen_item_default">gDoors</string>
     <string name="pref_screen_on_regex">Enabled Regexp</string>
-    <string name="pref_screen_on_regex_summ">Regexp that triggers the backlight</string>
+    <string name="pref_screen_on_regex_summ">Regexp that triggers the screen</string>
     <string name="pref_scren_on_regex_default">OPEN</string>
-    <string name="pref_screen">Backlight Control</string>
+    <string name="pref_screen">Screen On Control</string>
     <string name="pref_flash_enabled">Toggle flashlight dependent on item</string>
     <string name="pref_flash_enabled_summ">Allows to enable/disable or pulse the flashlight depending on the actual value of an openHAB item</string>
     <string name="pref_flash_item">Flash Item</string>
@@ -57,7 +57,9 @@
     <string name="pref_restart_enabled">Restart on crash</string>
     <string name="pref_restart_enabled_summ">HABPanelViewer is automatically restarted after a crash</string>
     <string name="pref_motion_detection_enabled">Motion Detection</string>
-    <string name="pref_motion_detection_enabled_summ">Turn screen on when motion is detected</string>
+    <string name="pref_motion_detection_enabled_summ">Toggle openHAB contact item when motion is detected</string>
+    <string name="pref_motion_item">Motion Contact</string>
+    <string name="pref_motion_item_summ">Name of the contact item whose state shall be set motion has been detected</string>
     <string name="pref_restart">Auto Restart</string>
     <string name="pref_max_restarts">Number of allowed restarts</string>
     <string name="pref_max_restarts_summ">The number of restarts until auto restart is turned off</string>
@@ -85,7 +87,7 @@
     <string name="pref_screen_stay_enabled_summ">Tries to keep the screen on as long as the regexp matches</string>
     <string name="pref_screen_stay_enabled">Keep screen on</string>
     <string name="pref_battery">Battery</string>
-    <string name="pref_battery_enabled">Toggle openHAB switch item when device battery is low</string>
+    <string name="pref_battery_enabled">Toggle openHAB contact item when device battery is low</string>
     <string name="pref_battery_enabled_summ">Allows to set the state of an openHAB items depending on the device battery status</string>
     <string name="pref_battery_item">Battery Low Contact</string>
     <string name="pref_battery_item_summ">Name of the contact item whose state shall be set when battery is low/not low</string>

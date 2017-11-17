@@ -3,6 +3,7 @@
 - reorganize settings
 - add reporting for battery charging state and battery level
 - add in-app help screen
+- motion detection does no longer wake up the screen, but reports events to openHAB
 
 0.9.8
 =====
