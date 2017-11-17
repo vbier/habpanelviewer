@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer.motion;
+package vier_bier.de.habpanelviewer.reporting.motion;
 
 import android.Manifest;
 import android.app.Activity;

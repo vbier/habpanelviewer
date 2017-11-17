@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer.motion;
+package vier_bier.de.habpanelviewer.reporting.motion;
 
 /**
  * Image data consisting of the data bytes and the image size.
