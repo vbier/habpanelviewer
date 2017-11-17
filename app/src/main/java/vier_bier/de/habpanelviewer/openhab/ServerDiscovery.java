@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer;
+package vier_bier.de.habpanelviewer.openhab;
 
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
@@ -69,7 +69,7 @@ public class ServerDiscovery {
         Log.v(TAG, "discovery finished.");
     }
 
-    void terminate() {
+    public void terminate() {
         stopDiscovery();
     }
 

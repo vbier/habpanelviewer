@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer.screen;
+package vier_bier.de.habpanelviewer.control;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

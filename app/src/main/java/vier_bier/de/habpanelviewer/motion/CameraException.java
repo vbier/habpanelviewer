@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer;
+package vier_bier.de.habpanelviewer.motion;
 
 /**
  * Camera related exception independent on Android API level.

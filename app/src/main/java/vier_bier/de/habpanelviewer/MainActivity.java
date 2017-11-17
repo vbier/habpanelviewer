@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.media.AudioManager;
 import android.net.nsd.NsdManager;
@@ -40,7 +41,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Date;
 
-import vier_bier.de.habpanelviewer.flash.FlashController;
+import vier_bier.de.habpanelviewer.control.FlashController;
+import vier_bier.de.habpanelviewer.control.ScreenController;
+import vier_bier.de.habpanelviewer.control.VolumeController;
 import vier_bier.de.habpanelviewer.motion.IMotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetectorCamera2;
@@ -48,12 +51,11 @@ import vier_bier.de.habpanelviewer.motion.MotionListener;
 import vier_bier.de.habpanelviewer.motion.MotionVisualizer;
 import vier_bier.de.habpanelviewer.openhab.ConnectionListener;
 import vier_bier.de.habpanelviewer.openhab.SSEClient;
+import vier_bier.de.habpanelviewer.openhab.ServerDiscovery;
 import vier_bier.de.habpanelviewer.reporting.BatteryMonitor;
-import vier_bier.de.habpanelviewer.screen.ScreenController;
 import vier_bier.de.habpanelviewer.settings.SetPreferenceActivity;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 import vier_bier.de.habpanelviewer.status.StatusInfoActivity;
-import vier_bier.de.habpanelviewer.volume.VolumeController;
 
 /**
  * Main activity showing the Webview for openHAB.
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 try {
                     mFlashService = new FlashController((CameraManager) getSystemService(Context.CAMERA_SERVICE));
-                } catch (CameraException e) {
+                } catch (CameraAccessException | IllegalAccessException e) {
                     Log.d("Habpanelview", "Could not create flash controller");
                 }
             }

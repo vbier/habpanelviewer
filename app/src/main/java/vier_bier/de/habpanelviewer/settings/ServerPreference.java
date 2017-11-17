@@ -16,7 +16,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import vier_bier.de.habpanelviewer.ServerDiscovery;
+import vier_bier.de.habpanelviewer.openhab.ServerDiscovery;
 
 /**
  * TextPreference with an additional button to trigger mDNS server discovery.

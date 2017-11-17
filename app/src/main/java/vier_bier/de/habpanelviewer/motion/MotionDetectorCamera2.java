@@ -27,8 +27,6 @@ import android.view.TextureView;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-import vier_bier.de.habpanelviewer.CameraException;
-
 /**
  * Motion detection using Camera2 API.
  */

@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import vier_bier.de.habpanelviewer.CameraException;
-
 /**
  * Motion detection using the old Camera API.
  */

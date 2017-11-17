@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer.flash;
+package vier_bier.de.habpanelviewer.control;
 
 import android.annotation.TargetApi;
 import android.content.SharedPreferences;
@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import vier_bier.de.habpanelviewer.CameraException;
 import vier_bier.de.habpanelviewer.openhab.StateListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
@@ -38,27 +37,23 @@ public class FlashController implements StateListener {
 
     private ApplicationStatus mStatus;
 
-    public FlashController(CameraManager cameraManager) throws CameraException {
+    public FlashController(CameraManager cameraManager) throws CameraAccessException, IllegalAccessException {
         camManager = cameraManager;
         EventBus.getDefault().register(this);
 
-        try {
-            for (String camId : camManager.getCameraIdList()) {
-                CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
-                Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-                Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+        for (String camId : camManager.getCameraIdList()) {
+            CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
+            Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+            Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-                if (facing == CameraCharacteristics.LENS_FACING_BACK && hasFlash) {
-                    torchId = camId;
-                    break;
-                }
+            if (facing == CameraCharacteristics.LENS_FACING_BACK && hasFlash) {
+                torchId = camId;
+                break;
             }
-        } catch (CameraAccessException e) {
-            throw new CameraException(e);
         }
 
         if (torchId == null) {
-            throw new CameraException("Could not find back facing camera with flash!");
+            throw new IllegalAccessException("Could not find back facing camera with flash!");
         }
     }
 

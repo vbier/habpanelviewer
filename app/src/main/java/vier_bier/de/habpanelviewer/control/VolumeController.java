@@ -1,4 +1,4 @@
-package vier_bier.de.habpanelviewer.volume;
+package vier_bier.de.habpanelviewer.control;
 
 import android.content.SharedPreferences;
 import android.media.AudioManager;

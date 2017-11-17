@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import vier_bier.de.habpanelviewer.CameraException;
 import vier_bier.de.habpanelviewer.R;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
