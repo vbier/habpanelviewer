@@ -114,9 +114,9 @@ public class ScreenController implements StateListener {
         }
 
         if (isEnabled()) {
-            mStatus.set("Backlight Control", "enabled\n" + screenOnItemName + "=" + screenOnItemState);
+            mStatus.set("Screen On Control", "enabled\n" + screenOnItemName + "=" + screenOnItemState);
         } else {
-            mStatus.set("Backlight Control", "disabled");
+            mStatus.set("Screen On Control", "disabled");
         }
     }
 }

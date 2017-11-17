@@ -26,6 +26,11 @@
         android:title="@string/action_info"
         android:icon="@drawable/ic_info_outline_black_24dp" />
     <item
+        android:id="@+id/action_help"
+        android:orderInCategory="100"
+        android:title="@string/action_help"
+        android:icon="@drawable/ic_help_outline_black_24dp" />
+    <item
         android:id="@+id/action_restart"
         android:orderInCategory="100"
         android:title="@string/action_restart"

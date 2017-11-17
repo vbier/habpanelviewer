@@ -4,6 +4,29 @@
         android:key="pref_key_settings"
         android:title="@string/pref_settings_title">
         <PreferenceScreen
+            android:key="pref_app"
+            android:persistent="false"
+            android:title="@string/pref_app">
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="pref_app_enabled"
+                android:summary="@string/pref_app_enabled_summ"
+                android:title="@string/pref_app_enabled" />
+            <EditTextPreference
+                android:defaultValue="@string/pref_app_name_default"
+                android:dependency="pref_app_enabled"
+                android:key="pref_app_name"
+                android:summary="@string/pref_app_name_summ"
+                android:title="@string/pref_app_name" />
+            <EditTextPreference
+                android:defaultValue="@string/pref_app_package_default"
+                android:dependency="pref_app_enabled"
+                android:key="pref_app_package"
+                android:summary="@string/pref_app_package_summ"
+                android:title="@string/pref_app" />
+        </PreferenceScreen>
+        <PreferenceScreen
             android:key="pref_restart"
             android:persistent="false"
             android:title="@string/pref_restart">
@@ -26,29 +49,6 @@
             android:title="@string/pref_control">
 
             <PreferenceScreen
-                android:key="pref_app"
-                android:persistent="false"
-                android:title="@string/pref_app">
-
-                <CheckBoxPreference
-                    android:defaultValue="true"
-                    android:key="pref_app_enabled"
-                    android:summary="@string/pref_app_enabled_summ"
-                    android:title="@string/pref_app_enabled" />
-                <EditTextPreference
-                    android:defaultValue="@string/pref_app_name_default"
-                    android:dependency="pref_app_enabled"
-                    android:key="pref_app_name"
-                    android:summary="@string/pref_app_name_summ"
-                    android:title="@string/pref_app_name" />
-                <EditTextPreference
-                    android:defaultValue="@string/pref_app_package_default"
-                    android:dependency="pref_app_enabled"
-                    android:key="pref_app_package"
-                    android:summary="@string/pref_app_package_summ"
-                    android:title="@string/pref_app" />
-            </PreferenceScreen>
-            <PreferenceScreen
                 android:key="pref_screen"
                 android:persistent="false"
                 android:title="@string/pref_screen">
@@ -57,18 +57,18 @@
                     android:key="pref_screen_enabled"
                     android:summary="@string/pref_screen_enabled_summ"
                     android:title="@string/pref_screen_enabled" />
-                <CheckBoxPreference
-                    android:defaultValue="false"
-                    android:dependency="pref_screen_enabled"
-                    android:key="pref_screen_stay_enabled"
-                    android:summary="@string/pref_screen_stay_enabled_summ"
-                    android:title="@string/pref_screen_stay_enabled" />
                 <EditTextPreference
                     android:defaultValue="@string/pref_screen_item_default"
                     android:dependency="pref_screen_enabled"
                     android:key="pref_screen_item"
                     android:summary="@string/pref_screen_item_summ"
                     android:title="@string/pref_screen_item" />
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:dependency="pref_screen_enabled"
+                    android:key="pref_screen_stay_enabled"
+                    android:summary="@string/pref_screen_stay_enabled_summ"
+                    android:title="@string/pref_screen_stay_enabled" />
                 <EditTextPreference
                     android:defaultValue="@string/pref_scren_on_regex_default"
                     android:dependency="pref_screen_enabled"

@@ -2,6 +2,7 @@
 =====
 - reorganize settings
 - add reporting for battery charging state and battery level
+- add in-app help screen
 
 0.9.8
 =====

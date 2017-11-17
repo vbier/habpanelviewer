@@ -90,7 +90,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/builds" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/check-manifest" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes-jar" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-classes" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-runtime-classes" />
@@ -123,6 +122,7 @@
     <orderEntry type="library" scope="TEST" name="javax.inject:javax.inject:1@jar" level="project" />
     <orderEntry type="library" scope="TEST" name="com.squareup:javawriter:2.1.1@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-v4-26.0.0-alpha1" level="project" />
+    <orderEntry type="library" name="com.github.mukeshsolanki:MarkdownView-Android-1.0.4" level="project" />
     <orderEntry type="library" name="com.android.support:design-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="com.android.support:support-compat-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="com.android.support:support-core-utils-26.0.0-alpha1" level="project" />

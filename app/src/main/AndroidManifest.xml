@@ -53,6 +53,10 @@
             android:name=".status.StatusInfoActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="Information" />
+        <activity
+            android:name=".help.HelpActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="Help" />
     </application>
 
 </manifest>

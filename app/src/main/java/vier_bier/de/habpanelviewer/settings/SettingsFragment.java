@@ -62,7 +62,7 @@ public class SettingsFragment extends PreferenceFragment {
         }
         if (!screenEnabled) {
             findPreference("pref_screen").setEnabled(false);
-            findPreference("pref_screen").setSummary("Backlight control is not available on this device");
+            findPreference("pref_screen").setSummary("Screen On control is not available on this device");
         }
 
         // add validation to the regexps

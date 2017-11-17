@@ -44,6 +44,7 @@ import java.util.Date;
 import vier_bier.de.habpanelviewer.control.FlashController;
 import vier_bier.de.habpanelviewer.control.ScreenController;
 import vier_bier.de.habpanelviewer.control.VolumeController;
+import vier_bier.de.habpanelviewer.help.HelpActivity;
 import vier_bier.de.habpanelviewer.motion.IMotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.motion.MotionDetectorCamera2;
@@ -397,6 +398,8 @@ public class MainActivity extends AppCompatActivity
             }
         } else if (id == R.id.action_info) {
             showInfoScreen();
+        } else if (id == R.id.action_help) {
+            showHelpScreen();
         } else if (id == R.id.action_restart) {
             destroy();
             ProcessPhoenix.triggerRebirth(this);
@@ -458,7 +461,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (mScreenService == null) {
-            toastMsg += "Unable to control screen backlight on this device\n";
+            toastMsg += "Unable to turn on the screen on this device\n";
         }
 
         if (mMotionDetector == null) {
@@ -487,6 +490,12 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(intent, 0);
     }
 
+    private void showHelpScreen() {
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, HelpActivity.class);
+        startActivityForResult(intent, 0);
+    }
+
     private void addStatusItems() {
         if (mStatus == null) {
             return;
@@ -499,7 +508,7 @@ public class MainActivity extends AppCompatActivity
             mStatus.set("Flash Control", "unavailable");
         }
         if (mScreenService == null) {
-            mStatus.set("Backlight Control", "unavailable");
+            mStatus.set("Screen On Control", "unavailable");
         }
         if (mMotionDetector == null) {
             mStatus.set("Motion Detection", "unavailable");
