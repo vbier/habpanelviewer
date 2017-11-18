@@ -31,7 +31,7 @@ public class SetItemStateTask extends AsyncTask<SetItemStateTask.ItemState, Void
                 final URL url = new URL(serverUrl + "/rest/items/" + state.mItemName + "/state");
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 if (urlConnection instanceof HttpsURLConnection && ignoreCertErrors) {
-                    ((HttpsURLConnection) urlConnection).setSSLSocketFactory(SSEClient.createSslContext(ignoreCertErrors).getSocketFactory());
+                    ((HttpsURLConnection) urlConnection).setSSLSocketFactory(ServerConnection.createSslContext(ignoreCertErrors).getSocketFactory());
 
                     HostnameVerifier hostnameVerifier = new HostnameVerifier() {
                         @Override

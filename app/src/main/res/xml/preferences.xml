@@ -217,6 +217,51 @@
                     android:summary="@string/pref_proximity_item_summ"
                     android:title="@string/pref_proximity_item" />
             </PreferenceScreen>
+            <PreferenceScreen
+                android:key="pref_brightness"
+                android:persistent="false"
+                android:title="@string/pref_brightness">
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_brightness_enabled"
+                    android:summary="@string/pref_brightness_enabled_summ"
+                    android:title="@string/pref_brightness_enabled" />
+                <EditTextPreference
+                    android:dependency="pref_brightness_enabled"
+                    android:key="pref_brightness_item"
+                    android:summary="@string/pref_brightness_item_summ"
+                    android:title="@string/pref_brightness_item" />
+            </PreferenceScreen>
+            <PreferenceScreen
+                android:key="pref_pressure"
+                android:persistent="false"
+                android:title="@string/pref_pressure">
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_pressure_enabled"
+                    android:summary="@string/pref_pressure_enabled_summ"
+                    android:title="@string/pref_pressure_enabled" />
+                <EditTextPreference
+                    android:dependency="pref_pressure_enabled"
+                    android:key="pref_pressure_item"
+                    android:summary="@string/pref_pressure_item_summ"
+                    android:title="@string/pref_pressure_item" />
+            </PreferenceScreen>
+            <PreferenceScreen
+                android:key="pref_temperature"
+                android:persistent="false"
+                android:title="@string/pref_temperature">
+                <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="pref_temperature_enabled"
+                    android:summary="@string/pref_temperature_enabled_summ"
+                    android:title="@string/pref_temperature_enabled" />
+                <EditTextPreference
+                    android:dependency="pref_temperature_enabled"
+                    android:key="pref_temperature_item"
+                    android:summary="@string/pref_temperature_item_summ"
+                    android:title="@string/pref_temperature_item" />
+            </PreferenceScreen>
         </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory

@@ -16,29 +16,33 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import vier_bier.de.habpanelviewer.openhab.StateListener;
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
+import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Controller for the back-facing cameras flash light.
  */
 @TargetApi(Build.VERSION_CODES.M)
-public class FlashController implements StateListener {
-    private FlashControlThread controller;
+public class FlashController implements SubscriptionListener {
     private CameraManager camManager;
+    private ServerConnection mServerConnection;
+
+    private FlashControlThread controller;
     private String torchId;
 
     private boolean enabled;
     private String flashItemName;
-    private String flashItemState;
 
     private Pattern flashOnPattern;
     private Pattern flashPulsatingPattern;
 
     private ApplicationStatus mStatus;
 
-    public FlashController(CameraManager cameraManager) throws CameraAccessException, IllegalAccessException {
+    public FlashController(CameraManager cameraManager, ServerConnection serverConnection) throws CameraAccessException, IllegalAccessException {
         camManager = cameraManager;
+        mServerConnection = serverConnection;
+
         EventBus.getDefault().register(this);
 
         for (String camId : camManager.getCameraIdList()) {
@@ -69,7 +73,7 @@ public class FlashController implements StateListener {
         }
 
         if (isEnabled()) {
-            mStatus.set("Flash Control", "enabled\n" + flashItemName + "=" + flashItemState);
+            mStatus.set("Flash Control", "enabled\n" + flashItemName + "=" + mServerConnection.getState(flashItemName));
         } else {
             mStatus.set("Flash Control", "disabled");
         }
@@ -95,37 +99,10 @@ public class FlashController implements StateListener {
         return controller;
     }
 
-    @Override
-    public void updateState(String name, String state) {
-        if (name.equals(flashItemName)) {
-            if (flashItemState != null && flashItemState.equals(state)) {
-                Log.i("Habpanelview", "unchanged flash item state=" + state);
-                return;
-            }
-
-            Log.i("Habpanelview", "flash item state=" + state + ", old state=" + flashItemState);
-            flashItemState = state;
-            addStatusItems();
-
-            if (flashOnPattern != null && state != null && flashOnPattern.matcher(state).matches()) {
-                createController().enableFlash();
-            } else if (flashPulsatingPattern != null && state != null && flashPulsatingPattern.matcher(state).matches()) {
-                createController().pulseFlash();
-            } else {
-                if (controller != null) {
-                    controller.disableFlash();
-                }
-            }
-        }
-    }
-
     public void updateFromPreferences(SharedPreferences prefs) {
         flashPulsatingPattern = null;
         flashOnPattern = null;
-        if (flashItemName == null || !flashItemName.equalsIgnoreCase(prefs.getString("pref_flash_item", ""))) {
-            flashItemName = prefs.getString("pref_flash_item", "");
-            flashItemState = null;
-        }
+        flashItemName = prefs.getString("pref_flash_item", "");
         enabled = prefs.getBoolean("pref_flash_enabled", false);
 
         String pulsatingRegexpStr = prefs.getString("pref_flash_pulse_regex", "");
@@ -146,7 +123,23 @@ public class FlashController implements StateListener {
             }
         }
 
+        mServerConnection.subscribeItems(this, flashItemName);
+    }
+
+    @Override
+    public void itemUpdated(String name, final String value) {
+        Log.i("Habpanelview", "flash item state=" + value);
         addStatusItems();
+
+        if (flashOnPattern != null && value != null && flashOnPattern.matcher(value).matches()) {
+            createController().enableFlash();
+        } else if (flashPulsatingPattern != null && value != null && flashPulsatingPattern.matcher(value).matches()) {
+            createController().pulseFlash();
+        } else {
+            if (controller != null) {
+                controller.disableFlash();
+            }
+        }
     }
 
     private class FlashControlThread extends Thread {

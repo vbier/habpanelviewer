@@ -2,7 +2,7 @@ package com.tylerjroach.eventsource;
 
 import javax.net.ssl.SSLEngine;
 
-import vier_bier.de.habpanelviewer.openhab.SSEClient;
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
 
 /**
  * Workaround for a bug in the eventsource implementation.
@@ -16,6 +16,6 @@ public class CertificateIgnoringSSLEngineFactory extends SSLEngineFactory {
 
     @Override
     SSLEngine GetNewSSLEngine() {
-        return SSEClient.createSslContext(mIgnoreCertErrors).createSSLEngine();
+        return ServerConnection.createSslContext(mIgnoreCertErrors).createSSLEngine();
     }
 }

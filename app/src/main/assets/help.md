@@ -74,13 +74,40 @@ A sample openHAB items file looks like this:
 The contact state will be *CLOSED* whenever motion has been detected by the camera, *OPEN* otherwise.
 
 ### proximity sensor
-Allows to set the value of an openHAB contact item depending on the device proximity sensor. You can then use the items in rules, e.g. for sending a notification when the battery is low.
+Allows to set the value of an openHAB contact item depending on the device proximity sensor.
 
 The contact state will be *CLOSED* whenever an object has been detected close to the device, *OPEN* otherwise.
 
 A sample openHAB items file looks like this:
 
     Contact Tablet_Proximity
+
+### brightness sensor
+Allows to set the value of an openHAB number item depending on the device brightness sensor.
+
+The item state will be set to the measured brightness in lux.
+
+A sample openHAB items file looks like this:
+
+    Number Tablet_Brightness
+
+### pressure sensor
+Allows to set the value of an openHAB number item depending on the device pressure sensor.
+
+The item state will be set to the measured pressure in mBar or hPa (depending on the sensor hardware).
+
+A sample openHAB items file looks like this:
+
+    Number Tablet_Pressure
+
+### temperature sensor
+Allows to set the value of an openHAB number item depending on the device temperature sensor.
+
+The item state will be set to the measured temperature in degrees celsius.
+
+A sample openHAB items file looks like this:
+
+    Number Tablet_Temperature
 
 [go back to top](#top)
 

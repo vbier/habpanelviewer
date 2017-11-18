@@ -24,7 +24,7 @@ import javax.net.ssl.SSLSession;
 
 import vier_bier.de.habpanelviewer.R;
 import vier_bier.de.habpanelviewer.UiUtil;
-import vier_bier.de.habpanelviewer.openhab.SSEClient;
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
 
 /**
  * Fragment for preferences.
@@ -33,6 +33,10 @@ public class SettingsFragment extends PreferenceFragment {
     private boolean flashEnabled = false;
     private boolean motionEnabled = false;
     private boolean screenEnabled = false;
+    private boolean proximityEnabled = false;
+    private boolean pressureEnabled = false;
+    private boolean brightnessEnabled = false;
+    private boolean temperatureEnabled = false;
 
     private boolean newApi = false;
     private boolean ignoreCertErrors = false;
@@ -46,6 +50,10 @@ public class SettingsFragment extends PreferenceFragment {
             flashEnabled = bundle.getBoolean("flash_enabled");
             motionEnabled = bundle.getBoolean("motion_enabled");
             screenEnabled = bundle.getBoolean("screen_enabled");
+            proximityEnabled = bundle.getBoolean("proximity_enabled");
+            pressureEnabled = bundle.getBoolean("pressure_enabled");
+            brightnessEnabled = bundle.getBoolean("brightness_enabled");
+            temperatureEnabled = bundle.getBoolean("temperature_enabled");
         }
 
         // Load the preferences from an XML resource
@@ -63,6 +71,22 @@ public class SettingsFragment extends PreferenceFragment {
         if (!screenEnabled) {
             findPreference("pref_screen").setEnabled(false);
             findPreference("pref_screen").setSummary("Screen On control is not available on this device");
+        }
+        if (!proximityEnabled) {
+            findPreference("pref_proximity").setEnabled(false);
+            findPreference("pref_proximity").setSummary("Proximity sensor is not available on this device");
+        }
+        if (!pressureEnabled) {
+            findPreference("pref_pressure").setEnabled(false);
+            findPreference("pref_pressure").setSummary("Pressure sensor is not available on this device");
+        }
+        if (!brightnessEnabled) {
+            findPreference("pref_brightness").setEnabled(false);
+            findPreference("pref_brightness").setSummary("Brightness sensor is not available on this device");
+        }
+        if (!temperatureEnabled) {
+            findPreference("pref_temperature").setEnabled(false);
+            findPreference("pref_temperature").setSummary("Temperature sensor is not available on this device");
         }
 
         // add validation to the regexps
@@ -130,7 +154,7 @@ public class SettingsFragment extends PreferenceFragment {
                         final URL url = new URL(urls[0]);
                         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                         if (urlConnection instanceof HttpsURLConnection) {
-                            ((HttpsURLConnection) urlConnection).setSSLSocketFactory(SSEClient.createSslContext(ignoreCertErrors).getSocketFactory());
+                            ((HttpsURLConnection) urlConnection).setSSLSocketFactory(ServerConnection.createSslContext(ignoreCertErrors).getSocketFactory());
 
                             HostnameVerifier hostnameVerifier = new HostnameVerifier() {
                                 @Override

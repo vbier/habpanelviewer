@@ -45,10 +45,14 @@ import vier_bier.de.habpanelviewer.control.ScreenController;
 import vier_bier.de.habpanelviewer.control.VolumeController;
 import vier_bier.de.habpanelviewer.help.HelpActivity;
 import vier_bier.de.habpanelviewer.openhab.ConnectionListener;
-import vier_bier.de.habpanelviewer.openhab.SSEClient;
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
 import vier_bier.de.habpanelviewer.openhab.ServerDiscovery;
 import vier_bier.de.habpanelviewer.reporting.BatteryMonitor;
+import vier_bier.de.habpanelviewer.reporting.BrightnessMonitor;
+import vier_bier.de.habpanelviewer.reporting.PressureMonitor;
 import vier_bier.de.habpanelviewer.reporting.ProximityMonitor;
+import vier_bier.de.habpanelviewer.reporting.SensorMissingException;
+import vier_bier.de.habpanelviewer.reporting.TemperatureMonitor;
 import vier_bier.de.habpanelviewer.reporting.motion.IMotionDetector;
 import vier_bier.de.habpanelviewer.reporting.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.reporting.motion.MotionDetectorCamera2;
@@ -65,16 +69,19 @@ public class MainActivity extends AppCompatActivity
 
     private ClientWebView mWebView;
     private TextView mTextView;
-    private SSEClient mSseClient;
+    private ServerConnection mServerConnection;
     private Thread.UncaughtExceptionHandler exceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 
     private ServerDiscovery mDiscovery;
     private FlashController mFlashService;
     private ScreenController mScreenService;
-    private VolumeController mVolumeController;
     private IMotionDetector mMotionDetector;
     private BatteryMonitor mBatteryMonitor;
+    private VolumeController mVolumeController;
     private ProximityMonitor mProximityMonitor;
+    private BrightnessMonitor mBrightnessMonitor;
+    private PressureMonitor mPressureMonitor;
+    private TemperatureMonitor mTemperatureMonitor;
     private ApplicationStatus mStatus;
 
     private int mRestartCount;
@@ -105,9 +112,9 @@ public class MainActivity extends AppCompatActivity
             mDiscovery = null;
         }
 
-        if (mSseClient != null) {
-            mSseClient.terminate();
-            mSseClient = null;
+        if (mServerConnection != null) {
+            mServerConnection.terminate();
+            mServerConnection = null;
         }
 
         if (mBatteryMonitor != null) {
@@ -117,6 +124,22 @@ public class MainActivity extends AppCompatActivity
 
         if (mProximityMonitor != null) {
             mProximityMonitor.terminate();
+            mProximityMonitor = null;
+        }
+
+        if (mBrightnessMonitor != null) {
+            mBrightnessMonitor.terminate();
+            mBrightnessMonitor = null;
+        }
+
+        if (mPressureMonitor != null) {
+            mPressureMonitor.terminate();
+            mPressureMonitor = null;
+        }
+
+        if (mTemperatureMonitor != null) {
+            mTemperatureMonitor.terminate();
+            mTemperatureMonitor = null;
         }
     }
 
@@ -140,10 +163,14 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+
+        mServerConnection = new ServerConnection(this);
+        mServerConnection.addConnectionListener(this);
+
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 try {
-                    mFlashService = new FlashController((CameraManager) getSystemService(Context.CAMERA_SERVICE));
+                    mFlashService = new FlashController((CameraManager) getSystemService(Context.CAMERA_SERVICE), mServerConnection);
                 } catch (CameraAccessException | IllegalAccessException e) {
                     Log.d("Habpanelview", "Could not create flash controller");
                 }
@@ -204,24 +231,31 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
+        mVolumeController = new VolumeController((AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection);
+        mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this, mServerConnection);
 
-        mSseClient = new SSEClient(this);
-        mSseClient.setConnectionListener(this);
+        mBatteryMonitor = new BatteryMonitor(this, mServerConnection);
 
-        mVolumeController = new VolumeController((AudioManager) getSystemService(Context.AUDIO_SERVICE));
-        mSseClient.addStateListener(mVolumeController);
-
-        mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this);
-        mSseClient.addStateListener(mScreenService);
-
-        mBatteryMonitor = new BatteryMonitor(this);
-        mSseClient.addStateListener(mBatteryMonitor);
-
-        mProximityMonitor = new ProximityMonitor((SensorManager) getSystemService(Context.SENSOR_SERVICE));
-        mSseClient.addStateListener(mProximityMonitor);
-
-        if (mFlashService != null) {
-            mSseClient.addStateListener(mFlashService);
+        SensorManager m = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        try {
+            mProximityMonitor = new ProximityMonitor(m, mServerConnection);
+        } catch (SensorMissingException e) {
+            Log.d("Habpanelview", "Could not create proximity monitor");
+        }
+        try {
+            mBrightnessMonitor = new BrightnessMonitor(m, mServerConnection);
+        } catch (SensorMissingException e) {
+            Log.d("Habpanelview", "Could not create brightness monitor");
+        }
+        try {
+            mPressureMonitor = new PressureMonitor(m, mServerConnection);
+        } catch (SensorMissingException e) {
+            Log.d("Habpanelview", "Could not create pressure monitor");
+        }
+        try {
+            mTemperatureMonitor = new TemperatureMonitor(m, mServerConnection);
+        } catch (SensorMissingException e) {
+            Log.d("Habpanelview", "Could not create temperature monitor");
         }
 
         mRestartCount = getIntent().getIntExtra("restartCount", 0);
@@ -315,10 +349,22 @@ public class MainActivity extends AppCompatActivity
             mVolumeController.updateFromPreferences(prefs);
         }
 
+        if (mProximityMonitor != null) {
+            mProximityMonitor.updateFromPreferences(prefs);
+        }
+        if (mBrightnessMonitor != null) {
+            mBrightnessMonitor.updateFromPreferences(prefs);
+        }
+        if (mPressureMonitor != null) {
+            mPressureMonitor.updateFromPreferences(prefs);
+        }
+        if (mTemperatureMonitor != null) {
+            mTemperatureMonitor.updateFromPreferences(prefs);
+        }
+
         mBatteryMonitor.updateFromPreferences(prefs);
-        mProximityMonitor.updateFromPreferences(prefs);
         mWebView.updateFromPreferences(prefs);
-        mSseClient.updateFromPreferences(prefs);
+        mServerConnection.updateFromPreferences(prefs);
 
         TextureView previewView = ((TextureView) findViewById(R.id.previewView));
         SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
@@ -445,19 +491,13 @@ public class MainActivity extends AppCompatActivity
     private void showInitialToastMessage(int restartCount) {
         String toastMsg = "";
         if (restartCount > 0) {
-            toastMsg += "App restarted after crash";
+            toastMsg += "App restarted after crash\n";
         }
 
-        if (mFlashService == null) {
-            toastMsg += "No back-facing camera with flash found on this device\n";
-        }
-
-        if (mScreenService == null) {
-            toastMsg += "Unable to turn on the screen on this device\n";
-        }
-
-        if (mMotionDetector == null) {
-            toastMsg += "Unable to detect motion on this device\n";
+        if (mFlashService == null || mScreenService == null || mMotionDetector == null
+                || mProximityMonitor == null || mBrightnessMonitor == null
+                || mPressureMonitor == null) {
+            toastMsg += "Some application features are not available on your device.";
         }
 
         if (!toastMsg.isEmpty()) {
@@ -470,6 +510,10 @@ public class MainActivity extends AppCompatActivity
         intent.putExtra("flash_enabled", mFlashService != null);
         intent.putExtra("motion_enabled", mMotionDetector != null);
         intent.putExtra("screen_enabled", mScreenService != null);
+        intent.putExtra("proximity_enabled", mProximityMonitor != null);
+        intent.putExtra("pressure_enabled", mPressureMonitor != null);
+        intent.putExtra("brightness_enabled", mBrightnessMonitor != null);
+        intent.putExtra("temperature_enabled", mTemperatureMonitor != null);
         startActivityForResult(intent, 0);
     }
 
@@ -504,6 +548,18 @@ public class MainActivity extends AppCompatActivity
         }
         if (mRestartCount != 0) {
             mStatus.set("Restart Counter", String.valueOf(mRestartCount));
+        }
+        if (mProximityMonitor == null) {
+            mStatus.set("Proximity Sensor", "unavailable");
+        }
+        if (mPressureMonitor == null) {
+            mStatus.set("Pressure Sensor", "unavailable");
+        }
+        if (mBrightnessMonitor == null) {
+            mStatus.set("Brightness Sensor", "unavailable");
+        }
+        if (mTemperatureMonitor == null) {
+            mStatus.set("Temperature Sensor", "unavailable");
         }
 
         String webview = "";

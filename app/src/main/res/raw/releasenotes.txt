@@ -2,6 +2,7 @@
 =====
 - add reporting for battery charging state and battery level
 - add reporting for proximity events
+- add reporting for brightness, pressure and temperature sensors
 - add in-app help screen
 - motion detection does no longer wake up the screen, but reports events to openHAB
 - reorganize settings

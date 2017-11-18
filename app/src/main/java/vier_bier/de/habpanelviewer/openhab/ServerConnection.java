@@ -24,8 +24,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.SSLContext;
@@ -35,24 +35,25 @@ import javax.net.ssl.X509TrustManager;
 /**
  * Client for openHABs SSE service. Listens for item value changes.
  */
-public class SSEClient {
+public class ServerConnection {
     private Context mCtx;
     private String mServerURL;
-    private EventSource mEventSource;
-    private Set<String> mItems;
-
     private boolean mIgnoreCertErrors;
+    private EventSource mEventSource;
+
+    private final HashMap<String, ArrayList<SubscriptionListener>> mSubscriptions = new HashMap<>();
+    private HashMap<String, String> mValues = new HashMap<>();
+    private AtomicBoolean mConnected = new AtomicBoolean(false);
 
     private SSEHandler client;
     private FetchItemStateTask task;
-    private final ArrayList<StateListener> stateListeners = new ArrayList<>();
-    private ConnectionListener connectionListener;
+    private final ArrayList<ConnectionListener> connectionListeners = new ArrayList<>();
 
     private BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
 
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
                 connect();
@@ -62,7 +63,7 @@ public class SSEClient {
         }
     };
 
-    public SSEClient(Context context) {
+    public ServerConnection(Context context) {
         mCtx = context;
 
         final IntentFilter intentFilter = new IntentFilter();
@@ -70,47 +71,64 @@ public class SSEClient {
         mCtx.registerReceiver(mNetworkReceiver, intentFilter);
     }
 
+    public void addConnectionListener(ConnectionListener l) {
+        synchronized (connectionListeners) {
+            if (!connectionListeners.contains(l)) {
+                connectionListeners.add(l);
+            }
+        }
+    }
+
+    public void subscribeItems(SubscriptionListener l, String... names) {
+        boolean itemsChanged = false;
+
+        final HashSet<String> newItems = new HashSet<>();
+        for (String name : names) {
+            if (name != null && !name.isEmpty()) {
+                newItems.add(name);
+            }
+        }
+
+        synchronized (mSubscriptions) {
+            for (String name : mSubscriptions.keySet()) {
+                ArrayList<SubscriptionListener> listeners = mSubscriptions.get(name);
+                if (listeners != null && listeners.contains(l) && !newItems.contains(name)) {
+                    listeners.remove(l);
+
+                    if (listeners.isEmpty()) {
+                        itemsChanged = true;
+                        mSubscriptions.remove(name);
+                        mValues.remove(name);
+                    }
+                }
+            }
+
+            for (String name : newItems) {
+                ArrayList<SubscriptionListener> listeners = mSubscriptions.get(name);
+                if (listeners == null) {
+                    itemsChanged = true;
+                    listeners = new ArrayList<>();
+                    mSubscriptions.put(name, listeners);
+                } else {
+                    l.itemUpdated(name, mValues.get(name));
+                }
+
+                if (!listeners.contains(l)) {
+                    listeners.add(l);
+                }
+            }
+        }
+
+        if (itemsChanged && mConnected.get()) {
+            close();
+            connect();
+        }
+    }
+
     public void updateFromPreferences(SharedPreferences prefs) {
-        HashSet<String> items = new HashSet<>();
-        boolean flashEnabled = prefs.getBoolean("pref_flash_enabled", false);
-        if (flashEnabled) {
-            items.add(prefs.getString("pref_flash_item", ""));
-        }
-
-        boolean screenOnEnabled = prefs.getBoolean("pref_screen_enabled", false);
-        if (screenOnEnabled) {
-            items.add(prefs.getString("pref_screen_item", ""));
-        }
-
-        boolean volumeEnabled = prefs.getBoolean("pref_volume_enabled", false);
-        if (volumeEnabled) {
-            items.add(prefs.getString("pref_volume_item", ""));
-        }
-
-        boolean batteryEnabled = prefs.getBoolean("pref_battery_enabled", false);
-        if (batteryEnabled) {
-            items.add(prefs.getString("pref_battery_item", ""));
-            items.add(prefs.getString("pref_battery_charging_item", ""));
-        }
-
-        boolean proximityEnabled = prefs.getBoolean("pref_proximity_enabled", false);
-        if (proximityEnabled) {
-            items.add(prefs.getString("pref_proximity_item", ""));
-        }
-
-        ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
         // in case server url has changed reconnect
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_url", ""))) {
             mServerURL = prefs.getString("pref_url", "");
-            close();
-        }
-
-        // in case items have changed reconnect
-        if (mItems == null || !mItems.equals(items)) {
-            mItems = items;
-
             close();
         }
 
@@ -121,6 +139,8 @@ public class SSEClient {
             close();
         }
 
+        ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
             connect();
         } else {
@@ -164,23 +184,11 @@ public class SSEClient {
         return sslContext;
     }
 
-    public void addStateListener(StateListener listener) {
-        synchronized (stateListeners) {
-            if (!stateListeners.contains(listener)) {
-                stateListeners.add(listener);
-            }
-        }
-    }
-
-    public void setConnectionListener(ConnectionListener l) {
-        connectionListener = l;
-    }
-
-    void connect() {
+    private void connect() {
         if (!mServerURL.isEmpty() && mEventSource == null) {
             StringBuilder topic = new StringBuilder();
-            for (String item : mItems) {
-                if (!item.isEmpty()) {
+            synchronized (mSubscriptions) {
+                for (String item : mSubscriptions.keySet()) {
                     if (topic.length() > 0) {
                         topic.append(",");
                     }
@@ -210,15 +218,14 @@ public class SSEClient {
                 }
                 mEventSource = builder.build();
                 mEventSource.connect();
-                Log.d("Habpanelview", "EventSource connected");
-                return;
+                Log.d("Habpanelview", "EventSource mConnected");
             }
         } else {
             Log.d("Habpanelview", "EventSource connection skipped");
         }
     }
 
-    synchronized void close() {
+    private synchronized void close() {
         if (mEventSource != null) {
             mEventSource.close();
             mEventSource = null;
@@ -230,7 +237,19 @@ public class SSEClient {
 
     public void terminate() {
         mCtx.unregisterReceiver(mNetworkReceiver);
-        stateListeners.clear();
+        connectionListeners.clear();
+        mSubscriptions.clear();
+    }
+
+    public String getState(String item) {
+        return mValues.get(item);
+    }
+
+    public void updateState(String item, String state) {
+        if (item != null && !item.isEmpty() && state != null && !state.equals(getState(item))) {
+            SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
+            t.execute(new SetItemStateTask.ItemState(item, state));
+        }
     }
 
     /**
@@ -238,7 +257,6 @@ public class SSEClient {
      * If you want to update the ui from a callback, make sure to post to main thread
      */
     private class SSEHandler implements EventSourceHandler {
-        private AtomicBoolean connected = new AtomicBoolean(false);
 
         private SSEHandler() {
         }
@@ -247,8 +265,12 @@ public class SSEClient {
         public void onConnect() {
             Log.v("Habpanelview", "SSE onConnect");
 
-            if (!connected.getAndSet(true)) {
-                connectionListener.connected(mServerURL);
+            if (!mConnected.getAndSet(true)) {
+                synchronized (connectionListeners) {
+                    for (ConnectionListener l : connectionListeners) {
+                        l.connected(mServerURL);
+                    }
+                }
                 fetchCurrentItemsState();
             }
         }
@@ -264,14 +286,24 @@ public class SSEClient {
                         String topic = jObject.getString("topic");
                         String name = topic.split("/")[2];
 
-                        synchronized (stateListeners) {
-                            for (StateListener l : stateListeners) {
-                                l.updateState(name, payload.getString("value"));
-                            }
-                        }
+                        final String value = payload.getString("value");
+                        propagateItem(name, value);
                     }
                 } catch (JSONException e) {
                     Log.e("Habpanelview", "Error parsing JSON", e);
+                }
+            }
+        }
+
+        private void propagateItem(String name, String value) {
+            if (!value.equals(mValues.put(name, value))) {
+                final ArrayList<SubscriptionListener> listeners;
+                synchronized (mSubscriptions) {
+                    listeners = mSubscriptions.get(name);
+                }
+
+                for (SubscriptionListener l : listeners) {
+                    l.itemUpdated(name, value);
                 }
             }
         }
@@ -288,8 +320,14 @@ public class SSEClient {
         public void onClosed(boolean willReconnect) {
             Log.v("Habpanelview", "SSE onClosed: reConnect=" + String.valueOf(willReconnect));
 
-            if (connected.getAndSet(false)) {
-                connectionListener.disconnected();
+            if (mConnected.getAndSet(false)) {
+                mValues.clear();
+
+                synchronized (connectionListeners) {
+                    for (ConnectionListener l : connectionListeners) {
+                        l.disconnected();
+                    }
+                }
             }
         }
 
@@ -298,9 +336,23 @@ public class SSEClient {
                 task.cancel(true);
             }
 
-            task = new FetchItemStateTask(mServerURL, stateListeners, mIgnoreCertErrors);
+            HashSet<String> missingItems = new HashSet<>();
+            synchronized (mSubscriptions) {
+                for (String item : mSubscriptions.keySet()) {
+                    if (!mValues.containsKey(item)) {
+                        missingItems.add(item);
+                    }
+                }
+            }
+
+            task = new FetchItemStateTask(mServerURL, mIgnoreCertErrors, new SubscriptionListener() {
+                @Override
+                public void itemUpdated(String name, String value) {
+                    propagateItem(name, value);
+                }
+            });
             Log.d("Habpanelview", "Actively fetching items state");
-            task.execute(mItems);
+            task.execute(missingItems.toArray(new String[missingItems.size()]));
         }
     }
 }

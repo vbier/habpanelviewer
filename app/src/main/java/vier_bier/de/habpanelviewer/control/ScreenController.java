@@ -13,26 +13,27 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import vier_bier.de.habpanelviewer.R;
-import vier_bier.de.habpanelviewer.openhab.StateListener;
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
+import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Controller for the screen backlight.
  */
-public class ScreenController implements StateListener {
+public class ScreenController implements SubscriptionListener {
+    private ServerConnection mServerConnection;
     private final PowerManager.WakeLock screenOnLock;
     private final Activity activity;
 
     private boolean enabled;
     private boolean keepOn;
     private String screenOnItemName;
-    private String screenOnItemState;
-
     private Pattern screenOnPattern;
 
     private ApplicationStatus mStatus;
 
-    public ScreenController(PowerManager pwrManager, Activity activity) {
+    public ScreenController(PowerManager pwrManager, Activity activity, ServerConnection serverConnection) {
+        mServerConnection = serverConnection;
         this.activity = activity;
         EventBus.getDefault().register(this);
 
@@ -44,7 +45,7 @@ public class ScreenController implements StateListener {
         activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(false);
     }
 
-    public synchronized void screenOn() {
+    private synchronized void screenOn() {
         if (!screenOnLock.isHeld()) {
             screenOnLock.acquire();
             screenOnLock.release();
@@ -61,36 +62,10 @@ public class ScreenController implements StateListener {
         addStatusItems();
     }
 
-    @Override
-    public void updateState(String name, String state) {
-        if (name.equals(screenOnItemName)) {
-            if (screenOnItemState != null && screenOnItemState.equals(state)) {
-                Log.i("Habpanelview", "unchanged screen on item state=" + state);
-                return;
-            }
-
-            Log.i("Habpanelview", "screen on item state=" + state + ", old state=" + screenOnItemState);
-            screenOnItemState = state;
-            addStatusItems();
-
-            activity.runOnUiThread(new Runnable() {
-                public void run() {
-                    if (screenOnPattern != null && screenOnItemState != null && screenOnPattern.matcher(screenOnItemState).matches()) {
-                        screenOn();
-                    } else {
-                        screenOff();
-                    }
-                }
-            });
-        }
-    }
-
     public void updateFromPreferences(SharedPreferences prefs) {
         screenOnPattern = null;
-        if (screenOnItemName == null || !screenOnItemName.equalsIgnoreCase(prefs.getString("pref_screen_item", ""))) {
-            screenOnItemName = prefs.getString("pref_screen_item", "");
-            screenOnItemState = null;
-        }
+        screenOnItemName = prefs.getString("pref_screen_item", "");
+
         enabled = prefs.getBoolean("pref_screen_enabled", false);
         keepOn = prefs.getBoolean("pref_screen_stay_enabled", false);
 
@@ -102,6 +77,8 @@ public class ScreenController implements StateListener {
                 // is handled in the preferences
             }
         }
+
+        mServerConnection.subscribeItems(this, screenOnItemName);
     }
 
     private boolean isEnabled() {
@@ -114,9 +91,25 @@ public class ScreenController implements StateListener {
         }
 
         if (isEnabled()) {
-            mStatus.set("Screen On Control", "enabled\n" + screenOnItemName + "=" + screenOnItemState);
+            mStatus.set("Screen On Control", "enabled\n" + screenOnItemName + "=" + mServerConnection.getState(screenOnItemName));
         } else {
             mStatus.set("Screen On Control", "disabled");
         }
+    }
+
+    @Override
+    public void itemUpdated(String name, final String value) {
+        Log.i("Habpanelview", "screen on item state=" + value);
+        addStatusItems();
+
+        activity.runOnUiThread(new Runnable() {
+            public void run() {
+                if (screenOnPattern != null && value != null && screenOnPattern.matcher(value).matches()) {
+                    screenOn();
+                } else {
+                    screenOff();
+                }
+            }
+        });
     }
 }

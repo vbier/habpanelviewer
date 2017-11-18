@@ -13,34 +13,31 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import vier_bier.de.habpanelviewer.openhab.SetItemStateTask;
-import vier_bier.de.habpanelviewer.openhab.StateListener;
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
+import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Monitors battery state and reports to openHAB.
  */
-public class BatteryMonitor implements StateListener {
+public class BatteryMonitor implements SubscriptionListener {
     private Context mCtx;
+    private ServerConnection mServerConnection;
     private ApplicationStatus mStatus;
-
-    private String mServerURL;
-    private boolean mIgnoreCertErrors;
 
     private BroadcastReceiver mBatteryReceiver;
     private boolean mBatteryEnabled;
 
     private String mBatteryLowItem;
-    private String mBatteryLowState;
     private String mBatteryChargingItem;
-    private String mBatteryChargingState;
     private String mBatteryLevelItem;
-    private int mBatteryLevelState;
 
     private BatteryPollingThread mPollBatteryLevel;
 
-    public BatteryMonitor(Context context) {
+    public BatteryMonitor(Context context, ServerConnection serverConnection) {
         mCtx = context;
+        mServerConnection = serverConnection;
+
         EventBus.getDefault().register(this);
 
         mBatteryReceiver = new BroadcastReceiver() {
@@ -48,20 +45,12 @@ public class BatteryMonitor implements StateListener {
             public void onReceive(Context context, Intent intent) {
                 if (Intent.ACTION_BATTERY_LOW.equals(intent.getAction())
                         || Intent.ACTION_BATTERY_OKAY.equals(intent.getAction())) {
-                    mBatteryLowState = Intent.ACTION_BATTERY_LOW.equals(intent.getAction()) ? "CLOSED" : "OPEN";
-
-                    if (mBatteryEnabled) {
-                        updateState(mBatteryLowItem, mBatteryLowState);
-                    }
+                    String newState = Intent.ACTION_BATTERY_LOW.equals(intent.getAction()) ? "CLOSED" : "OPEN";
+                    mServerConnection.updateState(mBatteryLowItem, newState);
                 } else {
-                    mBatteryChargingState = Intent.ACTION_POWER_CONNECTED.equals(intent.getAction()) ? "CLOSED" : "OPEN";
-
-                    if (mBatteryEnabled) {
-                        updateState(mBatteryChargingItem, mBatteryChargingState);
-                    }
+                    String newState = Intent.ACTION_POWER_CONNECTED.equals(intent.getAction()) ? "CLOSED" : "OPEN";
+                    mServerConnection.updateState(mBatteryChargingItem, newState);
                 }
-
-                addStatusItems();
             }
         };
 
@@ -82,21 +71,6 @@ public class BatteryMonitor implements StateListener {
         }
     }
 
-    @Override
-    public void updateState(String name, String value) {
-        if (name.equals(mBatteryLowItem)
-                && (mBatteryLowState == null || !mBatteryLowState.equals(value))) {
-            mBatteryLowState = value;
-        } else if (name.equals(mBatteryChargingItem)
-                && (mBatteryChargingState == null || !mBatteryChargingState.equals(value))) {
-            mBatteryChargingState = value;
-        } else {
-            return;
-        }
-
-        addStatusItems();
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
         mStatus = status;
@@ -111,13 +85,16 @@ public class BatteryMonitor implements StateListener {
         if (mBatteryEnabled) {
             String state = "reporting enabled";
             if (!mBatteryLowItem.isEmpty()) {
-                state += "\nBattery low: " + "CLOSED".equals(mBatteryLowState) + " [" + mBatteryLowItem + "=" + mBatteryLowState + "]";
+                String lowState = mServerConnection.getState(mBatteryLowItem);
+                state += "\nBattery low: " + "CLOSED".equals(lowState) + " [" + mBatteryLowItem + "=" + lowState + "]";
             }
             if (!mBatteryChargingItem.isEmpty()) {
-                state += "\nBattery charging: " + "CLOSED".equals(mBatteryChargingState) + " [" + mBatteryChargingItem + "=" + mBatteryChargingState + "]";
+                String chargingState = mServerConnection.getState(mBatteryChargingItem);
+                state += "\nBattery charging: " + "CLOSED".equals(chargingState) + " [" + mBatteryChargingItem + "=" + chargingState + "]";
             }
             if (!mBatteryLevelItem.isEmpty()) {
-                state += "\nBattery level: " + mBatteryLevelState + "% [" + mBatteryLevelItem + "=" + mBatteryLevelState + "]";
+                String levelState = mServerConnection.getState(mBatteryLevelItem);
+                state += "\nBattery level: " + levelState + "% [" + mBatteryLevelItem + "=" + levelState + "]";
             }
             mStatus.set("Battery", state);
         } else {
@@ -126,35 +103,23 @@ public class BatteryMonitor implements StateListener {
     }
 
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        mServerURL = prefs.getString("pref_url", "");
-        mIgnoreCertErrors = prefs.getBoolean("pref_ignore_ssl_errors", false);
-
         if (mBatteryEnabled != prefs.getBoolean("pref_battery_enabled", false)) {
             mBatteryEnabled = !mBatteryEnabled;
         }
 
-        if ((!mBatteryEnabled || mServerURL.isEmpty()) && mPollBatteryLevel != null) {
+        if (!mBatteryEnabled && mPollBatteryLevel != null) {
             mPollBatteryLevel.stopPolling();
             mPollBatteryLevel = null;
         }
 
-        if (mBatteryLowItem == null || !mBatteryLowItem.equalsIgnoreCase(prefs.getString("pref_battery_item", ""))) {
-            mBatteryLowItem = prefs.getString("pref_battery_item", "");
-            mBatteryLowState = null;
-        }
+        mBatteryLowItem = prefs.getString("pref_battery_item", "");
+        mBatteryChargingItem = prefs.getString("pref_battery_charging_item", "");
+        mBatteryLevelItem = prefs.getString("pref_battery_level_item", "");
 
-        if (mBatteryChargingItem == null || !mBatteryChargingItem.equalsIgnoreCase(prefs.getString("pref_battery_charging_item", ""))) {
-            mBatteryChargingItem = prefs.getString("pref_battery_charging_item", "");
-            mBatteryChargingState = null;
-        }
+        mServerConnection.subscribeItems(this, mBatteryLowItem, mBatteryChargingItem, mBatteryLevelItem);
 
-        if (mBatteryLevelItem == null || !mBatteryLevelItem.equalsIgnoreCase(prefs.getString("pref_battery_level_item", ""))) {
-            mBatteryLevelItem = prefs.getString("pref_battery_level_item", "");
-            mBatteryLevelState = -1;
-        }
-
-        boolean canPoll = !mServerURL.isEmpty() && (!mBatteryLevelItem.isEmpty()
-                || !mBatteryChargingItem.isEmpty() || !mBatteryLowItem.isEmpty());
+        boolean canPoll = !mBatteryLevelItem.isEmpty()
+                || !mBatteryChargingItem.isEmpty() || !mBatteryLowItem.isEmpty();
 
         if (mBatteryEnabled) {
             if (!canPoll) {
@@ -167,6 +132,11 @@ public class BatteryMonitor implements StateListener {
                 mPollBatteryLevel.start();
             }
         }
+    }
+
+    @Override
+    public void itemUpdated(String name, String value) {
+        addStatusItems();
     }
 
     private class BatteryPollingThread extends Thread {
@@ -194,18 +164,11 @@ public class BatteryMonitor implements StateListener {
 
                 synchronized (fRunning) {
                     try {
-                        fRunning.wait("CLOSED".equals(mBatteryChargingState) ? 5000 : 300000);
+                        fRunning.wait("CLOSED".equals(mServerConnection.getState(mBatteryChargingItem)) ? 5000 : 300000);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
                 }
-            }
-        }
-
-        private void propagateState(String item, String state) {
-            if (!item.isEmpty() && state != null) {
-                SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
-                t.execute(new SetItemStateTask.ItemState(item, state));
             }
         }
 
@@ -220,11 +183,7 @@ public class BatteryMonitor implements StateListener {
                 int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
                 int newBatteryLevelState = (int) ((level / (float) scale) * 100);
 
-                if (mBatteryLevelState != newBatteryLevelState) {
-                    mBatteryLevelState = newBatteryLevelState;
-
-                    propagateState(mBatteryLevelItem, String.valueOf(mBatteryLevelState));
-                }
+                mServerConnection.updateState(mBatteryLevelItem, String.valueOf(newBatteryLevelState));
             }
 
             if (fPollAll.getAndSet(false)) {
@@ -235,19 +194,13 @@ public class BatteryMonitor implements StateListener {
                 int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
                 boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                         status == BatteryManager.BATTERY_STATUS_FULL;
+                int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+                int newBatteryLevelState = (int) ((level / (float) scale) * 100);
 
-                if (!mBatteryChargingItem.isEmpty()) {
-                    mBatteryChargingState = isCharging ? "CLOSED" : "OPEN";
-                    propagateState(mBatteryChargingItem, mBatteryChargingState);
-                }
-
-                if (!mBatteryLowItem.isEmpty()) {
-                    mBatteryLowState = mBatteryLevelState < 16 ? "CLOSED" : "OPEN";
-                    propagateState(mBatteryLowItem, mBatteryLowState);
-                }
+                mServerConnection.updateState(mBatteryChargingItem, isCharging ? "CLOSED" : "OPEN");
+                mServerConnection.updateState(mBatteryLowItem, newBatteryLevelState < 16 ? "CLOSED" : "OPEN");
             }
-
-            addStatusItems();
         }
     }
 }

@@ -8,25 +8,27 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import vier_bier.de.habpanelviewer.openhab.StateListener;
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
+import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Controller for the device volume.
  */
-public class VolumeController implements StateListener {
+public class VolumeController implements SubscriptionListener {
     private AudioManager mAudioManager;
+    private ServerConnection mServerConnection;
 
     private boolean enabled;
     private String volumeItemName;
-    private String volumeItemState;
     private final int mMaxVolume;
-
 
     private ApplicationStatus mStatus;
 
-    public VolumeController(AudioManager audioManager) {
+    public VolumeController(AudioManager audioManager, ServerConnection serverConnection) {
         mAudioManager = audioManager;
+        mServerConnection = serverConnection;
+
         EventBus.getDefault().register(this);
 
         mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -46,7 +48,7 @@ public class VolumeController implements StateListener {
         int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
         if (isEnabled()) {
-            mStatus.set("Volume Control", "enabled\n" + volumeItemName + "=" + volumeItemState
+            mStatus.set("Volume Control", "enabled\n" + volumeItemName + "=" + mServerConnection.getState(volumeItemName)
                     + "\nCurrent volume is " + volume + ", max. is " + mMaxVolume);
         } else {
             mStatus.set("Volume Control", "disabled\nCurrent volume is " + volume + ", max. is " + mMaxVolume);
@@ -57,38 +59,27 @@ public class VolumeController implements StateListener {
         return enabled;
     }
 
-    @Override
-    public void updateState(String name, String state) {
-        if (name.equals(volumeItemName)) {
-            if (volumeItemState != null && volumeItemState.equals(state)) {
-                Log.i("Habpanelview", "unchanged volume item state=" + state);
-                return;
-            }
+    public void updateFromPreferences(SharedPreferences prefs) {
+        volumeItemName = prefs.getString("pref_volume_item", "");
+        enabled = prefs.getBoolean("pref_volume_enabled", false);
 
-            Log.i("Habpanelview", "volume item state=" + state + ", old state=" + volumeItemState);
-            volumeItemState = state;
-
-            try {
-                int volume = Integer.parseInt(volumeItemState);
-                if (volume > 0 && volume <= mMaxVolume) {
-                    mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
-                } else {
-                    Log.w("Habpanelview", "volume item state out of bounds: " + volumeItemState);
-                }
-            } catch (NumberFormatException e) {
-                Log.e("Habpanelview", "failed to parse volume from volume item state: " + volumeItemState);
-            }
-
-            addStatusItems();
-        }
+        mServerConnection.subscribeItems(this, volumeItemName);
     }
 
-    public void updateFromPreferences(SharedPreferences prefs) {
-        if (volumeItemName == null || !volumeItemName.equalsIgnoreCase(prefs.getString("pref_volume_item", ""))) {
-            volumeItemName = prefs.getString("pref_volume_item", "");
-            volumeItemState = null;
+    @Override
+    public void itemUpdated(String name, String value) {
+        Log.i("Habpanelview", "volume item state=" + value);
+
+        try {
+            int volume = Integer.parseInt(value);
+            if (volume > 0 && volume <= mMaxVolume) {
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
+            } else {
+                Log.w("Habpanelview", "volume item state out of bounds: " + value);
+            }
+        } catch (NumberFormatException e) {
+            Log.e("Habpanelview", "failed to parse volume from volume item state: " + value);
         }
-        enabled = prefs.getBoolean("pref_volume_enabled", false);
 
         addStatusItems();
     }
