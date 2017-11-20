@@ -1,9 +1,8 @@
 package vier_bier.de.habpanelviewer.openhab;
 
 /**
- * Created by volla on 17.11.17.
+ * Listener for item subscriptions.
  */
-
-public interface SubscriptionListener {
-    void itemUpdated(String name, String value);
+public interface SubscriptionListener extends StateUpdateListener {
+    void itemInvalid(String name);
 }

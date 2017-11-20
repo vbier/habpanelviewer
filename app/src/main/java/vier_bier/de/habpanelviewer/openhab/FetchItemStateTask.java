@@ -15,12 +15,12 @@ import javax.net.ssl.SSLSession;
 /**
  * Asynchronous task that fetches the value of an openHAB item from the openHAB rest API.
  */
-class FetchItemStateTask extends AsyncTask<String, Void, Void> {
+public class FetchItemStateTask extends AsyncTask<String, Void, Void> {
     private String serverUrl;
     private boolean ignoreCertErrors;
     private SubscriptionListener subscriptionListener;
 
-    FetchItemStateTask(String url, boolean ignoreCertificateErrors, SubscriptionListener l) {
+    public FetchItemStateTask(String url, boolean ignoreCertificateErrors, SubscriptionListener l) {
         serverUrl = url;
         subscriptionListener = l;
         ignoreCertErrors = ignoreCertificateErrors;
@@ -58,11 +58,12 @@ class FetchItemStateTask extends AsyncTask<String, Void, Void> {
                 } finally {
                     urlConnection.disconnect();
                 }
+
+                subscriptionListener.itemUpdated(itemName, response);
             } catch (IOException e) {
+                subscriptionListener.itemInvalid(itemName);
                 Log.e("Habpanelview", "Failed to obtain state for item " + itemName, e);
             }
-
-            subscriptionListener.itemUpdated(itemName, response);
 
             if (isCancelled()) {
                 return null;

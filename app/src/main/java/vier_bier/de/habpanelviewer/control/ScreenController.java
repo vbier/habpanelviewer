@@ -14,13 +14,13 @@ import java.util.regex.PatternSyntaxException;
 
 import vier_bier.de.habpanelviewer.R;
 import vier_bier.de.habpanelviewer.openhab.ServerConnection;
-import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
+import vier_bier.de.habpanelviewer.openhab.StateUpdateListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Controller for the screen backlight.
  */
-public class ScreenController implements SubscriptionListener {
+public class ScreenController implements StateUpdateListener {
     private ServerConnection mServerConnection;
     private final PowerManager.WakeLock screenOnLock;
     private final Activity activity;

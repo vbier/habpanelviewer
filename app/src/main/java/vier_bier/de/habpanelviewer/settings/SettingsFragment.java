@@ -1,12 +1,16 @@
 package vier_bier.de.habpanelviewer.settings;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
@@ -24,7 +28,9 @@ import javax.net.ssl.SSLSession;
 
 import vier_bier.de.habpanelviewer.R;
 import vier_bier.de.habpanelviewer.UiUtil;
+import vier_bier.de.habpanelviewer.openhab.FetchItemStateTask;
 import vier_bier.de.habpanelviewer.openhab.ServerConnection;
+import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
 
 /**
  * Fragment for preferences.
@@ -106,6 +112,45 @@ public class SettingsFragment extends PreferenceFragment {
         // add validation to the package name
         EditTextPreference pkgPreference = (EditTextPreference) findPreference("pref_app_package");
         pkgPreference.setOnPreferenceChangeListener(new PackageValidatingListener());
+
+        // add validation to the items
+        for (String key : new String[]{"pref_flash_item", "pref_motion_item", "pref_screen_item",
+                "pref_proximity_item", "pref_pressure_item", "pref_brightness_item",
+                "pref_volume_item", "pref_temperature_item", "pref_battery_item",
+                "pref_battery_charging_item", "pref_battery_level_item"}) {
+            final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
+            editText.addTextChangedListener(new ValidatingTextWatcher() {
+                @Override
+                public void afterTextChanged(final Editable editable) {
+                    final String itemName = editable.toString();
+
+                    final String serverUrl = ((EditTextPreference) findPreference("pref_url")).getText();
+                    final boolean ignore = ((CheckBoxPreference) findPreference("pref_ignore_ssl_errors")).isChecked();
+                    FetchItemStateTask task = new FetchItemStateTask(serverUrl, ignore, new SubscriptionListener() {
+                        @Override
+                        public void itemInvalid(String name) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    editText.setTextColor(Color.RED);
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void itemUpdated(String name, String value) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    editText.setTextColor(Color.WHITE);
+                                }
+                            });
+                        }
+                    });
+                    task.execute(new String[]{itemName});
+                }
+            });
+        }
     }
 
     @Override
@@ -152,9 +197,10 @@ public class SettingsFragment extends PreferenceFragment {
                 protected Void doInBackground(String... urls) {
                     try {
                         final URL url = new URL(urls[0]);
+                        final boolean ignore = ((CheckBoxPreference) findPreference("pref_ignore_ssl_errors")).isChecked();
                         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                         if (urlConnection instanceof HttpsURLConnection) {
-                            ((HttpsURLConnection) urlConnection).setSSLSocketFactory(ServerConnection.createSslContext(ignoreCertErrors).getSocketFactory());
+                            ((HttpsURLConnection) urlConnection).setSSLSocketFactory(ServerConnection.createSslContext(ignore).getSocketFactory());
 
                             HostnameVerifier hostnameVerifier = new HostnameVerifier() {
                                 @Override
@@ -196,6 +242,16 @@ public class SettingsFragment extends PreferenceFragment {
             }
 
             return true;
+        }
+    }
+
+    private abstract class ValidatingTextWatcher implements TextWatcher {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         }
     }
 }

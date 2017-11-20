@@ -11,13 +11,13 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import vier_bier.de.habpanelviewer.openhab.ServerConnection;
-import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
+import vier_bier.de.habpanelviewer.openhab.StateUpdateListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Abstract base class for device sensor monitors.
  */
-public abstract class SensorMonitor implements SensorEventListener, SubscriptionListener {
+public abstract class SensorMonitor implements SensorEventListener, StateUpdateListener {
     private SensorManager mSensorManager;
     ServerConnection mServerConnection;
     Sensor mSensor;

@@ -9,13 +9,13 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import vier_bier.de.habpanelviewer.openhab.ServerConnection;
-import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
+import vier_bier.de.habpanelviewer.openhab.StateUpdateListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Controller for the device volume.
  */
-public class VolumeController implements SubscriptionListener {
+public class VolumeController implements StateUpdateListener {
     private AudioManager mAudioManager;
     private ServerConnection mServerConnection;
 

@@ -17,14 +17,14 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import vier_bier.de.habpanelviewer.openhab.ServerConnection;
-import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
+import vier_bier.de.habpanelviewer.openhab.StateUpdateListener;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Controller for the back-facing cameras flash light.
  */
 @TargetApi(Build.VERSION_CODES.M)
-public class FlashController implements SubscriptionListener {
+public class FlashController implements StateUpdateListener {
     private CameraManager camManager;
     private ServerConnection mServerConnection;
 

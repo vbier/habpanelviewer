@@ -41,7 +41,7 @@ public class ServerConnection {
     private boolean mIgnoreCertErrors;
     private EventSource mEventSource;
 
-    private final HashMap<String, ArrayList<SubscriptionListener>> mSubscriptions = new HashMap<>();
+    private final HashMap<String, ArrayList<StateUpdateListener>> mSubscriptions = new HashMap<>();
     private HashMap<String, String> mValues = new HashMap<>();
     private AtomicBoolean mConnected = new AtomicBoolean(false);
 
@@ -79,7 +79,7 @@ public class ServerConnection {
         }
     }
 
-    public void subscribeItems(SubscriptionListener l, String... names) {
+    public void subscribeItems(StateUpdateListener l, String... names) {
         boolean itemsChanged = false;
 
         final HashSet<String> newItems = new HashSet<>();
@@ -91,7 +91,7 @@ public class ServerConnection {
 
         synchronized (mSubscriptions) {
             for (String name : new HashSet<>(mSubscriptions.keySet())) {
-                ArrayList<SubscriptionListener> listeners = mSubscriptions.get(name);
+                ArrayList<StateUpdateListener> listeners = mSubscriptions.get(name);
                 if (listeners != null && listeners.contains(l) && !newItems.contains(name)) {
                     listeners.remove(l);
 
@@ -104,7 +104,7 @@ public class ServerConnection {
             }
 
             for (String name : newItems) {
-                ArrayList<SubscriptionListener> listeners = mSubscriptions.get(name);
+                ArrayList<StateUpdateListener> listeners = mSubscriptions.get(name);
                 if (listeners == null) {
                     itemsChanged = true;
                     listeners = new ArrayList<>();
@@ -297,12 +297,12 @@ public class ServerConnection {
 
         private void propagateItem(String name, String value) {
             if (!value.equals(mValues.put(name, value))) {
-                final ArrayList<SubscriptionListener> listeners;
+                final ArrayList<StateUpdateListener> listeners;
                 synchronized (mSubscriptions) {
                     listeners = mSubscriptions.get(name);
                 }
 
-                for (SubscriptionListener l : listeners) {
+                for (StateUpdateListener l : listeners) {
                     l.itemUpdated(name, value);
                 }
             }
@@ -349,6 +349,11 @@ public class ServerConnection {
                 @Override
                 public void itemUpdated(String name, String value) {
                     propagateItem(name, value);
+                }
+
+                @Override
+                public void itemInvalid(String name) {
+                    propagateItem(name, "ITEM NOT FOUND");
                 }
             });
             Log.d("Habpanelview", "Actively fetching items state");
