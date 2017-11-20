@@ -90,7 +90,7 @@ public class ServerConnection {
         }
 
         synchronized (mSubscriptions) {
-            for (String name : mSubscriptions.keySet()) {
+            for (String name : new HashSet<>(mSubscriptions.keySet())) {
                 ArrayList<SubscriptionListener> listeners = mSubscriptions.get(name);
                 if (listeners != null && listeners.contains(l) && !newItems.contains(name)) {
                     listeners.remove(l);
