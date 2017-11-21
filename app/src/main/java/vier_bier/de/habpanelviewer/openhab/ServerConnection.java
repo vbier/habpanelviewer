@@ -48,6 +48,7 @@ public class ServerConnection {
     private SSEHandler client;
     private FetchItemStateTask task;
     private final ArrayList<ConnectionListener> connectionListeners = new ArrayList<>();
+    private final HashSet<ItemState> pendingUpdates = new HashSet<>();
 
     private BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
         @Override
@@ -247,8 +248,17 @@ public class ServerConnection {
 
     public void updateState(String item, String state) {
         if (item != null && !item.isEmpty() && state != null && !state.equals(getState(item))) {
-            SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
-            t.execute(new SetItemStateTask.ItemState(item, state));
+            if (mConnected.get()) {
+                Log.v("Habpanelview", "Sending state update for " + item + ": " + state);
+
+                SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
+                t.execute(new ItemState(item, state));
+            } else {
+                Log.v("Habpanelview", "Buffering update of item " + item);
+                synchronized (pendingUpdates) {
+                    pendingUpdates.add(new ItemState(item, state));
+                }
+            }
         }
     }
 
@@ -271,6 +281,7 @@ public class ServerConnection {
                         l.connected(mServerURL);
                     }
                 }
+                sendPendingUpdates();
                 fetchCurrentItemsState();
             }
         }
@@ -329,6 +340,17 @@ public class ServerConnection {
                     }
                 }
             }
+        }
+
+        private void sendPendingUpdates() {
+            Log.v("Habpanelview", "Sending pending updates...");
+            synchronized (pendingUpdates) {
+                for (ItemState state : pendingUpdates) {
+                    updateState(state.mItemName, state.mItemState);
+                }
+                pendingUpdates.clear();
+            }
+            Log.v("Habpanelview", "Pending updates sent");
         }
 
         private synchronized void fetchCurrentItemsState() {

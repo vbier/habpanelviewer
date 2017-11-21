@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import vier_bier.de.habpanelviewer.R;
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 
 /**
@@ -52,9 +53,9 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     private Comparer mComparer;
     private ApplicationStatus mStatus;
 
-    AbstractMotionDetector(Activity context, MotionListener l) {
+    AbstractMotionDetector(Activity context, MotionListener l, ServerConnection serverConnection) {
         mContext = context;
-        mListener = new MotionReporter(l);
+        mListener = new MotionReporter(l, serverConnection);
         EventBus.getDefault().register(this);
 
         setDaemon(true);

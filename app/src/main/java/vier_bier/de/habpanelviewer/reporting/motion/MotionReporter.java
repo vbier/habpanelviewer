@@ -5,7 +5,7 @@ import android.graphics.Point;
 
 import java.util.ArrayList;
 
-import vier_bier.de.habpanelviewer.openhab.SetItemStateTask;
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
 
 /**
  * Reports motion events to openHAB.
@@ -13,17 +13,16 @@ import vier_bier.de.habpanelviewer.openhab.SetItemStateTask;
 public class MotionReporter extends MotionListener.MotionAdapter {
     private static final String TAG = "MotionReporter";
 
+    private ServerConnection mServerConnection;
     private MotionListener mListener;
 
     private long mLastMotionTime;
     private boolean mMotion;
 
-    private String mServerURL;
-    private boolean mIgnoreCertErrors;
-
     private String mMotionItem;
 
-    public MotionReporter(MotionListener l) {
+    public MotionReporter(MotionListener l, ServerConnection serverConnection) {
+        mServerConnection = serverConnection;
         mListener = l;
     }
 
@@ -34,7 +33,7 @@ public class MotionReporter extends MotionListener.MotionAdapter {
         mLastMotionTime = System.currentTimeMillis();
         if (!mMotion) {
             mMotion = true;
-            propagateState();
+            mServerConnection.updateState(mMotionItem, mMotion ? "CLOSED" : "OPEN");
         }
     }
 
@@ -44,30 +43,21 @@ public class MotionReporter extends MotionListener.MotionAdapter {
 
         if (mMotion && System.currentTimeMillis() - mLastMotionTime > 60000) {
             mMotion = false;
-            propagateState();
+            mServerConnection.updateState(mMotionItem, mMotion ? "CLOSED" : "OPEN");
         }
     }
 
     public void updateFromPreferences(SharedPreferences prefs) {
-        mServerURL = prefs.getString("pref_url", "");
-        mIgnoreCertErrors = prefs.getBoolean("pref_ignore_ssl_errors", false);
-
         if (mMotionItem == null || !mMotionItem.equalsIgnoreCase(prefs.getString("pref_motion_item", ""))) {
             mMotionItem = prefs.getString("pref_motion_item", "");
+            mMotion = false;
         }
 
-        propagateState();
+        mServerConnection.updateState(mMotionItem, mMotion ? "CLOSED" : "OPEN");
     }
 
     public void terminate() {
         mMotion = false;
-        propagateState();
-    }
-
-    private void propagateState() {
-        if (!mMotionItem.isEmpty()) {
-            SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
-            t.execute(new SetItemStateTask.ItemState(mMotionItem, mMotion ? "CLOSED" : "OPEN"));
-        }
+        mServerConnection.updateState(mMotionItem, mMotion ? "CLOSED" : "OPEN");
     }
 }

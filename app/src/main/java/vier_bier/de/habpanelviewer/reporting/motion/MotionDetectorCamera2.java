@@ -27,6 +27,8 @@ import android.view.TextureView;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
+
 /**
  * Motion detection using Camera2 API.
  */
@@ -54,8 +56,8 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
     private CameraDevice mCamera;
 
-    public MotionDetectorCamera2(Activity context, CameraManager manager, MotionListener l, Activity act) {
-        super(context, l);
+    public MotionDetectorCamera2(Activity context, CameraManager manager, MotionListener l, Activity act, ServerConnection serverConnection) {
+        super(context, l, serverConnection);
 
         Log.d(TAG, "instantiating motion detection");
 

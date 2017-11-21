@@ -180,9 +180,9 @@ public class MainActivity extends AppCompatActivity
 
             boolean newApi = prefs.getBoolean("pref_motion_detection_new_api", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
             if (newApi && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mMotionDetector = new MotionDetectorCamera2(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE), mv, this);
+                mMotionDetector = new MotionDetectorCamera2(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE), mv, this, mServerConnection);
             } else {
-                mMotionDetector = new MotionDetector(this, mv);
+                mMotionDetector = new MotionDetector(this, mv, mServerConnection);
             }
         }
 

@@ -15,7 +15,7 @@ import javax.net.ssl.SSLSession;
 /**
  * Asynchronous task that sets the value of an openHAB item using the openHAB rest API.
  */
-public class SetItemStateTask extends AsyncTask<SetItemStateTask.ItemState, Void, Void> {
+public class SetItemStateTask extends AsyncTask<ItemState, Void, Void> {
     private String serverUrl;
     private boolean ignoreCertErrors;
 
@@ -51,7 +51,8 @@ public class SetItemStateTask extends AsyncTask<SetItemStateTask.ItemState, Void
                     osw.write(state.mItemState);
                     osw.flush();
                     osw.close();
-                    System.err.println(urlConnection.getResponseCode());
+                    Log.v("Habpanelview", "set request response: " + urlConnection.getResponseMessage()
+                            + "(" + urlConnection.getResponseCode() + ")");
                 } finally {
                     urlConnection.disconnect();
                 }
@@ -66,14 +67,5 @@ public class SetItemStateTask extends AsyncTask<SetItemStateTask.ItemState, Void
         return null;
     }
 
-    public static class ItemState {
-        final String mItemName;
-        final String mItemState;
-
-        public ItemState(String itemName, String itemState) {
-            mItemName = itemName;
-            mItemState = itemState;
-        }
-    }
 }
 

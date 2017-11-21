@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import vier_bier.de.habpanelviewer.openhab.ServerConnection;
+
 /**
  * Motion detection using the old Camera API.
  */
@@ -20,8 +22,8 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
     private boolean mRunning;
     private Camera mCamera;
 
-    public MotionDetector(Activity context, MotionListener l) {
-        super(context, l);
+    public MotionDetector(Activity context, MotionListener l, ServerConnection serverConnection) {
+        super(context, l, serverConnection);
     }
 
     @Override
