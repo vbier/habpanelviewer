@@ -6,11 +6,8 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
+import vier_bier.de.habpanelviewer.ConnectionUtil;
 
 /**
  * Asynchronous task that sets the value of an openHAB item using the openHAB rest API.
@@ -28,19 +25,7 @@ public class SetItemStateTask extends AsyncTask<ItemState, Void, Void> {
     protected final Void doInBackground(ItemState... itemStates) {
         for (ItemState state : itemStates) {
             try {
-                final URL url = new URL(serverUrl + "/rest/items/" + state.mItemName + "/state");
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                if (urlConnection instanceof HttpsURLConnection && ignoreCertErrors) {
-                    ((HttpsURLConnection) urlConnection).setSSLSocketFactory(ServerConnection.createSslContext(ignoreCertErrors).getSocketFactory());
-
-                    HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return hostname.equalsIgnoreCase(url.getHost());
-                        }
-                    };
-                    ((HttpsURLConnection) urlConnection).setHostnameVerifier(hostnameVerifier);
-                }
+                HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(serverUrl + "/rest/items/" + state.mItemName + "/state", ignoreCertErrors);
                 try {
                     urlConnection.setRequestMethod("PUT");
                     urlConnection.setDoOutput(true);

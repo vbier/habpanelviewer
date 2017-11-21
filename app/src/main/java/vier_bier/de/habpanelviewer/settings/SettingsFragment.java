@@ -17,19 +17,15 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLSession;
 
+import vier_bier.de.habpanelviewer.ConnectionUtil;
 import vier_bier.de.habpanelviewer.R;
 import vier_bier.de.habpanelviewer.UiUtil;
 import vier_bier.de.habpanelviewer.openhab.FetchItemStateTask;
-import vier_bier.de.habpanelviewer.openhab.ServerConnection;
 import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
 
 /**
@@ -196,21 +192,8 @@ public class SettingsFragment extends PreferenceFragment {
                 @Override
                 protected Void doInBackground(String... urls) {
                     try {
-                        final URL url = new URL(urls[0]);
                         final boolean ignore = ((CheckBoxPreference) findPreference("pref_ignore_ssl_errors")).isChecked();
-                        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                        if (urlConnection instanceof HttpsURLConnection) {
-                            ((HttpsURLConnection) urlConnection).setSSLSocketFactory(ServerConnection.createSslContext(ignore).getSocketFactory());
-
-                            HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-                                @Override
-                                public boolean verify(String hostname, SSLSession session) {
-                                    return hostname.equalsIgnoreCase(url.getHost());
-                                }
-                            };
-                            ((HttpsURLConnection) urlConnection).setHostnameVerifier(hostnameVerifier);
-                        }
-                        urlConnection.setConnectTimeout(200);
+                        HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(urls[0], ignore);
                         urlConnection.connect();
                         urlConnection.disconnect();
                     } catch (MalformedURLException e) {

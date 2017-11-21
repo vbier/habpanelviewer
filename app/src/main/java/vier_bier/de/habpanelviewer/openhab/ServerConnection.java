@@ -19,18 +19,10 @@ import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 /**
  * Client for openHABs SSE service. Listens for item value changes.
@@ -147,42 +139,6 @@ public class ServerConnection {
         } else {
             close();
         }
-    }
-
-    public static SSLContext createSslContext(boolean ignoreCertificateErrors) {
-        SSLContext sslContext;
-        try {
-            TrustManager[] trustAllCerts = null;
-
-            if (ignoreCertificateErrors) {
-                trustAllCerts = new TrustManager[]{new X509TrustManager() {
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                        Log.v("TrustManager", "checkClientTrusted");
-                    }
-
-                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                        Log.v("TrustManager", "getAcceptedIssuers");
-                        return null;
-                    }
-
-                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                        Log.v("TrustManager", "checkServerTrusted");
-                    }
-                }};
-            }
-
-            sslContext = SSLContext.getInstance("TLS");
-            try {
-                sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-            } catch (KeyManagementException e) {
-                return null;
-            }
-        } catch (NoSuchAlgorithmException e1) {
-            return null;
-        }
-
-        return sslContext;
     }
 
     private void connect() {
