@@ -5,6 +5,8 @@
 - add reporting for brightness, pressure and temperature sensors
 - add in-app help screen
 - motion detection does no longer wake up the screen, but reports events to openHAB
+- add item name validation to settings
+- buffer sensor values until connection to server has been established
 - reorganize settings
 
 0.9.8
