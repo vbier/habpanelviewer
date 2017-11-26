@@ -332,10 +332,10 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (mScreenService != null) {
-            mScreenService.updateFromPreferences(prefs);
-
             // make sure screen lock is released on start
             mScreenService.screenOff();
+
+            mScreenService.updateFromPreferences(prefs);
         }
 
         if (mMotionDetector != null) {

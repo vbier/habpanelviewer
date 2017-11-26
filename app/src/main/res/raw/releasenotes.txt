@@ -8,6 +8,7 @@
 - add item name validation to settings
 - buffer sensor values until connection to server has been established
 - reorganize settings
+- fix problem where screen would not stay on when regexp matches on start of application
 
 0.9.8
 =====

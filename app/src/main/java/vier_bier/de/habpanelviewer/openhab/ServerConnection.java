@@ -102,7 +102,7 @@ public class ServerConnection {
                     itemsChanged = true;
                     listeners = new ArrayList<>();
                     mSubscriptions.put(name, listeners);
-                } else {
+                } else if (mValues.containsKey(name)) {
                     l.itemUpdated(name, mValues.get(name));
                 }
 

@@ -42,6 +42,7 @@ public class ScreenController implements StateUpdateListener {
     }
 
     public void screenOff() {
+        Log.v("ScreenController", "screenOff");
         activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(false);
     }
 
@@ -52,6 +53,7 @@ public class ScreenController implements StateUpdateListener {
         }
 
         if (keepOn) {
+            Log.v("ScreenController", "screenOn");
             activity.findViewById(R.id.activity_main_webview).setKeepScreenOn(true);
         }
     }
