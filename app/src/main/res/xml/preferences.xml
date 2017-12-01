@@ -231,6 +231,19 @@
                     android:key="pref_brightness_item"
                     android:summary="@string/pref_brightness_item_summ"
                     android:title="@string/pref_brightness_item" />
+                <CheckBoxPreference
+                    android:dependency="pref_brightness_enabled"
+                    android:defaultValue="true"
+                    android:key="pref_brightness_average"
+                    android:summary="@string/pref_brightness_average_summ"
+                    android:title="@string/pref_brightness_average" />
+                <EditTextPreference
+                    android:dependency="pref_brightness_average"
+                    android:defaultValue="60"
+                    android:key="pref_brightness_intervall"
+                    android:inputType="number"
+                    android:summary="@string/pref_brightness_intervall_summ"
+                    android:title="@string/pref_brightness_intervall" />
             </PreferenceScreen>
             <PreferenceScreen
                 android:key="pref_pressure"

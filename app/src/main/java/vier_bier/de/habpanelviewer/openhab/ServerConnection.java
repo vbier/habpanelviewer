@@ -24,10 +24,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import vier_bier.de.habpanelviewer.openhab.average.AveragePropagator;
+import vier_bier.de.habpanelviewer.openhab.average.StatePropagator;
+
 /**
  * Client for openHABs SSE service. Listens for item value changes.
  */
-public class ServerConnection {
+public class ServerConnection implements StatePropagator {
     private Context mCtx;
     private String mServerURL;
     private boolean mIgnoreCertErrors;
@@ -41,6 +44,7 @@ public class ServerConnection {
     private FetchItemStateTask task;
     private final ArrayList<ConnectionListener> connectionListeners = new ArrayList<>();
     private final HashSet<ItemState> pendingUpdates = new HashSet<>();
+    private final AveragePropagator averagePropagator = new AveragePropagator(this);
 
     private BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
         @Override
@@ -194,12 +198,17 @@ public class ServerConnection {
 
     public void terminate() {
         mCtx.unregisterReceiver(mNetworkReceiver);
+        averagePropagator.terminate();
         connectionListeners.clear();
         mSubscriptions.clear();
     }
 
     public String getState(String item) {
         return mValues.get(item);
+    }
+
+    public void addStateToAverage(String item, Integer state, int updateInterval) {
+        averagePropagator.addStateToAverage(item, state, updateInterval);
     }
 
     public void updateState(String item, String state) {
@@ -289,6 +298,7 @@ public class ServerConnection {
 
             if (mConnected.getAndSet(false)) {
                 mValues.clear();
+                averagePropagator.clear();
 
                 synchronized (connectionListeners) {
                     for (ConnectionListener l : connectionListeners) {

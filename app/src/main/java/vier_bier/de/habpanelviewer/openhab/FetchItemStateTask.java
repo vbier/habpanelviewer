@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
@@ -45,6 +46,9 @@ public class FetchItemStateTask extends AsyncTask<String, Void, Void> {
                 }
 
                 subscriptionListener.itemUpdated(itemName, response);
+            } catch (FileNotFoundException e) {
+                subscriptionListener.itemInvalid(itemName);
+                Log.e("Habpanelview", "Failed to obtain state for item " + itemName + ". Item not found.");
             } catch (IOException e) {
                 subscriptionListener.itemInvalid(itemName);
                 Log.e("Habpanelview", "Failed to obtain state for item " + itemName, e);
