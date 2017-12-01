@@ -54,6 +54,8 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     private ApplicationStatus mStatus;
 
     AbstractMotionDetector(Activity context, MotionListener l, ServerConnection serverConnection) {
+        super("AbstractMotionDetector");
+
         mContext = context;
         mListener = new MotionReporter(l, serverConnection);
         EventBus.getDefault().register(this);

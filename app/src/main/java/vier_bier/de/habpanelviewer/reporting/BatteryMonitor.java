@@ -143,6 +143,11 @@ public class BatteryMonitor implements StateUpdateListener {
         private final AtomicBoolean fRunning = new AtomicBoolean(true);
         private final AtomicBoolean fPollAll = new AtomicBoolean(true);
 
+        public BatteryPollingThread() {
+            super("BatteryPollingThread");
+            setDaemon(true);
+        }
+
         public void stopPolling() {
             synchronized (fRunning) {
                 fRunning.set(false);
