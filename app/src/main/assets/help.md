@@ -83,7 +83,7 @@ A sample openHAB items file looks like this:
     Contact Tablet_Proximity
 
 ### brightness sensor
-Allows to set the value of an openHAB number item depending on the device brightness sensor.
+Allows to set the value of an openHAB number item depending on the device brightness sensor. As some devices report values in quick succession, brightness reporting additionally allows to collect values for a defined time and to only send the average to openHAB. 
 
 The item state will be set to the measured brightness in lux.
 
