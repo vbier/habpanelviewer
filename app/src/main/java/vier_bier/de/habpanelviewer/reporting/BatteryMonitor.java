@@ -145,7 +145,7 @@ public class BatteryMonitor implements StateUpdateListener {
 
         public void stopPolling() {
             synchronized (fRunning) {
-                fRunning.getAndSet(true);
+                fRunning.set(false);
                 fRunning.notifyAll();
             }
         }
