@@ -49,6 +49,7 @@ import vier_bier.de.habpanelviewer.openhab.ServerConnection;
 import vier_bier.de.habpanelviewer.openhab.ServerDiscovery;
 import vier_bier.de.habpanelviewer.reporting.BatteryMonitor;
 import vier_bier.de.habpanelviewer.reporting.BrightnessMonitor;
+import vier_bier.de.habpanelviewer.reporting.ConnectedIndicator;
 import vier_bier.de.habpanelviewer.reporting.PressureMonitor;
 import vier_bier.de.habpanelviewer.reporting.ProximityMonitor;
 import vier_bier.de.habpanelviewer.reporting.SensorMissingException;
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity
     private ScreenController mScreenService;
     private IMotionDetector mMotionDetector;
     private BatteryMonitor mBatteryMonitor;
+    private ConnectedIndicator mConnectedReporter;
     private VolumeController mVolumeController;
     private ProximityMonitor mProximityMonitor;
     private BrightnessMonitor mBrightnessMonitor;
@@ -117,6 +119,11 @@ public class MainActivity extends AppCompatActivity
         if (mBatteryMonitor != null) {
             mBatteryMonitor.terminate();
             mBatteryMonitor = null;
+        }
+
+        if (mConnectedReporter != null) {
+            mConnectedReporter.terminate();
+            mConnectedReporter = null;
         }
 
         if (mProximityMonitor != null) {
@@ -232,6 +239,7 @@ public class MainActivity extends AppCompatActivity
         mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this, mServerConnection);
 
         mBatteryMonitor = new BatteryMonitor(this, mServerConnection);
+        mConnectedReporter = new ConnectedIndicator(mServerConnection);
 
         SensorManager m = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         try {
@@ -360,6 +368,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         mBatteryMonitor.updateFromPreferences(prefs);
+        mConnectedReporter.updateFromPreferences(prefs);
         mWebView.updateFromPreferences(prefs);
         mServerConnection.updateFromPreferences(prefs);
 

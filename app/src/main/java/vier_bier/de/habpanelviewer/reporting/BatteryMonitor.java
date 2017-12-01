@@ -129,7 +129,6 @@ public class BatteryMonitor implements StateUpdateListener {
                 mPollBatteryLevel.pollNow();
             } else {
                 mPollBatteryLevel = new BatteryPollingThread();
-                mPollBatteryLevel.start();
             }
         }
     }
@@ -146,6 +145,7 @@ public class BatteryMonitor implements StateUpdateListener {
         public BatteryPollingThread() {
             super("BatteryPollingThread");
             setDaemon(true);
+            start();
         }
 
         public void stopPolling() {

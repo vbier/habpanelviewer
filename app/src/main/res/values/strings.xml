@@ -125,4 +125,11 @@
     <string name="pref_temperature_enabled_summ">Allows to set the state of an openHAB item depending on the device temperature sensor</string>
     <string name="pref_temperature_item">Temperature Item</string>
     <string name="pref_temperature_item_summ">Name of the number item whose state shall be set when the temperature changes</string>
+    <string name="pref_connected">Connected Indicator</string>
+    <string name="pref_connected_enabled">Enabled</string>
+    <string name="pref_connected_enabled_summ">Allows to periodically update an openHAB item with the current time as a connector indicator</string>
+    <string name="pref_connected_item">Connected Item</string>
+    <string name="pref_connected_item_summ">Name of the number item whose state shall be set</string>
+    <string name="pref_connected_intervall">Update intervall</string>
+    <string name="pref_connected_intervall_summ">The number of seconds between subsequent state updates</string>
 </resources>

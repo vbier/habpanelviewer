@@ -43,6 +43,28 @@
                 android:title="@string/pref_max_restarts" />
         </PreferenceScreen>
         <PreferenceScreen
+            android:key="pref_connected"
+            android:persistent="false"
+            android:title="@string/pref_connected">
+            <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="pref_connected_enabled"
+                android:summary="@string/pref_connected_enabled_summ"
+                android:title="@string/pref_connected_enabled" />
+            <EditTextPreference
+                android:dependency="pref_connected_enabled"
+                android:key="pref_connected_item"
+                android:summary="@string/pref_connected_item_summ"
+                android:title="@string/pref_connected_item" />
+            <EditTextPreference
+                android:dependency="pref_connected_enabled"
+                android:defaultValue="60"
+                android:key="pref_connected_intervall"
+                android:inputType="number"
+                android:summary="@string/pref_connected_intervall_summ"
+                android:title="@string/pref_connected_intervall" />
+        </PreferenceScreen>
+        <PreferenceScreen
             android:key="pref_control"
             android:summary="@string/pref_control_summ"
             android:persistent="false"
