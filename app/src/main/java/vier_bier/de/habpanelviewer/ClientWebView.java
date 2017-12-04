@@ -225,10 +225,8 @@ public class ClientWebView extends WebView {
         }
     }
 
-    @Override
-    public void destroy() {
-        getContext().unregisterReceiver(mNetworkReceiver);
 
-        super.destroy();
+    public void unregister() {
+        getContext().unregisterReceiver(mNetworkReceiver);
     }
 }

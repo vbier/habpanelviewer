@@ -145,6 +145,8 @@ public class MainActivity extends AppCompatActivity
             mTemperatureMonitor.terminate();
             mTemperatureMonitor = null;
         }
+
+        mWebView.unregister();
     }
 
     @Override
@@ -448,6 +450,7 @@ public class MainActivity extends AppCompatActivity
             destroy();
             ProcessPhoenix.triggerRebirth(this);
         } else if (id == R.id.action_exit) {
+            destroy();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 finishAndRemoveTask();
             } else {
