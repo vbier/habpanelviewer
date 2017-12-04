@@ -1,6 +1,6 @@
 # <a name="top"/>HABPanelViewer
 
-HABPanelViewer is an Android homescreen application visualizing HABPanel, a dedicated UI of openHAB.
+HABPanelViewer is an Android home screen application visualizing HABPanel, a dedicated UI of openHAB.
 
 Its functionality can mainly be divided into three categories: 
 - [controlling the device](#control) in reaction to openHAB item state changes
@@ -62,7 +62,7 @@ Allows to set the value of an openHAB item when motion is detected (_does not wo
 The detection process works as follows: it divides the picture into smaller areas, calculates a brightness average for every area and checks if this average deviates from the last value. If the deviation is higher than the leniency, motion is detected.
 
 The detection can be enabled or disabled and detection parameters can be changed in the settings:
-- Camera Preview: wether to show a preview of the detection as on overlay. This is useful for fine-tuning the detection.
+- Camera Preview: whether to show a preview of the detection as on overlay. This is useful for fine-tuning the detection.
 - Use Lollipop camera API: Use the new Camera 2 API introduced with Lollipop. You should generally use this when available.
 - Detection granularity: Amount by which is axis is divided. So a granularity of 10 results in the picture being divided into 100 areas. 
 - Detection leniency: deviation threshold that triggers detected motion. 0 means every deviation results in detected motion, 255 means motion will never be detected.   
@@ -126,7 +126,7 @@ If you want to skip the HABPanel menu on start and directly want to go to a pane
 You can activate or de-active kiosk mode in the settings. Kiosk mode hides the HABPanel status bar and the menu.
 
 ### scrolling prevention
-In case you always scroll accidentially when trying to press buttons, activate **Prevent Dragging** in the Settings. This completely disables scrolling, and effectively disables the HABPanel menu.  
+In case you always scroll accidentally when trying to press buttons, activate **Prevent Dragging** in the Settings. This completely disables scrolling, and effectively disables the HABPanel menu.  
 
 ### app shortcut
 Configure menu entry name and the package name of an app that can then be started from the main menu. In order to find out the package name of your favorite app, open it in the playstore. The package name is shown as id in the URL.
