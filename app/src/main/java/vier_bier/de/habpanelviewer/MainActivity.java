@@ -225,7 +225,6 @@ public class MainActivity extends AppCompatActivity
 
                     @Override
                     public void notFound() {
-                        Toast.makeText(MainActivity.this, "Could not find openHAB server!", Toast.LENGTH_LONG).show();
                     }
                 }, true, true);
             }
@@ -508,12 +507,6 @@ public class MainActivity extends AppCompatActivity
         String toastMsg = "";
         if (restartCount > 0) {
             toastMsg += "App restarted after crash\n";
-        }
-
-        if (mFlashService == null || mScreenService == null || mMotionDetector == null
-                || mProximityMonitor == null || mBrightnessMonitor == null
-                || mPressureMonitor == null) {
-            toastMsg += "Some application features are not available on your device.";
         }
 
         if (!toastMsg.isEmpty()) {

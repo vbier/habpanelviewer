@@ -63,6 +63,10 @@ public class ConnectionUtil {
         localTrustStore.setCertificateEntry(alias, x509Certificate);
 
         saveTrustStore(localTrustStore);
+
+        // reset fields so the keystore gets read again
+        mTrustManager = null;
+        mSslContext = null;
     }
 
     public static synchronized HttpURLConnection createUrlConnection(final String urlStr) throws IOException, GeneralSecurityException {

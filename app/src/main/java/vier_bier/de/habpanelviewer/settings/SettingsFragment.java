@@ -195,7 +195,7 @@ public class SettingsFragment extends PreferenceFragment {
                     } catch (MalformedURLException e) {
                         UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", urls[0] + " is not a valid URL");
                     } catch (SSLException e) {
-                        UiUtil.showDialog(getActivity(), "Certificate invalid", "Could not connect to openHAB at URL " + urls[0]);
+                        UiUtil.showDialog(getActivity(), "Certificate invalid", "Could not connect to openHAB at URL " + urls[0] + ".\n You can accept the certificate once you have left the settings.");
                     } catch (IOException | GeneralSecurityException e) {
                         UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", "Could not connect to openHAB at URL " + urls[0]);
                     }

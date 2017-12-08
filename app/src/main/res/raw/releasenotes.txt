@@ -12,6 +12,7 @@
 - buffer sensor values until connection to server has been established
 - reorganize settings
 - fix problem where screen would not stay on when regexp matches on start of application
+- remove initial toast message for missing application features on unsupported devices
 
 0.9.8
 =====

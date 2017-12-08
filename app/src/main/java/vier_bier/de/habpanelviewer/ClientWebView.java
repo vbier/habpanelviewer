@@ -27,6 +27,7 @@ import android.webkit.WebViewClient;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 
 import vier_bier.de.habpanelviewer.ssl.ConnectionUtil;
 
@@ -92,8 +93,7 @@ public class ClientWebView extends WebView {
                 Log.d("SSL", "onReceivedSslError: " + error.getUrl());
 
                 SslCertificate cert = error.getCertificate();
-
-                if (error.getPrimaryError() == SslError.SSL_UNTRUSTED && ConnectionUtil.isTrusted(error.getCertificate())) {
+                if (ConnectionUtil.isTrusted(error.getCertificate())) {
                     Log.d("SSL", "certificate is trusted: " + error.getUrl());
 
                     handler.proceed();
@@ -131,17 +131,18 @@ public class ClientWebView extends WebView {
 
                 final String reason = r;
 
-                String c = cert.toString().replaceAll(";", "<br/>").replaceAll(",", "<br/>&nbsp;");
-                c += "Valid from: " + cert.getValidNotBefore() + "<br/>";
-                c += "Valid until: " + cert.getValidNotAfter() + "<br/>";
+                String c = "Issued by: " + cert.getIssuedBy().getDName() + "<br/>";
+                c += "Issued to: " + cert.getIssuedTo().getDName() + "<br/>";
+                c += "Valid from: " + SimpleDateFormat.getDateInstance().format(cert.getValidNotBeforeDate()) + "<br/>";
+                c += "Valid until: " + SimpleDateFormat.getDateInstance().format(cert.getValidNotAfterDate()) + "<br/>";
 
                 final String certInfo = c;
 
                 new AlertDialog.Builder(ClientWebView.this.getContext())
                         .setTitle("SSL Certificate Invalid!")
-                        .setMessage("The SSL Certificate served by https://" + host + " " + reason + ".\n"
-                                + certInfo.replaceAll("<br/>", "\n").replaceAll("&nbsp;", " ")
-                                + "Do you want to proceed and store a security exception for this certificate ?")
+                        .setMessage("The SSL Certificate served by https://" + host + " " + reason + ".\n\n"
+                                + certInfo.replaceAll("<br/>", "\n")
+                                + "\nDo you want to proceed and store a security exception for this certificate ?")
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -257,8 +258,11 @@ public class ClientWebView extends WebView {
         }
     }
 
-
     public void unregister() {
         getContext().unregisterReceiver(mNetworkReceiver);
+    }
+
+    interface CertificateListener {
+        void trusted(String host);
     }
 }
