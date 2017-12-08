@@ -17,16 +17,17 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.security.GeneralSecurityException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.net.ssl.SSLException;
 
-import vier_bier.de.habpanelviewer.ConnectionUtil;
 import vier_bier.de.habpanelviewer.R;
 import vier_bier.de.habpanelviewer.UiUtil;
 import vier_bier.de.habpanelviewer.openhab.FetchItemStateTask;
 import vier_bier.de.habpanelviewer.openhab.SubscriptionListener;
+import vier_bier.de.habpanelviewer.ssl.ConnectionUtil;
 
 /**
  * Fragment for preferences.
@@ -41,7 +42,6 @@ public class SettingsFragment extends PreferenceFragment {
     private boolean temperatureEnabled = false;
 
     private boolean newApi = false;
-    private boolean ignoreCertErrors = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,8 +121,7 @@ public class SettingsFragment extends PreferenceFragment {
                     final String itemName = editable.toString();
 
                     final String serverUrl = ((EditTextPreference) findPreference("pref_url")).getText();
-                    final boolean ignore = ((CheckBoxPreference) findPreference("pref_ignore_ssl_errors")).isChecked();
-                    FetchItemStateTask task = new FetchItemStateTask(serverUrl, ignore, new SubscriptionListener() {
+                    FetchItemStateTask task = new FetchItemStateTask(serverUrl, new SubscriptionListener() {
                         @Override
                         public void itemInvalid(String name) {
                             getActivity().runOnUiThread(new Runnable() {
@@ -153,13 +152,11 @@ public class SettingsFragment extends PreferenceFragment {
     public void onStart() {
         super.onStart();
         newApi = ((CheckBoxPreference) findPreference("pref_motion_detection_new_api")).isChecked();
-        ignoreCertErrors = ((CheckBoxPreference) findPreference("pref_ignore_ssl_errors")).isChecked();
     }
 
     @Override
     public void onStop() {
-        if (newApi != ((CheckBoxPreference) findPreference("pref_motion_detection_new_api")).isChecked()
-                || ignoreCertErrors != ((CheckBoxPreference) findPreference("pref_ignore_ssl_errors")).isChecked()) {
+        if (newApi != ((CheckBoxPreference) findPreference("pref_motion_detection_new_api")).isChecked()) {
             ProcessPhoenix.triggerRebirth(getActivity());
         }
         super.onStop();
@@ -192,15 +189,14 @@ public class SettingsFragment extends PreferenceFragment {
                 @Override
                 protected Void doInBackground(String... urls) {
                     try {
-                        final boolean ignore = ((CheckBoxPreference) findPreference("pref_ignore_ssl_errors")).isChecked();
-                        HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(urls[0], ignore);
+                        HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(urls[0]);
                         urlConnection.connect();
                         urlConnection.disconnect();
                     } catch (MalformedURLException e) {
                         UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", urls[0] + " is not a valid URL");
                     } catch (SSLException e) {
                         UiUtil.showDialog(getActivity(), "Certificate invalid", "Could not connect to openHAB at URL " + urls[0]);
-                    } catch (IOException e) {
+                    } catch (IOException | GeneralSecurityException e) {
                         UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", "Could not connect to openHAB at URL " + urls[0]);
                     }
 

@@ -3,6 +3,7 @@ package vier_bier.de.habpanelviewer;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -12,7 +13,9 @@ import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.CookieManager;
@@ -25,12 +28,13 @@ import android.webkit.WebViewClient;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import vier_bier.de.habpanelviewer.ssl.ConnectionUtil;
+
 /**
  * WebView
  */
 public class ClientWebView extends WebView {
     private boolean mDraggingPrevented;
-    private boolean mIgnoreCertErrors;
     private boolean mKioskMode;
     private String mServerURL;
     private String mStartPanel;
@@ -83,48 +87,77 @@ public class ClientWebView extends WebView {
         setWebChromeClient(new WebChromeClient());
 
         setWebViewClient(new WebViewClient() {
-            /**
-             * Ignores certificate errors on the configure server URL.
-             */
             @Override
-            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                if (mIgnoreCertErrors) {
-                    if (error.getUrl().toLowerCase().startsWith(mServerURL.toLowerCase())) {
-                        handler.proceed();
-                    }
-                } else {
-                    String host = "unknown host";
-                    try {
-                        URL url = new URL(error.getUrl());
-                        host = url.getHost();
-                    } catch (MalformedURLException e) {
-                    }
+            public void onReceivedSslError(WebView view, final SslErrorHandler handler, final SslError error) {
+                Log.d("SSL", "onReceivedSslError: " + error.getUrl());
 
-                    String reason = "is not valid";
-                    switch (error.getPrimaryError()) {
-                        case SslError.SSL_DATE_INVALID:
-                            reason = "has an invalid date";
-                            break;
-                        case SslError.SSL_EXPIRED:
-                            reason = "has expired";
-                            break;
-                        case SslError.SSL_IDMISMATCH:
-                            reason = "has a hostname mismatch";
-                            break;
-                        case SslError.SSL_NOTYETVALID:
-                            reason = "is not yet valid";
-                            break;
-                        case SslError.SSL_UNTRUSTED:
-                            reason = "is untrusted";
-                            break;
-                    }
+                SslCertificate cert = error.getCertificate();
 
-                    SslCertificate cert = error.getCertificate();
-                    String certInfo = cert.toString().replaceAll(";", "<br/>").replaceAll(",", "<br/>&nbsp;");
-                    certInfo += "Valid from: " + cert.getValidNotBefore() + "<br/>";
-                    certInfo += "Valid until: " + cert.getValidNotAfter() + "<br/>";
-                    loadData("<html><body><h1>SSL Certificate Invalid!</h1><h2>The SSL Certificate served by https://" + host + " " + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8");
+                if (error.getPrimaryError() == SslError.SSL_UNTRUSTED && ConnectionUtil.isTrusted(error.getCertificate())) {
+                    Log.d("SSL", "certificate is trusted: " + error.getUrl());
+
+                    handler.proceed();
+                    return;
                 }
+
+                String h;
+                try {
+                    URL url = new URL(error.getUrl());
+                    h = url.getHost();
+                } catch (MalformedURLException e) {
+                    h = "unknown host";
+                }
+
+                final String host = h;
+
+                String r = "is not valid";
+                switch (error.getPrimaryError()) {
+                    case SslError.SSL_DATE_INVALID:
+                        r = "has an invalid date";
+                        break;
+                    case SslError.SSL_EXPIRED:
+                        r = "has expired";
+                        break;
+                    case SslError.SSL_IDMISMATCH:
+                        r = "has a hostname mismatch";
+                        break;
+                    case SslError.SSL_NOTYETVALID:
+                        r = "is not yet valid";
+                        break;
+                    case SslError.SSL_UNTRUSTED:
+                        r = "is untrusted";
+                        break;
+                }
+
+                final String reason = r;
+
+                String c = cert.toString().replaceAll(";", "<br/>").replaceAll(",", "<br/>&nbsp;");
+                c += "Valid from: " + cert.getValidNotBefore() + "<br/>";
+                c += "Valid until: " + cert.getValidNotAfter() + "<br/>";
+
+                final String certInfo = c;
+
+                new AlertDialog.Builder(ClientWebView.this.getContext())
+                        .setTitle("SSL Certificate Invalid!")
+                        .setMessage("The SSL Certificate served by https://" + host + " " + reason + ".\n"
+                                + certInfo.replaceAll("<br/>", "\n").replaceAll("&nbsp;", " ")
+                                + "Do you want to proceed and store a security exception for this certificate ?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                try {
+                                    ConnectionUtil.addCertificate(error.getCertificate());
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                handler.proceed();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                loadData("<html><body><h1>SSL Certificate Invalid!</h1><h2>The SSL Certificate served by https://" + host + " " + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8");
+                            }
+                        }).show();
             }
         });
 
@@ -190,7 +223,6 @@ public class ClientWebView extends WebView {
         Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
         Boolean isJavascript = prefs.getBoolean("pref_javascript", false);
         mDraggingPrevented = prefs.getBoolean("pref_prevent_dragging", false);
-        mIgnoreCertErrors = prefs.getBoolean("pref_ignore_ssl_errors", false);
 
         WebSettings webSettings = getSettings();
         webSettings.setUseWideViewPort(isDesktop);

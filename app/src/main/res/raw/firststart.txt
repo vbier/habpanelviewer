@@ -1,8 +1,6 @@
 The application is currently searching for the openHAB server in you local network.
-Once the server has been found, HABPanel will automatically be shown. Please proceed
-with the initial HABPanel setup.
+Once the server has been found, HABPanel will automatically be shown. Please proceed with the initial HABPanel setup.
 
-In case the server can not be found, open the menu to access the settings and enter
-the server URL manually.
+In case the server can not be found, open the menu to access the settings and enter the server URL manually.
 
 To open the menu, swipe inwards from the right side of the screen.

@@ -1,21 +1,24 @@
 package com.tylerjroach.eventsource;
 
+import java.security.GeneralSecurityException;
+
 import javax.net.ssl.SSLEngine;
 
-import vier_bier.de.habpanelviewer.ConnectionUtil;
+import vier_bier.de.habpanelviewer.ssl.ConnectionUtil;
 
 /**
  * Workaround for a bug in the eventsource implementation.
  */
 public class CertificateIgnoringSSLEngineFactory extends SSLEngineFactory {
-    private boolean mIgnoreCertErrors;
-
-    public CertificateIgnoringSSLEngineFactory(boolean ignoreCertErrors) {
-        mIgnoreCertErrors = ignoreCertErrors;
+    public CertificateIgnoringSSLEngineFactory() {
     }
 
     @Override
     SSLEngine GetNewSSLEngine() {
-        return ConnectionUtil.createSslContext(mIgnoreCertErrors).createSSLEngine();
+        try {
+            return ConnectionUtil.createSslContext().createSSLEngine();
+        } catch (GeneralSecurityException e) {
+            return super.GetNewSSLEngine();
+        }
     }
 }

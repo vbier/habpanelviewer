@@ -33,7 +33,6 @@ import vier_bier.de.habpanelviewer.openhab.average.StatePropagator;
 public class ServerConnection implements StatePropagator {
     private Context mCtx;
     private String mServerURL;
-    private boolean mIgnoreCertErrors;
     private EventSource mEventSource;
 
     private final HashMap<String, ArrayList<StateUpdateListener>> mSubscriptions = new HashMap<>();
@@ -129,13 +128,6 @@ public class ServerConnection implements StatePropagator {
             close();
         }
 
-        // in case certification checking has changed reconnect
-        if (mIgnoreCertErrors != prefs.getBoolean("pref_ignore_ssl_errors", false)) {
-            mIgnoreCertErrors = prefs.getBoolean("pref_ignore_ssl_errors", false);
-
-            close();
-        }
-
         ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
@@ -175,7 +167,7 @@ public class ServerConnection implements StatePropagator {
                 client = new SSEHandler();
                 EventSource.Builder builder = new EventSource.Builder(uri).eventHandler(client);
                 if (mServerURL.startsWith("https:")) {
-                    builder = builder.sslEngineFactory(new CertificateIgnoringSSLEngineFactory(mIgnoreCertErrors));
+                    builder = builder.sslEngineFactory(new CertificateIgnoringSSLEngineFactory());
                 }
                 mEventSource = builder.build();
                 mEventSource.connect();
@@ -216,7 +208,7 @@ public class ServerConnection implements StatePropagator {
             if (mConnected.get()) {
                 Log.v("Habpanelview", "Sending state update for " + item + ": " + state);
 
-                SetItemStateTask t = new SetItemStateTask(mServerURL, mIgnoreCertErrors);
+                SetItemStateTask t = new SetItemStateTask(mServerURL);
                 t.execute(new ItemState(item, state));
             } else {
                 Log.v("Habpanelview", "Buffering update of item " + item);
@@ -333,7 +325,7 @@ public class ServerConnection implements StatePropagator {
                 }
             }
 
-            task = new FetchItemStateTask(mServerURL, mIgnoreCertErrors, new SubscriptionListener() {
+            task = new FetchItemStateTask(mServerURL, new SubscriptionListener() {
                 @Override
                 public void itemUpdated(String name, String value) {
                     propagateItem(name, value);

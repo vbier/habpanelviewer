@@ -334,10 +334,5 @@
             android:key="pref_javascript"
             android:summary="@string/pref_javascript_summ"
             android:title="@string/pref_javascript" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_ignore_ssl_errors"
-            android:summary="@string/pref_ignore_ssl_errors_summ"
-            android:title="@string/pref_ignore_ssl_errors" />
     </PreferenceCategory>
 </PreferenceScreen>

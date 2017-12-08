@@ -39,8 +39,6 @@
     <string name="pref_max_restarts_summ">The number of restarts until auto restart is turned off</string>
     <string name="pref_restart_enabled">Restart on crash</string>
     <string name="pref_restart_enabled_summ">HABPanelViewer is automatically restarted after a crash</string>
-    <string name="pref_ignore_ssl_errors">Ignore certificate errors for openHAB host</string>
-    <string name="pref_ignore_ssl_errors_summ">Ignore certificate errors for requests to the openHAB hosts. On change, a restart will be performed when you exit the settings</string>
     <string name="pref_mdns_https_summ">Try to find secure connection when performing discovery</string>
     <string name="pref_mdns_https">HTTPS discovery</string>
     <string name="pref_menu_position">Menu Position</string>

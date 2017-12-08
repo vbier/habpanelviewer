@@ -6,6 +6,8 @@
 - add connected indicator
 - add in-app help screen
 - motion detection does no longer wake up the screen, but reports events to openHAB
+- remove ignore certificate error from openHAB host preference
+- allow user to store https security exceptions
 - add item name validation to settings
 - buffer sensor values until connection to server has been established
 - reorganize settings

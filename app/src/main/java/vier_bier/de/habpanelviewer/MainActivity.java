@@ -59,6 +59,7 @@ import vier_bier.de.habpanelviewer.reporting.motion.MotionDetector;
 import vier_bier.de.habpanelviewer.reporting.motion.MotionDetectorCamera2;
 import vier_bier.de.habpanelviewer.reporting.motion.MotionVisualizer;
 import vier_bier.de.habpanelviewer.settings.SetPreferenceActivity;
+import vier_bier.de.habpanelviewer.ssl.ConnectionUtil;
 import vier_bier.de.habpanelviewer.status.ApplicationStatus;
 import vier_bier.de.habpanelviewer.status.StatusInfoActivity;
 
@@ -153,6 +154,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+
+        try {
+            ConnectionUtil.initialize(this);
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, "Could not initialize SSL engine!", Toast.LENGTH_LONG).show();
+        }
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
