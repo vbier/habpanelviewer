@@ -261,8 +261,4 @@ public class ClientWebView extends WebView {
     public void unregister() {
         getContext().unregisterReceiver(mNetworkReceiver);
     }
-
-    interface CertificateListener {
-        void trusted(String host);
-    }
 }
