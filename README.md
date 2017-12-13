@@ -1,4 +1,4 @@
-# <img alt="Logo" src="app/src/main/res/mipmap-hdpi/ic_launcher.png" border="0"> HABPanel<img alt="Logo" src="V.png" border="0">iewer
+# <img alt="Logo" src="app/src/main/res/mipmap-hdpi/ic_launcher.png" border="0"> HABPanelViewer
 
 An android homescreen app as a HABPanel client.
 
