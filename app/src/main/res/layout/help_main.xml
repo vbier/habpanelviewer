@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/activity_help_layout"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="vier_bier.de.habpanelviewer.help.HelpActivity">
+    tools:context="de.vier_bier.habpanelviewer.help.HelpActivity">
 
     <com.mukesh.MarkdownView
         android:id="@+id/activity_help_webview"

@@ -302,7 +302,7 @@
     <PreferenceCategory
         android:key="pref_key_habpanel_settings"
         android:title="@string/pref_habpanel_title">
-        <vier_bier.de.habpanelviewer.settings.ServerPreference
+        <de.vier_bier.habpanelviewer.settings.ServerPreference
             android:key="pref_url"
             android:summary="@string/pref_url_summ"
             android:title="@string/pref_url" />
