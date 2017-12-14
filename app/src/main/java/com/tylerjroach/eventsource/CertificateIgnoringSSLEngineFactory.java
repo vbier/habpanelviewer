@@ -4,7 +4,7 @@ import java.security.GeneralSecurityException;
 
 import javax.net.ssl.SSLEngine;
 
-import vier_bier.de.habpanelviewer.ssl.ConnectionUtil;
+import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
 /**
  * Workaround for a bug in the eventsource implementation.

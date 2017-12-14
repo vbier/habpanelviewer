@@ -59,10 +59,10 @@
             <EditTextPreference
                 android:dependency="pref_connected_enabled"
                 android:defaultValue="60"
-                android:key="pref_connected_intervall"
+                android:key="pref_connected_interval"
                 android:inputType="number"
-                android:summary="@string/pref_connected_intervall_summ"
-                android:title="@string/pref_connected_intervall" />
+                android:summary="@string/pref_connected_interval_summ"
+                android:title="@string/pref_connected_interval" />
         </PreferenceScreen>
         <PreferenceScreen
             android:key="pref_control"
@@ -298,11 +298,17 @@
                     android:title="@string/pref_temperature_item" />
             </PreferenceScreen>
         </PreferenceScreen>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_show_on_lock_screen"
+            android:summary="@string/pref_show_on_lock_screen_summ"
+            android:title="@string/pref_show_on_lock_screen" />
+
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_habpanel_settings"
         android:title="@string/pref_habpanel_title">
-        <vier_bier.de.habpanelviewer.settings.ServerPreference
+        <de.vier_bier.habpanelviewer.settings.ServerPreference
             android:key="pref_url"
             android:summary="@string/pref_url_summ"
             android:title="@string/pref_url" />

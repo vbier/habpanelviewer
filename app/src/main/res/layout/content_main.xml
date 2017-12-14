@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     android:id="@+id/activity_main_layout"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="vier_bier.de.habpanelviewer.MainActivity">
+    tools:context="de.vier_bier.habpanelviewer.MainActivity">
 
-    <vier_bier.de.habpanelviewer.ClientWebView
+    <de.vier_bier.habpanelviewer.ClientWebView
         android:id="@+id/activity_main_webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
