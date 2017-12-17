@@ -1,10 +1,12 @@
 package de.vier_bier.habpanelviewer.reporting;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 
 /**
@@ -14,8 +16,8 @@ public class BrightnessMonitor extends SensorMonitor {
     private boolean mDoAverage;
     private int mInterval;
 
-    public BrightnessMonitor(SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
-        super(sensorManager, serverConnection, "brightness", Sensor.TYPE_LIGHT);
+    public BrightnessMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
+        super(ctx, sensorManager, serverConnection, "brightness", Sensor.TYPE_LIGHT);
     }
 
     protected synchronized void addStatusItems() {
@@ -24,15 +26,15 @@ public class BrightnessMonitor extends SensorMonitor {
         }
 
         if (mSensorEnabled) {
-            String state = "reporting enabled";
+            String state = mCtx.getString(R.string.enabled);
             if (!mSensorItem.isEmpty()) {
                 final String brightness = mServerConnection.getState(mSensorItem);
-                state += "\nBrightness : " + brightness + " lx [" + mSensorItem + "=" + brightness + "]";
+                state += "\n" + mCtx.getString(R.string.brightness) + " : " + brightness + " lx [" + mSensorItem + "=" + brightness + "]";
             }
 
-            mStatus.set("Brightness Sensor", state);
+            mStatus.set(mCtx.getString(R.string.pref_brightness), state);
         } else {
-            mStatus.set("Brightness Sensor", "reporting disabled");
+            mStatus.set(mCtx.getString(R.string.pref_brightness), mCtx.getString(R.string.disabled));
         }
     }
 

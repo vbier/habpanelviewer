@@ -1,0 +1,16 @@
+0.9.9pre
+=====
+- Melden der Batteriewerte an openHAB
+- Melden der Sensorwerte an openHAB
+- Melden eines Zeitstempels an openHAB
+- Hilfe
+- Bewegungserkennung wird an openHAB gemeldet
+- Einstellung "ignore certificate error from openHAB host" entfernt
+- Benutzer kann nun SSL Zertifikat Ausnahmen speichern
+- Item Names in den Einstellungen werden rot angezeigt, falls es das Item nicht gibt
+- Sensor Werte werden gepuffert, bis die Verbindung zum Server hergestellt wurde
+- Einstellungen neu strukturiert
+- Fehler behoben, bei dem der Bildschirm nicht ausging, wenn der reguläre Ausdruck beim Start der App zutraf
+- Initiale Toast Meldung entfernt
+- Neue Einstellung, ob die App auf dem Sperrbildschirm gezeigt werden soll
+- Deutsche Übersetzung

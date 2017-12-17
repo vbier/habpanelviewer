@@ -93,9 +93,10 @@ public class ScreenController implements StateUpdateListener {
         }
 
         if (isEnabled()) {
-            mStatus.set("Screen On Control", "enabled\n" + screenOnItemName + "=" + mServerConnection.getState(screenOnItemName));
+            mStatus.set(activity.getString(R.string.pref_screen), activity.getString(R.string.enabled)
+                    + "\n" + screenOnItemName + "=" + mServerConnection.getState(screenOnItemName));
         } else {
-            mStatus.set("Screen On Control", "disabled");
+            mStatus.set(activity.getString(R.string.pref_screen), activity.getString(R.string.disabled));
         }
     }
 

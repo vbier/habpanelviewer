@@ -1,17 +1,19 @@
 package de.vier_bier.habpanelviewer.reporting;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 
 /**
  * Monitors pressure sensor state and reports to openHAB.
  */
 public class PressureMonitor extends SensorMonitor {
-    public PressureMonitor(SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
-        super(sensorManager, serverConnection, "pressure", Sensor.TYPE_PRESSURE);
+    public PressureMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
+        super(ctx, sensorManager, serverConnection, "pressure", Sensor.TYPE_PRESSURE);
     }
 
     protected synchronized void addStatusItems() {
@@ -20,15 +22,15 @@ public class PressureMonitor extends SensorMonitor {
         }
 
         if (mSensorEnabled) {
-            String state = "reporting enabled";
+            String state = mCtx.getString(R.string.enabled);
             if (!mSensorItem.isEmpty()) {
                 final String pressure = mServerConnection.getState(mSensorItem);
-                state += "\nPressure : " + pressure + " hPa or mbar [" + mSensorItem + "=" + pressure + "]";
+                state += "\n" + mCtx.getString(R.string.pressure, pressure) + " [" + mSensorItem + "=" + pressure + "]";
             }
 
-            mStatus.set("Pressure Sensor", state);
+            mStatus.set(mCtx.getString(R.string.pref_pressure), state);
         } else {
-            mStatus.set("Pressure Sensor", "reporting disabled");
+            mStatus.set(mCtx.getString(R.string.pref_pressure), mCtx.getString(R.string.disabled));
         }
     }
 

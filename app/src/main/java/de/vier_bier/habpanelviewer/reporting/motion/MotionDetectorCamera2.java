@@ -27,6 +27,7 @@ import android.view.TextureView;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 
 /**
@@ -92,7 +93,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
             throw new CameraException(e);
         }
 
-        throw new CameraException("Could not find front facing mCamera!");
+        throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
     }
 
     protected void stopPreview() {
@@ -262,21 +263,23 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
     @Override
     protected String getCameraInfo() {
-        String camStr = "Camera API 2 (Lollipop)\n";
+        String camStr = mContext.getString(R.string.camApi2) + "\n";
         CameraManager camManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         try {
             for (String camId : camManager.getCameraIdList()) {
-                camStr += "Camera " + camId + ": ";
+                camStr += mContext.getString(R.string.cameraId, camId) + ": ";
 
                 CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
                 Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-                camStr += (hasFlash ? "has" : "no") + " flash, ";
-                camStr += (facing == CameraCharacteristics.LENS_FACING_BACK ? "back" : "front") + "-facing\n";
+                camStr += (hasFlash ? mContext.getString(R.string.has) : mContext.getString(R.string.no))
+                        + " " + mContext.getString(R.string.flash) + ", ";
+                camStr += (facing == CameraCharacteristics.LENS_FACING_BACK ?
+                        mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing));
             }
         } catch (CameraAccessException e) {
-            camStr = "failed to access camera service: " + e.getMessage();
+            camStr = mActivity.getString(R.string.failedAccessCamera) + ":" + e.getMessage();
         }
 
         return camStr.trim();

@@ -75,25 +75,25 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
             return;
         }
 
-        mStatus.set("Cameras", getCameraInfo());
+        mStatus.set(mContext.getString(R.string.cameras), getCameraInfo());
         if (mEnabled) {
-            mStatus.set("Motion Detection", "enabled\n" + getPreviewInfo());
+            mStatus.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.enabled) + "\n" + getPreviewInfo());
         } else {
-            mStatus.set("Motion Detection", "disabled");
+            mStatus.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.disabled));
         }
     }
 
     private String getPreviewInfo() {
         if (mCameraId != null) {
-            String retVal = "camera id " + mCameraId;
+            String retVal = mContext.getString(R.string.cameraId, mCameraId);
             if (mPreviewSize != null) {
-                retVal += ", detection resolution " + mPreviewSize.x + "x" + mPreviewSize.y;
+                retVal += ", " + mContext.getString(R.string.detectionResolution, mPreviewSize.x, mPreviewSize.y);
             }
             return retVal + "\n"
-                    + mBoxes + " detection boxes, leniency is " + mLeniency + "\n"
-                    + mFrameCount + " frames processed, motion has been detected " + mDetectionCount + " times";
+                    + mContext.getString(R.string.boxesLenciency, mBoxes, mLeniency) + "\n"
+                    + mFrameCount + mContext.getString(R.string.framesProcessed, mFrameCount, mDetectionCount);
         } else {
-            return "camera could not be opened";
+            return mContext.getString(R.string.failedAccessCamera);
         }
     }
 
@@ -177,7 +177,8 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
                         }
                     }
                     if (mStatus != null) {
-                        mStatus.set("Motion Detection", "enabled\n" + getPreviewInfo());
+                        mStatus.set(mContext.getString(R.string.pref_motion),
+                                mContext.getString(R.string.enabled) + "\n" + getPreviewInfo());
                     }
 
                     Log.v(TAG, "processing done");

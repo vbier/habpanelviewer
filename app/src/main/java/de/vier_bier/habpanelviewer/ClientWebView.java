@@ -49,7 +49,9 @@ public class ClientWebView extends WebView {
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
                 loadStartUrl();
             } else {
-                loadData("<html><body><h1>Waiting for network connection...</h1><h2>The device is currently not connected to the network. Once the connection has been established, the configured HABPanel page will automatically be loaded.</h2></body></html>", "text/html", "UTF-8");
+                loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
+                        + "</h1><h2>" + getContext().getString(R.string.notConnected)
+                        + "</h2></body></html>", "text/html", "UTF-8");
             }
         }
     };
@@ -105,44 +107,44 @@ public class ClientWebView extends WebView {
                     URL url = new URL(error.getUrl());
                     h = url.getHost();
                 } catch (MalformedURLException e) {
-                    h = "unknown host";
+                    h = getContext().getString(R.string.unknownHost);
                 }
 
                 final String host = h;
 
-                String r = "is not valid";
+                String r = getContext().getString(R.string.notvalid);
                 switch (error.getPrimaryError()) {
                     case SslError.SSL_DATE_INVALID:
-                        r = "has an invalid date";
+                        r = getContext().getString(R.string.invalidDate);
                         break;
                     case SslError.SSL_EXPIRED:
-                        r = "has expired";
+                        r = getContext().getString(R.string.expired);
                         break;
                     case SslError.SSL_IDMISMATCH:
-                        r = "has a hostname mismatch";
+                        r = getContext().getString(R.string.hostnameMismatch);
                         break;
                     case SslError.SSL_NOTYETVALID:
-                        r = "is not yet valid";
+                        r = getContext().getString(R.string.notYetValid);
                         break;
                     case SslError.SSL_UNTRUSTED:
-                        r = "is untrusted";
+                        r = getContext().getString(R.string.untrusted);
                         break;
                 }
 
                 final String reason = r;
 
-                String c = "Issued by: " + cert.getIssuedBy().getDName() + "<br/>";
-                c += "Issued to: " + cert.getIssuedTo().getDName() + "<br/>";
-                c += "Valid from: " + SimpleDateFormat.getDateInstance().format(cert.getValidNotBeforeDate()) + "<br/>";
-                c += "Valid until: " + SimpleDateFormat.getDateInstance().format(cert.getValidNotAfterDate()) + "<br/>";
+                String c = getContext().getString(R.string.issuedBy) + cert.getIssuedBy().getDName() + "<br/>";
+                c += getContext().getString(R.string.issuedTo) + cert.getIssuedTo().getDName() + "<br/>";
+                c += getContext().getString(R.string.validFrom) + SimpleDateFormat.getDateInstance().format(cert.getValidNotBeforeDate()) + "<br/>";
+                c += getContext().getString(R.string.validUntil) + SimpleDateFormat.getDateInstance().format(cert.getValidNotAfterDate()) + "<br/>";
 
                 final String certInfo = c;
 
                 new AlertDialog.Builder(ClientWebView.this.getContext())
-                        .setTitle("SSL Certificate Invalid!")
-                        .setMessage("The SSL Certificate served by https://" + host + " " + reason + ".\n\n"
-                                + certInfo.replaceAll("<br/>", "\n")
-                                + "\nDo you want to proceed and store a security exception for this certificate ?")
+                        .setTitle(getContext().getString(R.string.certInvalid))
+                        .setMessage(getContext().getString(R.string.sslCert) + "https://" + host + " " + reason + ".\n\n"
+                                + certInfo.replaceAll("<br/>", "\n") + "\n"
+                                + getContext().getString(R.string.storeSecurityException))
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -156,7 +158,9 @@ public class ClientWebView extends WebView {
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                loadData("<html><body><h1>SSL Certificate Invalid!</h1><h2>The SSL Certificate served by https://" + host + " " + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8");
+                                loadData("<html><body><h1>" + getContext().getString(R.string.certInvalid)
+                                        + "</h1><h2>" + getContext().getString(R.string.sslCert) + "https://" + host + " "
+                                        + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8");
                             }
                         }).show();
             }
@@ -190,7 +194,10 @@ public class ClientWebView extends WebView {
             post(new Runnable() {
                 @Override
                 public void run() {
-                    loadData("<html><body><h1>Configuration missing</h1><h2>The openHAB server could not be found. Please specify the URL in the application settings.</h2></body></html>", "text/html", "UTF-8");
+                    loadData("<html><body><h1>" + getContext().getString(R.string.configMissing)
+                            + "</h1><h2>" + getContext().getString(R.string.serverNotFound) + "."
+                            + getContext().getString(R.string.specifyServerInSettings)
+                            + "</h2></body></html>", "text/html", "UTF-8");
                 }
             });
             return;
@@ -254,7 +261,9 @@ public class ClientWebView extends WebView {
                 loadStartUrl();
             }
         } else {
-            loadData("<html><body><h1>Waiting for network connection...</h1><h2>The device is currently not connected to the network. Once the connection has been established, the configured HABPanel page will automatically be loaded.</h2></body></html>", "text/html", "UTF-8");
+            loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
+                    + "</h1><h2>" + getContext().getString(R.string.notConnected)
+                    + "</h2></body></html>", "text/html", "UTF-8");
         }
     }
 

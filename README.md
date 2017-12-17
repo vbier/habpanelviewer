@@ -1,13 +1,8 @@
 # <img alt="Logo" src="app/src/main/res/mipmap-hdpi/ic_launcher.png" border="0"> HABPanelViewer
 
-An android homescreen app as a HABPanel client.
+An android launcher/home screen app as a HABPanel client.
 
-This is an app with very limited functionality that addresses the problems I had when using other WebView based apps for browsing HABPanel:
-- **unwanted scrolling in kiosk mode**: whenever I enabled kiosk mode, pressing buttons activated scrolling even though the panel completely fit on the screen.
-- **no flashlight control**: i use this on a wall mounted tabled that serves as a control for my alarm system. My tablet does not have a controllable LED, so I wanted to use the cameras flashlight as inidicator when the alarm system is armed.
-- **no screen backlight control**: i wanted the tablet to turn on when somebody opens the door
-
-So I wrote this app that fixes the above mentioned problems. It features:
+Main features:
 - **mDNS server discovery**: finds the openHAB server on your network by using mDNS discovery
 - **launcher functionality**: the app can be set as launcher, thus starting automatically with the tablet
 - **HABPanel panel name configuration**: the configured panel is then shown on start
@@ -17,7 +12,7 @@ So I wrote this app that fixes the above mentioned problems. It features:
 - **flashlight control**: allows to configure an openHAB item and regexps to enable/disable or blink the cameras flash (_available on Android 6+_)
 - **screen on control**: allows to configure an openHAB item and a regexp to turn on the screen
 - **motion detection**: reports motion to openHAB (_does not work at the same time as flashlight control. there are two different implementations, one using the old camera API and one using the Camera 2 API on Android 5+_).
-- **device sensor value reporting**: reports device sensor values to openHAB (currently only battery, more to come)
+- **device sensor value reporting**: reports device sensor values to openHAB
 
 The app does support android from SDK version 19, which means it will run on devices running Android 4.4+ (Kitkat).
 

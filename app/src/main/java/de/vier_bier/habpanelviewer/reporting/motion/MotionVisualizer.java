@@ -13,6 +13,8 @@ import android.view.SurfaceView;
 
 import java.util.ArrayList;
 
+import de.vier_bier.habpanelviewer.R;
+
 /**
  * Visualizes motion areas on the given mSurface view.
  */
@@ -37,10 +39,10 @@ public class MotionVisualizer implements MotionListener {
         mPaint.setTextSize(scaledSize);
 
         Rect bounds = new Rect();
-        mPaint.getTextBounds("Motion", 0, 6, bounds);
+        mPaint.getTextBounds(mNavigationView.getContext().getString(R.string.motion), 0, 6, bounds);
         mMotionTextWidth = bounds.width();
 
-        mPaint.getTextBounds("too dark", 0, 8, bounds);
+        mPaint.getTextBounds(mNavigationView.getContext().getString(R.string.tooDark), 0, 8, bounds);
         mDarkTextWidth = bounds.width();
     }
 
@@ -76,7 +78,7 @@ public class MotionVisualizer implements MotionListener {
                         }
                     }
 
-                    canvas.drawText("Motion", (canvas.getWidth() - mMotionTextWidth) / 2, 50, mPaint);
+                    canvas.drawText(mNavigationView.getContext().getString(R.string.motion), (canvas.getWidth() - mMotionTextWidth) / 2, 50, mPaint);
 
                     for (Point p : differing) {
                         canvas.drawRect(p.x * xsize, p.y * ysize, p.x * xsize + xsize, p.y * ysize + ysize, mPaint);
@@ -110,7 +112,7 @@ public class MotionVisualizer implements MotionListener {
         if (showPreview && motionDetection && mMotionView.getHolder().getSurface().isValid()) {
             final Canvas canvas = mMotionView.getHolder().lockCanvas();
             if (canvas != null) {
-                canvas.drawText("too dark", (canvas.getWidth() - mDarkTextWidth) / 2, 50, mPaint);
+                canvas.drawText(mNavigationView.getContext().getString(R.string.tooDark), (canvas.getWidth() - mDarkTextWidth) / 2, 50, mPaint);
                 mMotionView.getHolder().unlockCanvasAndPost(canvas);
             }
         }

@@ -1,5 +1,6 @@
 package de.vier_bier.habpanelviewer.control;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.util.Log;
@@ -8,6 +9,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
@@ -16,6 +18,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Controller for the device volume.
  */
 public class VolumeController implements StateUpdateListener {
+    private Context mCtx;
     private AudioManager mAudioManager;
     private ServerConnection mServerConnection;
 
@@ -25,7 +28,8 @@ public class VolumeController implements StateUpdateListener {
 
     private ApplicationStatus mStatus;
 
-    public VolumeController(AudioManager audioManager, ServerConnection serverConnection) {
+    public VolumeController(Context ctx, AudioManager audioManager, ServerConnection serverConnection) {
+        mCtx = ctx;
         mAudioManager = audioManager;
         mServerConnection = serverConnection;
 
@@ -48,10 +52,12 @@ public class VolumeController implements StateUpdateListener {
         int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
         if (isEnabled()) {
-            mStatus.set("Volume Control", "enabled\n" + volumeItemName + "=" + mServerConnection.getState(volumeItemName)
-                    + "\nCurrent volume is " + volume + ", max. is " + mMaxVolume);
+            mStatus.set(mCtx.getString(R.string.pref_volume), mCtx.getString(R.string.enabled)
+                    + "\n" + volumeItemName + "=" + mServerConnection.getState(volumeItemName)
+                    + "\n" + mCtx.getString(R.string.volumeIsOf, volume, mMaxVolume));
         } else {
-            mStatus.set("Volume Control", "disabled\nCurrent volume is " + volume + ", max. is " + mMaxVolume);
+            mStatus.set(mCtx.getString(R.string.pref_volume), mCtx.getString(R.string.enabled)
+                    + "\n" + mCtx.getString(R.string.volumeIsOf, volume, mMaxVolume));
         }
     }
 

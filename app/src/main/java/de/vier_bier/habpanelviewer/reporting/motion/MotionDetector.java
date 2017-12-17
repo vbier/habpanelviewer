@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 
 /**
@@ -60,7 +61,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
                 }
             }
 
-            throw new CameraException("Could not find front facing camera!");
+            throw new CameraException(mContext.getString(R.string.frontCameraMissing));
         }
 
         return null;
@@ -121,17 +122,18 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
 
     @Override
     protected String getCameraInfo() {
-        String camStr = "Camera API (Pre-Lollipop)\n";
+        String camStr = mContext.getString(R.string.camApiPreLollipop) + "\n";
         Camera.CameraInfo info = new Camera.CameraInfo();
         for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
             Camera.getCameraInfo(i, info);
-            camStr += "Camera " + i + ": ";
+            camStr += mContext.getString(R.string.cameraId, String.valueOf(i)) + ": ";
 
             boolean hasFlash = mContext.getApplicationContext().getPackageManager()
                     .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 
-            camStr += (hasFlash ? "has" : "no") + " flash, ";
-            camStr += (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK ? "back" : "front") + "-facing\n";
+            camStr += (hasFlash ? mContext.getString(R.string.has) : mContext.getString(R.string.no)) + " " + mContext.getString(R.string.flash) + ", ";
+            camStr += (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK ?
+                    mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing));
         }
 
         return camStr.trim();

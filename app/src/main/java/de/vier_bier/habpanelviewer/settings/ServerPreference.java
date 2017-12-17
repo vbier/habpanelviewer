@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerDiscovery;
 
 /**
@@ -45,11 +46,11 @@ public class ServerPreference extends EditTextPreference {
         final ViewGroup container = (ViewGroup) editText.getParent();
         if (container != null) {
             final CheckBox cb = new CheckBox(getContext());
-            cb.setText("discover HTTPS connection");
+            cb.setText(R.string.discoverHttps);
             cb.setChecked(true);
 
             final Button b = new Button(getContext());
-            b.setText("Discover Server");
+            b.setText(R.string.discoverServer);
 
             container.addView(b, ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -85,7 +86,7 @@ public class ServerPreference extends EditTextPreference {
                                     b.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(getContext(), "Could not find openHAB server!", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getContext(), getContext().getString(R.string.serverNotFound), Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 }

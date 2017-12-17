@@ -13,6 +13,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
@@ -83,22 +84,25 @@ public class BatteryMonitor implements StateUpdateListener {
         }
 
         if (mBatteryEnabled) {
-            String state = "reporting enabled";
+            String state = mCtx.getString(R.string.enabled);
             if (!mBatteryLowItem.isEmpty()) {
                 String lowState = mServerConnection.getState(mBatteryLowItem);
-                state += "\nBattery low: " + "CLOSED".equals(lowState) + " [" + mBatteryLowItem + "=" + lowState + "]";
+                state += "\n" + mCtx.getString(R.string.battLow) + ": " + "CLOSED".equals(lowState)
+                        + " [" + mBatteryLowItem + "=" + lowState + "]";
             }
             if (!mBatteryChargingItem.isEmpty()) {
                 String chargingState = mServerConnection.getState(mBatteryChargingItem);
-                state += "\nBattery charging: " + "CLOSED".equals(chargingState) + " [" + mBatteryChargingItem + "=" + chargingState + "]";
+                state += "\n" + mCtx.getString(R.string.battCharging) + ": " + "CLOSED".equals(chargingState)
+                        + " [" + mBatteryChargingItem + "=" + chargingState + "]";
             }
             if (!mBatteryLevelItem.isEmpty()) {
                 String levelState = mServerConnection.getState(mBatteryLevelItem);
-                state += "\nBattery level: " + levelState + "% [" + mBatteryLevelItem + "=" + levelState + "]";
+                state += "\n" + mCtx.getString(R.string.battLevel) + ": " + levelState + "% ["
+                        + mBatteryLevelItem + "=" + levelState + "]";
             }
-            mStatus.set("Battery", state);
+            mStatus.set(mCtx.getString(R.string.pref_battery), state);
         } else {
-            mStatus.set("Battery", "reporting disabled");
+            mStatus.set(mCtx.getString(R.string.pref_battery), mCtx.getString(R.string.disabled));
         }
     }
 

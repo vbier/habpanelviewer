@@ -38,6 +38,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.vier_bier.habpanelviewer.control.FlashController;
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity
         try {
             ConnectionUtil.initialize(this);
         } catch (Exception e) {
-            Toast.makeText(MainActivity.this, "Could not initialize SSL engine!", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, R.string.sslFailed, Toast.LENGTH_LONG).show();
         }
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -182,7 +183,7 @@ public class MainActivity extends AppCompatActivity
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 try {
-                    mFlashService = new FlashController((CameraManager) getSystemService(Context.CAMERA_SERVICE), mServerConnection);
+                    mFlashService = new FlashController(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE), mServerConnection);
                 } catch (CameraAccessException | IllegalAccessException e) {
                     Log.d("Habpanelview", "Could not create flash controller");
                 }
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity
             editor1.apply();
 
             final String startText = ResourcesUtil.fetchFirstStart(this);
-            UiUtil.showScrollDialog(this, "HABPanelViewer", "Welcome to HABPanelViewer!",
+            UiUtil.showScrollDialog(this, "HABPanelViewer", getString(R.string.welcome),
                     startText);
 
             if (prefs.getString("pref_url", "").isEmpty()) {
@@ -236,36 +237,36 @@ public class MainActivity extends AppCompatActivity
                 editor1.apply();
 
                 final String relText = ResourcesUtil.fetchReleaseNotes(this, lastVersion);
-                UiUtil.showScrollDialog(this, "HABPanelViewer Update",
-                        "The application has been updated. Find the bug fixes and new features below:",
+                UiUtil.showScrollDialog(this, getString(R.string.updated),
+                        getString(R.string.updatedText),
                         relText);
             }
         }
 
-        mVolumeController = new VolumeController((AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection);
+        mVolumeController = new VolumeController(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection);
         mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this, mServerConnection);
 
         mBatteryMonitor = new BatteryMonitor(this, mServerConnection);
-        mConnectedReporter = new ConnectedIndicator(mServerConnection);
+        mConnectedReporter = new ConnectedIndicator(this, mServerConnection);
 
         SensorManager m = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         try {
-            mProximityMonitor = new ProximityMonitor(m, mServerConnection);
+            mProximityMonitor = new ProximityMonitor(this, m, mServerConnection);
         } catch (SensorMissingException e) {
             Log.d("Habpanelview", "Could not create proximity monitor");
         }
         try {
-            mBrightnessMonitor = new BrightnessMonitor(m, mServerConnection);
+            mBrightnessMonitor = new BrightnessMonitor(this, m, mServerConnection);
         } catch (SensorMissingException e) {
             Log.d("Habpanelview", "Could not create brightness monitor");
         }
         try {
-            mPressureMonitor = new PressureMonitor(m, mServerConnection);
+            mPressureMonitor = new PressureMonitor(this, m, mServerConnection);
         } catch (SensorMissingException e) {
             Log.d("Habpanelview", "Could not create pressure monitor");
         }
         try {
-            mTemperatureMonitor = new TemperatureMonitor(m, mServerConnection);
+            mTemperatureMonitor = new TemperatureMonitor(this, m, mServerConnection);
         } catch (SensorMissingException e) {
             Log.d("Habpanelview", "Could not create temperature monitor");
         }
@@ -512,7 +513,7 @@ public class MainActivity extends AppCompatActivity
     private void showInitialToastMessage(int restartCount) {
         String toastMsg = "";
         if (restartCount > 0) {
-            toastMsg += "App restarted after crash\n";
+            toastMsg += getString(R.string.appRestarted);
         }
 
         if (!toastMsg.isEmpty()) {
@@ -553,28 +554,29 @@ public class MainActivity extends AppCompatActivity
         }
 
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
-        mStatus.set("HABPanelViewer", "Version: " + BuildConfig.VERSION_NAME + "\nBuild date: " + buildDate.toString());
+        mStatus.set(getString(R.string.app_name), "Version: " + BuildConfig.VERSION_NAME + "\n"
+                + getString(R.string.buildDate) + SimpleDateFormat.getDateTimeInstance().format(buildDate));
 
         if (mFlashService == null) {
-            mStatus.set("Flash Control", "unavailable");
+            mStatus.set(getString(R.string.pref_flash), getString(R.string.unavailable));
         }
         if (mMotionDetector == null) {
-            mStatus.set("Motion Detection", "unavailable");
+            mStatus.set(getString(R.string.pref_motion), getString(R.string.unavailable));
         }
         if (mRestartCount != 0) {
-            mStatus.set("Restart Counter", String.valueOf(mRestartCount));
+            mStatus.set(getString(R.string.restartCounter), String.valueOf(mRestartCount));
         }
         if (mProximityMonitor == null) {
-            mStatus.set("Proximity Sensor", "unavailable");
+            mStatus.set(getString(R.string.pref_proximity), getString(R.string.unavailable));
         }
         if (mPressureMonitor == null) {
-            mStatus.set("Pressure Sensor", "unavailable");
+            mStatus.set(getString(R.string.pref_pressure), getString(R.string.unavailable));
         }
         if (mBrightnessMonitor == null) {
-            mStatus.set("Brightness Sensor", "unavailable");
+            mStatus.set(getString(R.string.pref_brightness), getString(R.string.unavailable));
         }
         if (mTemperatureMonitor == null) {
-            mStatus.set("Temperature Sensor", "unavailable");
+            mStatus.set(getString(R.string.pref_temperature), getString(R.string.unavailable));
         }
 
         String webview = "";

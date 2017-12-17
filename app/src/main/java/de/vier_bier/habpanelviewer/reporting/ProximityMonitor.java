@@ -1,10 +1,12 @@
 package de.vier_bier.habpanelviewer.reporting;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 
 /**
@@ -13,8 +15,8 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 public class ProximityMonitor extends SensorMonitor {
     private boolean mProximity;
 
-    public ProximityMonitor(SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
-        super(sensorManager, serverConnection, "proximity", Sensor.TYPE_PROXIMITY);
+    public ProximityMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
+        super(ctx, sensorManager, serverConnection, "proximity", Sensor.TYPE_PROXIMITY);
     }
 
     @Override
@@ -40,16 +42,16 @@ public class ProximityMonitor extends SensorMonitor {
         }
 
         if (mSensorEnabled) {
-            String state = "reporting enabled";
+            String state = mCtx.getString(R.string.enabled);
             if (!mSensorItem.isEmpty()) {
-                state += "\nObject close : " + mProximity + " [" + mSensorItem + "=" + mServerConnection.getState(mSensorItem) + "]";
+                state += "\n" + mCtx.getString(R.string.objectClose) + " : " + mProximity + " [" + mSensorItem + "=" + mServerConnection.getState(mSensorItem) + "]";
             }
 
-            state += "\nSensor max. range is " + mSensor.getMaximumRange() + ", resolution is " + mSensor.getResolution();
+            state += "\n" + mCtx.getString(R.string.maxRangeResolution, mSensor.getMaximumRange(), mSensor.getResolution());
 
-            mStatus.set("Proximity Sensor", state);
+            mStatus.set(mCtx.getString(R.string.pref_proximity), state);
         } else {
-            mStatus.set("Proximity Sensor", "reporting disabled");
+            mStatus.set(mCtx.getString(R.string.pref_proximity), mCtx.getString(R.string.disabled));
         }
     }
 }

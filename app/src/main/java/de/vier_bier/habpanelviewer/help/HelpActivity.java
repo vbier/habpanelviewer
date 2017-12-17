@@ -32,6 +32,6 @@ public class HelpActivity extends Activity {
         setContentView(R.layout.help_main);
 
         final MarkdownView markdownView = findViewById(R.id.activity_help_webview);
-        markdownView.loadMarkdownFromAssets("help.md");
+        markdownView.loadMarkdownFromAssets(getString(R.string.helpFile));
     }
 }

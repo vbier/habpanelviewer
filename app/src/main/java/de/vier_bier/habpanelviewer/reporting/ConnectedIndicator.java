@@ -1,5 +1,6 @@
 package de.vier_bier.habpanelviewer.reporting;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import org.greenrobot.eventbus.EventBus;
@@ -8,6 +9,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
@@ -20,11 +22,13 @@ public class ConnectedIndicator implements StateUpdateListener {
     private String mStatusItem;
     private int mInterval;
 
+    private Context mCtx;
     private ServerConnection mServerConnection;
     private ConnectedReportingThread mReportConnection;
     private ApplicationStatus mStatus;
 
-    public ConnectedIndicator(ServerConnection serverConnection) {
+    public ConnectedIndicator(Context ctx, ServerConnection serverConnection) {
+        mCtx = ctx;
         mServerConnection = serverConnection;
 
         EventBus.getDefault().register(this);
@@ -76,15 +80,15 @@ public class ConnectedIndicator implements StateUpdateListener {
         }
 
         if (mEnabled) {
-            String state = "enabled";
+            String state = mCtx.getString(R.string.enabled);
             if (!mStatusItem.isEmpty()) {
                 final String status = mServerConnection.getState(mStatusItem);
                 state += "\n" + mStatusItem + "=" + status;
             }
 
-            mStatus.set("Connected Indicator", state);
+            mStatus.set(mCtx.getString(R.string.pref_connected), state);
         } else {
-            mStatus.set("Connected Indicator", "disabled");
+            mStatus.set(mCtx.getString(R.string.pref_connected), mCtx.getString(R.string.disabled));
         }
     }
 

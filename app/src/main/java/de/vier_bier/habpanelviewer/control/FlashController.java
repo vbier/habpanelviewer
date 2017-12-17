@@ -1,6 +1,7 @@
 package de.vier_bier.habpanelviewer.control;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
@@ -16,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
@@ -39,7 +41,7 @@ public class FlashController implements StateUpdateListener {
 
     private ApplicationStatus mStatus;
 
-    public FlashController(CameraManager cameraManager, ServerConnection serverConnection) throws CameraAccessException, IllegalAccessException {
+    public FlashController(Context ctx, CameraManager cameraManager, ServerConnection serverConnection) throws CameraAccessException, IllegalAccessException {
         camManager = cameraManager;
         mServerConnection = serverConnection;
 
@@ -57,7 +59,7 @@ public class FlashController implements StateUpdateListener {
         }
 
         if (torchId == null) {
-            throw new IllegalAccessException("Could not find back facing camera with flash!");
+            throw new IllegalAccessException(ctx.getString(R.string.couldNotFindBackFlash));
         }
     }
 

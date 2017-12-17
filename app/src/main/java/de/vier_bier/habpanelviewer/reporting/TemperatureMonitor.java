@@ -1,17 +1,19 @@
 package de.vier_bier.habpanelviewer.reporting;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 
 /**
  * Monitors temperature sensor state and reports to openHAB.
  */
 public class TemperatureMonitor extends SensorMonitor {
-    public TemperatureMonitor(SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
-        super(sensorManager, serverConnection, "temperature", Sensor.TYPE_AMBIENT_TEMPERATURE);
+    public TemperatureMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
+        super(ctx, sensorManager, serverConnection, "temperature", Sensor.TYPE_AMBIENT_TEMPERATURE);
     }
 
     protected synchronized void addStatusItems() {
@@ -20,15 +22,15 @@ public class TemperatureMonitor extends SensorMonitor {
         }
 
         if (mSensorEnabled) {
-            String state = "reporting enabled";
+            String state = mCtx.getString(R.string.enabled);
             if (!mSensorItem.isEmpty()) {
                 final String value = mServerConnection.getState(mSensorItem);
-                state += "\nTemperature : " + value + " °C [" + mSensorItem + "=" + value + "]";
+                state += "\n" + mCtx.getString(R.string.temperature) + " : " + value + " °C [" + mSensorItem + "=" + value + "]";
             }
 
-            mStatus.set("Temperature Sensor", state);
+            mStatus.set(mCtx.getString(R.string.pref_temperature), state);
         } else {
-            mStatus.set("Temperature Sensor", "reporting disabled");
+            mStatus.set(mCtx.getString(R.string.pref_temperature), mCtx.getString(R.string.disabled));
         }
     }
 

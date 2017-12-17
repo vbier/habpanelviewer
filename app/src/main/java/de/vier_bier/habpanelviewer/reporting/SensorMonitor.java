@@ -1,5 +1,6 @@
 package de.vier_bier.habpanelviewer.reporting;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
@@ -10,6 +11,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
@@ -18,6 +20,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Abstract base class for device sensor monitors.
  */
 public abstract class SensorMonitor implements SensorEventListener, StateUpdateListener {
+    protected Context mCtx;
     private SensorManager mSensorManager;
     ServerConnection mServerConnection;
     Sensor mSensor;
@@ -27,14 +30,15 @@ public abstract class SensorMonitor implements SensorEventListener, StateUpdateL
     boolean mSensorEnabled;
     String mSensorItem;
 
-    SensorMonitor(SensorManager sensorManager, ServerConnection serverConnection, String prefkey, int sensorType) throws SensorMissingException {
+    SensorMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection, String prefkey, int sensorType) throws SensorMissingException {
+        mCtx = ctx;
         mSensorManager = sensorManager;
         mServerConnection = serverConnection;
         mPreferenceKey = prefkey;
         mSensor = mSensorManager.getDefaultSensor(sensorType);
 
         if (mSensor == null) {
-            throw new SensorMissingException(sensorType);
+            throw new SensorMissingException(mCtx.getString(R.string.deviceMissingSensor) + sensorType);
         }
 
         EventBus.getDefault().register(this);

@@ -1,0 +1,6 @@
+Die App sucht momentan den openHAB Server im lokalen Netz. Sobald der Server gefunden wurde,
+wird HABPanel geladen. Bitte fahren Sie dann mit der initialen Konfigurqation von HABPanel fort.
+
+Wenn der Server nicht gefunden werden kann, öffnen Sie das Menü und geben Sie die URL ion den Einstllungen ein.
+
+Um das Menü zu öffnen, ziehen Sie den Finger vom rechten Rand zur Mitte des Bildschirms.

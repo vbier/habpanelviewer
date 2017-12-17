@@ -64,31 +64,31 @@ public class SettingsFragment extends PreferenceFragment {
         // disable preferences if functionality is not available
         if (!flashEnabled) {
             findPreference("pref_flash").setEnabled(false);
-            findPreference("pref_flash").setSummary("Flash control is not available because no back camera with flash has been found");
+            findPreference("pref_flash").setSummary(getString(R.string.pref_flash) + getString(R.string.notAvailableOnDevice));
         }
         if (!motionEnabled) {
             findPreference("pref_motion").setEnabled(false);
-            findPreference("pref_motion").setSummary("Motion detection is not available because no front camera has been found");
+            findPreference("pref_motion").setSummary(getString(R.string.pref_motion) + getString(R.string.notAvailableOnDevice));
         }
         if (!screenEnabled) {
             findPreference("pref_screen").setEnabled(false);
-            findPreference("pref_screen").setSummary("Screen On control is not available on this device");
+            findPreference("pref_screen").setSummary(getString(R.string.pref_screen) + getString(R.string.notAvailableOnDevice));
         }
         if (!proximityEnabled) {
             findPreference("pref_proximity").setEnabled(false);
-            findPreference("pref_proximity").setSummary("Proximity sensor is not available on this device");
+            findPreference("pref_proximity").setSummary(getString(R.string.pref_proximity) + getString(R.string.notAvailableOnDevice));
         }
         if (!pressureEnabled) {
             findPreference("pref_pressure").setEnabled(false);
-            findPreference("pref_pressure").setSummary("Pressure sensor is not available on this device");
+            findPreference("pref_pressure").setSummary(getString(R.string.pref_pressure) + getString(R.string.notAvailableOnDevice));
         }
         if (!brightnessEnabled) {
             findPreference("pref_brightness").setEnabled(false);
-            findPreference("pref_brightness").setSummary("Brightness sensor is not available on this device");
+            findPreference("pref_brightness").setSummary(getString(R.string.pref_brightness) + getString(R.string.notAvailableOnDevice));
         }
         if (!temperatureEnabled) {
             findPreference("pref_temperature").setEnabled(false);
-            findPreference("pref_temperature").setSummary("Temperature sensor is not available on this device");
+            findPreference("pref_temperature").setSummary(getString(R.string.pref_temperature) + getString(R.string.notAvailableOnDevice));
         }
 
         // add validation to the regexps
@@ -170,7 +170,7 @@ public class SettingsFragment extends PreferenceFragment {
             if (!pkg.isEmpty()) {
                 Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage(pkg);
                 if (launchIntent == null) {
-                    UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", "Could not find app for package " + pkg);
+                    UiUtil.showDialog(getActivity(), preference.getTitle() + " " + getString(R.string.invalid), getString(R.string.couldNotFindApp) + pkg);
                 }
             }
             return true;
@@ -193,11 +193,11 @@ public class SettingsFragment extends PreferenceFragment {
                         urlConnection.connect();
                         urlConnection.disconnect();
                     } catch (MalformedURLException e) {
-                        UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", urls[0] + " is not a valid URL");
+                        UiUtil.showDialog(getActivity(), preference.getTitle() + " " + getString(R.string.invalid), urls[0] + getString(R.string.notValidUrl));
                     } catch (SSLException e) {
-                        UiUtil.showDialog(getActivity(), "Certificate invalid", "Could not connect to openHAB at URL " + urls[0] + ".\n You can accept the certificate once you have left the settings.");
+                        UiUtil.showDialog(getActivity(), getString(R.string.certInvalid), getString(R.string.couldNotConnect) + " " + urls[0] + ".\n" + getString(R.string.acceptCertWhenOurOfSettings));
                     } catch (IOException | GeneralSecurityException e) {
-                        UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", "Could not connect to openHAB at URL " + urls[0]);
+                        UiUtil.showDialog(getActivity(), preference.getTitle() + " " + getString(R.string.invalid), getString(R.string.couldNotConnect) + " " + urls[0]);
                     }
 
                     return null;
@@ -217,7 +217,7 @@ public class SettingsFragment extends PreferenceFragment {
                 //noinspection ResultOfMethodCallIgnored
                 Pattern.compile(text);
             } catch (PatternSyntaxException e) {
-                UiUtil.showDialog(getActivity(), preference.getTitle() + " invalid", e.getMessage());
+                UiUtil.showDialog(getActivity(), preference.getTitle() + " " + getString(R.string.invalid), e.getMessage());
             }
 
             return true;
