@@ -336,8 +336,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
-        final String menuPos = prefs.getString("pref_menu_position", "right");
-        if (menuPos.equalsIgnoreCase("left")) {
+        final String menuPos = prefs.getString("pref_menu_position", "");
+        if (menuPos.equalsIgnoreCase(getString(R.string.left))) {
             params.gravity = Gravity.START;
         } else {
             params.gravity = Gravity.END;
@@ -347,7 +347,7 @@ public class MainActivity extends AppCompatActivity
         Intent launchIntent = getLaunchIntent(this);
         i.setVisible(launchIntent != null);
         if (launchIntent != null) {
-            i.setTitle("Launch " + prefs.getString("pref_app_name", "App"));
+            i.setTitle(getString(R.string.launch, prefs.getString("pref_app_name", "App")));
         }
 
         if (mFlashService != null) {

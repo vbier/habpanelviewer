@@ -186,4 +186,6 @@
     <string name="couldNotFindBackFlash">Konnte keine nach hinten gerichtete Kamera mit Blitz finden!</string>
     <string name="volumeIsOf">Lautstärke ist %d von %d</string>
     <string name="helpFile">help-de.md</string>
+    <string name="launch">Starte %s</string>
+    <string name="left">links</string>
 </resources>

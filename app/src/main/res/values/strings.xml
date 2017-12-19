@@ -197,4 +197,6 @@
     <string name="couldNotFindBackFlash">Could not find back facing camera with flash!</string>
     <string name="volumeIsOf">Current volume is %d of %d</string>
     <string name="helpFile">help.md</string>
+    <string name="launch">Launch %s</string>
+    <string name="left">left</string>
 </resources>

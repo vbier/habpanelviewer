@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="menupositions">
+        <item>links</item>
+        <item>rechts</item>
+    </string-array>
+</resources>
