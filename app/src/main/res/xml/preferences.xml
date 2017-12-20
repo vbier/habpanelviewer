@@ -9,18 +9,16 @@
             android:title="@string/pref_app">
 
             <CheckBoxPreference
-                android:defaultValue="true"
                 android:key="pref_app_enabled"
+                android:defaultValue="false"
                 android:summary="@string/pref_app_enabled_summ"
                 android:title="@string/pref_app_enabled" />
             <EditTextPreference
-                android:defaultValue="@string/pref_app_name_default"
                 android:dependency="pref_app_enabled"
                 android:key="pref_app_name"
                 android:summary="@string/pref_app_name_summ"
                 android:title="@string/pref_app_name" />
             <EditTextPreference
-                android:defaultValue="@string/pref_app_package_default"
                 android:dependency="pref_app_enabled"
                 android:key="pref_app_package"
                 android:summary="@string/pref_app_package_summ"
@@ -31,7 +29,7 @@
             android:persistent="false"
             android:title="@string/pref_restart">
             <CheckBoxPreference
-                android:defaultValue="true"
+                android:defaultValue="false"
                 android:key="pref_restart_enabled"
                 android:summary="@string/pref_restart_enabled_summ"
                 android:title="@string/pref_restart_enabled" />
@@ -75,12 +73,11 @@
                 android:persistent="false"
                 android:title="@string/pref_screen">
                 <CheckBoxPreference
-                    android:defaultValue="true"
+                    android:defaultValue="false"
                     android:key="pref_screen_enabled"
                     android:summary="@string/pref_screen_enabled_summ"
                     android:title="@string/pref_screen_enabled" />
                 <EditTextPreference
-                    android:defaultValue="@string/pref_screen_item_default"
                     android:dependency="pref_screen_enabled"
                     android:key="pref_screen_item"
                     android:summary="@string/pref_screen_item_summ"
@@ -92,7 +89,6 @@
                     android:summary="@string/pref_screen_stay_enabled_summ"
                     android:title="@string/pref_screen_stay_enabled" />
                 <EditTextPreference
-                    android:defaultValue="@string/pref_scren_on_regex_default"
                     android:dependency="pref_screen_enabled"
                     android:key="pref_screen_on_regex"
                     android:summary="@string/pref_screen_on_regex_summ"
@@ -104,24 +100,21 @@
                 android:enabled="@bool/is_post_api_23"
                 android:title="@string/pref_flash">
                 <CheckBoxPreference
-                    android:defaultValue="true"
+                    android:defaultValue="false"
                     android:key="pref_flash_enabled"
                     android:summary="@string/pref_flash_enabled_summ"
                     android:title="@string/pref_flash_enabled" />
                 <EditTextPreference
-                    android:defaultValue="@string/pref_flash_item_default"
                     android:dependency="pref_flash_enabled"
                     android:key="pref_flash_item"
                     android:summary="@string/pref_flash_item_summ"
                     android:title="@string/pref_flash_item" />
                 <EditTextPreference
-                    android:defaultValue="@string/pref_flash_pulse_regex_default"
                     android:dependency="pref_flash_enabled"
                     android:key="pref_flash_pulse_regex"
                     android:summary="@string/pref_flash_pulse_regex_summ"
                     android:title="@string/pref_flash_pulse_regex" />
                 <EditTextPreference
-                    android:defaultValue="@string/pref_flash_steady_regex_default"
                     android:dependency="pref_flash_enabled"
                     android:key="pref_flash_steady_regex"
                     android:summary="@string/pref_flash_steady_regex_summ"
