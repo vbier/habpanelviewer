@@ -90,7 +90,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
                 retVal += ", " + mContext.getString(R.string.detectionResolution, mPreviewSize.x, mPreviewSize.y);
             }
             return retVal + "\n"
-                    + mContext.getString(R.string.boxesLenciency, mBoxes, mLeniency) + "\n"
+                    + mContext.getString(R.string.boxesLeniency, mBoxes, mLeniency) + "\n"
                     + mFrameCount + mContext.getString(R.string.framesProcessed, mFrameCount, mDetectionCount);
         } else {
             return mContext.getString(R.string.failedAccessCamera);

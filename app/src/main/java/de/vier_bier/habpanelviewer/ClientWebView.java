@@ -112,7 +112,7 @@ public class ClientWebView extends WebView {
 
                 final String host = h;
 
-                String r = getContext().getString(R.string.notvalid);
+                String r = getContext().getString(R.string.notValid);
                 switch (error.getPrimaryError()) {
                     case SslError.SSL_DATE_INVALID:
                         r = getContext().getString(R.string.invalidDate);

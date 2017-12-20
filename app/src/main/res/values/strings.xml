@@ -7,6 +7,8 @@
     <string name="action_help">Help</string>
     <string name="action_exit">Exit</string>
     <string name="action_restart">Restart App</string>
+    <string name="action_goto_start_url">Goto Start URL</string>
+    <string name="action_settings">Settings</string>
 
     <string name="pref_url" translatable="false">openHAB URL</string>
     <string name="pref_url_summ">URL of the openHAB server</string>
@@ -130,8 +132,9 @@
     <string name="pref_connected_interval_summ">The number of seconds between subsequent state updates</string>
     <string name="pref_show_on_lock_screen">Show on lock screen</string>
     <string name="pref_show_on_lock_screen_summ">Whether the app shall be shown on the lock screen</string>
-    <string name="action_goto_start_url">Goto Start URL</string>
-    <string name="action_settings">Settings</string>
+
+    <string name="helpFile">help.md</string>
+
     <string name="sslFailed">Could not initialize SSL engine!</string>
     <string name="welcome">Welcome to HABPanelViewer!</string>
     <string name="updated">HABPanelViewer Update</string>
@@ -143,7 +146,7 @@
     <string name="waitingNetwork">Waiting for network connection...</string>
     <string name="notConnected">The device is currently not connected to the network. Once the connection has been established, the configured HABPanel page will automatically be loaded.</string>
     <string name="unknownHost">unknown host</string>
-    <string name="notvalid">is not valid</string>
+    <string name="notValid">is not valid</string>
     <string name="invalidDate">has an invalid date</string>
     <string name="expired">has expired</string>
     <string name="hostnameMismatch">has a hostname mismatch</string>
@@ -192,11 +195,10 @@
     <string name="failedAccessCamera">failed to access camera service:</string>
     <string name="cameras">Cameras</string>
     <string name="detectionResolution">resolution %dx%d</string>
-    <string name="boxesLenciency">%d boxes, leniency is %d</string>
+    <string name="boxesLeniency">%d boxes, leniency is %d</string>
     <string name="framesProcessed">%d frames, motion detected %d times</string>
     <string name="couldNotFindBackFlash">Could not find back facing camera with flash!</string>
     <string name="volumeIsOf">Volume %d of %d</string>
-    <string name="helpFile">help.md</string>
     <string name="launch">Launch %s</string>
     <string name="left">left</string>
 </resources>

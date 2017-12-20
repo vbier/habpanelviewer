@@ -5,6 +5,10 @@
     <string name="action_help">Hilfe</string>
     <string name="action_exit">Beenden</string>
     <string name="action_restart">Neustart</string>
+    <string name="action_goto_start_url">Lade Start URL</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="action_reload">Lade Seite Neu</string>
+
     <string name="pref_url_summ">Die URL des openHAB Servers</string>
     <string name="pref_desktop_mode">Desktop Modus</string>
     <string name="pref_desktop_mode_summ">Zeigt die Seiten im Desktop Modus an Stelle des Mobil Modus</string>
@@ -36,6 +40,7 @@
     <string name="pref_mdns_https">HTTPS Serversuche</string>
     <string name="pref_menu_position">Menü Position</string>
     <string name="pref_menu_position_summ">Die Seite von der das Menü geöffnet werden kann</string>
+
     <string name="pref_control">Geräte Steuerung</string>
     <string name="pref_control_summ">Steuert verschiedene Funktionen des Gerätes in Abhängigkeit von openHAB items</string>
     <string name="pref_screen">Bildschirm Steuerung</string>
@@ -61,6 +66,7 @@
     <string name="pref_volume_enabled_summ">Verändert die Geräte Lautstärke in Abhängigkeit eines openHAB Items</string>
     <string name="pref_volume_item">Lautstärke Item</string>
     <string name="pref_volume_item_summ">Name des openHAB items dessen Wert die Lautstärke steuert</string>
+
     <string name="pref_reporting">Sensorwerte Meldung</string>
     <string name="pref_reporting_summ">Meldet Sensorwerte an openHAB</string>
     <string name="pref_battery">Batterie Sensor</string>
@@ -118,9 +124,9 @@
     <string name="pref_connected_interval_summ">Die Anzahl der Sekunden, nach denen der Wert an openHAB gemeldet wird</string>
     <string name="pref_show_on_lock_screen">Sichtbar bei Bildschirmsperre</string>
     <string name="pref_show_on_lock_screen_summ">Ob die App sichtbar sein soll, wenn der Bildschirm gesperrt ist</string>
-    <string name="action_goto_start_url">Lade Start URL</string>
-    <string name="action_settings">Einstellungen</string>
-    <string name="action_reload">Lade Seite Neu</string>
+
+    <string name="helpFile">help-de.md</string>
+
     <string name="sslFailed">Konnte SSL nicht initialisieren</string>
     <string name="welcome">Willkommen bei HABPanelViewer!</string>
     <string name="updated">HABPanelViewer Aktualisierung</string>
@@ -132,7 +138,7 @@
     <string name="waitingNetwork">Warte auf Netzwerk Verbindung...</string>
     <string name="notConnected">Das Gerät ist momentan nicht mit dem Netzwerk verbunden. Sobald die Verbindung hergestellt wurde, wird HABPanel automatisch geladen.</string>
     <string name="unknownHost">unbekannter Rechner</string>
-    <string name="notvalid">ist nicht gültig</string>
+    <string name="notValid">ist nicht gültig</string>
     <string name="invalidDate">hat ein ungültiges Datum</string>
     <string name="expired">ist abgelaufen</string>
     <string name="hostnameMismatch">hat einen falschen Rechner Namen</string>
@@ -181,11 +187,10 @@
     <string name="failedAccessCamera">Konnte Kamera nicht ansprechen:</string>
     <string name="cameras">Kameras</string>
     <string name="detectionResolution">Auflösung %dx%d</string>
-    <string name="boxesLenciency">%d Rechtecke, Erkennungs Schwelle %d</string>
+    <string name="boxesLeniency">%d Rechtecke, Erkennungs Schwelle %d</string>
     <string name="framesProcessed">%d Bilder, %d mal Bewegung erkannt</string>
     <string name="couldNotFindBackFlash">Konnte keine nach hinten gerichtete Kamera mit Blitz finden!</string>
     <string name="volumeIsOf">Lautstärke %d von %d</string>
-    <string name="helpFile">help-de.md</string>
     <string name="launch">Starte %s</string>
     <string name="left">links</string>
 </resources>
