@@ -12,7 +12,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-public class MyTrustManager implements X509TrustManager {
+public class LocalTrustManager implements X509TrustManager {
 
     static class LocalStoreX509TrustManager implements X509TrustManager {
 
@@ -67,7 +67,7 @@ public class MyTrustManager implements X509TrustManager {
 
     private X509Certificate[] acceptedIssuers;
 
-    MyTrustManager(KeyStore localKeyStore) {
+    LocalTrustManager(KeyStore localKeyStore) {
         try {
             TrustManagerFactory tmf = TrustManagerFactory
                     .getInstance(TrustManagerFactory.getDefaultAlgorithm());

@@ -38,7 +38,7 @@ public class ConnectionUtil {
     private static File localTrustStoreFile;
     private static final String TRUSTSTORE_PASSWORD = "secret";
 
-    private static MyTrustManager mTrustManager;
+    private static LocalTrustManager mTrustManager;
     private static SSLContext mSslContext;
 
     public static synchronized void initialize(Context ctx) throws GeneralSecurityException, IOException {
@@ -92,7 +92,7 @@ public class ConnectionUtil {
     public static synchronized boolean isTrusted(SslCertificate cert) {
         if (mTrustManager == null) {
             KeyStore trustStore = loadTrustStore();
-            mTrustManager = new MyTrustManager(trustStore);
+            mTrustManager = new LocalTrustManager(trustStore);
         }
 
         try {
@@ -111,7 +111,7 @@ public class ConnectionUtil {
 
         if (mTrustManager == null) {
             KeyStore trustStore = loadTrustStore();
-            mTrustManager = new MyTrustManager(trustStore);
+            mTrustManager = new LocalTrustManager(trustStore);
         }
 
         TrustManager[] tms = new TrustManager[]{mTrustManager};
