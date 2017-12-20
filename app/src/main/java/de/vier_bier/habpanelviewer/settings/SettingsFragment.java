@@ -215,7 +215,9 @@ public class SettingsFragment extends PreferenceFragment {
             String text = (String) o;
             try {
                 //noinspection ResultOfMethodCallIgnored
-                Pattern.compile(text);
+                if (text != null) {
+                    Pattern.compile(text);
+                }
             } catch (PatternSyntaxException e) {
                 UiUtil.showDialog(getActivity(), preference.getTitle() + " " + getString(R.string.invalid), e.getMessage());
             }
