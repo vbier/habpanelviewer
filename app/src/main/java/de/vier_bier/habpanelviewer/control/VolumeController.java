@@ -52,11 +52,13 @@ public class VolumeController implements StateUpdateListener {
         int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
         if (isEnabled()) {
-            mStatus.set(mCtx.getString(R.string.pref_volume), mCtx.getString(R.string.enabled)
-                    + "\n" + volumeItemName + "=" + mServerConnection.getState(volumeItemName)
-                    + "\n" + mCtx.getString(R.string.volumeIsOf, volume, mMaxVolume));
+            String status = mCtx.getString(R.string.enabled);
+            if (!volumeItemName.isEmpty()) {
+                status += "\n" + volumeItemName + "=" + mServerConnection.getState(volumeItemName);
+            }
+            mStatus.set(mCtx.getString(R.string.pref_volume), status + "\n" + mCtx.getString(R.string.volumeIsOf, volume, mMaxVolume));
         } else {
-            mStatus.set(mCtx.getString(R.string.pref_volume), mCtx.getString(R.string.enabled)
+            mStatus.set(mCtx.getString(R.string.pref_volume), mCtx.getString(R.string.disabled)
                     + "\n" + mCtx.getString(R.string.volumeIsOf, volume, mMaxVolume));
         }
     }

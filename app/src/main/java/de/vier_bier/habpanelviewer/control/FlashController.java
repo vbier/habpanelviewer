@@ -27,6 +27,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  */
 @TargetApi(Build.VERSION_CODES.M)
 public class FlashController implements StateUpdateListener {
+    private Context mCtx;
     private CameraManager camManager;
     private ServerConnection mServerConnection;
 
@@ -42,6 +43,7 @@ public class FlashController implements StateUpdateListener {
     private ApplicationStatus mStatus;
 
     public FlashController(Context ctx, CameraManager cameraManager, ServerConnection serverConnection) throws CameraAccessException, IllegalAccessException {
+        mCtx = ctx;
         camManager = cameraManager;
         mServerConnection = serverConnection;
 
@@ -75,9 +77,13 @@ public class FlashController implements StateUpdateListener {
         }
 
         if (isEnabled()) {
-            mStatus.set("Flash Control", "enabled\n" + flashItemName + "=" + mServerConnection.getState(flashItemName));
+            String status = mCtx.getString(R.string.enabled);
+            if (!flashItemName.isEmpty()) {
+                status += "\n" + flashItemName + "=" + mServerConnection.getState(flashItemName);
+            }
+            mStatus.set(mCtx.getString(R.string.pref_flash), status);
         } else {
-            mStatus.set("Flash Control", "disabled");
+            mStatus.set(mCtx.getString(R.string.pref_flash), mCtx.getString(R.string.disabled));
         }
     }
 

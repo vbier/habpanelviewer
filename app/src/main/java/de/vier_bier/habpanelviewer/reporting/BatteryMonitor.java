@@ -127,8 +127,10 @@ public class BatteryMonitor implements StateUpdateListener {
 
         if (mBatteryEnabled) {
             if (!canPoll) {
-                mPollBatteryLevel.stopPolling();
-                mPollBatteryLevel = null;
+                if (mPollBatteryLevel != null) {
+                    mPollBatteryLevel.stopPolling();
+                    mPollBatteryLevel = null;
+                }
             } else if (mPollBatteryLevel != null) {
                 mPollBatteryLevel.pollNow();
             } else {

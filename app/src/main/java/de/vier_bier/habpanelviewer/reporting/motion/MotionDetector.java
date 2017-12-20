@@ -133,7 +133,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
 
             camStr += (hasFlash ? mContext.getString(R.string.has) : mContext.getString(R.string.no)) + " " + mContext.getString(R.string.flash) + ", ";
             camStr += (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK ?
-                    mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing));
+                    mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing)) + "\n";
         }
 
         return camStr.trim();

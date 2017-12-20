@@ -93,8 +93,12 @@ public class ScreenController implements StateUpdateListener {
         }
 
         if (isEnabled()) {
-            mStatus.set(activity.getString(R.string.pref_screen), activity.getString(R.string.enabled)
-                    + "\n" + screenOnItemName + "=" + mServerConnection.getState(screenOnItemName));
+            String status = activity.getString(R.string.enabled);
+            if (!screenOnItemName.isEmpty()) {
+                status += "\n" + screenOnItemName + "=" + mServerConnection.getState(screenOnItemName);
+            }
+
+            mStatus.set(activity.getString(R.string.pref_screen), status);
         } else {
             mStatus.set(activity.getString(R.string.pref_screen), activity.getString(R.string.disabled));
         }

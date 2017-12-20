@@ -171,7 +171,7 @@
     <string name="disabled">disabled</string>
     <string name="temperature">Temperature</string>
     <string name="deviceMissingSensor">Device does not have a sensor of type</string>
-    <string name="maxRangeResolution">Sensor max. range is %1f, resolution is %1f</string>
+    <string name="maxRangeResolution">Sensor max. range is %.1f, resolution is %.1f</string>
     <string name="objectClose">Object close</string>
     <string name="pressure">Pressure: %s hPa or mbar</string>
     <string name="brightness">Brightness</string>
@@ -191,11 +191,11 @@
     <string name="frontFacing">front-facing</string>
     <string name="failedAccessCamera">failed to access camera service:</string>
     <string name="cameras">Cameras</string>
-    <string name="detectionResolution">detection resolution %dx%d</string>
-    <string name="boxesLenciency">%d detection boxes, leniency is %d</string>
-    <string name="framesProcessed">%d frames processed, motion has been detected %d times</string>
+    <string name="detectionResolution">resolution %dx%d</string>
+    <string name="boxesLenciency">%d boxes, leniency is %d</string>
+    <string name="framesProcessed">%d frames, motion detected %d times</string>
     <string name="couldNotFindBackFlash">Could not find back facing camera with flash!</string>
-    <string name="volumeIsOf">Current volume is %d of %d</string>
+    <string name="volumeIsOf">Volume %d of %d</string>
     <string name="helpFile">help.md</string>
     <string name="launch">Launch %s</string>
     <string name="left">left</string>
