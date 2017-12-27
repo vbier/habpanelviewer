@@ -121,14 +121,14 @@
     <string name="pref_connected_interval">Meldungs Intervall</string>
     <string name="pref_connected_interval_summ">Die Anzahl der Sekunden, nach denen der Wert an openHAB gemeldet wird</string>
     <string name="pref_show_on_lock_screen">Sichtbar bei Bildschirmsperre</string>
-    <string name="pref_show_on_lock_screen_summ">Ob die App sichtbar sein soll, wenn der Bildschirm gesperrt ist</string>
+    <string name="pref_show_on_lock_screen_summ">Ob die Anwednung sichtbar sein soll, wenn der Bildschirm gesperrt ist</string>
 
     <string name="helpFile">help-de.md</string>
 
     <string name="sslFailed">Konnte SSL nicht initialisieren</string>
     <string name="welcome">Willkommen bei HABPanelViewer!</string>
     <string name="updated">HABPanelViewer Aktualisierung</string>
-    <string name="updatedText">Die applikation wurde aktualisiert. Folgende Fehlerbehebungen und Verbesserungen wurden eingearbeitet:</string>
+    <string name="updatedText">Die Anwendung wurde aktualisiert. Folgende Fehlerbehebungen und Verbesserungen wurden eingearbeitet:</string>
     <string name="appRestarted">App wurde nach Absturz neu gestartet</string>
     <string name="buildDate">Build Datum:</string>
     <string name="unavailable">nicht verfügbar</string>
