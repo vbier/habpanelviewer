@@ -27,7 +27,7 @@
     <string name="pref_app_name_summ">Der Name der Applikation der im Menü gezeigt wird</string>
     <string name="pref_app_package">Applikations Name</string>
     <string name="pref_app_package_summ">Der Paket Name der Applikation</string>
-    <string name="pref_app_enabled">Zeige App Start Eintragim Menü</string>
+    <string name="pref_app_enabled">Zeige App Start Eintrag im Menü</string>
     <string name="pref_app_enabled_summ">Ermöglicht das Starten einer App aus dem Menü</string>
     <string name="pref_restart">Automatischer Neustart</string>
     <string name="pref_max_restarts">Anzahl der erlaubten Neustarts</string>
@@ -40,10 +40,10 @@
     <string name="pref_menu_position_summ">Die Seite von der das Menü geöffnet werden kann</string>
 
     <string name="pref_control">Geräte Steuerung</string>
-    <string name="pref_control_summ">Steuert verschiedene Funktionen des Gerätes in Abhängigkeit von openHAB items</string>
+    <string name="pref_control_summ">Steuert verschiedene Funktionen des Gerätes in Abhängigkeit von openHAB Items</string>
     <string name="pref_screen">Bildschirm Steuerung</string>
     <string name="pref_screen_enabled">Bildschirm Steuerung aktiviert</string>
-    <string name="pref_screen_enabled_summ">Schaltet den Bildschirm an in Abhängigkeit eines openHAB items</string>
+    <string name="pref_screen_enabled_summ">Schaltet den Bildschirm an in Abhängigkeit eines openHAB Items</string>
     <string name="pref_screen_item">Bildschirm Item</string>
     <string name="pref_screen_item_summ">Name des openHAB Items dessen Wert den Bildschirm einschaltet</string>
     <string name="pref_screen_on_regex">Regulärer Ausdruck zum Einschalten</string>
@@ -54,7 +54,7 @@
     <string name="pref_flash_enabled_summ">Schaltet das Blitzlich an/aus oder lässt es blinken in Abhängigkeit eines openHAB Items</string>
     <string name="pref_flash_item">Blitzlicht Item</string>
     <string name="pref_flash_enabled">Blitzlicht Steuerung aktiviert</string>
-    <string name="pref_flash_item_summ">Name des openHAB items dessen Wert das Blitzlicht steuert</string>
+    <string name="pref_flash_item_summ">Name des openHAB Items dessen Wert das Blitzlicht steuert</string>
     <string name="pref_flash_pulse_regex">Regulärer Ausdruck zum Blinken</string>
     <string name="pref_flash_pulse_regex_summ">Regulärer Ausdruck (java regexp), bei dessen Zutreffen das Blitzlicht blinken soll</string>
     <string name="pref_flash_steady_regex">Regulärer Ausdruck zum Einschalten</string>
@@ -63,7 +63,7 @@
     <string name="pref_volume_enabled">Lautstärke Steuerung aktiviert</string>
     <string name="pref_volume_enabled_summ">Verändert die Geräte Lautstärke in Abhängigkeit eines openHAB Items</string>
     <string name="pref_volume_item">Lautstärke Item</string>
-    <string name="pref_volume_item_summ">Name des openHAB items dessen Wert die Lautstärke steuert</string>
+    <string name="pref_volume_item_summ">Name des openHAB Items dessen Wert die Lautstärke steuert</string>
 
     <string name="pref_reporting">Sensorwerte Meldung</string>
     <string name="pref_reporting_summ">Meldet Sensorwerte an openHAB</string>
@@ -71,16 +71,16 @@
     <string name="pref_battery_enabled_summ">Überacht den Batteriezustand und meldet Änderungen an openHAB</string>
     <string name="pref_battery_enabled">Batterie Meldung aktiviert</string>
     <string name="pref_battery_item">Batterie Leer Kontakt</string>
-    <string name="pref_battery_item_summ">Name des openHAB Kontaktes der geschaltet wird wenn die Batterie leer ist</string>
+    <string name="pref_battery_item_summ">Name des openHAB Kontakts der geschaltet wird wenn die Batterie leer ist</string>
     <string name="pref_battery_charging_item">Batterie wird geladen Kontakt</string>
-    <string name="pref_battery_charging_item_summ">Name des openHAB Kontaktes der geschaltet wird wenn die Batterie geladen wird</string>
+    <string name="pref_battery_charging_item_summ">Name des openHAB Kontakts der geschaltet wird wenn die Batterie geladen wird</string>
     <string name="pref_battery_level_item">Batterieladung Item</string>
     <string name="pref_battery_level_item_summ">Name des openHAB Items das den Batterie Ladezustand in Prozent anzeigen soll</string>
     <string name="pref_motion">Bewegungs Erkennung</string>
     <string name="pref_motion_detection_enabled">Bewegungs Erkennung</string>
     <string name="pref_motion_detection_enabled_summ">Schaltet einen openHAB Kontakt wenn Bewegung erkannt wird</string>
     <string name="pref_motion_item">Bewegungs Kontakt</string>
-    <string name="pref_motion_item_summ">Name des openHAB Kontaktes der geschaltet wird wenn Bewegung erkannt wird</string>
+    <string name="pref_motion_item_summ">Name des openHAB Kontakts der geschaltet wird wenn Bewegung erkannt wird</string>
     <string name="pref_motion_detection_new_api_summ">Benutze das Camera API 2 das mit Lollipop eingeführt wurde. Verändern Sie dies nur, falls die Erkennung nicht funktioniert. Die App startet automatisch neu, wenn der Wert verändert wird.</string>
     <string name="pref_motion_detection_new_api">Benutze Lollipop Camera API 2</string>
     <string name="pref_motion_detection_preview_summ">Blendet eine Kamera Vorschau über dem Browser ein</string>
@@ -93,7 +93,7 @@
     <string name="pref_proximity_enabled">Annäherungs Sensor aktiviert</string>
     <string name="pref_proximity_enabled_summ">Schaltet einen openHAB Kontakt wenn Annäherung erkannt wird</string>
     <string name="pref_proximity_item">Annäherungs Kontakt</string>
-    <string name="pref_proximity_item_summ">Name des openHAB Kontaktes der geschaltet wird wenn Annäherung erkannt wird</string>
+    <string name="pref_proximity_item_summ">Name des openHAB Kontakts der geschaltet wird wenn Annäherung erkannt wird</string>
     <string name="pref_brightness">Helligkeits Sensor</string>
     <string name="pref_brightness_enabled">Helligkeits Sensor aktiviert</string>
     <string name="pref_brightness_enabled_summ">Überacht den Helligkeits Sensor und meldet Änderungen an openHAB</string>
@@ -142,10 +142,10 @@
     <string name="hostnameMismatch">hat einen falschen Rechner Namen</string>
     <string name="notYetValid">ist noch nicht gültig</string>
     <string name="untrusted">ist nicht vertrauenswürdig</string>
-    <string name="issuedBy">Ausgestellt von:</string>
-    <string name="issuedTo">Ausgestellt für:</string>
-    <string name="validFrom">Gültig von:</string>
-    <string name="validUntil">Gültig bis:</string>
+    <string name="issuedBy">Ausgestellt von: </string>
+    <string name="issuedTo">Ausgestellt für: </string>
+    <string name="validFrom">Gültig von: </string>
+    <string name="validUntil">Gültig bis: </string>
     <string name="certInvalid">SSL Zertifikat Ungültig!</string>
     <string name="sslCert">Das SSL Zertifikat von</string>
     <string name="storeSecurityException">Wollen Sie fortfahren und eine Ausnahme für dieses Zertifikat speichern?</string>

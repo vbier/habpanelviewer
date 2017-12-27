@@ -128,7 +128,7 @@ Falls Sie direkt mit einer Kachel beginnen wollen anstatt im HABPanel Menü, ste
 Sie können den HABPanel Kiosk Modus in den Einstellungen ein oder ausschalten. Der Kiosk Modus versteckt das HABPanel Menü und die Titelleiste.
 
 ### Ziehen verhindern
-Falls Sie aus Versehen Scrollen, wenn Sie eine Knopf drücken wollen, aktivieren Sie die Einstellung **Ziegen verhindern**. Dies deaktiviert Scrolling in der Anwendung komplett, und verhindert so auch das Öffnen des HABPanel Menüs.
+Falls Sie aus Versehen Scrollen, wenn Sie einen Knopf drücken wollen, aktivieren Sie die Einstellung **Ziehen verhindern**. Dies deaktiviert Scrolling in der Anwendung komplett, und verhindert so auch das Öffnen des HABPanel Menüs.
 
 ### Starte App
 Konfigurieren Sie einen Namen und den Paket Namen einer Android App, um diese aus dem Menü starten zu können. Um den Paketnamen heraus zu finden, öffnen Sie die Anwendung im Google Play Store. Der Paket Name wird dann als id in der URL angezeigt.
