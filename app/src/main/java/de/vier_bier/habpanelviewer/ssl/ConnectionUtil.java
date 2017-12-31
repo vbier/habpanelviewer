@@ -21,6 +21,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -40,6 +41,8 @@ public class ConnectionUtil {
 
     private static LocalTrustManager mTrustManager;
     private static SSLContext mSslContext;
+
+    private static ArrayList<CertChangedListener> mListeners = new ArrayList<>();
 
     public static synchronized void initialize(Context ctx) throws GeneralSecurityException, IOException {
         localTrustStoreFile = new File(ctx.getFilesDir(), "localTrustStore.bks");
@@ -67,6 +70,27 @@ public class ConnectionUtil {
         // reset fields so the keystore gets read again
         mTrustManager = null;
         mSslContext = null;
+
+        // notify listeners
+        synchronized (mListeners) {
+            for (CertChangedListener l : mListeners) {
+                l.certAdded();
+            }
+        }
+    }
+
+    public static void addCertListener(CertChangedListener l) {
+        synchronized (mListeners) {
+            if (!mListeners.contains(l)) {
+                mListeners.add(l);
+            }
+        }
+    }
+
+    public static void removeCertListener(CertChangedListener l) {
+        synchronized (mListeners) {
+            mListeners.remove(l);
+        }
     }
 
     public static synchronized HttpURLConnection createUrlConnection(final String urlStr) throws IOException, GeneralSecurityException {
@@ -207,5 +231,8 @@ public class ConnectionUtil {
                 | ((bytes[offset] & 0xff) << 24);
     }
 
+    public interface CertChangedListener {
+        void certAdded();
+    }
 }
 

@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.vier_bier.habpanelviewer.openhab.average.AveragePropagator;
 import de.vier_bier.habpanelviewer.openhab.average.StatePropagator;
+import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
 /**
  * Client for openHABs SSE service. Listens for item value changes.
@@ -34,6 +35,7 @@ public class ServerConnection implements StatePropagator {
     private Context mCtx;
     private String mServerURL;
     private EventSource mEventSource;
+    private ConnectionUtil.CertChangedListener mCertListener;
 
     private final HashMap<String, ArrayList<StateUpdateListener>> mSubscriptions = new HashMap<>();
     private HashMap<String, String> mValues = new HashMap<>();
@@ -65,6 +67,29 @@ public class ServerConnection implements StatePropagator {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         mCtx.registerReceiver(mNetworkReceiver, intentFilter);
+
+        mCertListener = new ConnectionUtil.CertChangedListener() {
+            @Override
+            public void certAdded() {
+                Log.d("Habpanelview", "Cert added, reconnecting to server...");
+
+                // if we are not connected, try to connect. connection may have failed due to
+                // certificate errors
+                if (!mConnected.get()) {
+                    close();
+                    connect();
+                }
+            }
+        };
+
+        ConnectionUtil.addCertListener(mCertListener);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        ConnectionUtil.removeCertListener(mCertListener);
+
+        super.finalize();
     }
 
     public void addConnectionListener(ConnectionListener l) {

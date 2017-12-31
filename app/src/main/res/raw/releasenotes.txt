@@ -15,6 +15,7 @@
 - remove initial toast message for missing application features on unsupported devices
 - add setting allowing to choose whether app shall be shown on lock screen
 - add german translation
+- fix bug where adding a certificate exception did not lead to reconnect of SSE connection
 
 0.9.8
 =====
