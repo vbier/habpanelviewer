@@ -8,6 +8,9 @@ Its functionality can mainly be divided into three categories:
 - [usability features](#usability) making it easier to use HABPanel on a tablet
 
 ## <a name="control"/>Device Control
+### command item
+Monitors an openHAB **String Item** for supported commands. Currently only the RESTART command is handled and makes HabPanelViewer restart.
+
 ### flashlight control
 Allows to enable, disable or blink the devices flashlight depending on an openHAB item (_available on Android 6+_).
 

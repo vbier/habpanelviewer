@@ -41,6 +41,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.vier_bier.habpanelviewer.command.CommandQueue;
+import de.vier_bier.habpanelviewer.command.RestartHandler;
 import de.vier_bier.habpanelviewer.control.FlashController;
 import de.vier_bier.habpanelviewer.control.ScreenController;
 import de.vier_bier.habpanelviewer.control.VolumeController;
@@ -86,6 +88,7 @@ public class MainActivity extends AppCompatActivity
     private BrightnessMonitor mBrightnessMonitor;
     private PressureMonitor mPressureMonitor;
     private TemperatureMonitor mTemperatureMonitor;
+    private CommandQueue mCommandQueue;
     private ApplicationStatus mStatus;
 
     private int mRestartCount;
@@ -97,7 +100,7 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    void destroy() {
+    public void destroy() {
         if (mFlashService != null) {
             mFlashService.terminate();
             mFlashService = null;
@@ -146,6 +149,10 @@ public class MainActivity extends AppCompatActivity
         if (mTemperatureMonitor != null) {
             mTemperatureMonitor.terminate();
             mTemperatureMonitor = null;
+        }
+
+        if (mCommandQueue != null) {
+            mCommandQueue = null;
         }
 
         mWebView.unregister();
@@ -271,6 +278,9 @@ public class MainActivity extends AppCompatActivity
             Log.d("Habpanelview", "Could not create temperature monitor");
         }
 
+        mCommandQueue = new CommandQueue(mServerConnection);
+        mCommandQueue.addHandler(new RestartHandler(this));
+
         mRestartCount = getIntent().getIntExtra("restartCount", 0);
         showInitialToastMessage(mRestartCount);
 
@@ -380,6 +390,9 @@ public class MainActivity extends AppCompatActivity
         }
         if (mTemperatureMonitor != null) {
             mTemperatureMonitor.updateFromPreferences(prefs);
+        }
+        if (mCommandQueue != null) {
+            mCommandQueue.updateFromPreferences(prefs);
         }
 
         mBatteryMonitor.updateFromPreferences(prefs);

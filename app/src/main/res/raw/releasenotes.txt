@@ -16,6 +16,7 @@
 - add setting allowing to choose whether app shall be shown on lock screen
 - add german translation
 - fix bug where adding a certificate exception did not lead to reconnect of SSE connection
+- add command item and RESTART command
 
 0.9.8
 =====

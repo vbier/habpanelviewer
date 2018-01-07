@@ -41,6 +41,8 @@
 
     <string name="pref_control">Geräte Steuerung</string>
     <string name="pref_control_summ">Steuert verschiedene Funktionen des Gerätes in Abhängigkeit von openHAB Items</string>
+    <string name="pref_command_item">Kommando Item</string>
+    <string name="pref_command_item_summ">Name des openHAB Items in dem openHAB Kommandos an HABPanelViewer sendet</string>
     <string name="pref_screen">Bildschirm Steuerung</string>
     <string name="pref_screen_enabled">Bildschirm Steuerung aktiviert</string>
     <string name="pref_screen_enabled_summ">Schaltet den Bildschirm an in Abhängigkeit eines openHAB Items</string>

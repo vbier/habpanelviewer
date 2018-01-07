@@ -8,6 +8,9 @@ Die Funktionalität kann in drei Bereiche aufgeteilt werden:
 - [Benutzerfreundlichkeit](#usability) macht es einfacher HABPanel auf einem Tablet zu benutzen
 
 ## <a name="control"/>Geräte Steuerung
+### Kommando Item
+Überwacht das openHAB **String Item** und wartet auf Kommandos. Momentan wird nur das RESTART Kommando unterstützt und dieses startet HABPanelViewer neu.
+
 ### Blitzlicht Steuerung
 Erlaubt es, das Blitzlicht an oder auszuschalten, oder blinken zu lassen in Abhängigkeit eines openHAB Items (_verfügbar ab Android 6+_).
 

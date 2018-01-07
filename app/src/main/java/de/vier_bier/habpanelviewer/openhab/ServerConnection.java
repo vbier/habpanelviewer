@@ -32,6 +32,7 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
  * Client for openHABs SSE service. Listens for item value changes.
  */
 public class ServerConnection implements StatePropagator {
+    private static final String SKIP_INITIAL = "SKIP_INITIAL";
     private Context mCtx;
     private String mServerURL;
     private EventSource mEventSource;
@@ -101,6 +102,10 @@ public class ServerConnection implements StatePropagator {
     }
 
     public void subscribeItems(StateUpdateListener l, String... names) {
+        subscribeItems(l, true, names);
+    }
+
+    public void subscribeItems(StateUpdateListener l, boolean initialValue, String... names) {
         boolean itemsChanged = false;
 
         final HashSet<String> newItems = new HashSet<>();
@@ -130,7 +135,13 @@ public class ServerConnection implements StatePropagator {
                     itemsChanged = true;
                     listeners = new ArrayList<>();
                     mSubscriptions.put(name, listeners);
-                } else if (mValues.containsKey(name)) {
+
+                    if (!initialValue) {
+                        // if initial value shall not be propagated, put SKIP_INITIAL in the value map
+                        // as this makes the connect skip fetching of the initial value
+                        mValues.put(name, SKIP_INITIAL);
+                    }
+                } else if (mValues.containsKey(name) && initialValue) {
                     l.itemUpdated(name, mValues.get(name));
                 }
 

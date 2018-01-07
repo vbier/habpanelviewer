@@ -45,6 +45,8 @@
 
     <string name="pref_control">Device Control</string>
     <string name="pref_control_summ">Control device features depending on sensors or openHAB items</string>
+    <string name="pref_command_item">Command Item</string>
+    <string name="pref_command_item_summ">Name of the Item that is used by openHAB to send commands to HABPanelViewer</string>
     <string name="pref_screen">Screen On Control</string>
     <string name="pref_screen_enabled">Turn screen on dependent on item</string>
     <string name="pref_screen_enabled_summ">Allows to turn on the screen depending on the actual value of an openHAB item</string>

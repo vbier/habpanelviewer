@@ -15,3 +15,4 @@
 - Neue Einstellung, ob die App auf dem Sperrbildschirm gezeigt werden soll
 - Deutsche Übersetzung
 - Fehler behoben, bei dem die SSE Verbindung nach dem Erstellen einer Zertifikatsausnahme nicht neu aufgebaut wurde
+- Kommand Item und RESTART Kommando hinzugefügt
