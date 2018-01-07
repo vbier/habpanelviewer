@@ -9,34 +9,18 @@ Its functionality can mainly be divided into three categories:
 
 ## <a name="control"/>Device Control
 ### command item
-Monitors an openHAB **String Item** for supported commands. Currently only the RESTART command is handled and makes HabPanelViewer restart.
-
-### flashlight control
-Allows to enable, disable or blink the devices flashlight depending on an openHAB item (_available on Android 6+_).
-
-In order to use this, configure the name of an openHAB item and regular expressions in the settings:
-- Flash Item: the name of an openHAB item from which to derive the flashlight state
-- Blinking Regexp: a regular expression that, if matched, activates the flashlight blinking 
-- Enabled Regexp: a regular expression that, if matched, activates the flashlight
-
-An example could be to use a **String Item** in openHAB than can be defined in an items file like this:
-
-    String Tablet_Flashlight
-  
-If you now configure blinking regexp as *BLINKING* and enabled regexp as *ON*, you can enable the flashlight by setting the item in openHAB to "ON" or you can have the flashlight blinking by setting the value of the item in openHAB to "BLINKING".
-
-You can also realize more complex things, e.g. derive the flashlight from the state of your openHAB alarm system. Make it blinking when the system is activating and have it on when the system is armed. This would allow to see from far way in which state the alarm system is without turning on the screen. 
-
-### screen on control
-Allows to turn on the devices screen depending on an openHAB item.
-
-In order to use this, configure the name of an openHAB item and regular expressions in the settings:
-- Screen On Item: the name of an openHAB item from which to derive the screen state
-- Keep screen on: if checked, the app tries to force the screen to stay on as long as the regular expression matches. Otherwise, the system might turn the screen after inactivity. 
-- Enabled Regexp: a regular expression that, if matched, turns on the screen 
-
-### volume control
-Allows to set the device volume depending on an openHAB item. Simply configure the name of an openHAB **Number** item. The device volume will be set to the value of this item. In order to find the valid range for your device, check the *Volume Control* section of the *Status Information* screen. Out of range values will be ignored.
+Monitors an openHAB **String Item** for supported commands. Supported commands are:
+* RESTART: makes HabPanelViewer restart
+* SCREEN_ON: turns on the devices screen
+* KEEP_SCREEN_ON: turns on the devices screen and prevents the system from turning off the screen
+* ALLOW_SCREEN_OFF: allows the system to turn of the screen
+* MUTE: mutes the device
+* UNMUTE: restores the volume to the level the device had when it was muted
+* SET_VOLUME n: sets the device volume to n, being an integer between 0 and device max volume.
+* FLASH_ON: turns on the flashlight of the back-facing camera
+* FLASH_OFF: turns off the flashlight of the back-facing camera
+* FLASH_BLINK: blinks the flashlight of the back-facing camera with an interval of one second
+* FLASH_BLINK n: blinks the flashlight of the back-facing camera with an interval of n milliseconds
 
 [go back to top](#top)
 

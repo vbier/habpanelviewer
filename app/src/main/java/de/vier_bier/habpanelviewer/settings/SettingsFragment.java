@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import javax.net.ssl.SSLException;
 
@@ -35,7 +33,6 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 public class SettingsFragment extends PreferenceFragment {
     private boolean flashEnabled = false;
     private boolean motionEnabled = false;
-    private boolean screenEnabled = false;
     private boolean proximityEnabled = false;
     private boolean pressureEnabled = false;
     private boolean brightnessEnabled = false;
@@ -51,7 +48,6 @@ public class SettingsFragment extends PreferenceFragment {
         if (bundle != null) {
             flashEnabled = bundle.getBoolean("flash_enabled");
             motionEnabled = bundle.getBoolean("motion_enabled");
-            screenEnabled = bundle.getBoolean("screen_enabled");
             proximityEnabled = bundle.getBoolean("proximity_enabled");
             pressureEnabled = bundle.getBoolean("pressure_enabled");
             brightnessEnabled = bundle.getBoolean("brightness_enabled");
@@ -70,10 +66,6 @@ public class SettingsFragment extends PreferenceFragment {
             findPreference("pref_motion").setEnabled(false);
             findPreference("pref_motion").setSummary(getString(R.string.pref_motion) + getString(R.string.notAvailableOnDevice));
         }
-        if (!screenEnabled) {
-            findPreference("pref_screen").setEnabled(false);
-            findPreference("pref_screen").setSummary(getString(R.string.pref_screen) + getString(R.string.notAvailableOnDevice));
-        }
         if (!proximityEnabled) {
             findPreference("pref_proximity").setEnabled(false);
             findPreference("pref_proximity").setSummary(getString(R.string.pref_proximity) + getString(R.string.notAvailableOnDevice));
@@ -91,16 +83,6 @@ public class SettingsFragment extends PreferenceFragment {
             findPreference("pref_temperature").setSummary(getString(R.string.pref_temperature) + getString(R.string.notAvailableOnDevice));
         }
 
-        // add validation to the regexps
-        String[] regExpPrefIds = new String[]{"pref_flash_pulse_regex", "pref_flash_steady_regex", "pref_screen_on_regex"};
-        PatternValidatingListener l = new PatternValidatingListener();
-        for (String id : regExpPrefIds) {
-            EditTextPreference textPreference = (EditTextPreference) findPreference(id);
-            textPreference.setOnPreferenceChangeListener(l);
-
-            l.onPreferenceChange(textPreference, textPreference.getText());
-        }
-
         // add validation to the openHAB url
         EditTextPreference urlPreference = (EditTextPreference) findPreference("pref_url");
         urlPreference.setOnPreferenceChangeListener(new URLValidatingListener());
@@ -110,10 +92,9 @@ public class SettingsFragment extends PreferenceFragment {
         pkgPreference.setOnPreferenceChangeListener(new PackageValidatingListener());
 
         // add validation to the items
-        for (String key : new String[]{"pref_flash_item", "pref_motion_item", "pref_screen_item",
-                "pref_proximity_item", "pref_pressure_item", "pref_brightness_item",
-                "pref_volume_item", "pref_temperature_item", "pref_battery_item",
-                "pref_battery_charging_item", "pref_battery_level_item"}) {
+        for (String key : new String[]{"pref_motion_item", "pref_proximity_item",
+                "pref_pressure_item", "pref_brightness_item", "pref_temperature_item",
+                "pref_battery_item", "pref_battery_charging_item", "pref_battery_level_item"}) {
             final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
             editText.addTextChangedListener(new ValidatingTextWatcher() {
                 @Override
@@ -204,23 +185,6 @@ public class SettingsFragment extends PreferenceFragment {
                 }
             };
             validator.execute(text);
-
-            return true;
-        }
-    }
-
-    private class PatternValidatingListener implements Preference.OnPreferenceChangeListener {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object o) {
-            String text = (String) o;
-            try {
-                //noinspection ResultOfMethodCallIgnored
-                if (text != null) {
-                    Pattern.compile(text);
-                }
-            } catch (PatternSyntaxException e) {
-                UiUtil.showDialog(getActivity(), preference.getTitle() + " " + getString(R.string.invalid), e.getMessage());
-            }
 
             return true;
         }

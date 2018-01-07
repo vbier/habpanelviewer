@@ -42,10 +42,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.vier_bier.habpanelviewer.command.CommandQueue;
+import de.vier_bier.habpanelviewer.command.FlashHandler;
 import de.vier_bier.habpanelviewer.command.RestartHandler;
-import de.vier_bier.habpanelviewer.control.FlashController;
-import de.vier_bier.habpanelviewer.control.ScreenController;
-import de.vier_bier.habpanelviewer.control.VolumeController;
+import de.vier_bier.habpanelviewer.command.ScreenHandler;
+import de.vier_bier.habpanelviewer.command.VolumeHandler;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.ConnectionListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
@@ -78,12 +78,10 @@ public class MainActivity extends AppCompatActivity
     private Thread.UncaughtExceptionHandler exceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 
     private ServerDiscovery mDiscovery;
-    private FlashController mFlashService;
-    private ScreenController mScreenService;
+    private FlashHandler mFlashService;
     private IMotionDetector mMotionDetector;
     private BatteryMonitor mBatteryMonitor;
     private ConnectedIndicator mConnectedReporter;
-    private VolumeController mVolumeController;
     private ProximityMonitor mProximityMonitor;
     private BrightnessMonitor mBrightnessMonitor;
     private PressureMonitor mPressureMonitor;
@@ -190,7 +188,7 @@ public class MainActivity extends AppCompatActivity
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 try {
-                    mFlashService = new FlashController(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE), mServerConnection);
+                    mFlashService = new FlashHandler(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE));
                 } catch (CameraAccessException | IllegalAccessException e) {
                     Log.d("Habpanelview", "Could not create flash controller");
                 }
@@ -250,9 +248,6 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        mVolumeController = new VolumeController(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection);
-        mScreenService = new ScreenController((PowerManager) getSystemService(POWER_SERVICE), this, mServerConnection);
-
         mBatteryMonitor = new BatteryMonitor(this, mServerConnection);
         mConnectedReporter = new ConnectedIndicator(this, mServerConnection);
 
@@ -280,6 +275,11 @@ public class MainActivity extends AppCompatActivity
 
         mCommandQueue = new CommandQueue(mServerConnection);
         mCommandQueue.addHandler(new RestartHandler(this));
+        mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this));
+        mCommandQueue.addHandler(new VolumeHandler((AudioManager) getSystemService(Context.AUDIO_SERVICE)));
+        if (mFlashService != null) {
+            mCommandQueue.addHandler(mFlashService);
+        }
 
         mRestartCount = getIntent().getIntExtra("restartCount", 0);
         showInitialToastMessage(mRestartCount);
@@ -360,23 +360,8 @@ public class MainActivity extends AppCompatActivity
             i.setTitle(getString(R.string.launch, prefs.getString("pref_app_name", "App")));
         }
 
-        if (mFlashService != null) {
-            mFlashService.updateFromPreferences(prefs);
-        }
-
-        if (mScreenService != null) {
-            // make sure screen lock is released on start
-            mScreenService.screenOff();
-
-            mScreenService.updateFromPreferences(prefs);
-        }
-
         if (mMotionDetector != null) {
             mMotionDetector.updateFromPreferences(prefs);
-        }
-
-        if (mVolumeController != null) {
-            mVolumeController.updateFromPreferences(prefs);
         }
 
         if (mProximityMonitor != null) {
@@ -538,7 +523,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(MainActivity.this, SetPreferenceActivity.class);
         intent.putExtra("flash_enabled", mFlashService != null);
         intent.putExtra("motion_enabled", mMotionDetector != null);
-        intent.putExtra("screen_enabled", mScreenService != null);
         intent.putExtra("proximity_enabled", mProximityMonitor != null);
         intent.putExtra("pressure_enabled", mPressureMonitor != null);
         intent.putExtra("brightness_enabled", mBrightnessMonitor != null);

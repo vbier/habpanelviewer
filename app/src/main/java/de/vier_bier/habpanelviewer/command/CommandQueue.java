@@ -38,15 +38,19 @@ public class CommandQueue implements StateUpdateListener {
 
     @Override
     public void itemUpdated(String name, String value) {
-        synchronized (mHandlers) {
-            for (CommandHandler mHandler : mHandlers) {
-                if (mHandler.handleCommand(value)) {
-                    return;
+        if (value != null && !value.isEmpty()) {
+            synchronized (mHandlers) {
+                for (CommandHandler mHandler : mHandlers) {
+                    if (mHandler.handleCommand(value)) {
+                        mServerConnection.updateState(name, "");
+                        return;
+                    }
                 }
             }
+
+            Log.w("Habpanelview", "received unhandled command: " + value);
         }
 
-        Log.w("Habpanelview", "received unhandled command: " + value);
     }
 
     public void updateFromPreferences(SharedPreferences prefs) {
