@@ -12,6 +12,8 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
  * Monitors temperature sensor state and reports to openHAB.
  */
 public class TemperatureMonitor extends SensorMonitor {
+    private float fTemperature;
+
     public TemperatureMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
         super(ctx, sensorManager, serverConnection, "temperature", Sensor.TYPE_AMBIENT_TEMPERATURE);
     }
@@ -24,8 +26,7 @@ public class TemperatureMonitor extends SensorMonitor {
         if (mSensorEnabled) {
             String state = mCtx.getString(R.string.enabled);
             if (!mSensorItem.isEmpty()) {
-                final String value = mServerConnection.getState(mSensorItem);
-                state += "\n" + mCtx.getString(R.string.temperature) + " : " + value + " °C [" + mSensorItem + "=" + value + "]";
+                state += "\n" + mCtx.getString(R.string.temperature, fTemperature, mSensorItem, mSensorState);
             }
 
             mStatus.set(mCtx.getString(R.string.pref_temperature), state);
@@ -36,7 +37,7 @@ public class TemperatureMonitor extends SensorMonitor {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float value = event.values[0];
-        mServerConnection.updateState(mSensorItem, String.valueOf(value));
+        fTemperature = event.values[0];
+        mServerConnection.updateState(mSensorItem, String.valueOf(fTemperature));
     }
 }

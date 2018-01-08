@@ -15,6 +15,7 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 public class BrightnessMonitor extends SensorMonitor {
     private boolean mDoAverage;
     private int mInterval;
+    private Integer mBrightness;
 
     public BrightnessMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
         super(ctx, sensorManager, serverConnection, "brightness", Sensor.TYPE_LIGHT);
@@ -27,9 +28,11 @@ public class BrightnessMonitor extends SensorMonitor {
 
         if (mSensorEnabled) {
             String state = mCtx.getString(R.string.enabled);
+            if (mDoAverage) {
+                state += "\n" + mCtx.getString(R.string.updateInterval, mInterval);
+            }
             if (!mSensorItem.isEmpty()) {
-                final String brightness = mServerConnection.getState(mSensorItem);
-                state += "\n" + mCtx.getString(R.string.brightness) + " : " + brightness + " lx [" + mSensorItem + "=" + brightness + "]";
+                state += "\n" + mCtx.getString(R.string.brightness, mBrightness, mSensorItem, mSensorState);
             }
 
             mStatus.set(mCtx.getString(R.string.pref_brightness), state);
@@ -53,11 +56,17 @@ public class BrightnessMonitor extends SensorMonitor {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        int brightness = (int) event.values[0];
+        boolean sendUpdate = mBrightness == null || !mDoAverage;
+
+        mBrightness = (int) event.values[0];
         if (mDoAverage) {
-            mServerConnection.addStateToAverage(mSensorItem, brightness, mInterval);
-        } else {
-            mServerConnection.updateState(mSensorItem, String.valueOf(brightness));
+            mServerConnection.addStateToAverage(mSensorItem, mBrightness, mInterval);
         }
+
+        if (sendUpdate) {
+            mServerConnection.updateState(mSensorItem, String.valueOf(mBrightness));
+        }
+
+        addStatusItems();
     }
 }

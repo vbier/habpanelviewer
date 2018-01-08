@@ -13,7 +13,7 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
  * Monitors proximity sensor state and reports to openHAB.
  */
 public class ProximityMonitor extends SensorMonitor {
-    private boolean mProximity;
+    private Boolean mProximity;
 
     public ProximityMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
         super(ctx, sensorManager, serverConnection, "proximity", Sensor.TYPE_PROXIMITY);
@@ -26,11 +26,11 @@ public class ProximityMonitor extends SensorMonitor {
         Log.v("ProximityMonitor", "onSensorChanged" + distance);
 
         if (distance < mSensor.getMaximumRange()) {
-            if (!mProximity) {
+            if (mProximity == null || !mProximity.booleanValue()) {
                 mProximity = true;
                 mServerConnection.updateState(mSensorItem, "CLOSED");
             }
-        } else if (mProximity) {
+        } else if (mProximity == null || mProximity.booleanValue()) {
             mProximity = false;
             mServerConnection.updateState(mSensorItem, "OPEN");
         }
@@ -44,7 +44,7 @@ public class ProximityMonitor extends SensorMonitor {
         if (mSensorEnabled) {
             String state = mCtx.getString(R.string.enabled);
             if (!mSensorItem.isEmpty()) {
-                state += "\n" + mCtx.getString(R.string.objectClose) + " : " + mProximity + " [" + mSensorItem + "=" + mServerConnection.getState(mSensorItem) + "]";
+                state += "\n" + mCtx.getString(R.string.objectClose, mProximity, mSensorItem, mSensorState);
             }
 
             state += "\n" + mCtx.getString(R.string.maxRangeResolution, mSensor.getMaximumRange(), mSensor.getResolution());

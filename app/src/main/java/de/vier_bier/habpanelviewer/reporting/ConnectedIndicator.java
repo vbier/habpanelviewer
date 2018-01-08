@@ -27,6 +27,9 @@ public class ConnectedIndicator implements StateUpdateListener {
     private ConnectedReportingThread mReportConnection;
     private ApplicationStatus mStatus;
 
+    private long fStatus;
+    private String mStatusState;
+
     public ConnectedIndicator(Context ctx, ServerConnection serverConnection) {
         mCtx = ctx;
         mServerConnection = serverConnection;
@@ -71,6 +74,7 @@ public class ConnectedIndicator implements StateUpdateListener {
 
     @Override
     public void itemUpdated(String name, String value) {
+        mStatusState = value;
         addStatusItems();
     }
 
@@ -82,8 +86,7 @@ public class ConnectedIndicator implements StateUpdateListener {
         if (mEnabled) {
             String state = mCtx.getString(R.string.enabled);
             if (!mStatusItem.isEmpty()) {
-                final String status = mServerConnection.getState(mStatusItem);
-                state += "\n" + mStatusItem + "=" + status;
+                state += "\n" + mStatusItem + "=" + mStatusState;
             }
 
             mStatus.set(mCtx.getString(R.string.pref_connected), state);
@@ -124,7 +127,8 @@ public class ConnectedIndicator implements StateUpdateListener {
         @Override
         public void run() {
             while (fRunning.get()) {
-                mServerConnection.updateState(mStatusItem, String.valueOf(System.currentTimeMillis()));
+                fStatus = System.currentTimeMillis();
+                mServerConnection.updateState(mStatusItem, String.valueOf(fStatus));
 
                 synchronized (fRunning) {
                     try {

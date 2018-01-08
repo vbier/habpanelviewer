@@ -12,6 +12,8 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
  * Monitors pressure sensor state and reports to openHAB.
  */
 public class PressureMonitor extends SensorMonitor {
+    private int mPressure;
+
     public PressureMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
         super(ctx, sensorManager, serverConnection, "pressure", Sensor.TYPE_PRESSURE);
     }
@@ -24,8 +26,7 @@ public class PressureMonitor extends SensorMonitor {
         if (mSensorEnabled) {
             String state = mCtx.getString(R.string.enabled);
             if (!mSensorItem.isEmpty()) {
-                final String pressure = mServerConnection.getState(mSensorItem);
-                state += "\n" + mCtx.getString(R.string.pressure, pressure) + " [" + mSensorItem + "=" + pressure + "]";
+                state += "\n" + mCtx.getString(R.string.pressure, mPressure, mSensorItem, mSensorState);
             }
 
             mStatus.set(mCtx.getString(R.string.pref_pressure), state);
@@ -36,7 +37,7 @@ public class PressureMonitor extends SensorMonitor {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        int pressure = (int) event.values[0];
-        mServerConnection.updateState(mSensorItem, String.valueOf(pressure));
+        mPressure = (int) event.values[0];
+        mServerConnection.updateState(mSensorItem, String.valueOf(mPressure));
     }
 }

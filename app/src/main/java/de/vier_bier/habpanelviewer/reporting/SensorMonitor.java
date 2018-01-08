@@ -28,7 +28,9 @@ public abstract class SensorMonitor implements SensorEventListener, StateUpdateL
 
     private String mPreferenceKey;
     boolean mSensorEnabled;
+
     String mSensorItem;
+    String mSensorState;
 
     SensorMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection, String prefkey, int sensorType) throws SensorMissingException {
         mCtx = ctx;
@@ -73,6 +75,7 @@ public abstract class SensorMonitor implements SensorEventListener, StateUpdateL
 
     @Override
     public void itemUpdated(String name, String value) {
+        mSensorState = value;
         addStatusItems();
     }
 

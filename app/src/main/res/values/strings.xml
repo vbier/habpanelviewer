@@ -146,15 +146,15 @@
     <string name="discoverServer">Discover Server</string>
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>
-    <string name="temperature">Temperature</string>
+    <string name="temperature">Temperature: %.1f°C [%s=%s]</string>
     <string name="deviceMissingSensor">Device does not have a sensor of type</string>
     <string name="maxRangeResolution">Sensor max. range is %.1f, resolution is %.1f</string>
-    <string name="objectClose">Object close</string>
-    <string name="pressure">Pressure: %s hPa or mbar</string>
-    <string name="brightness">Brightness</string>
-    <string name="battLow">Battery low</string>
-    <string name="battCharging">Battery charging</string>
-    <string name="battLevel">Battery level</string>
+    <string name="objectClose">Object close: %b [%s=%s]</string>
+    <string name="pressure">Pressure: %d hPa or mbar [%s=%s]</string>
+    <string name="brightness">Brightness: %d lx [%s=%s]</string>
+    <string name="battLow">Battery low: %b [%s=%s]</string>
+    <string name="battCharging">Battery charging: %b [%s=%s]</string>
+    <string name="battLevel">Battery level: %d%% [%s=%s]</string>
     <string name="tooDark">too dark</string>
     <string name="motion">Motion</string>
     <string name="frontCameraMissing">Could not find front facing camera!</string>
@@ -175,4 +175,5 @@
     <string name="volumeIsOf">Volume %d of %d</string>
     <string name="launch">Launch %s</string>
     <string name="left">left</string>
+    <string name="updateInterval">average interval is %d seconds</string>
 </resources>

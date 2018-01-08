@@ -142,15 +142,15 @@
     <string name="discoverServer">Server Suchen</string>
     <string name="enabled">aktiviert</string>
     <string name="disabled">deaktiviert</string>
-    <string name="temperature">Temperatur</string>
+    <string name="temperature">Temperatur: %.1f°C [%s=%s]</string>
     <string name="deviceMissingSensor">Das Gerät hat keinen Sensor des Typs</string>
     <string name="maxRangeResolution">Max. Reichweite ist %.1f, Ausflösung ist %.1f</string>
-    <string name="objectClose">Objekt nah</string>
-    <string name="pressure">Druck: %s hPa oder mbar</string>
-    <string name="brightness">Helligkeit</string>
-    <string name="battLow">Batterie leer</string>
-    <string name="battCharging">Batterie wird geladen</string>
-    <string name="battLevel">Batterie Ladung</string>
+    <string name="objectClose">Objekt nah: %b [%s=%s]</string>
+    <string name="pressure">Druck: %d hPa oder mbar [%s=%s]</string>
+    <string name="brightness">Helligkeit: %d lx [%s=%s]</string>
+    <string name="battLow">Batterie leer: %b [%s=%s]</string>
+    <string name="battCharging">Batterie wird geladen: %b [%s=%s]</string>
+    <string name="battLevel">Batterie Ladung: %d%% [%s=%s]</string>
     <string name="tooDark">zu dunkel</string>
     <string name="motion">Bewegung</string>
     <string name="frontCameraMissing">Konnte nach vorne gerichtete Kamera nicht finden!</string>
@@ -171,4 +171,5 @@
     <string name="volumeIsOf">Lautstärke %d von %d</string>
     <string name="launch">Starte %s</string>
     <string name="left">links</string>
+    <string name="updateInterval">Meldeintervall ist %d Sekunden</string>
 </resources>
