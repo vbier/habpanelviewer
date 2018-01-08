@@ -104,6 +104,12 @@
     <string name="pref_connected_item_summ">Name of the number item whose state shall be set</string>
     <string name="pref_connected_interval">Update interval</string>
     <string name="pref_connected_interval_summ">The number of seconds between subsequent state updates</string>
+    <string name="pref_volume">Volume Reporting</string>
+    <string name="pref_volume_enabled">Monitor device volume and report changes to openHAB</string>
+    <string name="pref_volume_enabled_summ">Allows to set the state of an openHAB item depending on the device volume</string>
+    <string name="pref_volume_item">Volume Item</string>
+    <string name="pref_volume_item_summ">>Name of the number item whose state shall be set</string>
+
     <string name="pref_show_on_lock_screen">Show on lock screen</string>
     <string name="pref_show_on_lock_screen_summ">Whether the app shall be shown on the lock screen</string>
 
@@ -155,6 +161,7 @@
     <string name="battLow">Battery low: %b [%s=%s]</string>
     <string name="battCharging">Battery charging: %b [%s=%s]</string>
     <string name="battLevel">Battery level: %d%% [%s=%s]</string>
+    <string name="volumeIsOf">Volume: %d of %d [%s=%s]</string>
     <string name="tooDark">too dark</string>
     <string name="motion">Motion</string>
     <string name="frontCameraMissing">Could not find front facing camera!</string>
@@ -172,7 +179,6 @@
     <string name="boxesLeniency">%d boxes, leniency is %d</string>
     <string name="framesProcessed">%d frames, motion detected %d times</string>
     <string name="couldNotFindBackFlash">Could not find back facing camera with flash!</string>
-    <string name="volumeIsOf">Volume %d of %d</string>
     <string name="launch">Launch %s</string>
     <string name="left">left</string>
     <string name="updateInterval">average interval is %d seconds</string>

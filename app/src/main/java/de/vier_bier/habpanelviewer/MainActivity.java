@@ -57,6 +57,7 @@ import de.vier_bier.habpanelviewer.reporting.PressureMonitor;
 import de.vier_bier.habpanelviewer.reporting.ProximityMonitor;
 import de.vier_bier.habpanelviewer.reporting.SensorMissingException;
 import de.vier_bier.habpanelviewer.reporting.TemperatureMonitor;
+import de.vier_bier.habpanelviewer.reporting.VolumeMonitor;
 import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetectorCamera2;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity
     private BrightnessMonitor mBrightnessMonitor;
     private PressureMonitor mPressureMonitor;
     private TemperatureMonitor mTemperatureMonitor;
+    private VolumeMonitor mVolumeMonitor;
     private CommandQueue mCommandQueue;
     private ApplicationStatus mStatus;
 
@@ -147,6 +149,11 @@ public class MainActivity extends AppCompatActivity
         if (mTemperatureMonitor != null) {
             mTemperatureMonitor.terminate();
             mTemperatureMonitor = null;
+        }
+
+        if (mVolumeMonitor != null) {
+            mVolumeMonitor.terminate();
+            mVolumeMonitor = null;
         }
 
         if (mCommandQueue != null) {
@@ -249,6 +256,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         mBatteryMonitor = new BatteryMonitor(this, mServerConnection);
+        mVolumeMonitor = new VolumeMonitor(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection);
         mConnectedReporter = new ConnectedIndicator(this, mServerConnection);
 
         SensorManager m = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -375,6 +383,9 @@ public class MainActivity extends AppCompatActivity
         }
         if (mTemperatureMonitor != null) {
             mTemperatureMonitor.updateFromPreferences(prefs);
+        }
+        if (mVolumeMonitor != null) {
+            mVolumeMonitor.updateFromPreferences(prefs);
         }
         if (mCommandQueue != null) {
             mCommandQueue.updateFromPreferences(prefs);

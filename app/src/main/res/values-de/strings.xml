@@ -48,7 +48,7 @@
     <string name="pref_reporting">Sensorwertemeldung</string>
     <string name="pref_reporting_summ">Meldet Sensorwerte an openHAB</string>
     <string name="pref_battery">Batteriesensor</string>
-    <string name="pref_battery_enabled_summ">Überacht den Batteriezustand und meldet Änderungen an openHAB</string>
+    <string name="pref_battery_enabled_summ">Überwacht den Batteriezustand und meldet Änderungen an openHAB</string>
     <string name="pref_battery_enabled">Batterie Meldung aktiviert</string>
     <string name="pref_battery_item">Batterie Leer Kontakt</string>
     <string name="pref_battery_item_summ">Name des openHAB Kontakts der geschaltet wird wenn die Batterie leer ist</string>
@@ -76,7 +76,7 @@
     <string name="pref_proximity_item_summ">Name des openHAB Kontakts der geschaltet wird wenn Annäherung erkannt wird</string>
     <string name="pref_brightness">Helligkeitssensor</string>
     <string name="pref_brightness_enabled">Helligkeitssensor aktiviert</string>
-    <string name="pref_brightness_enabled_summ">Überacht den Helligkeitssensor und meldet Änderungen an openHAB</string>
+    <string name="pref_brightness_enabled_summ">Überwacht den Helligkeitssensor und meldet Änderungen an openHAB</string>
     <string name="pref_brightness_item">Helligkeits Sensor Item</string>
     <string name="pref_brightness_item_summ">Name des openHAB Items an das die Helligkeit gemeldet wird</string>
     <string name="pref_brightness_average">Werte mitteln</string>
@@ -84,13 +84,13 @@
     <string name="pref_brightness_intervall">Meldungs Intervall</string>
     <string name="pref_brightness_intervall_summ">Die Anzahl der Sekunden, nach denen der Wert an openHAB gemeldet wird</string>
     <string name="pref_pressure">Drucksensor</string>
-    <string name="pref_pressure_enabled_summ">Überacht den Drucksensor und meldet Änderungen an openHAB</string>
+    <string name="pref_pressure_enabled_summ">Überwacht den Drucksensor und meldet Änderungen an openHAB</string>
     <string name="pref_pressure_enabled">Drucksensor aktiviert</string>
     <string name="pref_pressure_item">Druck Item</string>
     <string name="pref_pressure_item_summ">Name des openHAB Items an das der Druck gemeldet wird</string>
     <string name="pref_temperature">Temperatursensor</string>
     <string name="pref_temperature_enabled">Temperatursensor aktiviert</string>
-    <string name="pref_temperature_enabled_summ">Überacht den Temperatursensor und meldet Änderungen an openHAB</string>
+    <string name="pref_temperature_enabled_summ">Überwacht den Temperatursensor und meldet Änderungen an openHAB</string>
     <string name="pref_temperature_item">Temperatur Item</string>
     <string name="pref_temperature_item_summ">Name des openHAB Items an das die Temperatur gemeldet wird</string>
     <string name="pref_connected">Verbindungsindikator</string>
@@ -100,6 +100,12 @@
     <string name="pref_connected_item_summ">Name des openHAB Items an das der Zeitstempel gemeldet wird</string>
     <string name="pref_connected_interval">Meldungs Intervall</string>
     <string name="pref_connected_interval_summ">Die Anzahl der Sekunden, nach denen der Wert an openHAB gemeldet wird</string>
+    <string name="pref_volume">Lautstärkemeldung</string>
+    <string name="pref_volume_enabled">Lautstärkemeldung aktiviert</string>
+    <string name="pref_volume_enabled_summ">Überwacht die Lautstärke und meldet Änderungen an openHAB</string>
+    <string name="pref_volume_item">Lautstärke Item</string>
+    <string name="pref_volume_item_summ">Name des openHAB Items an das die Lautstärke gemeldet wird</string>
+
     <string name="pref_show_on_lock_screen">Sichtbar bei Bildschirmsperre</string>
     <string name="pref_show_on_lock_screen_summ">Ob die Anwednung sichtbar sein soll, wenn der Bildschirm gesperrt ist</string>
 
@@ -151,6 +157,7 @@
     <string name="battLow">Batterie leer: %b [%s=%s]</string>
     <string name="battCharging">Batterie wird geladen: %b [%s=%s]</string>
     <string name="battLevel">Batterie Ladung: %d%% [%s=%s]</string>
+    <string name="volumeIsOf">Lautstärke: %d von %d [%s=%s]</string>
     <string name="tooDark">zu dunkel</string>
     <string name="motion">Bewegung</string>
     <string name="frontCameraMissing">Konnte nach vorne gerichtete Kamera nicht finden!</string>
@@ -168,7 +175,6 @@
     <string name="boxesLeniency">%d Rechtecke, Erkennungs Schwelle %d</string>
     <string name="framesProcessed">%d Bilder, %d mal Bewegung erkannt</string>
     <string name="couldNotFindBackFlash">Konnte keine nach hinten gerichtete Kamera mit Blitz finden!</string>
-    <string name="volumeIsOf">Lautstärke %d von %d</string>
     <string name="launch">Starte %s</string>
     <string name="left">links</string>
     <string name="updateInterval">Meldeintervall ist %d Sekunden</string>
