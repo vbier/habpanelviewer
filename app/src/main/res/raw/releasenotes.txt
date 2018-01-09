@@ -2,6 +2,8 @@
 =========
 - fix bug where adding a certificate exception did not lead to reconnect of SSE connection
 - add command item and RESTART command, change all device control functionality to use the command item
+- add further commands: FLASH_ON, FLASH_OFF, FLASH_BLINK, RESTART, SCREEN_ON, KEEP_SCREEN_ON, ALLOW_SCREEN_OFF, MUTE, UNMUTE, SET_VOLUME
+- add device admin functionality and ADMIN_LOCK_SCREEN command
 - improve german translation
 
 0.9.13pre

@@ -21,6 +21,7 @@ Die Funktionalität kann in drei Bereiche aufgeteilt werden:
 * FLASH_OFF: schaltet das Blitzlicht der hinteren Kamera aus
 * FLASH_BLINK: lässt das Blitzlicht der hinteren Kamera im 1 Sekunden Intervall blinken
 * FLASH_BLINK n: lässt das Blitzlicht der hinteren Kamera im n Millisekunden Intervall blinken
+* ADMIN_LOCK_SCREEN: aktiviert die Bildschirmsperre
 
 [zurück nach oben](#top)
 
