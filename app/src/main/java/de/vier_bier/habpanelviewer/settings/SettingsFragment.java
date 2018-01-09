@@ -111,7 +111,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         // add validation to the items
         for (String key : new String[]{"pref_motion_item", "pref_proximity_item", "pref_volume_item",
-                "pref_pressure_item", "pref_brightness_item", "pref_temperature_item",
+                "pref_pressure_item", "pref_brightness_item", "pref_temperature_item", "pref_command_item",
                 "pref_battery_item", "pref_battery_charging_item", "pref_battery_level_item"}) {
             final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
             editText.addTextChangedListener(new ValidatingTextWatcher() {
@@ -141,7 +141,7 @@ public class SettingsFragment extends PreferenceFragment {
                             });
                         }
                     });
-                    task.execute(new String[]{itemName});
+                    task.execute(itemName);
                 }
             });
         }
