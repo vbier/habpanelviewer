@@ -106,6 +106,8 @@
     <string name="pref_volume_item">Lautstärke Item</string>
     <string name="pref_volume_item_summ">Name des openHAB Items an das die Lautstärke gemeldet wird</string>
 
+    <string name="pref_device_admin">Geräte Admin</string>
+    <string name="pref_device_admin_summ">Installiert HABPanelViewer als Geräte Admin. Dies erlaubt es HABPanelViewer die Bildschrimsperre zu aktivieren, wenn das Kommando dafür empfangen wurde</string>
     <string name="pref_show_on_lock_screen">Sichtbar bei Bildschirmsperre</string>
     <string name="pref_show_on_lock_screen_summ">Ob die Anwednung sichtbar sein soll, wenn der Bildschirm gesperrt ist</string>
 
@@ -178,4 +180,6 @@
     <string name="launch">Starte %s</string>
     <string name="left">links</string>
     <string name="updateInterval">Meldeintervall ist %d Sekunden</string>
+    <string name="deviceAdmin">HABPanelViewer</string>
+    <string name="deviceAdminDescription">Wird benötigt, damit HABPanelViewer den Bildschrim ausschalten kann</string>
 </resources>

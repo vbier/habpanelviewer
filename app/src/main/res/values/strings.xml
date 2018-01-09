@@ -110,6 +110,8 @@
     <string name="pref_volume_item">Volume Item</string>
     <string name="pref_volume_item_summ">>Name of the number item whose state shall be set</string>
 
+    <string name="pref_device_admin">Device Admin</string>
+    <string name="pref_device_admin_summ">Install HABPanelViewer as device admin. This allows to lock the device when the appropriate command is received</string>
     <string name="pref_show_on_lock_screen">Show on lock screen</string>
     <string name="pref_show_on_lock_screen_summ">Whether the app shall be shown on the lock screen</string>
 
@@ -182,4 +184,6 @@
     <string name="launch">Launch %s</string>
     <string name="left">left</string>
     <string name="updateInterval">average interval is %d seconds</string>
+    <string name="deviceAdmin">HABPanelViewer</string>
+    <string name="deviceAdminDescription">Is needed for immediate screen locking</string>
 </resources>

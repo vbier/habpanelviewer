@@ -248,7 +248,11 @@
             android:key="pref_show_on_lock_screen"
             android:summary="@string/pref_show_on_lock_screen_summ"
             android:title="@string/pref_show_on_lock_screen" />
-
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_device_admin"
+            android:summary="@string/pref_device_admin_summ"
+            android:title="@string/pref_device_admin" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_habpanel_settings"

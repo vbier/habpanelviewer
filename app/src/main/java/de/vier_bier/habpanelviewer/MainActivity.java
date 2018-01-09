@@ -41,6 +41,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import de.vier_bier.habpanelviewer.command.AdminHandler;
 import de.vier_bier.habpanelviewer.command.CommandQueue;
 import de.vier_bier.habpanelviewer.command.FlashHandler;
 import de.vier_bier.habpanelviewer.command.RestartHandler;
@@ -283,6 +284,7 @@ public class MainActivity extends AppCompatActivity
 
         mCommandQueue = new CommandQueue(mServerConnection);
         mCommandQueue.addHandler(new RestartHandler(this));
+        mCommandQueue.addHandler(new AdminHandler(this));
         mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this));
         mCommandQueue.addHandler(new VolumeHandler((AudioManager) getSystemService(Context.AUDIO_SERVICE)));
         if (mFlashService != null) {

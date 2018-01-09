@@ -1,6 +1,9 @@
 package de.vier_bier.habpanelviewer.settings;
 
+import android.app.admin.DevicePolicyManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
@@ -21,16 +25,22 @@ import java.security.GeneralSecurityException;
 
 import javax.net.ssl.SSLException;
 
+import de.vier_bier.habpanelviewer.AdminReceiver;
+import de.vier_bier.habpanelviewer.BuildConfig;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 import de.vier_bier.habpanelviewer.openhab.FetchItemStateTask;
 import de.vier_bier.habpanelviewer.openhab.SubscriptionListener;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  * Fragment for preferences.
  */
 public class SettingsFragment extends PreferenceFragment {
+    private DevicePolicyManager mDPM;
+
     private boolean flashEnabled = false;
     private boolean motionEnabled = false;
     private boolean proximityEnabled = false;
@@ -57,6 +67,8 @@ public class SettingsFragment extends PreferenceFragment {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
 
+        mDPM = (DevicePolicyManager) getActivity().getSystemService(Context.DEVICE_POLICY_SERVICE);
+
         // disable preferences if functionality is not available
         if (!flashEnabled) {
             findPreference("pref_flash").setEnabled(false);
@@ -82,6 +94,12 @@ public class SettingsFragment extends PreferenceFragment {
             findPreference("pref_temperature").setEnabled(false);
             findPreference("pref_temperature").setSummary(getString(R.string.pref_temperature) + getString(R.string.notAvailableOnDevice));
         }
+
+        onActivityResult(42, RESULT_OK, null);
+
+        // add validation to the device admin
+        CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
+        adminPreference.setOnPreferenceChangeListener(new AdminValidatingListener());
 
         // add validation to the openHAB url
         EditTextPreference urlPreference = (EditTextPreference) findPreference("pref_url");
@@ -190,6 +208,21 @@ public class SettingsFragment extends PreferenceFragment {
         }
     }
 
+    private class AdminValidatingListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(final Preference preference, Object o) {
+            boolean value = (Boolean) o;
+
+            if (value && !mDPM.isAdminActive(AdminReceiver.COMP)) {
+                installAsAdmin();
+            } else if (!value && mDPM.isAdminActive(AdminReceiver.COMP)) {
+                removeAsAdmin();
+            }
+
+            return false;
+        }
+    }
+
     private abstract class ValidatingTextWatcher implements TextWatcher {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -198,5 +231,37 @@ public class SettingsFragment extends PreferenceFragment {
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 42 && resultCode == RESULT_OK) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            boolean isActive = mDPM.isAdminActive(AdminReceiver.COMP);
+
+            if (prefs.getBoolean("pref_device_admin", false) != isActive) {
+                SharedPreferences.Editor editor1 = prefs.edit();
+                editor1.putBoolean("pref_device_admin", isActive);
+                editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
+                editor1.apply();
+
+                CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
+                adminPreference.setChecked(isActive);
+            }
+        }
+    }
+
+    private void removeAsAdmin() {
+        mDPM.removeActiveAdmin(AdminReceiver.COMP);
+
+        CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
+        adminPreference.setChecked(false);
+    }
+
+    private void installAsAdmin() {
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, AdminReceiver.COMP);
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.deviceAdminDescription));
+        startActivityForResult(intent, 42);
     }
 }
