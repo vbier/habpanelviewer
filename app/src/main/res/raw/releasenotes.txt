@@ -1,5 +1,10 @@
-0.9.9pre
-=====
+0.9.14pre
+=========
+- fix bug where adding a certificate exception did not lead to reconnect of SSE connection
+- improve german translation
+
+0.9.13pre
+=========
 - add reporting for battery charging state and battery level
 - add reporting for proximity events
 - add reporting for brightness, pressure and temperature sensors
@@ -15,7 +20,22 @@
 - remove initial toast message for missing application features on unsupported devices
 - add setting allowing to choose whether app shall be shown on lock screen
 - add german translation
-- fix bug where adding a certificate exception did not lead to reconnect of SSE connection
+
+0.9.12pre
+=====
+- test release for play store
+
+0.9.11pre
+=====
+- test release for play store
+
+0.9.10pre
+=====
+- test release for play store
+
+0.9.9pre
+=====
+- test release for play store
 
 0.9.8
 =====

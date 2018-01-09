@@ -1,3 +1,20 @@
+0.9.13pre
+=========
+- Fehler behoben, bei dem die SSE Verbindung nach dem Erstellen einer Zertifikatsausnahme nicht neu aufgebaut wurde
+- Deutsche Übersetzung verbessert
+
+0.9.12pre
+=========
+- Test Release für den Google Play Store
+
+0.9.10pre
+=========
+- Test Release für den Google Play Store
+
+0.9.10pre
+=========
+- Test Release für den Google Play Store
+
 0.9.9pre
 =====
 - Melden der Batteriewerte an openHAB
@@ -14,4 +31,3 @@
 - Initiale Toast Meldung entfernt
 - Neue Einstellung, ob die App auf dem Sperrbildschirm gezeigt werden soll
 - Deutsche Übersetzung
-- Fehler behoben, bei dem die SSE Verbindung nach dem Erstellen einer Zertifikatsausnahme nicht neu aufgebaut wurde
