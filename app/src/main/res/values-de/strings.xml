@@ -39,8 +39,6 @@
     <string name="pref_menu_position">Menü Position</string>
     <string name="pref_menu_position_summ">Die Seite von der das Menü geöffnet werden kann</string>
 
-    <string name="pref_control">Gerätesteuerung</string>
-    <string name="pref_control_summ">Steuert verschiedene Funktionen des Gerätes in Abhängigkeit von openHAB Items</string>
     <string name="pref_command_item">Kommando Item</string>
     <string name="pref_command_item_summ">Name des openHAB Items in dem openHAB Kommandos an HABPanelViewer sendet</string>
     <string name="pref_flash">Blitzlichtsteuerung</string>

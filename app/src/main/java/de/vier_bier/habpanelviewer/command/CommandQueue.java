@@ -41,9 +41,13 @@ public class CommandQueue implements StateUpdateListener {
         if (value != null && !value.isEmpty()) {
             synchronized (mHandlers) {
                 for (CommandHandler mHandler : mHandlers) {
-                    if (mHandler.handleCommand(value)) {
-                        mServerConnection.updateState(name, "");
-                        return;
+                    try {
+                        if (mHandler.handleCommand(value)) {
+                            mServerConnection.updateState(name, "");
+                            return;
+                        }
+                    } catch (Throwable t) {
+                        Log.e("Habpanelview", "unhandled exception", t);
                     }
                 }
             }

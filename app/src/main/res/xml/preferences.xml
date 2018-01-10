@@ -62,17 +62,10 @@
                 android:summary="@string/pref_connected_interval_summ"
                 android:title="@string/pref_connected_interval" />
         </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_control"
-            android:summary="@string/pref_control_summ"
-            android:persistent="false"
-            android:title="@string/pref_control">
-
-            <EditTextPreference
-                android:key="pref_command_item"
-                android:summary="@string/pref_command_item_summ"
-                android:title="@string/pref_command_item" />
-        </PreferenceScreen>
+        <EditTextPreference
+            android:key="pref_command_item"
+            android:summary="@string/pref_command_item_summ"
+            android:title="@string/pref_command_item" />
         <ListPreference
             android:defaultValue="right"
             android:key="pref_menu_position"

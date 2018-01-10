@@ -43,8 +43,6 @@
     <string name="pref_menu_position">Menu Position</string>
     <string name="pref_menu_position_summ">The side from which the main menu can be pulled out</string>
 
-    <string name="pref_control">Device Control</string>
-    <string name="pref_control_summ">Control device features depending on sensors or openHAB items</string>
     <string name="pref_command_item">Command Item</string>
     <string name="pref_command_item_summ">Name of the Item that is used by openHAB to send commands to HABPanelViewer</string>
     <string name="pref_flash">Flashlight Control</string>
