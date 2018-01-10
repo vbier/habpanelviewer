@@ -1,6 +1,7 @@
 package de.vier_bier.habpanelviewer;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,6 +43,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.vier_bier.habpanelviewer.command.AdminHandler;
+import de.vier_bier.habpanelviewer.command.BluetoothHandler;
 import de.vier_bier.habpanelviewer.command.CommandQueue;
 import de.vier_bier.habpanelviewer.command.FlashHandler;
 import de.vier_bier.habpanelviewer.command.RestartHandler;
@@ -285,6 +287,7 @@ public class MainActivity extends AppCompatActivity
         mCommandQueue = new CommandQueue(mServerConnection);
         mCommandQueue.addHandler(new RestartHandler(this));
         mCommandQueue.addHandler(new AdminHandler(this));
+        mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
         mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this));
         mCommandQueue.addHandler(new VolumeHandler((AudioManager) getSystemService(Context.AUDIO_SERVICE)));
         if (mFlashService != null) {
