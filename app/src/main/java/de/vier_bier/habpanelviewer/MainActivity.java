@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity
         mCommandQueue.addHandler(new RestartHandler(this));
         mCommandQueue.addHandler(new AdminHandler(this));
         mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
-        mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this));
+        mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this, findViewById(R.id.blankView)));
         mCommandQueue.addHandler(new VolumeHandler((AudioManager) getSystemService(Context.AUDIO_SERVICE)));
         if (mFlashService != null) {
             mCommandQueue.addHandler(mFlashService);

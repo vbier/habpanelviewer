@@ -14,6 +14,7 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 * SCREEN_ON: turns on the devices screen
 * KEEP_SCREEN_ON: turns on the devices screen and prevents the system from turning off the screen
 * ALLOW_SCREEN_OFF: allows the system to turn of the screen
+* SCREEN_DIM: dims the screen as much as possible and restores the brightness on touch event
 * MUTE: mutes the device
 * UNMUTE: restores the volume to the level the device had when it was muted
 * SET_VOLUME n: sets the device volume to n, being an integer between 0 and device max volume.

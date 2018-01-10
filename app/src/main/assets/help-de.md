@@ -14,6 +14,7 @@ Die Funktionalität kann in drei Bereiche aufgeteilt werden:
 * SCREEN_ON: schaltet den Bildschirm des Geräts ein
 * KEEP_SCREEN_ON: schaltet den Bildschirm des Geräts ein und hindert das System daran, ihn auszuschalten
 * ALLOW_SCREEN_OFF: erlaubt dem System, den Bildschirm auszuschalten
+* SCREEN_DIM: regelt die Helligkeit so weit runter wie möglich und stellt sie zurück, wenn der Bildschirm berührt wird
 * MUTE: stellt das Gerät stumm
 * UNMUTE: stellt die Lautstärke auf den Wert, den das Gerät zum Zeitpunkt des MUTE Kommandos hatte
 * SET_VOLUME n: stellt die Lautstärke auf den Wert n, welcher eine Ganzzahl im Bereich 0.._Maximallautstärke des Geräts_ sein muss.
