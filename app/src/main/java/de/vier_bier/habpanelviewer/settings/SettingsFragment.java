@@ -41,7 +41,6 @@ import static android.app.Activity.RESULT_OK;
 public class SettingsFragment extends PreferenceFragment {
     private DevicePolicyManager mDPM;
 
-    private boolean flashEnabled = false;
     private boolean motionEnabled = false;
     private boolean proximityEnabled = false;
     private boolean pressureEnabled = false;
@@ -56,7 +55,6 @@ public class SettingsFragment extends PreferenceFragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            flashEnabled = bundle.getBoolean("flash_enabled");
             motionEnabled = bundle.getBoolean("motion_enabled");
             proximityEnabled = bundle.getBoolean("proximity_enabled");
             pressureEnabled = bundle.getBoolean("pressure_enabled");
@@ -70,10 +68,6 @@ public class SettingsFragment extends PreferenceFragment {
         mDPM = (DevicePolicyManager) getActivity().getSystemService(Context.DEVICE_POLICY_SERVICE);
 
         // disable preferences if functionality is not available
-        if (!flashEnabled) {
-            findPreference("pref_flash").setEnabled(false);
-            findPreference("pref_flash").setSummary(getString(R.string.pref_flash) + getString(R.string.notAvailableOnDevice));
-        }
         if (!motionEnabled) {
             findPreference("pref_motion").setEnabled(false);
             findPreference("pref_motion").setSummary(getString(R.string.pref_motion) + getString(R.string.notAvailableOnDevice));
