@@ -3,13 +3,12 @@ package de.vier_bier.habpanelviewer.command;
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.PowerManager;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowManager;
 
 import de.vier_bier.habpanelviewer.AdminReceiver;
+import de.vier_bier.habpanelviewer.EmptyActivity;
 import de.vier_bier.habpanelviewer.R;
 
 /**
@@ -19,24 +18,13 @@ public class ScreenHandler implements CommandHandler {
     private final DevicePolicyManager mDPM;
     private final PowerManager.WakeLock screenOnLock;
     private final Activity mActivity;
-    private final View mBlankView;
-    private float mScreenBrightness = 1F;
 
-    public ScreenHandler(PowerManager pwrManager, Activity activity, View view) {
+    public ScreenHandler(PowerManager pwrManager, Activity activity) {
         mActivity = activity;
         mDPM = (DevicePolicyManager) mActivity.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        mBlankView = view;
 
         screenOnLock = pwrManager.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "HabpanelViewer");
-
-        mBlankView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                screenDim(false);
-                return true;
-            }
-        });
 
         setKeepScreenOn(false);
     }
@@ -62,22 +50,9 @@ public class ScreenHandler implements CommandHandler {
     }
 
     private void screenDim(final boolean dim) {
-        final WindowManager.LayoutParams layout = mActivity.getWindow().getAttributes();
-
-        float screenBrightness = layout.screenBrightness;
-        if (screenBrightness != 0 && dim) {
-            mScreenBrightness = screenBrightness;
-        }
-
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mBlankView.setVisibility(dim ? View.VISIBLE : View.INVISIBLE);
-
-                layout.screenBrightness = dim ? 0F : mScreenBrightness;
-                mActivity.getWindow().setAttributes(layout);
-            }
-        });
+        Intent intent = new Intent();
+        intent.setClass(mActivity, EmptyActivity.class);
+        mActivity.startActivityForResult(intent, 0);
     }
 
     public void setKeepScreenOn(final boolean on) {

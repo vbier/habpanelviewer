@@ -31,13 +31,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="android.webkit.WebView.MetricsOptOut"
             android:value="true" />
 
         <activity
-            android:name="de.vier_bier.habpanelviewer.MainActivity"
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
@@ -52,29 +51,32 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="de.vier_bier.habpanelviewer.settings.SetPreferenceActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="Settings" />
+            android:name=".settings.SetPreferenceActivity"
+            android:label="Settings"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="de.vier_bier.habpanelviewer.status.StatusInfoActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="Information" />
+            android:name=".status.StatusInfoActivity"
+            android:label="Information"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="de.vier_bier.habpanelviewer.help.HelpActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="Help" />
+            android:name=".help.HelpActivity"
+            android:label="Help"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
-            android:name="de.vier_bier.habpanelviewer.AdminReceiver"
+            android:name=".AdminReceiver"
             android:label="@string/deviceAdmin"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin" />
+
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".EmptyActivity"></activity>
     </application>
 
 </manifest>
