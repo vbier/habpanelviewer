@@ -25,18 +25,27 @@ import de.vier_bier.habpanelviewer.R;
  * Status Information Activity showing interesting app or hardware details.
  */
 public class StatusInfoActivity extends Activity {
-    private final ApplicationStatus status = new ApplicationStatus(this);
+    private final ApplicationStatus status = new ApplicationStatus();
     private ScheduledExecutorService executor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        final StatusItemAdapter adapter = new StatusItemAdapter(this, status);
+
         executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
                 EventBus.getDefault().post(status);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                    }
+                });
             }
         }, 0, 1, TimeUnit.SECONDS);
 
@@ -54,10 +63,7 @@ public class StatusInfoActivity extends Activity {
         setContentView(R.layout.info_main);
 
         final ListView listview = findViewById(R.id.info_listview);
-        final StatusItemAdapter adapter = new StatusItemAdapter(this, status);
-
         listview.setAdapter(adapter);
-        status.registerAdapter(adapter);
     }
 
     @Override
@@ -65,7 +71,6 @@ public class StatusInfoActivity extends Activity {
         EventBus.getDefault().unregister(this);
         executor.shutdown();
         executor = null;
-        status.registerAdapter(null);
         super.onDestroy();
     }
 
