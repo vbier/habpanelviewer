@@ -7,6 +7,7 @@ import android.hardware.SensorManager;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
+import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Monitors temperature sensor state and reports to openHAB.
@@ -18,20 +19,16 @@ public class TemperatureMonitor extends SensorMonitor {
         super(ctx, sensorManager, serverConnection, "temperature", Sensor.TYPE_AMBIENT_TEMPERATURE);
     }
 
-    protected synchronized void addStatusItems() {
-        if (mStatus == null) {
-            return;
-        }
-
+    protected synchronized void addStatusItems(ApplicationStatus status) {
         if (mSensorEnabled) {
             String state = mCtx.getString(R.string.enabled);
             if (!mSensorItem.isEmpty()) {
                 state += "\n" + mCtx.getString(R.string.temperature, fTemperature, mSensorItem, mSensorState);
             }
 
-            mStatus.set(mCtx.getString(R.string.pref_temperature), state);
+            status.set(mCtx.getString(R.string.pref_temperature), state);
         } else {
-            mStatus.set(mCtx.getString(R.string.pref_temperature), mCtx.getString(R.string.disabled));
+            status.set(mCtx.getString(R.string.pref_temperature), mCtx.getString(R.string.disabled));
         }
     }
 

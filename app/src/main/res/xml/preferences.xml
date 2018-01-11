@@ -146,6 +146,14 @@
                     android:dependency="pref_motion_detection_enabled"
                     android:summary="@string/pref_motion_detection_leniency_summ"
                     android:title="@string/pref_motion_detection_leniency" />
+                <ListPreference
+                    android:defaultValue="500"
+                    android:key="pref_motion_detection_sleep"
+                    android:entries="@array/sleep"
+                    android:entryValues="@array/sleep"
+                    android:dependency="pref_motion_detection_enabled"
+                    android:summary="@string/pref_motion_detection_sleep_summ"
+                    android:title="@string/pref_motion_detection_sleep" />
             </PreferenceScreen>
             <PreferenceScreen
                 android:key="pref_proximity"

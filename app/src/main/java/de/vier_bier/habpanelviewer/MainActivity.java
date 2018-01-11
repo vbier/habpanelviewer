@@ -92,7 +92,6 @@ public class MainActivity extends AppCompatActivity
     private TemperatureMonitor mTemperatureMonitor;
     private VolumeMonitor mVolumeMonitor;
     private CommandQueue mCommandQueue;
-    private ApplicationStatus mStatus;
 
     private int mRestartCount;
 
@@ -305,9 +304,50 @@ public class MainActivity extends AppCompatActivity
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
-        mStatus = status;
+        Date buildDate = new Date(BuildConfig.TIMESTAMP);
+        status.set(getString(R.string.app_name), "Version: " + BuildConfig.VERSION_NAME + "\n"
+                + getString(R.string.buildDate) + SimpleDateFormat.getDateTimeInstance().format(buildDate));
 
-        addStatusItems();
+        if (mFlashService == null) {
+            status.set(getString(R.string.pref_flash), getString(R.string.unavailable));
+        }
+        if (mMotionDetector == null) {
+            status.set(getString(R.string.pref_motion), getString(R.string.unavailable));
+        }
+        if (mRestartCount != 0) {
+            status.set(getString(R.string.restartCounter), String.valueOf(mRestartCount));
+        }
+        if (mProximityMonitor == null) {
+            status.set(getString(R.string.pref_proximity), getString(R.string.unavailable));
+        }
+        if (mPressureMonitor == null) {
+            status.set(getString(R.string.pref_pressure), getString(R.string.unavailable));
+        }
+        if (mBrightnessMonitor == null) {
+            status.set(getString(R.string.pref_brightness), getString(R.string.unavailable));
+        }
+        if (mTemperatureMonitor == null) {
+            status.set(getString(R.string.pref_temperature), getString(R.string.unavailable));
+        }
+
+        String webview = "";
+        PackageManager pm = getPackageManager();
+        try {
+            PackageInfo pi = pm.getPackageInfo("com.google.android.webview", 0);
+            webview += "com.google.android.webview " + pi.versionName + "/" + pi.versionCode + "\n";
+        } catch (PackageManager.NameNotFoundException e) {
+        }
+
+        try {
+            PackageInfo pi = pm.getPackageInfo("com.android.webview", 0);
+            webview += "com.android.webview " + pi.versionName + "/" + pi.versionCode + "\n";
+        } catch (PackageManager.NameNotFoundException e1) {
+        }
+
+        if (webview.isEmpty()) {
+            webview = mWebView.getSettings().getUserAgentString();
+        }
+        status.set("Webview", webview.trim());
     }
 
     @Override
@@ -550,8 +590,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, StatusInfoActivity.class);
 
-        addStatusItems();
-
         startActivityForResult(intent, 0);
     }
 
@@ -559,56 +597,5 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, HelpActivity.class);
         startActivityForResult(intent, 0);
-    }
-
-    private void addStatusItems() {
-        if (mStatus == null) {
-            return;
-        }
-
-        Date buildDate = new Date(BuildConfig.TIMESTAMP);
-        mStatus.set(getString(R.string.app_name), "Version: " + BuildConfig.VERSION_NAME + "\n"
-                + getString(R.string.buildDate) + SimpleDateFormat.getDateTimeInstance().format(buildDate));
-
-        if (mFlashService == null) {
-            mStatus.set(getString(R.string.pref_flash), getString(R.string.unavailable));
-        }
-        if (mMotionDetector == null) {
-            mStatus.set(getString(R.string.pref_motion), getString(R.string.unavailable));
-        }
-        if (mRestartCount != 0) {
-            mStatus.set(getString(R.string.restartCounter), String.valueOf(mRestartCount));
-        }
-        if (mProximityMonitor == null) {
-            mStatus.set(getString(R.string.pref_proximity), getString(R.string.unavailable));
-        }
-        if (mPressureMonitor == null) {
-            mStatus.set(getString(R.string.pref_pressure), getString(R.string.unavailable));
-        }
-        if (mBrightnessMonitor == null) {
-            mStatus.set(getString(R.string.pref_brightness), getString(R.string.unavailable));
-        }
-        if (mTemperatureMonitor == null) {
-            mStatus.set(getString(R.string.pref_temperature), getString(R.string.unavailable));
-        }
-
-        String webview = "";
-        PackageManager pm = getPackageManager();
-        try {
-            PackageInfo pi = pm.getPackageInfo("com.google.android.webview", 0);
-            webview += "com.google.android.webview " + pi.versionName + "/" + pi.versionCode + "\n";
-        } catch (PackageManager.NameNotFoundException e) {
-        }
-
-        try {
-            PackageInfo pi = pm.getPackageInfo("com.android.webview", 0);
-            webview += "com.android.webview " + pi.versionName + "/" + pi.versionCode + "\n";
-        } catch (PackageManager.NameNotFoundException e1) {
-        }
-
-        if (webview.isEmpty()) {
-            webview = mWebView.getSettings().getUserAgentString();
-        }
-        mStatus.set("Webview", webview.trim());
     }
 }

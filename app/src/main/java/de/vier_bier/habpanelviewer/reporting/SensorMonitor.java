@@ -24,7 +24,6 @@ public abstract class SensorMonitor implements SensorEventListener, StateUpdateL
     private SensorManager mSensorManager;
     ServerConnection mServerConnection;
     Sensor mSensor;
-    protected ApplicationStatus mStatus;
 
     private String mPreferenceKey;
     boolean mSensorEnabled;
@@ -48,15 +47,14 @@ public abstract class SensorMonitor implements SensorEventListener, StateUpdateL
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
-        mStatus = status;
-        addStatusItems();
+        addStatusItems(status);
     }
 
     public synchronized void terminate() {
         mSensorManager.unregisterListener(this);
     }
 
-    protected abstract void addStatusItems();
+    protected abstract void addStatusItems(ApplicationStatus status);
 
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         if (mSensorEnabled != prefs.getBoolean("pref_" + mPreferenceKey + "_enabled", false)) {
@@ -76,7 +74,6 @@ public abstract class SensorMonitor implements SensorEventListener, StateUpdateL
     @Override
     public void itemUpdated(String name, String value) {
         mSensorState = value;
-        addStatusItems();
     }
 
     @Override

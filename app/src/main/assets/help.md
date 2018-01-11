@@ -56,7 +56,8 @@ The detection can be enabled or disabled and detection parameters can be changed
 - Camera Preview: whether to show a preview of the detection as on overlay. This is useful for fine-tuning the detection.
 - Use Lollipop camera API: Use the new Camera 2 API introduced with Lollipop. You should generally use this when available.
 - Detection granularity: Amount by which is axis is divided. So a granularity of 10 results in the picture being divided into 100 areas. 
-- Detection leniency: deviation threshold that triggers detected motion. 0 means every deviation results in detected motion, 255 means motion will never be detected.   
+- Detection leniency: deviation threshold that triggers detected motion. 0 means every deviation results in detected motion, 255 means motion will never be detected.
+- Detection interval: time to sleep between consecutive detection attempts in ms. Note hat this has direct impact on CPU usage.
 
 A sample openHAB items file looks like this:
 

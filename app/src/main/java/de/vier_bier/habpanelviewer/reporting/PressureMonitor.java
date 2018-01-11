@@ -7,6 +7,7 @@ import android.hardware.SensorManager;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
+import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Monitors pressure sensor state and reports to openHAB.
@@ -18,20 +19,16 @@ public class PressureMonitor extends SensorMonitor {
         super(ctx, sensorManager, serverConnection, "pressure", Sensor.TYPE_PRESSURE);
     }
 
-    protected synchronized void addStatusItems() {
-        if (mStatus == null) {
-            return;
-        }
-
+    protected synchronized void addStatusItems(ApplicationStatus status) {
         if (mSensorEnabled) {
             String state = mCtx.getString(R.string.enabled);
             if (!mSensorItem.isEmpty()) {
                 state += "\n" + mCtx.getString(R.string.pressure, mPressure, mSensorItem, mSensorState);
             }
 
-            mStatus.set(mCtx.getString(R.string.pref_pressure), state);
+            status.set(mCtx.getString(R.string.pref_pressure), state);
         } else {
-            mStatus.set(mCtx.getString(R.string.pref_pressure), mCtx.getString(R.string.disabled));
+            status.set(mCtx.getString(R.string.pref_pressure), mCtx.getString(R.string.disabled));
         }
     }
 

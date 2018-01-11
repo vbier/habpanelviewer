@@ -8,6 +8,7 @@ import android.util.Log;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
+import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Monitors proximity sensor state and reports to openHAB.
@@ -36,11 +37,7 @@ public class ProximityMonitor extends SensorMonitor {
         }
     }
 
-    protected synchronized void addStatusItems() {
-        if (mStatus == null) {
-            return;
-        }
-
+    protected synchronized void addStatusItems(ApplicationStatus status) {
         if (mSensorEnabled) {
             String state = mCtx.getString(R.string.enabled);
             if (!mSensorItem.isEmpty()) {
@@ -49,9 +46,9 @@ public class ProximityMonitor extends SensorMonitor {
 
             state += "\n" + mCtx.getString(R.string.maxRangeResolution, mSensor.getMaximumRange(), mSensor.getResolution());
 
-            mStatus.set(mCtx.getString(R.string.pref_proximity), state);
+            status.set(mCtx.getString(R.string.pref_proximity), state);
         } else {
-            mStatus.set(mCtx.getString(R.string.pref_proximity), mCtx.getString(R.string.disabled));
+            status.set(mCtx.getString(R.string.pref_proximity), mCtx.getString(R.string.disabled));
         }
     }
 }

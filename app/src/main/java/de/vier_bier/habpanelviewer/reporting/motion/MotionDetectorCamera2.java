@@ -68,7 +68,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
     @Override
     protected LumaData getPreviewLumaData() {
-        return mPreview.getAndSet(null);
+        return getPreview();
     }
 
     @Override
@@ -182,7 +182,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
                     if (i != null) {
                         // only process if we do not yet have a buffered preview image
-                        if (mPreview.get() == null) {
+                        if (!previewAvailable()) {
                             Log.v(TAG, "preview image available: size " + i.getWidth() + "x" + i.getHeight());
 
                             ByteBuffer luma = i.getPlanes()[0].getBuffer();

@@ -24,7 +24,6 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 public class BatteryMonitor implements StateUpdateListener {
     private Context mCtx;
     private ServerConnection mServerConnection;
-    private ApplicationStatus mStatus;
 
     private BroadcastReceiver mBatteryReceiver;
     private boolean mBatteryEnabled;
@@ -59,8 +58,6 @@ public class BatteryMonitor implements StateUpdateListener {
                     mBatteryCharging = Intent.ACTION_POWER_CONNECTED.equals(intent.getAction());
                     mServerConnection.updateState(mBatteryChargingItem, mBatteryCharging ? "CLOSED" : "OPEN");
                 }
-
-                addStatusItems();
             }
         };
 
@@ -83,15 +80,6 @@ public class BatteryMonitor implements StateUpdateListener {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
-        mStatus = status;
-        addStatusItems();
-    }
-
-    private synchronized void addStatusItems() {
-        if (mStatus == null) {
-            return;
-        }
-
         if (mBatteryEnabled) {
             String state = mCtx.getString(R.string.enabled);
             if (!mBatteryLowItem.isEmpty()) {
@@ -103,9 +91,9 @@ public class BatteryMonitor implements StateUpdateListener {
             if (!mBatteryLevelItem.isEmpty()) {
                 state += "\n" + mCtx.getString(R.string.battLevel, mBatteryLevel, mBatteryLevelItem, mBatteryLevelState);
             }
-            mStatus.set(mCtx.getString(R.string.pref_battery), state);
+            status.set(mCtx.getString(R.string.pref_battery), state);
         } else {
-            mStatus.set(mCtx.getString(R.string.pref_battery), mCtx.getString(R.string.disabled));
+            status.set(mCtx.getString(R.string.pref_battery), mCtx.getString(R.string.disabled));
         }
     }
 
@@ -151,8 +139,6 @@ public class BatteryMonitor implements StateUpdateListener {
         } else if (name.equals(mBatteryLowItem)) {
             mBatteryLowState = value;
         }
-
-        addStatusItems();
     }
 
     private class BatteryPollingThread extends Thread {
@@ -183,7 +169,6 @@ public class BatteryMonitor implements StateUpdateListener {
         public void run() {
             while (fRunning.get()) {
                 updateBatteryValues();
-                addStatusItems();
 
                 synchronized (fRunning) {
                     try {

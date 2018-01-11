@@ -71,6 +71,8 @@
     <string name="pref_motion_detection_granularity_summ">The number of rectangles per axis the image is divided into to detect changes</string>
     <string name="pref_motion_detection_leniency">Detection leniency</string>
     <string name="pref_motion_detection_leniency_summ">Threshold of changed pixels in a single detection are that triggers motion</string>
+    <string name="pref_motion_detection_sleep">Detection interval</string>
+    <string name="pref_motion_detection_sleep_summ">Time to sleep between consecutive detection attempts in ms</string>
     <string name="pref_proximity">Proximity Sensor</string>
     <string name="pref_proximity_enabled">Toggle openHAB contact item depending on device proximity sensor</string>
     <string name="pref_proximity_enabled_summ">Allows to set the state of an openHAB items depending on the device proximity sensor</string>

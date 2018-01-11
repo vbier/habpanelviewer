@@ -22,7 +22,6 @@ public class VolumeMonitor implements StateUpdateListener {
     private Context mCtx;
     private AudioManager mAudioManager;
     private ServerConnection mServerConnection;
-    private ApplicationStatus mStatus;
 
     private boolean mVolumeEnabled;
 
@@ -38,8 +37,6 @@ public class VolumeMonitor implements StateUpdateListener {
 
             mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             mServerConnection.updateState(mVolumeItem, String.valueOf(mVolume));
-
-            addStatusItems();
         }
     };
 
@@ -74,8 +71,15 @@ public class VolumeMonitor implements StateUpdateListener {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
-        mStatus = status;
-        addStatusItems();
+        if (mVolumeEnabled) {
+            String state = mCtx.getString(R.string.enabled);
+            if (!mVolumeItem.isEmpty()) {
+                state += "\n" + mCtx.getString(R.string.volumeIsOf, mVolume, mMaxVolume, mVolumeItem, mVolumeState);
+            }
+            status.set(mCtx.getString(R.string.pref_volume), state);
+        } else {
+            status.set(mCtx.getString(R.string.pref_volume), mCtx.getString(R.string.disabled));
+        }
     }
 
     public void terminate() {
@@ -85,22 +89,5 @@ public class VolumeMonitor implements StateUpdateListener {
     @Override
     public void itemUpdated(String name, String value) {
         mVolumeState = value;
-        addStatusItems();
-    }
-
-    private synchronized void addStatusItems() {
-        if (mStatus == null) {
-            return;
-        }
-
-        if (mVolumeEnabled) {
-            String state = mCtx.getString(R.string.enabled);
-            if (!mVolumeItem.isEmpty()) {
-                state += "\n" + mCtx.getString(R.string.volumeIsOf, mVolume, mMaxVolume, mVolumeItem, mVolumeState);
-            }
-            mStatus.set(mCtx.getString(R.string.pref_volume), state);
-        } else {
-            mStatus.set(mCtx.getString(R.string.pref_volume), mCtx.getString(R.string.disabled));
-        }
     }
 }

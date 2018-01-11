@@ -15,6 +15,10 @@ import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import de.vier_bier.habpanelviewer.R;
 
 /**
@@ -22,12 +26,19 @@ import de.vier_bier.habpanelviewer.R;
  */
 public class StatusInfoActivity extends Activity {
     private final ApplicationStatus status = new ApplicationStatus(this);
+    private ScheduledExecutorService executor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        EventBus.getDefault().post(status);
+        executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                EventBus.getDefault().post(status);
+            }
+        }, 0, 1, TimeUnit.SECONDS);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -52,6 +63,8 @@ public class StatusInfoActivity extends Activity {
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        executor.shutdown();
+        executor = null;
         status.registerAdapter(null);
         super.onDestroy();
     }

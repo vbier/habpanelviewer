@@ -32,7 +32,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetector {
     private static final String TAG = "AbstractMotionDetector";
 
-    final AtomicReference<D> mPreview = new AtomicReference<>();
+    private final AtomicReference<D> mPreview = new AtomicReference<>();
     private final AtomicBoolean mStopped = new AtomicBoolean(false);
 
     Activity mContext;
@@ -42,6 +42,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     String mCameraId;
     int mBoxes = 50;
 
+    private int mSleepTime;
     private int mLeniency = 20;
     private int mRotationCorrection;
     private int mDeviceRotation;
@@ -51,7 +52,6 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
     private LumaData mPreviousState;
     private Comparer mComparer;
-    private ApplicationStatus mStatus;
 
     AbstractMotionDetector(Activity context, MotionListener l, ServerConnection serverConnection) {
         super("AbstractMotionDetector");
@@ -66,20 +66,11 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
-        mStatus = status;
-        addStatusItems();
-    }
-
-    private void addStatusItems() {
-        if (mStatus == null) {
-            return;
-        }
-
-        mStatus.set(mContext.getString(R.string.cameras), getCameraInfo());
+        status.set(mContext.getString(R.string.cameras), getCameraInfo());
         if (mEnabled) {
-            mStatus.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.enabled) + "\n" + getPreviewInfo());
+            status.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.enabled) + "\n" + getPreviewInfo());
         } else {
-            mStatus.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.disabled));
+            status.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.disabled));
         }
     }
 
@@ -91,7 +82,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
             }
             return retVal + "\n"
                     + mContext.getString(R.string.boxesLeniency, mBoxes, mLeniency) + "\n"
-                    + mFrameCount + mContext.getString(R.string.framesProcessed, mFrameCount, mDetectionCount);
+                    + mContext.getString(R.string.framesProcessed, mFrameCount, mDetectionCount);
         } else {
             return mContext.getString(R.string.failedAccessCamera);
         }
@@ -111,6 +102,8 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         int newBoxes = Integer.parseInt(prefs.getString("pref_motion_detection_granularity", "20"));
         int newLeniency = Integer.parseInt(prefs.getString("pref_motion_detection_leniency", "20"));
         int newDeviceRotation = mContext.getWindowManager().getDefaultDisplay().getRotation();
+
+        mSleepTime = Integer.parseInt(prefs.getString("pref_motion_detection_sleep", "500"));
 
         if (newEnabled) {
             mListener.updateFromPreferences(prefs);
@@ -148,7 +141,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         try {
             while (!mStopped.get()) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(mSleepTime);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -161,6 +154,8 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
                     if (mPreviewSize == null) {
                         mPreviewSize = new Point(greyState.getWidth(), greyState.getHeight());
                     }
+
+                    mFrameCount++;
 
                     int minLuma = 1000;
                     if (greyState.isDarker(minLuma)) {
@@ -176,10 +171,6 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
                             mListener.noMotion();
                         }
                     }
-                    if (mStatus != null) {
-                        mStatus.set(mContext.getString(R.string.pref_motion),
-                                mContext.getString(R.string.enabled) + "\n" + getPreviewInfo());
-                    }
 
                     Log.v(TAG, "processing done");
                 }
@@ -190,8 +181,15 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     }
 
     void setPreview(D p) {
-        mFrameCount++;
         mPreview.set(p);
+    }
+
+    public boolean previewAvailable() {
+        return mPreview.get() != null;
+    }
+
+    public D getPreview() {
+        return mPreview.getAndSet(null);
     }
 
     private synchronized ArrayList<Point> detect(LumaData s) {

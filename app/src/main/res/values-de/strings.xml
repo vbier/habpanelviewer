@@ -67,6 +67,8 @@
     <string name="pref_motion_detection_granularity_summ">Die Anzahl der Teile pro Achse, in die das Bild eingetilt wird um Bewegung zu erkennen</string>
     <string name="pref_motion_detection_leniency">Erkennungsschwelle</string>
     <string name="pref_motion_detection_leniency_summ">Helligkeits Differenz, ab der Bewegung erkannt wird</string>
+    <string name="pref_motion_detection_sleep">Erkennungsintervall</string>
+    <string name="pref_motion_detection_sleep_summ">Zeit zwischen zwei aufeinanderfolgenden Erkennungsversuchen (in Millsekunden)</string>
     <string name="pref_proximity">Annäherungssensor</string>
     <string name="pref_proximity_enabled">Annäherungssensor aktiviert</string>
     <string name="pref_proximity_enabled_summ">Schaltet einen openHAB Kontakt wenn Annäherung erkannt wird</string>

@@ -25,7 +25,6 @@ public class ConnectedIndicator implements StateUpdateListener {
     private Context mCtx;
     private ServerConnection mServerConnection;
     private ConnectedReportingThread mReportConnection;
-    private ApplicationStatus mStatus;
 
     private long fStatus;
     private String mStatusState;
@@ -39,8 +38,16 @@ public class ConnectedIndicator implements StateUpdateListener {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
-        mStatus = status;
-        addStatusItems();
+        if (mEnabled) {
+            String state = mCtx.getString(R.string.enabled);
+            if (!mStatusItem.isEmpty()) {
+                state += "\n" + mStatusItem + "=" + mStatusState;
+            }
+
+            status.set(mCtx.getString(R.string.pref_connected), state);
+        } else {
+            status.set(mCtx.getString(R.string.pref_connected), mCtx.getString(R.string.disabled));
+        }
     }
 
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
@@ -75,24 +82,6 @@ public class ConnectedIndicator implements StateUpdateListener {
     @Override
     public void itemUpdated(String name, String value) {
         mStatusState = value;
-        addStatusItems();
-    }
-
-    protected synchronized void addStatusItems() {
-        if (mStatus == null) {
-            return;
-        }
-
-        if (mEnabled) {
-            String state = mCtx.getString(R.string.enabled);
-            if (!mStatusItem.isEmpty()) {
-                state += "\n" + mStatusItem + "=" + mStatusState;
-            }
-
-            mStatus.set(mCtx.getString(R.string.pref_connected), state);
-        } else {
-            mStatus.set(mCtx.getString(R.string.pref_connected), mCtx.getString(R.string.disabled));
-        }
     }
 
     public synchronized void terminate() {

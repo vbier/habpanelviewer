@@ -56,7 +56,8 @@ Die Erkennung kann aktiviert und deaktiviert werden, und es können einige Param
 - Zeige Kamera Vorschau: Blendet eine Kamera Vorschau über dem Browser ein. Diese ist Nützlich, um die Erkennung richtig einzustellen.
 - Benutze Lollipop Camera API 2: Benutze das Camera API 2 das mit Lollipop eingeführt wurde. Verändern Sie dies nur, falls die Erkennung nicht funktioniert. Die Anwendung startet automatisch neu, wenn der Wert verändert wird.
 - Erkennungsgranularität: Die Anzahl der Teile pro Achse, in die das Bild eingeteilt wird um Bewegung zu erkennen. Eine Granularität von 10 unterteilt das Bild also in 100 Unterbereiche. 
-- Erkennungsschwelle: Helligkeitsdifferenz, ab der Bewegung erkannt wird. 0 bedeutet jede Änderung resultiert in Bewegungserkennung, 255 bedeutet, es wird nie Bewegung erkannt.   
+- Erkennungsschwelle: Helligkeitsdifferenz, ab der Bewegung erkannt wird. 0 bedeutet jede Änderung resultiert in Bewegungserkennung, 255 bedeutet, es wird nie Bewegung erkannt.
+- Erkennungsintervall: Zeit zwischen zwei aufeinanderfolgenden Erkennungsversuchen (in Millsekunden). Dies hat direkten Einfluss auf den CPU Verbrauch. 
 
 Eine beispielhafte openHAB Items Datei könnte so aussehen:
 

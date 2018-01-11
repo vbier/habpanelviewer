@@ -37,7 +37,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
 
     @Override
     protected LumaData getPreviewLumaData() {
-        ImageData p = mPreview.getAndSet(null);
+        ImageData p = getPreview();
         if (p != null) {
             return p.extractLumaData(mBoxes);
         }
@@ -82,7 +82,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
                 mCamera.setPreviewCallback(new Camera.PreviewCallback() {
                     @Override
                     public void onPreviewFrame(byte[] bytes, Camera camera) {
-                        if (mCamera == camera && mPreview.get() == null) {
+                        if (mCamera == camera && !previewAvailable()) {
                             Log.v(TAG, "preview image available: size " + mPreviewSize.x + "x" + mPreviewSize.y);
 
                             setPreview(new ImageData(bytes, mPreviewSize.x, mPreviewSize.y));
