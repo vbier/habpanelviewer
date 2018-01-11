@@ -3,8 +3,15 @@ package de.vier_bier.habpanelviewer.command;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 
+import de.vier_bier.habpanelviewer.command.log.CommandInfo;
+import de.vier_bier.habpanelviewer.command.log.CommandLog;
+import de.vier_bier.habpanelviewer.command.log.CommandLogClient;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 
@@ -14,12 +21,19 @@ import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 public class CommandQueue implements StateUpdateListener {
     private final ArrayList<CommandHandler> mHandlers = new ArrayList<>();
     private ServerConnection mServerConnection;
+    private CommandLog mCmdLog = new CommandLog();
 
-    private String cmdItemName;
-
+    private String mCmdItemName;
 
     public CommandQueue(ServerConnection serverConnection) {
+        EventBus.getDefault().register(this);
+
         mServerConnection = serverConnection;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(CommandLogClient client) {
+        client.setCommandLog(mCmdLog);
     }
 
     public void addHandler(CommandHandler h) {
@@ -30,36 +44,40 @@ public class CommandQueue implements StateUpdateListener {
         }
     }
 
-    public void removeHandler(CommandHandler h) {
-        synchronized (mHandlers) {
-            mHandlers.remove(h);
-        }
-    }
-
     @Override
     public void itemUpdated(String name, String value) {
         if (value != null && !value.isEmpty()) {
-            synchronized (mHandlers) {
-                for (CommandHandler mHandler : mHandlers) {
-                    try {
-                        if (mHandler.handleCommand(value)) {
-                            mServerConnection.updateState(name, "");
+            try {
+                synchronized (mHandlers) {
+                    for (CommandHandler mHandler : mHandlers) {
+                        try {
+                            if (mHandler.handleCommand(value)) {
+                                mCmdLog.add(new CommandInfo(value, true));
+                                return;
+                            }
+                        } catch (Throwable t) {
+                            Log.e("Habpanelview", "unhandled exception", t);
+                            mCmdLog.add(new CommandInfo(value, true, t));
                             return;
                         }
-                    } catch (Throwable t) {
-                        Log.e("Habpanelview", "unhandled exception", t);
                     }
                 }
+
+                Log.w("Habpanelview", "received unhandled command: " + value);
+                mCmdLog.add(new CommandInfo(value, false));
+            } finally {
+                mServerConnection.updateState(name, "");
             }
-
-            Log.w("Habpanelview", "received unhandled command: " + value);
         }
-
     }
 
     public void updateFromPreferences(SharedPreferences prefs) {
-        cmdItemName = prefs.getString("pref_command_item", "");
+        mCmdItemName = prefs.getString("pref_command_item", "");
 
-        mServerConnection.subscribeItems(this, false, cmdItemName);
+        mCmdLog.setSize(prefs.getInt("pref_command_log_size", 100));
+
+        if (mServerConnection.subscribeItems(this, false, mCmdItemName)) {
+            mServerConnection.updateState(mCmdItemName, "");
+        }
     }
 }

@@ -26,6 +26,14 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 * BLUETOOTH_OFF: turn bluetooth off
 * ADMIN_LOCK_SCREEN: activates the lock screen (requires the app to be set as device admin in the settings)
 
+### command log
+Shows the last 100 commands that have been processed by HABPanelViewer. Color coding indicates processing status:
+* green: command has been processed successfully
+* yellow: command is not known to HABPanelViewer
+* red: command processing resulted in an exception.
+
+In case of processing exceptions, the exception message is also shown in the command log.
+
 [go back to top](#top)
 
 ## <a name="reporting"/>Sensor Reporting

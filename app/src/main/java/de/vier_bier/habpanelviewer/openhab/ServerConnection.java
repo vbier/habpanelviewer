@@ -105,7 +105,7 @@ public class ServerConnection implements StatePropagator {
         subscribeItems(l, true, names);
     }
 
-    public void subscribeItems(StateUpdateListener l, boolean initialValue, String... names) {
+    public boolean subscribeItems(StateUpdateListener l, boolean initialValue, String... names) {
         boolean itemsChanged = false;
 
         final HashSet<String> newItems = new HashSet<>();
@@ -155,6 +155,8 @@ public class ServerConnection implements StatePropagator {
             close();
             connect();
         }
+
+        return itemsChanged;
     }
 
     public void updateFromPreferences(SharedPreferences prefs) {

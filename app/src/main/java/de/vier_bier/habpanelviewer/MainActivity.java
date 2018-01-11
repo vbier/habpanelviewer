@@ -49,6 +49,7 @@ import de.vier_bier.habpanelviewer.command.FlashHandler;
 import de.vier_bier.habpanelviewer.command.RestartHandler;
 import de.vier_bier.habpanelviewer.command.ScreenHandler;
 import de.vier_bier.habpanelviewer.command.VolumeHandler;
+import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.ConnectionListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
@@ -288,7 +289,7 @@ public class MainActivity extends AppCompatActivity
         mCommandQueue.addHandler(new AdminHandler(this));
         mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
         mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this));
-        mCommandQueue.addHandler(new VolumeHandler((AudioManager) getSystemService(Context.AUDIO_SERVICE)));
+        mCommandQueue.addHandler(new VolumeHandler(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE)));
         if (mFlashService != null) {
             mCommandQueue.addHandler(mFlashService);
         }
@@ -511,6 +512,8 @@ public class MainActivity extends AppCompatActivity
             }
         } else if (id == R.id.action_info) {
             showInfoScreen();
+        } else if (id == R.id.action_cmd_log) {
+            showCmdLogScreen();
         } else if (id == R.id.action_help) {
             showHelpScreen();
         } else if (id == R.id.action_restart) {
@@ -589,6 +592,13 @@ public class MainActivity extends AppCompatActivity
     private void showInfoScreen() {
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, StatusInfoActivity.class);
+
+        startActivityForResult(intent, 0);
+    }
+
+    private void showCmdLogScreen() {
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, CommandLogActivity.class);
 
         startActivityForResult(intent, 0);
     }

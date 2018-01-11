@@ -26,6 +26,14 @@ Die Funktionalität kann in drei Bereiche aufgeteilt werden:
 * BLUETOOTH_OFF: schaltet bluetooth aus
 * ADMIN_LOCK_SCREEN: aktiviert die Bildschirmsperre (beötigt, das die App in den Einstellungen als Device Admin aktiviert ist)
 
+### Kommando Log
+Zeigt die letzten 100 von HABPanelViewer prozessierten Kommandos. Der Status wird durch die Textfarbe angezeigt:
+* grün: Das Kommando wurde erfolgreich ausgeführt.
+* gelb: Das Kommando ist HABPanelViewer nicht bekannt.
+* rot: Die Ausführung wurde aufgrund eines Fehlers abgebrochen.
+
+Im Fehlerfall wird außerdem noch die Fehlermeldung im Kommando Log angezeigt.
+
 [zurück nach oben](#top)
 
 ## <a name="reporting"/>Sensorwerte Meldung

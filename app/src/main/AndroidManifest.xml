@@ -62,6 +62,10 @@
             android:name=".help.HelpActivity"
             android:label="Help"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".command.log.CommandLogActivity"
+            android:label="Command Log"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <receiver
             android:name=".AdminReceiver"
