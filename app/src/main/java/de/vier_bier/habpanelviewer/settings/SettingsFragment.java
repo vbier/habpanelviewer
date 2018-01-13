@@ -8,7 +8,6 @@ import android.content.Loader;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -65,13 +64,6 @@ public class SettingsFragment extends PreferenceFragment {
                 if (editText instanceof AutoCompleteTextView) {
                     AutoCompleteTextView t = (AutoCompleteTextView) editText;
                     t.setAdapter(new ArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, strings));
-                }
-            }
-            //TODO.vb. add auto-complete for < O
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                for (String key : ITEMS_PREFS) {
-                    final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
-                    editText.setAutofillHints(strings.toArray(new String[strings.size()]));
                 }
             }
         }
