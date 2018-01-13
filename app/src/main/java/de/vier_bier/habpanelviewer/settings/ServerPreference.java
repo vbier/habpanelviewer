@@ -1,11 +1,9 @@
 package de.vier_bier.habpanelviewer.settings;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.net.nsd.NsdManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.preference.EditTextPreference;
 import android.util.AttributeSet;
 import android.view.View;
@@ -23,21 +21,8 @@ import de.vier_bier.habpanelviewer.openhab.ServerDiscovery;
  * TextPreference with an additional button to trigger mDNS server discovery.
  */
 public class ServerPreference extends EditTextPreference {
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ServerPreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-    public ServerPreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
     public ServerPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public ServerPreference(Context context) {
-        super(context);
     }
 
     @Override

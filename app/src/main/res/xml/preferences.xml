@@ -62,9 +62,10 @@
                 android:summary="@string/pref_connected_interval_summ"
                 android:title="@string/pref_connected_interval" />
         </PreferenceScreen>
-        <EditTextPreference
+        <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
             android:key="pref_command_item"
             android:summary="@string/pref_command_item_summ"
+            android:inputType="textPhonetic"
             android:title="@string/pref_command_item" />
         <ListPreference
             android:defaultValue="right"
@@ -87,19 +88,22 @@
                     android:key="pref_battery_enabled"
                     android:summary="@string/pref_battery_enabled_summ"
                     android:title="@string/pref_battery_enabled" />
-                <EditTextPreference
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
                     android:dependency="pref_battery_enabled"
                     android:key="pref_battery_item"
+                    android:inputType="textPhonetic"
                     android:summary="@string/pref_battery_item_summ"
                     android:title="@string/pref_battery_item" />
-                <EditTextPreference
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
                     android:dependency="pref_battery_enabled"
                     android:key="pref_battery_charging_item"
+                    android:inputType="textPhonetic"
                     android:summary="@string/pref_battery_charging_item_summ"
                     android:title="@string/pref_battery_charging_item" />
-                <EditTextPreference
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
                     android:dependency="pref_battery_enabled"
                     android:key="pref_battery_level_item"
+                    android:inputType="textPhonetic"
                     android:summary="@string/pref_battery_level_item_summ"
                     android:title="@string/pref_battery_level_item" />
             </PreferenceScreen>
@@ -112,9 +116,10 @@
                     android:key="pref_motion_detection_enabled"
                     android:summary="@string/pref_motion_detection_enabled_summ"
                     android:title="@string/pref_motion_detection_enabled" />
-                <EditTextPreference
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
                     android:dependency="pref_motion_detection_enabled"
                     android:key="pref_motion_item"
+                    android:inputType="textPhonetic"
                     android:summary="@string/pref_motion_item_summ"
                     android:title="@string/pref_motion_item" />
                 <CheckBoxPreference
@@ -164,9 +169,10 @@
                     android:key="pref_proximity_enabled"
                     android:summary="@string/pref_proximity_enabled_summ"
                     android:title="@string/pref_proximity_enabled" />
-                <EditTextPreference
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
                     android:dependency="pref_proximity_enabled"
                     android:key="pref_proximity_item"
+                    android:inputType="textPhonetic"
                     android:summary="@string/pref_proximity_item_summ"
                     android:title="@string/pref_proximity_item" />
             </PreferenceScreen>
@@ -179,9 +185,10 @@
                     android:key="pref_brightness_enabled"
                     android:summary="@string/pref_brightness_enabled_summ"
                     android:title="@string/pref_brightness_enabled" />
-                <EditTextPreference
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
                     android:dependency="pref_brightness_enabled"
                     android:key="pref_brightness_item"
+                    android:inputType="textPhonetic"
                     android:summary="@string/pref_brightness_item_summ"
                     android:title="@string/pref_brightness_item" />
                 <CheckBoxPreference
@@ -207,9 +214,10 @@
                     android:key="pref_pressure_enabled"
                     android:summary="@string/pref_pressure_enabled_summ"
                     android:title="@string/pref_pressure_enabled" />
-                <EditTextPreference
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
                     android:dependency="pref_pressure_enabled"
                     android:key="pref_pressure_item"
+                    android:inputType="textPhonetic"
                     android:summary="@string/pref_pressure_item_summ"
                     android:title="@string/pref_pressure_item" />
             </PreferenceScreen>
@@ -222,9 +230,10 @@
                     android:key="pref_temperature_enabled"
                     android:summary="@string/pref_temperature_enabled_summ"
                     android:title="@string/pref_temperature_enabled" />
-                <EditTextPreference
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
                     android:dependency="pref_temperature_enabled"
                     android:key="pref_temperature_item"
+                    android:inputType="textPhonetic"
                     android:summary="@string/pref_temperature_item_summ"
                     android:title="@string/pref_temperature_item" />
             </PreferenceScreen>
@@ -237,9 +246,10 @@
                     android:key="pref_volume_enabled"
                     android:summary="@string/pref_volume_enabled_summ"
                     android:title="@string/pref_volume_enabled" />
-                <EditTextPreference
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
                     android:dependency="pref_volume_enabled"
                     android:key="pref_volume_item"
+                    android:inputType="textPhonetic"
                     android:summary="@string/pref_volume_item_summ"
                     android:title="@string/pref_volume_item" />
             </PreferenceScreen>

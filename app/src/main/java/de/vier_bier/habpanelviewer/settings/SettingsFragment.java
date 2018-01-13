@@ -1,11 +1,14 @@
 package de.vier_bier.habpanelviewer.settings;
 
+import android.app.LoaderManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -14,6 +17,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
@@ -22,6 +27,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 import javax.net.ssl.SSLException;
 
@@ -29,8 +35,6 @@ import de.vier_bier.habpanelviewer.AdminReceiver;
 import de.vier_bier.habpanelviewer.BuildConfig;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
-import de.vier_bier.habpanelviewer.openhab.FetchItemStateTask;
-import de.vier_bier.habpanelviewer.openhab.SubscriptionListener;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
 import static android.app.Activity.RESULT_OK;
@@ -40,6 +44,50 @@ import static android.app.Activity.RESULT_OK;
  */
 public class SettingsFragment extends PreferenceFragment {
     private DevicePolicyManager mDPM;
+
+    private static final String[] ITEMS_PREFS = new String[]{
+            "pref_motion_item", "pref_proximity_item", "pref_volume_item",
+            "pref_pressure_item", "pref_brightness_item", "pref_temperature_item", "pref_command_item",
+            "pref_battery_item", "pref_battery_charging_item", "pref_battery_level_item"};
+
+    private ItemsAsyncTaskLoader mLoader;
+    private LoaderManager.LoaderCallbacks<List<String>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<String>>() {
+        @Override
+        public Loader<List<String>> onCreateLoader(int i, Bundle bundle) {
+            return mLoader;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<String>> loader, List<String> strings) {
+            for (String key : ITEMS_PREFS) {
+                final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
+
+                if (editText instanceof AutoCompleteTextView) {
+                    AutoCompleteTextView t = (AutoCompleteTextView) editText;
+                    t.setAdapter(new ArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, strings));
+                }
+            }
+            //TODO.vb. add auto-complete for < O
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                for (String key : ITEMS_PREFS) {
+                    final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
+                    editText.setAutofillHints(strings.toArray(new String[strings.size()]));
+                }
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<String>> loader) {
+            for (String key : ITEMS_PREFS) {
+                final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
+
+                if (editText instanceof AutoCompleteTextView) {
+                    AutoCompleteTextView t = (AutoCompleteTextView) editText;
+                    t.setAdapter(null);
+                }
+            }
+        }
+    };
 
     private boolean motionEnabled = false;
     private boolean proximityEnabled = false;
@@ -66,6 +114,7 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences);
 
         mDPM = (DevicePolicyManager) getActivity().getSystemService(Context.DEVICE_POLICY_SERVICE);
+        mLoader = new ItemsAsyncTaskLoader(getActivity(), "");
 
         // disable preferences if functionality is not available
         if (!motionEnabled) {
@@ -98,47 +147,46 @@ public class SettingsFragment extends PreferenceFragment {
         // add validation to the openHAB url
         EditTextPreference urlPreference = (EditTextPreference) findPreference("pref_url");
         urlPreference.setOnPreferenceChangeListener(new URLValidatingListener());
+        mLoader.setServerUrl(urlPreference.getText());
 
         // add validation to the package name
         EditTextPreference pkgPreference = (EditTextPreference) findPreference("pref_app_package");
         pkgPreference.setOnPreferenceChangeListener(new PackageValidatingListener());
 
         // add validation to the items
-        for (String key : new String[]{"pref_motion_item", "pref_proximity_item", "pref_volume_item",
-                "pref_pressure_item", "pref_brightness_item", "pref_temperature_item", "pref_command_item",
-                "pref_battery_item", "pref_battery_charging_item", "pref_battery_level_item"}) {
+        for (String key : ITEMS_PREFS) {
             final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
-            editText.addTextChangedListener(new ValidatingTextWatcher() {
+            editText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void afterTextChanged(final Editable editable) {
                     final String itemName = editable.toString();
 
-                    final String serverUrl = ((EditTextPreference) findPreference("pref_url")).getText();
-                    FetchItemStateTask task = new FetchItemStateTask(serverUrl, new SubscriptionListener() {
+                    getActivity().runOnUiThread(new Runnable() {
                         @Override
-                        public void itemInvalid(String name) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    editText.setTextColor(Color.RED);
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void itemUpdated(String name, String value) {
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    editText.setTextColor(Color.WHITE);
-                                }
-                            });
+                        public void run() {
+                            if (mLoader.isValid(itemName)) {
+                                editText.setTextColor(Color.GREEN);
+                            } else {
+                                editText.setTextColor(Color.RED);
+                            }
                         }
                     });
-                    task.execute(itemName);
+                }
+
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 }
             });
+
+            // initial color
+            editText.setText(editText.getText());
         }
+
+        getLoaderManager().initLoader(1234, null, mLoaderCallbacks);
     }
 
     @Override
@@ -174,6 +222,7 @@ public class SettingsFragment extends PreferenceFragment {
         @Override
         public boolean onPreferenceChange(final Preference preference, Object o) {
             String text = (String) o;
+            mLoader.setServerUrl(text);
 
             if (text == null || text.isEmpty()) {
                 return true;
@@ -214,16 +263,6 @@ public class SettingsFragment extends PreferenceFragment {
             }
 
             return false;
-        }
-    }
-
-    private abstract class ValidatingTextWatcher implements TextWatcher {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         }
     }
 

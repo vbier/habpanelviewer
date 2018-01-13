@@ -8,6 +8,7 @@
 - add device admin functionality and ADMIN_LOCK_SCREEN command
 - add command log screen showing processed commands
 - improve german translation
+- add completion support for item name preferences, improve checking
 
 0.9.13pre
 =========

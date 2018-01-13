@@ -1,6 +1,6 @@
 0.9.14pre
 =========
-- neues Setting: Erkennungsintervall
+- neue Einstellung: Erkennungsintervall
 - CPU Verbrauch reduziert
 - Fehler behoben, bei dem die SSE Verbindung nach dem Erstellen einer Zertifikatsausnahme nicht neu aufgebaut wurde
 - Kommando Item und RESTART Kommando hinzugefügt, alle Steuerungsfunktionalität wurde auf das Kommando Item umgestellt
@@ -8,6 +8,7 @@
 - Device Admin Funktionalität und ADMIN_LOCK_SCREEN Kommando hinzugefügt
 - Kommando Log hinzugefügt
 - Deutsche Übersetzung verbessert
+- Vervollständigung für Namen der openHAB Items in den Einstellungen
 
 0.9.13pre
 =====
