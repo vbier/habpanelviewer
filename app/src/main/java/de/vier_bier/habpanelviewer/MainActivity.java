@@ -46,7 +46,7 @@ import de.vier_bier.habpanelviewer.command.AdminHandler;
 import de.vier_bier.habpanelviewer.command.BluetoothHandler;
 import de.vier_bier.habpanelviewer.command.CommandQueue;
 import de.vier_bier.habpanelviewer.command.FlashHandler;
-import de.vier_bier.habpanelviewer.command.RestartHandler;
+import de.vier_bier.habpanelviewer.command.InternalCommandHandler;
 import de.vier_bier.habpanelviewer.command.ScreenHandler;
 import de.vier_bier.habpanelviewer.command.VolumeHandler;
 import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         mCommandQueue = new CommandQueue(mServerConnection);
-        mCommandQueue.addHandler(new RestartHandler(this));
+        mCommandQueue.addHandler(new InternalCommandHandler(this, mServerConnection));
         mCommandQueue.addHandler(new AdminHandler(this));
         mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
         mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this));

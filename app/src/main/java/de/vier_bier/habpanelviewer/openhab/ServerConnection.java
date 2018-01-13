@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.vier_bier.habpanelviewer.openhab.average.AveragePropagator;
@@ -45,7 +46,7 @@ public class ServerConnection implements StatePropagator {
     private SSEHandler client;
     private FetchItemStateTask task;
     private final ArrayList<ConnectionListener> connectionListeners = new ArrayList<>();
-    private final HashSet<ItemState> pendingUpdates = new HashSet<>();
+    private final HashMap<String, String> lastUpdates = new HashMap<>();
     private final AveragePropagator averagePropagator = new AveragePropagator(this);
 
     private BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
@@ -238,23 +239,39 @@ public class ServerConnection implements StatePropagator {
     }
 
     public void addStateToAverage(String item, Integer state, int updateInterval) {
-        averagePropagator.addStateToAverage(item, state, updateInterval);
+        if (averagePropagator.addStateToAverage(item, state, updateInterval)) {
+            // in case this is the first value for the item propagate it
+            updateState(item, state.toString());
+        }
     }
 
     public void updateState(String item, String state) {
-        if (item != null && !item.isEmpty() && state != null && !state.equals(getState(item))) {
+        updateState(item, state, false);
+    }
+
+    private void updateState(String item, String state, boolean resend) {
+        if (item != null && !item.isEmpty() && state != null && (resend || !state.equals(getState(item)))) {
+            synchronized (lastUpdates) {
+                lastUpdates.put(item, state);
+            }
+
             if (mConnected.get()) {
                 Log.v("Habpanelview", "Sending state update for " + item + ": " + state);
 
                 SetItemStateTask t = new SetItemStateTask(mServerURL);
                 t.execute(new ItemState(item, state));
-            } else {
-                Log.v("Habpanelview", "Buffering update of item " + item);
-                synchronized (pendingUpdates) {
-                    pendingUpdates.add(new ItemState(item, state));
-                }
             }
         }
+    }
+
+    public void sendCurrentValues() {
+        Log.v("Habpanelview", "Sending pending updates...");
+        synchronized (lastUpdates) {
+            for (Map.Entry<String, String> entry : lastUpdates.entrySet()) {
+                updateState(entry.getKey(), entry.getValue(), true);
+            }
+        }
+        Log.v("Habpanelview", "Pending updates sent");
     }
 
     /**
@@ -276,7 +293,7 @@ public class ServerConnection implements StatePropagator {
                         l.connected(mServerURL);
                     }
                 }
-                sendPendingUpdates();
+                sendCurrentValues();
                 fetchCurrentItemsState();
             }
         }
@@ -336,17 +353,6 @@ public class ServerConnection implements StatePropagator {
                     }
                 }
             }
-        }
-
-        private void sendPendingUpdates() {
-            Log.v("Habpanelview", "Sending pending updates...");
-            synchronized (pendingUpdates) {
-                for (ItemState state : pendingUpdates) {
-                    updateState(state.mItemName, state.mItemState);
-                }
-                pendingUpdates.clear();
-            }
-            Log.v("Habpanelview", "Pending updates sent");
         }
 
         private synchronized void fetchCurrentItemsState() {

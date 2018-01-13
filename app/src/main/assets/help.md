@@ -24,6 +24,7 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 * FLASH_BLINK n: blinks the flashlight of the back-facing camera with an interval of n milliseconds
 * BLUETOOTH_ON: turn bluetooth on
 * BLUETOOTH_OFF: turn bluetooth off
+* UPDATE_ITEMS: forces an update of all openHAB reporting items
 * ADMIN_LOCK_SCREEN: activates the lock screen (requires the app to be set as device admin in the settings)
 
 ### command log

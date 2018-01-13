@@ -24,6 +24,7 @@ Die Funktionalität kann in drei Bereiche aufgeteilt werden:
 * FLASH_BLINK n: lässt das Blitzlicht der hinteren Kamera im n Millisekunden Intervall blinken
 * BLUETOOTH_ON: schaltet bluetooth ein
 * BLUETOOTH_OFF: schaltet bluetooth aus
+* UPDATE_ITEMS: sendet alle aktuellen Item Werte an openHAB
 * ADMIN_LOCK_SCREEN: aktiviert die Bildschirmsperre (beötigt, das die App in den Einstellungen als Device Admin aktiviert ist)
 
 ### Kommando Log

@@ -14,12 +14,12 @@ public abstract class Average<R extends Number> implements Delayed {
     private final ArrayList<Sample<R>> samples = new ArrayList<>();
     private final String itemName;
 
-    protected int delayInMillis;
-    protected R total;
+    private int delayInMillis;
+    R total;
 
     private long origin = System.currentTimeMillis();
 
-    public Average(String item, int interval, R zero) {
+    Average(String item, int interval, R zero) {
         itemName = item;
         delayInMillis = interval * 1000;
         total = zero;
@@ -66,11 +66,11 @@ public abstract class Average<R extends Number> implements Delayed {
 
     public abstract R divideTotal(int count);
 
-    public String getItemName() {
+    String getItemName() {
         return itemName;
     }
 
-    public void resetTime() {
+    void resetTime() {
         origin = System.currentTimeMillis();
     }
 
@@ -88,7 +88,7 @@ public abstract class Average<R extends Number> implements Delayed {
         return Long.compare(getDelay(TimeUnit.MILLISECONDS), delayed.getDelay(TimeUnit.MILLISECONDS));
     }
 
-    public boolean setInterval(int interval) {
+    boolean setInterval(int interval) {
         if (delayInMillis != interval * 1000) {
             delayInMillis = interval * 1000;
 

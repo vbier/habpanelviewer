@@ -27,11 +27,14 @@ public class AveragePropagator extends Thread {
         mAverages.clear();
     }
 
-    public void addStateToAverage(String item, Integer state, int updateInterval) {
+    public boolean addStateToAverage(String item, Integer state, int updateInterval) {
+        boolean isFirstValue = false;
+
         if (item != null && !item.isEmpty() && state != null) {
             IntAverage avg = (IntAverage) mAverages.get(item);
 
             if (avg == null) {
+                isFirstValue = true;
                 avg = new IntAverage(item, updateInterval);
                 mAverages.put(item, avg);
                 mAvgQueue.add(avg);
@@ -43,6 +46,8 @@ public class AveragePropagator extends Thread {
 
             avg.add(state);
         }
+
+        return isFirstValue;
     }
 
     @Override

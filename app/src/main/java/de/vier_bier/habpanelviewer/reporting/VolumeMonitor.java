@@ -51,6 +51,8 @@ public class VolumeMonitor implements StateUpdateListener {
     }
 
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
+        mVolumeItem = prefs.getString("pref_volume_item", "");
+
         if (mVolumeEnabled != prefs.getBoolean("pref_volume_enabled", false)) {
             mVolumeEnabled = !mVolumeEnabled;
 
@@ -65,7 +67,6 @@ public class VolumeMonitor implements StateUpdateListener {
             }
         }
 
-        mVolumeItem = prefs.getString("pref_volume_item", "");
         mServerConnection.subscribeItems(this, mVolumeItem);
     }
 
