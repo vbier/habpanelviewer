@@ -33,6 +33,7 @@ public class ScreenHandler implements CommandHandler {
     public boolean handleCommand(String cmd) {
         if ("SCREEN_ON".equals(cmd)) {
             screenOn();
+            screenDim(false);
         } else if ("ALLOW_SCREEN_OFF".equals(cmd)) {
             setKeepScreenOn(false);
         } else if ("KEEP_SCREEN_ON".equals(cmd)) {
@@ -52,6 +53,9 @@ public class ScreenHandler implements CommandHandler {
     private void screenDim(final boolean dim) {
         Intent intent = new Intent();
         intent.setClass(mActivity, EmptyActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra("keep", dim);
         mActivity.startActivityForResult(intent, 0);
     }
 

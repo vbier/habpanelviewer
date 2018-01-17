@@ -1,5 +1,6 @@
 package de.vier_bier.habpanelviewer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
@@ -12,36 +13,52 @@ public class EmptyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_empty);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        boolean keep = this.getIntent().getExtras().getBoolean("keep");
+        if (keep) {
+            setContentView(R.layout.activity_empty);
 
-        final WindowManager.LayoutParams layout = getWindow().getAttributes();
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        float screenBrightness = layout.screenBrightness;
-        if (screenBrightness != 0) {
-            mScreenBrightness = screenBrightness;
-        }
+            final WindowManager.LayoutParams layout = getWindow().getAttributes();
 
-        layout.screenBrightness = 0F;
-        getWindow().setAttributes(layout);
-
-        View view = findViewById(R.id.blankView);
-        view.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                finish();
-                return true;
+            float screenBrightness = layout.screenBrightness;
+            if (screenBrightness != 0) {
+                mScreenBrightness = screenBrightness;
             }
-        });
+
+            layout.screenBrightness = 0F;
+            getWindow().setAttributes(layout);
+
+            View view = findViewById(R.id.blankView);
+            view.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+            view.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    finish();
+                    return true;
+                }
+            });
+        } else {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        boolean keep = intent.getExtras().getBoolean("keep");
+        if (!keep) {
+            finish();
+        }
     }
 
     @Override

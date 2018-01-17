@@ -80,7 +80,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".EmptyActivity"></activity>
+        <activity
+            android:name=".EmptyActivity"
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>
