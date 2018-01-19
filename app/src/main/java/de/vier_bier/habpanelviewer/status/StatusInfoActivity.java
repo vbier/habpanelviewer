@@ -49,8 +49,7 @@ public class StatusInfoActivity extends Activity {
             }
         }, 0, 1, TimeUnit.SECONDS);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean showOnLockScreen = prefs.getBoolean("pref_show_on_lock_screen", false);

@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity
 
     private ServerDiscovery mDiscovery;
     private FlashHandler mFlashService;
+    private ScreenHandler mScreenHandler;
     private IMotionDetector mMotionDetector;
     private BatteryMonitor mBatteryMonitor;
     private ConnectedIndicator mConnectedReporter;
@@ -177,9 +178,7 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(MainActivity.this, R.string.sslFailed, Toast.LENGTH_LONG).show();
         }
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -284,11 +283,12 @@ public class MainActivity extends AppCompatActivity
             Log.d("Habpanelview", "Could not create temperature monitor");
         }
 
+        mScreenHandler = new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this);
         mCommandQueue = new CommandQueue(mServerConnection);
         mCommandQueue.addHandler(new InternalCommandHandler(this, mServerConnection));
         mCommandQueue.addHandler(new AdminHandler(this));
         mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
-        mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this));
+        mCommandQueue.addHandler(mScreenHandler);
         mCommandQueue.addHandler(new VolumeHandler(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE)));
         if (mFlashService != null) {
             mCommandQueue.addHandler(mFlashService);
@@ -441,6 +441,8 @@ public class MainActivity extends AppCompatActivity
         mConnectedReporter.updateFromPreferences(prefs);
         mWebView.updateFromPreferences(prefs);
         mServerConnection.updateFromPreferences(prefs);
+
+        mScreenHandler.updateScreenState();
 
         TextureView previewView = ((TextureView) findViewById(R.id.previewView));
         SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
