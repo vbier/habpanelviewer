@@ -1,5 +1,6 @@
 package de.vier_bier.habpanelviewer.command;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -19,15 +20,18 @@ import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
  * Queue for commands sent from openHAB.
  */
 public class CommandQueue implements StateUpdateListener {
-    private final ArrayList<CommandHandler> mHandlers = new ArrayList<>();
+    private Activity mCtx;
     private ServerConnection mServerConnection;
+
+    private final ArrayList<CommandHandler> mHandlers = new ArrayList<>();
     private CommandLog mCmdLog = new CommandLog();
 
     private String mCmdItemName;
 
-    public CommandQueue(ServerConnection serverConnection) {
+    public CommandQueue(Activity ctx, ServerConnection serverConnection) {
         EventBus.getDefault().register(this);
 
+        mCtx = ctx;
         mServerConnection = serverConnection;
     }
 
@@ -52,29 +56,44 @@ public class CommandQueue implements StateUpdateListener {
                     for (CommandHandler mHandler : mHandlers) {
                         try {
                             if (mHandler.handleCommand(value)) {
-                                mCmdLog.add(new CommandInfo(value, true));
+                                addToCmdLog(new CommandInfo(value, true));
                                 return;
                             }
                         } catch (Throwable t) {
                             Log.e("Habpanelview", "unhandled exception", t);
-                            mCmdLog.add(new CommandInfo(value, true, t));
+                            addToCmdLog(new CommandInfo(value, true, t));
                             return;
                         }
                     }
                 }
 
                 Log.w("Habpanelview", "received unhandled command: " + value);
-                mCmdLog.add(new CommandInfo(value, false));
+                addToCmdLog(new CommandInfo(value, false));
             } finally {
                 mServerConnection.updateState(name, "");
             }
         }
     }
 
-    public void updateFromPreferences(SharedPreferences prefs) {
+    private void addToCmdLog(final CommandInfo cmd) {
+        mCtx.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCmdLog.add(cmd);
+            }
+        });
+    }
+
+    public void updateFromPreferences(final SharedPreferences prefs) {
         mCmdItemName = prefs.getString("pref_command_item", "");
 
-        mCmdLog.setSize(prefs.getInt("pref_command_log_size", 100));
+        mCtx.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mCmdLog.setSize(prefs.getInt("pref_command_log_size", 100));
+            }
+        });
+
 
         if (mServerConnection.subscribeItems(this, false, mCmdItemName)) {
             mServerConnection.updateState(mCmdItemName, "");

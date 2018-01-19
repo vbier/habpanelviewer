@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity
 
     private ServerDiscovery mDiscovery;
     private FlashHandler mFlashService;
-    private ScreenHandler mScreenHandler;
     private IMotionDetector mMotionDetector;
     private BatteryMonitor mBatteryMonitor;
     private ConnectedIndicator mConnectedReporter;
@@ -283,8 +282,8 @@ public class MainActivity extends AppCompatActivity
             Log.d("Habpanelview", "Could not create temperature monitor");
         }
 
-        mScreenHandler = new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this);
-        mCommandQueue = new CommandQueue(mServerConnection);
+        ScreenHandler mScreenHandler = new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this);
+        mCommandQueue = new CommandQueue(this, mServerConnection);
         mCommandQueue.addHandler(new InternalCommandHandler(this, mServerConnection));
         mCommandQueue.addHandler(new AdminHandler(this));
         mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));

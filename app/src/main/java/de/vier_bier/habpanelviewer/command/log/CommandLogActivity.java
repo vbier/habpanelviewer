@@ -44,6 +44,7 @@ public class CommandLogActivity extends Activity {
         final ListView listView = findViewById(R.id.command_log_listview);
 
         adapter = new CommandInfoAdapter(this, cmdLog.getCommands());
+        cmdLog.addListener(adapter);
         listView.setAdapter(adapter);
     }
 
@@ -84,7 +85,7 @@ public class CommandLogActivity extends Activity {
         EventBus.getDefault().post(logClient);
     }
 
-    private class CommandInfoAdapter extends BaseAdapter {
+    private class CommandInfoAdapter extends BaseAdapter implements CommandLog.CommandLogListener {
         private final Activity mContext;
         private final ArrayList<CommandInfo> mCommands;
         private final DateFormat mFormat = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.MEDIUM);
@@ -143,6 +144,16 @@ public class CommandLogActivity extends Activity {
         @Override
         public CharSequence[] getAutofillOptions() {
             return new CharSequence[0];
+        }
+
+        @Override
+        public void logChanged() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    notifyDataSetChanged();
+                }
+            });
         }
     }
 }
