@@ -5,7 +5,6 @@ import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
-import android.util.Log;
 
 import de.vier_bier.habpanelviewer.AdminReceiver;
 import de.vier_bier.habpanelviewer.EmptyActivity;
@@ -60,8 +59,6 @@ public class ScreenHandler implements CommandHandler {
     }
 
     public void setKeepScreenOn(final boolean on) {
-        Log.v("ScreenController", "setKeepScreenOn: on=" + on);
-
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

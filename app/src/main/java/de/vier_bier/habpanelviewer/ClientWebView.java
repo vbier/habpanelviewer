@@ -86,6 +86,19 @@ public class ClientWebView extends WebView {
         }
     }
 
+    @Override
+    public void setKeepScreenOn(boolean keepScreenOn) {
+        // disable chromium power save blocker
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        for (StackTraceElement ele : stackTraceElements) {
+            if (ele.getClassName().contains("PowerSaveBlocker")) {
+                return;
+            }
+        }
+
+        super.setKeepScreenOn(keepScreenOn);
+    }
+
     synchronized void initialize() {
         setWebChromeClient(new WebChromeClient());
 

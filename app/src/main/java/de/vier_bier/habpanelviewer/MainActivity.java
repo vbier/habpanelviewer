@@ -442,8 +442,6 @@ public class MainActivity extends AppCompatActivity
         mWebView.updateFromPreferences(prefs);
         mServerConnection.updateFromPreferences(prefs);
 
-        mScreenHandler.updateScreenState();
-
         TextureView previewView = ((TextureView) findViewById(R.id.previewView));
         SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
         boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
