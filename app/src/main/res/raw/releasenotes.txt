@@ -4,7 +4,7 @@
 - reduce CPU usage
 - fix bug where adding a certificate exception did not lead to reconnect of SSE connection
 - add command item and change all device control functionality to use the command item
-- add further commands: FLASH_ON, FLASH_OFF, FLASH_BLINK, RESTART, SCREEN_ON, KEEP_SCREEN_ON, ALLOW_SCREEN_OFF, MUTE, UNMUTE, SET_VOLUME, BLUETOOTH_ON, BLUETOOTH_OFF, RESTART, SCREEN_DIM, UPDATE_ITEMS
+- add further commands: FLASH_ON, FLASH_OFF, FLASH_BLINK, RESTART, SCREEN_ON, KEEP_SCREEN_ON, ALLOW_SCREEN_OFF, MUTE, UNMUTE, SET_VOLUME, BLUETOOTH_ON, BLUETOOTH_OFF, RESTART, SCREEN_DIM, UPDATE_ITEMS, START_APP
 - add device admin functionality and ADMIN_LOCK_SCREEN command
 - add command log screen showing processed commands
 - improve german translation

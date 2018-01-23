@@ -21,10 +21,11 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 * FLASH_ON: turns on the flashlight of the back-facing camera
 * FLASH_OFF: turns off the flashlight of the back-facing camera
 * FLASH_BLINK: blinks the flashlight of the back-facing camera with an interval of one second
-* FLASH_BLINK n: blinks the flashlight of the back-facing camera with an interval of n milliseconds
+* FLASH_BLINK *n*: blinks the flashlight of the back-facing camera with an interval of *n* milliseconds
 * BLUETOOTH_ON: turn bluetooth on
 * BLUETOOTH_OFF: turn bluetooth off
 * UPDATE_ITEMS: forces an update of all openHAB reporting items
+* START_APP *app*: starts the app with the package name *app*
 * ADMIN_LOCK_SCREEN: activates the lock screen (requires the app to be set as device admin in the settings)
 
 ### command log
