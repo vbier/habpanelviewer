@@ -45,7 +45,7 @@ public class SettingsFragment extends PreferenceFragment {
     private DevicePolicyManager mDPM;
 
     private static final String[] ITEMS_PREFS = new String[]{
-            "pref_motion_item", "pref_proximity_item", "pref_volume_item",
+            "pref_motion_item", "pref_proximity_item", "pref_volume_item", "pref_connected_item",
             "pref_pressure_item", "pref_brightness_item", "pref_temperature_item", "pref_command_item",
             "pref_battery_item", "pref_battery_charging_item", "pref_battery_level_item"};
 

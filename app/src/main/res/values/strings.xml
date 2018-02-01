@@ -184,7 +184,7 @@
     <string name="couldNotFindBackFlash">Could not find back facing camera with flash!</string>
     <string name="launch">Launch %s</string>
     <string name="left">left</string>
-    <string name="updateInterval">average interval is %d seconds</string>
+    <string name="updateInterval">interval is %d seconds</string>
     <string name="deviceAdmin">HABPanelViewer</string>
     <string name="deviceAdminDescription">Is needed for immediate screen locking</string>
     <string name="device_not_muted">Device is not muted!</string>

@@ -49,10 +49,11 @@
                 android:key="pref_connected_enabled"
                 android:summary="@string/pref_connected_enabled_summ"
                 android:title="@string/pref_connected_enabled" />
-            <EditTextPreference
+            <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
                 android:dependency="pref_connected_enabled"
                 android:key="pref_connected_item"
                 android:summary="@string/pref_connected_item_summ"
+                android:inputType="textPhonetic"
                 android:title="@string/pref_connected_item" />
             <EditTextPreference
                 android:dependency="pref_connected_enabled"

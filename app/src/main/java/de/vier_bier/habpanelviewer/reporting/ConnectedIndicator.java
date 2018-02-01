@@ -7,6 +7,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.vier_bier.habpanelviewer.R;
@@ -26,7 +28,7 @@ public class ConnectedIndicator implements StateUpdateListener {
     private ServerConnection mServerConnection;
     private ConnectedReportingThread mReportConnection;
 
-    private long fStatus;
+    private long mStatus;
     private String mStatusState;
 
     public ConnectedIndicator(Context ctx, ServerConnection serverConnection) {
@@ -40,8 +42,11 @@ public class ConnectedIndicator implements StateUpdateListener {
     public void onMessageEvent(ApplicationStatus status) {
         if (mEnabled) {
             String state = mCtx.getString(R.string.enabled);
+            state += "\n" + mCtx.getString(R.string.updateInterval, mInterval);
+
             if (!mStatusItem.isEmpty()) {
-                state += "\n" + mStatusItem + "=" + mStatusState;
+                state += "\n" + SimpleDateFormat.getDateTimeInstance().format(new Date(mStatus))
+                        + " [" + mStatusItem + "=" + mStatusState + "]";
             }
 
             status.set(mCtx.getString(R.string.pref_connected), state);
@@ -71,11 +76,12 @@ public class ConnectedIndicator implements StateUpdateListener {
             }
         }
 
+        mStatusItem = prefs.getString("pref_connected_item", "");
+
         if (intervalChanged && !started && mReportConnection != null) {
             mReportConnection.reportNow();
         }
 
-        mStatusItem = prefs.getString("pref_connected_item", "");
         mServerConnection.subscribeItems(this, mStatusItem);
     }
 
@@ -92,22 +98,22 @@ public class ConnectedIndicator implements StateUpdateListener {
     }
 
     private class ConnectedReportingThread extends Thread {
-        private AtomicBoolean fRunning = new AtomicBoolean(true);
+        private final AtomicBoolean fRunning = new AtomicBoolean(true);
 
-        public ConnectedReportingThread() {
+        ConnectedReportingThread() {
             super("ConnectedReportingThread");
             setDaemon(true);
             start();
         }
 
-        public void stopReporting() {
+        void stopReporting() {
             synchronized (fRunning) {
                 fRunning.set(false);
                 fRunning.notifyAll();
             }
         }
 
-        public void reportNow() {
+        void reportNow() {
             synchronized (fRunning) {
                 fRunning.notifyAll();
             }
@@ -116,8 +122,8 @@ public class ConnectedIndicator implements StateUpdateListener {
         @Override
         public void run() {
             while (fRunning.get()) {
-                fStatus = System.currentTimeMillis();
-                mServerConnection.updateState(mStatusItem, String.valueOf(fStatus));
+                mStatus = System.currentTimeMillis();
+                mServerConnection.updateState(mStatusItem, String.valueOf(mStatus));
 
                 synchronized (fRunning) {
                     try {
