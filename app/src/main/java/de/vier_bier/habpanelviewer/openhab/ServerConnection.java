@@ -32,14 +32,14 @@ import io.opensensors.sse.client.MessageEvent;
  * Client for openHABs SSE service. Listens for item value changes.
  */
 public class ServerConnection implements StatePropagator {
-    private Context mCtx;
+    private final Context mCtx;
     private String mServerURL;
     private EventSource mEventSource;
-    private ConnectionUtil.CertChangedListener mCertListener;
+    private final ConnectionUtil.CertChangedListener mCertListener;
 
     private final HashMap<String, ArrayList<StateUpdateListener>> mSubscriptions = new HashMap<>();
     private final HashMap<String, ArrayList<StateUpdateListener>> mCmdSubscriptions = new HashMap<>();
-    private HashMap<String, String> mValues = new HashMap<>();
+    private final HashMap<String, String> mValues = new HashMap<>();
 
     private SSEHandler client;
     private FetchItemStateTask task;
@@ -47,7 +47,7 @@ public class ServerConnection implements StatePropagator {
     private final HashMap<String, String> lastUpdates = new HashMap<>();
     private final AveragePropagator averagePropagator = new AveragePropagator(this);
 
-    private BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -110,8 +110,8 @@ public class ServerConnection implements StatePropagator {
         subscribeItems(mSubscriptions, l, true, names);
     }
 
-    private boolean subscribeItems(HashMap<String, ArrayList<StateUpdateListener>> subscriptions,
-                                   StateUpdateListener l, boolean initialValue, String... names) {
+    private void subscribeItems(HashMap<String, ArrayList<StateUpdateListener>> subscriptions,
+                                StateUpdateListener l, boolean initialValue, String... names) {
         boolean itemsChanged = false;
 
         final HashSet<String> newItems = new HashSet<>();
@@ -155,7 +155,6 @@ public class ServerConnection implements StatePropagator {
             reconnect();
         }
 
-        return itemsChanged;
     }
 
     public void updateFromPreferences(SharedPreferences prefs) {
@@ -184,7 +183,7 @@ public class ServerConnection implements StatePropagator {
     }
 
     private synchronized void connect() {
-        if (!mServerURL.isEmpty() && isConnected()) {
+        if (!mServerURL.isEmpty() && !isConnected()) {
             String topic = buildTopic();
 
             if (topic.length() > 0) {
@@ -310,7 +309,7 @@ public class ServerConnection implements StatePropagator {
     }
 
     private class SSEHandler implements EventSourceHandler {
-        private AtomicBoolean mConnected = new AtomicBoolean(false);
+        private final AtomicBoolean mConnected = new AtomicBoolean(false);
 
         private SSEHandler() {
         }

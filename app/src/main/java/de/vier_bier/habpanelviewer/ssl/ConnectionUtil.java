@@ -42,7 +42,7 @@ public class ConnectionUtil {
     private static LocalTrustManager mTrustManager;
     private static SSLContext mSslContext;
 
-    private static ArrayList<CertChangedListener> mListeners = new ArrayList<>();
+    private static final ArrayList<CertChangedListener> mListeners = new ArrayList<>();
 
     public static synchronized void initialize(Context ctx) throws GeneralSecurityException, IOException {
         localTrustStoreFile = new File(ctx.getFilesDir(), "localTrustStore.bks");
@@ -149,11 +149,8 @@ public class ConnectionUtil {
     private static KeyStore loadTrustStore() {
         try {
             KeyStore localTrustStore = KeyStore.getInstance("BKS");
-            InputStream in = new FileInputStream(localTrustStoreFile);
-            try {
+            try (InputStream in = new FileInputStream(localTrustStoreFile)) {
                 localTrustStore.load(in, TRUSTSTORE_PASSWORD.toCharArray());
-            } finally {
-                in.close();
             }
 
             return localTrustStore;
@@ -207,14 +204,14 @@ public class ConnectionUtil {
 
             String result = Integer.toString(leInt(digest), 16);
             if (result.length() > 8) {
-                StringBuffer buff = new StringBuffer();
+                StringBuilder builder = new StringBuilder();
                 int padding = 8 - result.length();
                 for (int i = 0; i < padding; i++) {
-                    buff.append("0");
+                    builder.append("0");
                 }
-                buff.append(result);
+                builder.append(result);
 
-                return buff.toString();
+                return builder.toString();
             }
 
             return result;
@@ -225,7 +222,7 @@ public class ConnectionUtil {
 
     private static int leInt(byte[] bytes) {
         int offset = 0;
-        return ((bytes[offset++] & 0xff) << 0)
+        return ((bytes[offset++] & 0xff))
                 | ((bytes[offset++] & 0xff) << 8)
                 | ((bytes[offset++] & 0xff) << 16)
                 | ((bytes[offset] & 0xff) << 24);

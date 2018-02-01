@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity
     private ClientWebView mWebView;
     private TextView mTextView;
     private ServerConnection mServerConnection;
-    private Thread.UncaughtExceptionHandler exceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+    private final Thread.UncaughtExceptionHandler exceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 
     private ServerDiscovery mDiscovery;
     private FlashHandler mFlashService;
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         // inflate navigation header to make sure the textview holding the connection text is created
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         LinearLayout navHeader = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
         navigationView.addHeaderView(navHeader);
         navigationView.setNavigationItemSelectedListener(this);
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
 
-            final SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
+            final SurfaceView motionView = findViewById(R.id.motionView);
 
             int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
             MotionVisualizer mv = new MotionVisualizer(motionView, navigationView, prefs, scaledSize);
@@ -298,7 +298,7 @@ public class MainActivity extends AppCompatActivity
 
         mTextView = navHeader.findViewById(R.id.textView);
 
-        mWebView = ((ClientWebView) findViewById(R.id.activity_main_webview));
+        mWebView = findViewById(R.id.activity_main_webview);
         mWebView.initialize(new ConnectionListener() {
             @Override
             public void connected(String url) {
@@ -346,13 +346,13 @@ public class MainActivity extends AppCompatActivity
         try {
             PackageInfo pi = pm.getPackageInfo("com.google.android.webview", 0);
             webview += "com.google.android.webview " + pi.versionName + "/" + pi.versionCode + "\n";
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (PackageManager.NameNotFoundException ignored) {
         }
 
         try {
             PackageInfo pi = pm.getPackageInfo("com.android.webview", 0);
             webview += "com.android.webview " + pi.versionName + "/" + pi.versionCode + "\n";
-        } catch (PackageManager.NameNotFoundException e1) {
+        } catch (PackageManager.NameNotFoundException ignored) {
         }
 
         if (webview.isEmpty()) {
@@ -408,7 +408,7 @@ public class MainActivity extends AppCompatActivity
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         }
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
         final String menuPos = prefs.getString("pref_menu_position", "");
         if (menuPos.equalsIgnoreCase(getString(R.string.left))) {
@@ -452,8 +452,8 @@ public class MainActivity extends AppCompatActivity
         mWebView.updateFromPreferences(prefs);
         mServerConnection.updateFromPreferences(prefs);
 
-        TextureView previewView = ((TextureView) findViewById(R.id.previewView));
-        SurfaceView motionView = ((SurfaceView) findViewById(R.id.motionView));
+        TextureView previewView = findViewById(R.id.previewView);
+        SurfaceView motionView = findViewById(R.id.motionView);
         boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
         boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
         if (motionDetection) {
@@ -494,7 +494,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (mWebView.canGoBack()) {
@@ -539,7 +539,7 @@ public class MainActivity extends AppCompatActivity
             Runtime.getRuntime().exit(0);
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawers();
         return true;
     }

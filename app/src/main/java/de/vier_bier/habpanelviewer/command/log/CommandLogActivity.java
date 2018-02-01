@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import de.vier_bier.habpanelviewer.R;
 
 /**
- * Activity showing the help markdown file.
+ * Activity showing the command log.
  */
 public class CommandLogActivity extends Activity {
     private ScheduledExecutorService executor;

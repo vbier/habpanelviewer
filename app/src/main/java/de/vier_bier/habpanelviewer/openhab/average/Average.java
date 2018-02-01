@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Numeric delayed average.
  */
-public abstract class Average<R extends Number> implements Delayed {
+abstract class Average<R extends Number> implements Delayed {
     private final ArrayList<Sample<R>> samples = new ArrayList<>();
     private final String itemName;
 
@@ -60,11 +60,11 @@ public abstract class Average<R extends Number> implements Delayed {
         }
     }
 
-    public abstract void removeFromTotal(R value);
+    protected abstract void removeFromTotal(R value);
 
-    public abstract void addToTotal(R value);
+    protected abstract void addToTotal(R value);
 
-    public abstract R divideTotal(int count);
+    protected abstract R divideTotal(int count);
 
     String getItemName() {
         return itemName;

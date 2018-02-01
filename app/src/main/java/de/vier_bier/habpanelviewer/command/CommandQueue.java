@@ -20,13 +20,11 @@ import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
  * Queue for commands sent from openHAB.
  */
 public class CommandQueue implements StateUpdateListener {
-    private Activity mCtx;
-    private ServerConnection mServerConnection;
+    private final Activity mCtx;
+    private final ServerConnection mServerConnection;
 
     private final ArrayList<CommandHandler> mHandlers = new ArrayList<>();
-    private CommandLog mCmdLog = new CommandLog();
-
-    private String mCmdItemName;
+    private final CommandLog mCmdLog = new CommandLog();
 
     public CommandQueue(Activity ctx, ServerConnection serverConnection) {
         EventBus.getDefault().register(this);
@@ -81,7 +79,7 @@ public class CommandQueue implements StateUpdateListener {
     }
 
     public void updateFromPreferences(final SharedPreferences prefs) {
-        mCmdItemName = prefs.getString("pref_command_item", "");
+        String mCmdItemName = prefs.getString("pref_command_item", "");
 
         mCtx.runOnUiThread(new Runnable() {
             @Override

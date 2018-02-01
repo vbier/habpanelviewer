@@ -5,9 +5,9 @@ package de.vier_bier.habpanelviewer.status;
  */
 public class StatusItem {
     private static long COUNTER;
-    private long id = COUNTER++;
+    private final long id = COUNTER++;
 
-    private String mName;
+    private final String mName;
     private String mValue;
 
     public StatusItem(String name, String value) {

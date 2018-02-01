@@ -35,7 +35,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     private final AtomicReference<D> mPreview = new AtomicReference<>();
     private final AtomicBoolean mStopped = new AtomicBoolean(false);
 
-    Activity mContext;
+    final Activity mContext;
     SurfaceTexture mSurface;
     boolean mEnabled;
     Point mPreviewSize;
@@ -46,7 +46,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     private int mLeniency = 20;
     private int mRotationCorrection;
     private int mDeviceRotation;
-    private MotionReporter mListener;
+    private final MotionReporter mListener;
     private int mDetectionCount = 0;
     private int mFrameCount = 0;
 
@@ -184,11 +184,11 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         mPreview.set(p);
     }
 
-    public boolean previewAvailable() {
-        return mPreview.get() != null;
+    boolean previewMissing() {
+        return mPreview.get() == null;
     }
 
-    public D getPreview() {
+    D getPreview() {
         return mPreview.getAndSet(null);
     }
 
@@ -212,7 +212,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         return correctSensorRotation(differing);
     }
 
-    protected synchronized void startDetection(TextureView textureView, int deviceDegrees) throws CameraException {
+    synchronized void startDetection(TextureView textureView, int deviceDegrees) throws CameraException {
         stopDetection();
 
         Log.d(TAG, "starting detection");

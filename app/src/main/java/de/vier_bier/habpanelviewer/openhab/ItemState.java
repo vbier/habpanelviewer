@@ -3,7 +3,7 @@ package de.vier_bier.habpanelviewer.openhab;
 /**
  * Item with state.
  */
-public class ItemState {
+class ItemState {
     final String mItemName;
     final String mItemState;
 
@@ -19,10 +19,6 @@ public class ItemState {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof ItemState)) {
-            return false;
-        }
-
-        return mItemName == null ? obj == null : mItemName.equals(((ItemState) obj).mItemName);
+        return obj instanceof ItemState && mItemName != null && mItemName.equals(((ItemState) obj).mItemName);
     }
 }

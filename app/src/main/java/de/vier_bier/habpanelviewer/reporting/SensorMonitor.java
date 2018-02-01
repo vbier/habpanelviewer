@@ -20,12 +20,12 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Abstract base class for device sensor monitors.
  */
 public abstract class SensorMonitor implements SensorEventListener, StateUpdateListener {
-    protected Context mCtx;
-    private SensorManager mSensorManager;
-    ServerConnection mServerConnection;
-    Sensor mSensor;
+    final Context mCtx;
+    private final SensorManager mSensorManager;
+    final ServerConnection mServerConnection;
+    final Sensor mSensor;
 
-    private String mPreferenceKey;
+    private final String mPreferenceKey;
     boolean mSensorEnabled;
 
     String mSensorItem;

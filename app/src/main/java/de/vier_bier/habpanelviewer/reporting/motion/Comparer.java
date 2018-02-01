@@ -9,11 +9,11 @@ import java.util.ArrayList;
  * computing the brightness average and comparing that.
  */
 class Comparer {
-    private int boxes;
+    private final int boxes;
 
-    private Point[] boxStart;
-    private Point[] boxEnd;
-    private int leniency;
+    private final Point[] boxStart;
+    private final Point[] boxEnd;
+    private final int leniency;
 
     Comparer(int width, int height, int boxes, int leniency) {
         this.boxes = boxes;

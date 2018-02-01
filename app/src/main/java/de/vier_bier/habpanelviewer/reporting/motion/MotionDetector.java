@@ -82,7 +82,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
                 mCamera.setPreviewCallback(new Camera.PreviewCallback() {
                     @Override
                     public void onPreviewFrame(byte[] bytes, Camera camera) {
-                        if (mCamera == camera && !previewAvailable()) {
+                        if (mCamera == camera && previewMissing()) {
                             Log.v(TAG, "preview image available: size " + mPreviewSize.x + "x" + mPreviewSize.y);
 
                             setPreview(new ImageData(bytes, mPreviewSize.x, mPreviewSize.y));
@@ -122,20 +122,20 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
 
     @Override
     protected String getCameraInfo() {
-        String camStr = mContext.getString(R.string.camApiPreLollipop) + "\n";
+        StringBuilder camStr = new StringBuilder(mContext.getString(R.string.camApiPreLollipop) + "\n");
         Camera.CameraInfo info = new Camera.CameraInfo();
         for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
             Camera.getCameraInfo(i, info);
-            camStr += mContext.getString(R.string.cameraId, String.valueOf(i)) + ": ";
+            camStr.append(mContext.getString(R.string.cameraId, String.valueOf(i))).append(": ");
 
             boolean hasFlash = mContext.getApplicationContext().getPackageManager()
                     .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
 
-            camStr += (hasFlash ? mContext.getString(R.string.has) : mContext.getString(R.string.no)) + " " + mContext.getString(R.string.flash) + ", ";
-            camStr += (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK ?
-                    mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing)) + "\n";
+            camStr.append(hasFlash ? mContext.getString(R.string.has) : mContext.getString(R.string.no)).append(" ").append(mContext.getString(R.string.flash)).append(", ");
+            camStr.append(info.facing == Camera.CameraInfo.CAMERA_FACING_BACK ?
+                    mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing)).append("\n");
         }
 
-        return camStr.trim();
+        return camStr.toString().trim();
     }
 }

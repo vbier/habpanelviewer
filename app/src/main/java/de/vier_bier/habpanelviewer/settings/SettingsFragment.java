@@ -50,7 +50,7 @@ public class SettingsFragment extends PreferenceFragment {
             "pref_battery_item", "pref_battery_charging_item", "pref_battery_level_item"};
 
     private ItemsAsyncTaskLoader mLoader;
-    private LoaderManager.LoaderCallbacks<List<String>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<String>>() {
+    private final LoaderManager.LoaderCallbacks<List<String>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<String>>() {
         @Override
         public Loader<List<String>> onCreateLoader(int i, Bundle bundle) {
             return mLoader;
@@ -106,7 +106,7 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences);
 
         mDPM = (DevicePolicyManager) getActivity().getSystemService(Context.DEVICE_POLICY_SERVICE);
-        mLoader = new ItemsAsyncTaskLoader(getActivity(), "");
+        mLoader = new ItemsAsyncTaskLoader(getActivity());
 
         // disable preferences if functionality is not available
         if (!motionEnabled) {

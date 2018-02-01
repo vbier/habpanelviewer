@@ -4,9 +4,9 @@ package de.vier_bier.habpanelviewer.reporting.motion;
  * Image data consisting of the data bytes and the image size.
  */
 class ImageData {
-    private byte[] data;
-    private int width;
-    private int height;
+    private final byte[] data;
+    private final int width;
+    private final int height;
 
     ImageData(byte[] bytes, int w, int h) {
         data = bytes;

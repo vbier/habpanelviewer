@@ -1,11 +1,10 @@
 package de.vier_bier.habpanelviewer.command.log;
 
 /**
- * Created by volla on 11.01.18.
+ * Info about an received command.
  */
-
 public class CommandInfo {
-    private long mTime = System.currentTimeMillis();
+    private final long mTime = System.currentTimeMillis();
     private final String mCommand;
     private final boolean mHandled;
     private final Throwable mException;

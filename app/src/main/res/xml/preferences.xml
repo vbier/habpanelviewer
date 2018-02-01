@@ -22,7 +22,7 @@
                 android:dependency="pref_app_enabled"
                 android:key="pref_app_package"
                 android:summary="@string/pref_app_package_summ"
-                android:title="@string/pref_app" />
+                android:title="@string/pref_app_package" />
         </PreferenceScreen>
         <PreferenceScreen
             android:key="pref_restart"

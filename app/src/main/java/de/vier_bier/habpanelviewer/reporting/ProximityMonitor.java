@@ -27,11 +27,11 @@ public class ProximityMonitor extends SensorMonitor {
         Log.v("ProximityMonitor", "onSensorChanged" + distance);
 
         if (distance < mSensor.getMaximumRange()) {
-            if (mProximity == null || !mProximity.booleanValue()) {
+            if (mProximity == null || !mProximity) {
                 mProximity = true;
                 mServerConnection.updateState(mSensorItem, "CLOSED");
             }
-        } else if (mProximity == null || mProximity.booleanValue()) {
+        } else if (mProximity == null || mProximity) {
             mProximity = false;
             mServerConnection.updateState(mSensorItem, "OPEN");
         }

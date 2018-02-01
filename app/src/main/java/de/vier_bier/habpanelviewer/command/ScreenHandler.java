@@ -58,7 +58,7 @@ public class ScreenHandler implements CommandHandler {
         mActivity.startActivityForResult(intent, 0);
     }
 
-    public void setKeepScreenOn(final boolean on) {
+    private void setKeepScreenOn(final boolean on) {
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

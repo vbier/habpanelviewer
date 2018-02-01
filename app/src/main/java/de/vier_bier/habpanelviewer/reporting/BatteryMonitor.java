@@ -22,10 +22,10 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Monitors battery state and reports to openHAB.
  */
 public class BatteryMonitor implements StateUpdateListener {
-    private Context mCtx;
-    private ServerConnection mServerConnection;
+    private final Context mCtx;
+    private final ServerConnection mServerConnection;
 
-    private BroadcastReceiver mBatteryReceiver;
+    private final BroadcastReceiver mBatteryReceiver;
     private boolean mBatteryEnabled;
 
     private String mBatteryLowItem;

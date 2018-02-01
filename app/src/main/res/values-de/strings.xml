@@ -35,8 +35,6 @@
     <string name="pref_max_restarts_summ">Die Anzahl der erlaubten Neustarts bevor der automatische Neustart deaktiviert wird</string>
     <string name="pref_restart_enabled">Neustart bei Absturz</string>
     <string name="pref_restart_enabled_summ">HABPanelViewer wird bei einem Absturz automatisch neu gestartet</string>
-    <string name="pref_mdns_https_summ">Versuche eine gesicherte Verbindung zu finden wenn der Server gesucht wird</string>
-    <string name="pref_mdns_https">HTTPS Serversuche</string>
     <string name="pref_menu_position">Menü Position</string>
     <string name="pref_menu_position_summ">Die Seite von der das Menü geöffnet werden kann</string>
 
@@ -124,7 +122,7 @@
     <string name="buildDate">Build Datum:</string>
     <string name="unavailable">nicht verfügbar</string>
     <string name="restartCounter">Neustart Zähler</string>
-    <string name="waitingNetwork">Warte auf Netzwerk Verbindung...</string>
+    <string name="waitingNetwork">Warte auf Netzwerk Verbindung…</string>
     <string name="notConnected">Das Gerät ist momentan nicht mit dem Netzwerk verbunden. Sobald die Verbindung hergestellt wurde, wird HABPanel automatisch geladen.</string>
     <string name="unknownHost">unbekannter Rechner</string>
     <string name="notValid">ist nicht gültig</string>

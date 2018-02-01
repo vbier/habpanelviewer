@@ -16,8 +16,8 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 public class InternalCommandHandler implements CommandHandler {
     private final Pattern START_PATTERN = Pattern.compile("START_APP (.+)");
 
-    private MainActivity mActivity;
-    private ServerConnection mConnection;
+    private final MainActivity mActivity;
+    private final ServerConnection mConnection;
 
     public InternalCommandHandler(MainActivity mainActivity, ServerConnection connection) {
         mActivity = mainActivity;

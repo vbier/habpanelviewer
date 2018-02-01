@@ -42,7 +42,7 @@ public class ClientWebView extends WebView {
     private String mServerURL;
     private String mStartPanel;
 
-    private BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);

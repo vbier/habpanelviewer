@@ -4,7 +4,7 @@ import android.app.admin.DeviceAdminReceiver;
 import android.content.ComponentName;
 
 /**
- * Created by volla on 09.01.18.
+ * Specific implementation of a DeviceAdminReceiver.
  */
 public class AdminReceiver extends DeviceAdminReceiver {
     public static final ComponentName COMP =

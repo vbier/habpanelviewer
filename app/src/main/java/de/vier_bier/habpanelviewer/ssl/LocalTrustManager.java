@@ -12,7 +12,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-public class LocalTrustManager implements X509TrustManager {
+class LocalTrustManager implements X509TrustManager {
 
     static class LocalStoreX509TrustManager implements X509TrustManager {
 
@@ -51,7 +51,7 @@ public class LocalTrustManager implements X509TrustManager {
         }
     }
 
-    static X509TrustManager findX509TrustManager(TrustManagerFactory tmf) {
+    private static X509TrustManager findX509TrustManager(TrustManagerFactory tmf) {
         TrustManager tms[] = tmf.getTrustManagers();
         for (TrustManager tm : tms) {
             if (tm instanceof X509TrustManager) {

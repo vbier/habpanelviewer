@@ -53,7 +53,6 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
     private CameraCaptureSession mCaptureSession;
-    private ImageReader mImageReader; // do not use local variable, as this gets garbage collected
 
     private CameraDevice mCamera;
 
@@ -173,7 +172,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
             configureTransform(previewView);
 
-            mImageReader = ImageReader.newInstance(mPreviewSize.x, mPreviewSize.y,
+            ImageReader mImageReader = ImageReader.newInstance(mPreviewSize.x, mPreviewSize.y,
                     ImageFormat.YUV_420_888, 2);
             mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
                 @Override
@@ -182,7 +181,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
                     if (i != null) {
                         // only process if we do not yet have a buffered preview image
-                        if (!previewAvailable()) {
+                        if (previewMissing()) {
                             Log.v(TAG, "preview image available: size " + i.getWidth() + "x" + i.getHeight());
 
                             ByteBuffer luma = i.getPlanes()[0].getBuffer();
@@ -263,25 +262,24 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
     @Override
     protected String getCameraInfo() {
-        String camStr = mContext.getString(R.string.camApi2) + "\n";
+        StringBuilder camStr = new StringBuilder(mContext.getString(R.string.camApi2) + "\n");
         CameraManager camManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         try {
             for (String camId : camManager.getCameraIdList()) {
-                camStr += mContext.getString(R.string.cameraId, camId) + ": ";
+                camStr.append(mContext.getString(R.string.cameraId, camId)).append(": ");
 
                 CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
                 Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-                camStr += (hasFlash ? mContext.getString(R.string.has) : mContext.getString(R.string.no))
-                        + " " + mContext.getString(R.string.flash) + ", ";
-                camStr += (facing == CameraCharacteristics.LENS_FACING_BACK ?
-                        mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing)) + "\n";
+                camStr.append(hasFlash ? mContext.getString(R.string.has) : mContext.getString(R.string.no)).append(" ").append(mContext.getString(R.string.flash)).append(", ");
+                camStr.append(facing == CameraCharacteristics.LENS_FACING_BACK ?
+                        mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing)).append("\n");
             }
         } catch (CameraAccessException e) {
-            camStr = mActivity.getString(R.string.failedAccessCamera) + ":" + e.getMessage();
+            camStr = new StringBuilder(mActivity.getString(R.string.failedAccessCamera) + ":" + e.getMessage());
         }
 
-        return camStr.trim();
+        return camStr.toString().trim();
     }
 }

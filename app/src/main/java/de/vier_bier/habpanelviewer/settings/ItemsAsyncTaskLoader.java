@@ -20,13 +20,12 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 /**
  * Async Task Loader for loading list of openHAB items via rest API.
  */
-public class ItemsAsyncTaskLoader extends AsyncTaskLoader<List<String>> {
-    private String mServerUrl;
+class ItemsAsyncTaskLoader extends AsyncTaskLoader<List<String>> {
+    private String mServerUrl = "";
     private List<String> mData;
 
-    ItemsAsyncTaskLoader(Context context, String serverUrl) {
+    ItemsAsyncTaskLoader(Context context) {
         super(context);
-        mServerUrl = serverUrl;
     }
 
     void setServerUrl(String url) {

@@ -14,9 +14,9 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 /**
  * Asynchronous task that fetches the value of an openHAB item from the openHAB rest API.
  */
-public class FetchItemStateTask extends AsyncTask<String, Void, Void> {
-    private String serverUrl;
-    private SubscriptionListener subscriptionListener;
+class FetchItemStateTask extends AsyncTask<String, Void, Void> {
+    private final String serverUrl;
+    private final SubscriptionListener subscriptionListener;
 
     public FetchItemStateTask(String url, SubscriptionListener l) {
         serverUrl = url;
@@ -27,7 +27,7 @@ public class FetchItemStateTask extends AsyncTask<String, Void, Void> {
     @Override
     protected final Void doInBackground(String... itemNames) {
         for (String itemName : itemNames) {
-            String response = "";
+            StringBuilder response = new StringBuilder();
 
             try {
                 HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(serverUrl + "/rest/items/" + itemName + "/state");
@@ -38,13 +38,13 @@ public class FetchItemStateTask extends AsyncTask<String, Void, Void> {
 
                     int bytesRead;
                     while (!isCancelled() && (bytesRead = in.read(contents)) != -1) {
-                        response += new String(contents, 0, bytesRead);
+                        response.append(new String(contents, 0, bytesRead));
                     }
                 } finally {
                     urlConnection.disconnect();
                 }
 
-                subscriptionListener.itemUpdated(itemName, response);
+                subscriptionListener.itemUpdated(itemName, response.toString());
             } catch (FileNotFoundException e) {
                 subscriptionListener.itemInvalid(itemName);
                 Log.e("Habpanelview", "Failed to obtain state for item " + itemName + ". Item not found.");

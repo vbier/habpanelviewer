@@ -13,8 +13,8 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 /**
  * Asynchronous task that sets the value of an openHAB item using the openHAB rest API.
  */
-public class SetItemStateTask extends AsyncTask<ItemState, Void, Void> {
-    private String serverUrl;
+class SetItemStateTask extends AsyncTask<ItemState, Void, Void> {
+    private final String serverUrl;
 
     public SetItemStateTask(String url) {
         serverUrl = url;

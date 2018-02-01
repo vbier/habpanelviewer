@@ -39,8 +39,6 @@
     <string name="pref_max_restarts_summ">The number of restarts until auto restart is turned off</string>
     <string name="pref_restart_enabled">Restart on crash</string>
     <string name="pref_restart_enabled_summ">HABPanelViewer is automatically restarted after a crash</string>
-    <string name="pref_mdns_https_summ">Try to find secure connection when performing discovery</string>
-    <string name="pref_mdns_https">HTTPS discovery</string>
     <string name="pref_menu_position">Menu Position</string>
     <string name="pref_menu_position_summ">The side from which the main menu can be pulled out</string>
 
@@ -128,7 +126,7 @@
     <string name="buildDate">Build date:</string>
     <string name="unavailable">unavailable</string>
     <string name="restartCounter">Restart Counter</string>
-    <string name="waitingNetwork">Waiting for network connection...</string>
+    <string name="waitingNetwork">Waiting for network connection…</string>
     <string name="notConnected">The device is currently not connected to the network. Once the connection has been established, the configured HABPanel page will automatically be loaded.</string>
     <string name="unknownHost">unknown host</string>
     <string name="notValid">is not valid</string>

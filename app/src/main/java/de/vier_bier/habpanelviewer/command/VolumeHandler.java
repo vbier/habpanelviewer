@@ -15,8 +15,8 @@ import de.vier_bier.habpanelviewer.R;
 public class VolumeHandler implements CommandHandler {
     private final Pattern SET_PATTERN = Pattern.compile("SET_VOLUME ([0-9]+)");
 
-    private Context mCtx;
-    private AudioManager mAudioManager;
+    private final Context mCtx;
+    private final AudioManager mAudioManager;
 
     private final int mMaxVolume;
     private int mVolume = -1;

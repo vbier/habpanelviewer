@@ -13,8 +13,8 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 public class MotionReporter extends MotionListener.MotionAdapter {
     private static final String TAG = "MotionReporter";
 
-    private ServerConnection mServerConnection;
-    private MotionListener mListener;
+    private final ServerConnection mServerConnection;
+    private final MotionListener mListener;
 
     private long mLastMotionTime;
     private boolean mMotion;
@@ -33,7 +33,7 @@ public class MotionReporter extends MotionListener.MotionAdapter {
         mLastMotionTime = System.currentTimeMillis();
         if (!mMotion) {
             mMotion = true;
-            mServerConnection.updateState(mMotionItem, mMotion ? "CLOSED" : "OPEN");
+            mServerConnection.updateState(mMotionItem, "CLOSED");
         }
     }
 
@@ -43,7 +43,7 @@ public class MotionReporter extends MotionListener.MotionAdapter {
 
         if (mMotion && System.currentTimeMillis() - mLastMotionTime > 60000) {
             mMotion = false;
-            mServerConnection.updateState(mMotionItem, mMotion ? "CLOSED" : "OPEN");
+            mServerConnection.updateState(mMotionItem, "OPEN");
         }
     }
 
@@ -58,6 +58,6 @@ public class MotionReporter extends MotionListener.MotionAdapter {
 
     public void terminate() {
         mMotion = false;
-        mServerConnection.updateState(mMotionItem, mMotion ? "CLOSED" : "OPEN");
+        mServerConnection.updateState(mMotionItem, "OPEN");
     }
 }

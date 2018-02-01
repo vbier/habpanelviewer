@@ -22,7 +22,7 @@ import de.vier_bier.habpanelviewer.R;
 public class FlashHandler implements CommandHandler {
     private final Pattern BLINK_PATTERN = Pattern.compile("FLASH_BLINK ([0-9]+)");
 
-    private CameraManager mCameraManager;
+    private final CameraManager mCameraManager;
     private FlashControlThread controller;
     private String torchId;
 
@@ -90,8 +90,8 @@ public class FlashHandler implements CommandHandler {
 
     private class FlashControlThread extends Thread {
         private final AtomicBoolean fRunning = new AtomicBoolean(true);
-        private AtomicInteger fPulseLength = new AtomicInteger(0);
-        private AtomicBoolean fOn = new AtomicBoolean(false);
+        private final AtomicInteger fPulseLength = new AtomicInteger(0);
+        private final AtomicBoolean fOn = new AtomicBoolean(false);
 
         private boolean fFlashOn = false;
 

@@ -19,18 +19,18 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Monitors the device volume.
  */
 public class VolumeMonitor implements StateUpdateListener {
-    private Context mCtx;
-    private AudioManager mAudioManager;
-    private ServerConnection mServerConnection;
+    private final Context mCtx;
+    private final AudioManager mAudioManager;
+    private final ServerConnection mServerConnection;
 
     private boolean mVolumeEnabled;
 
     private String mVolumeItem;
     private Integer mVolume;
-    private Integer mMaxVolume;
+    private final Integer mMaxVolume;
     private String mVolumeState;
 
-    private ContentObserver mVolumeObserver = new ContentObserver(new Handler()) {
+    private final ContentObserver mVolumeObserver = new ContentObserver(new Handler()) {
         @Override
         public void onChange(boolean selfChange) {
             super.onChange(selfChange);

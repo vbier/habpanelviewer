@@ -24,8 +24,8 @@ public class ConnectedIndicator implements StateUpdateListener {
     private String mStatusItem;
     private int mInterval;
 
-    private Context mCtx;
-    private ServerConnection mServerConnection;
+    private final Context mCtx;
+    private final ServerConnection mServerConnection;
     private ConnectedReportingThread mReportConnection;
 
     private long mStatus;

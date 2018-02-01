@@ -1,7 +1,7 @@
 package de.vier_bier.habpanelviewer.command.log;
 
 /**
- * Created by volla on 11.01.18.
+ * Client for a CommandLog.
  */
 public interface CommandLogClient {
     void setCommandLog(CommandLog mCmdLog);
