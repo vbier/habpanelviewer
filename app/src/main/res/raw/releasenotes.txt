@@ -1,6 +1,6 @@
 0.9.14pre
 =========
-- add detection interval setting
+- add motion detection interval setting
 - reduce CPU usage
 - fix bug where adding a certificate exception did not lead to reconnect of SSE connection
 - add command item and change all device control functionality to use the command item
@@ -9,6 +9,8 @@
 - add command log screen showing processed commands
 - improve german translation
 - add completion support for item name preferences, improve checking
+- add "Track Browser connection" preference
+- improve SSE reconnect
 
 0.9.13pre
 =========

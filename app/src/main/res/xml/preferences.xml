@@ -262,6 +262,11 @@
             android:title="@string/pref_show_on_lock_screen" />
         <CheckBoxPreference
             android:defaultValue="false"
+            android:key="pref_track_browser_connection"
+            android:summary="@string/pref_track_browser_connection_summ"
+            android:title="@string/pref_track_browser_connection" />
+        <CheckBoxPreference
+            android:defaultValue="false"
             android:key="pref_device_admin"
             android:summary="@string/pref_device_admin_summ"
             android:title="@string/pref_device_admin" />

@@ -1,6 +1,6 @@
 0.9.14pre
 =========
-- neue Einstellung: Erkennungsintervall
+- neue Einstellung: Bewegungserkennung Erkennungsintervall
 - CPU Verbrauch reduziert
 - Fehler behoben, bei dem die SSE Verbindung nach dem Erstellen einer Zertifikatsausnahme nicht neu aufgebaut wurde
 - Kommando Item und RESTART Kommando hinzugefügt, alle Steuerungsfunktionalität wurde auf das Kommando Item umgestellt
@@ -9,6 +9,8 @@
 - Kommando Log hinzugefügt
 - Deutsche Übersetzung verbessert
 - Vervollständigung für Namen der openHAB Items in den Einstellungen
+- neue Funktion: Überwache Browser Verbindung
+- SSE reconnect verbessert
 
 0.9.13pre
 =====

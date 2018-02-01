@@ -299,7 +299,18 @@ public class MainActivity extends AppCompatActivity
         mTextView = navHeader.findViewById(R.id.textView);
 
         mWebView = ((ClientWebView) findViewById(R.id.activity_main_webview));
-        mWebView.initialize();
+        mWebView.initialize(new ConnectionListener() {
+            @Override
+            public void connected(String url) {
+            }
+
+            @Override
+            public void disconnected() {
+                if (prefs.getBoolean("pref_track_browser_connection", false)) {
+                    mServerConnection.reconnect();
+                }
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

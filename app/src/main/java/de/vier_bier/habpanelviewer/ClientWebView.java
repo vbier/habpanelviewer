@@ -18,6 +18,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
@@ -29,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 
+import de.vier_bier.habpanelviewer.openhab.ConnectionListener;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
 /**
@@ -99,8 +101,17 @@ public class ClientWebView extends WebView {
         super.setKeepScreenOn(keepScreenOn);
     }
 
-    synchronized void initialize() {
-        setWebChromeClient(new WebChromeClient());
+    synchronized void initialize(final ConnectionListener cl) {
+        setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                if (consoleMessage.message().contains("SSE error, closing EventSource")) {
+                    cl.disconnected();
+                }
+
+                return super.onConsoleMessage(consoleMessage);
+            }
+        });
 
         setWebViewClient(new WebViewClient() {
             @Override

@@ -115,6 +115,8 @@
     <string name="pref_device_admin_summ">Install HABPanelViewer as device admin. This allows to lock the device when the appropriate command is received</string>
     <string name="pref_show_on_lock_screen">Show on lock screen</string>
     <string name="pref_show_on_lock_screen_summ">Whether the app shall be shown on the lock screen</string>
+    <string name="pref_track_browser_connection">Track Browser Connection</string>
+    <string name="pref_track_browser_connection_summ">Reconnects to openHAB when a browser SSE connection loss is detected</string>
 
     <string name="helpFile">help.md</string>
 

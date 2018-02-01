@@ -40,7 +40,6 @@ public class ServerConnection implements StatePropagator {
     private final HashMap<String, ArrayList<StateUpdateListener>> mSubscriptions = new HashMap<>();
     private final HashMap<String, ArrayList<StateUpdateListener>> mCmdSubscriptions = new HashMap<>();
     private HashMap<String, String> mValues = new HashMap<>();
-    private AtomicBoolean mConnected = new AtomicBoolean(false);
 
     private SSEHandler client;
     private FetchItemStateTask task;
@@ -55,8 +54,10 @@ public class ServerConnection implements StatePropagator {
             NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
 
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                connect();
-            } else {
+                if (!isConnected()) {
+                    connect();
+                }
+            } else if (isConnected()) {
                 close();
             }
         }
@@ -76,8 +77,7 @@ public class ServerConnection implements StatePropagator {
 
                 // if we are not connected, try to connect. connection may have failed due to
                 // certificate errors
-                if (!mConnected.get()) {
-                    close();
+                if (!isConnected()) {
                     connect();
                 }
             }
@@ -151,9 +151,8 @@ public class ServerConnection implements StatePropagator {
             }
         }
 
-        if (itemsChanged && mConnected.get()) {
-            close();
-            connect();
+        if (itemsChanged && isConnected()) {
+            reconnect();
         }
 
         return itemsChanged;
@@ -164,19 +163,28 @@ public class ServerConnection implements StatePropagator {
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_url", ""))) {
             mServerURL = prefs.getString("pref_url", "");
             close();
-        }
 
-        ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
-        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-            connect();
-        } else {
-            close();
+            ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
+            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                connect();
+            }
         }
     }
 
-    private void connect() {
-        if (!mServerURL.isEmpty() && mEventSource == null) {
+    private synchronized boolean isConnected() {
+        return mEventSource != null;
+    }
+
+    public synchronized void reconnect() {
+        if (isConnected()) {
+            close();
+            connect();
+        }
+    }
+
+    private synchronized void connect() {
+        if (!mServerURL.isEmpty() && isConnected()) {
             String topic = buildTopic();
 
             if (topic.length() > 0) {
@@ -282,7 +290,7 @@ public class ServerConnection implements StatePropagator {
                 lastUpdates.put(item, state);
             }
 
-            if (mConnected.get()) {
+            if (isConnected()) {
                 Log.v("Habpanelview", "Sending state update for " + item + ": " + state);
 
                 SetItemStateTask t = new SetItemStateTask(mServerURL);
@@ -302,6 +310,7 @@ public class ServerConnection implements StatePropagator {
     }
 
     private class SSEHandler implements EventSourceHandler {
+        private AtomicBoolean mConnected = new AtomicBoolean(false);
 
         private SSEHandler() {
         }
