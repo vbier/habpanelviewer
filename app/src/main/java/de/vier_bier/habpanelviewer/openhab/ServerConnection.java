@@ -33,13 +33,13 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
  * Client for openHABs SSE service. Listens for item value changes.
  */
 public class ServerConnection implements StatePropagator {
-    private static final String SKIP_INITIAL = "SKIP_INITIAL";
     private Context mCtx;
     private String mServerURL;
     private EventSource mEventSource;
     private ConnectionUtil.CertChangedListener mCertListener;
 
     private final HashMap<String, ArrayList<StateUpdateListener>> mSubscriptions = new HashMap<>();
+    private final HashMap<String, ArrayList<StateUpdateListener>> mCmdSubscriptions = new HashMap<>();
     private HashMap<String, String> mValues = new HashMap<>();
     private AtomicBoolean mConnected = new AtomicBoolean(false);
 
@@ -102,11 +102,17 @@ public class ServerConnection implements StatePropagator {
         }
     }
 
-    public void subscribeItems(StateUpdateListener l, String... names) {
-        subscribeItems(l, true, names);
+
+    public void subscribeCommandItems(StateUpdateListener l, String... names) {
+        subscribeItems(mCmdSubscriptions, l, false, names);
     }
 
-    public boolean subscribeItems(StateUpdateListener l, boolean initialValue, String... names) {
+    public void subscribeItems(StateUpdateListener l, String... names) {
+        subscribeItems(mSubscriptions, l, true, names);
+    }
+
+    private boolean subscribeItems(HashMap<String, ArrayList<StateUpdateListener>> subscriptions,
+                                   StateUpdateListener l, boolean initialValue, String... names) {
         boolean itemsChanged = false;
 
         final HashSet<String> newItems = new HashSet<>();
@@ -116,32 +122,26 @@ public class ServerConnection implements StatePropagator {
             }
         }
 
-        synchronized (mSubscriptions) {
-            for (String name : new HashSet<>(mSubscriptions.keySet())) {
-                ArrayList<StateUpdateListener> listeners = mSubscriptions.get(name);
+        synchronized (subscriptions) {
+            for (String name : new HashSet<>(subscriptions.keySet())) {
+                ArrayList<StateUpdateListener> listeners = subscriptions.get(name);
                 if (listeners != null && listeners.contains(l) && !newItems.contains(name)) {
                     listeners.remove(l);
 
                     if (listeners.isEmpty()) {
                         itemsChanged = true;
-                        mSubscriptions.remove(name);
+                        subscriptions.remove(name);
                         mValues.remove(name);
                     }
                 }
             }
 
             for (String name : newItems) {
-                ArrayList<StateUpdateListener> listeners = mSubscriptions.get(name);
+                ArrayList<StateUpdateListener> listeners = subscriptions.get(name);
                 if (listeners == null) {
                     itemsChanged = true;
                     listeners = new ArrayList<>();
-                    mSubscriptions.put(name, listeners);
-
-                    if (!initialValue) {
-                        // if initial value shall not be propagated, put SKIP_INITIAL in the value map
-                        // as this makes the connect skip fetching of the initial value
-                        mValues.put(name, SKIP_INITIAL);
-                    }
+                    subscriptions.put(name, listeners);
                 } else if (mValues.containsKey(name) && initialValue) {
                     l.itemUpdated(name, mValues.get(name));
                 }
@@ -178,21 +178,13 @@ public class ServerConnection implements StatePropagator {
 
     private void connect() {
         if (!mServerURL.isEmpty() && mEventSource == null) {
-            StringBuilder topic = new StringBuilder();
-            synchronized (mSubscriptions) {
-                for (String item : mSubscriptions.keySet()) {
-                    if (topic.length() > 0) {
-                        topic.append(",");
-                    }
-                    topic.append("smarthome/items/").append(item);
-                }
-            }
+            String topic = buildTopic();
 
             if (topic.length() > 0) {
                 URI uri;
 
                 try {
-                    uri = new URI(mServerURL + "/rest/events?topics=" + topic.toString());
+                    uri = new URI(mServerURL + "/rest/events?topics=" + topic);
 
                     if (uri.getPort() < 0 || uri.getPort() > 65535) {
                         Log.e("Habpanelview", "Could not create SSE connection, port out of range: " + uri.getPort());
@@ -215,6 +207,28 @@ public class ServerConnection implements StatePropagator {
         } else {
             Log.d("Habpanelview", "EventSource connection skipped");
         }
+    }
+
+    private String buildTopic() {
+        StringBuilder topic = new StringBuilder();
+        synchronized (mSubscriptions) {
+            for (String item : mSubscriptions.keySet()) {
+                if (topic.length() > 0) {
+                    topic.append(",");
+                }
+                topic.append("smarthome/items/").append(item).append("/statechanged");
+            }
+        }
+        synchronized (mCmdSubscriptions) {
+            for (String item : mCmdSubscriptions.keySet()) {
+                if (topic.length() > 0) {
+                    topic.append(",");
+                }
+                topic.append("smarthome/items/").append(item).append("/command");
+            }
+        }
+
+        return topic.toString();
     }
 
     private synchronized void close() {
@@ -300,17 +314,29 @@ public class ServerConnection implements StatePropagator {
 
         @Override
         public void onMessage(String event, MessageEvent message) {
+            Log.v("Habpanelview", "onMessage: message=" + message);
             if (message != null) {
                 try {
                     JSONObject jObject = new JSONObject(message.data);
                     String type = jObject.getString("type");
-                    if ("ItemStateEvent".equals(type) || "GroupItemStateChangedEvent".equals(type)) {
+                    if ("ItemStateChangedEvent".equals(type) || "GroupItemStateChangedEvent".equals(type)) {
                         JSONObject payload = new JSONObject(jObject.getString("payload"));
                         String topic = jObject.getString("topic");
                         String name = topic.split("/")[2];
 
-                        final String value = payload.getString("value");
-                        propagateItem(name, value);
+                        if (mSubscriptions.containsKey(name)) {
+                            final String value = payload.getString("value");
+                            propagateItem(name, value);
+                        }
+                    } else if ("ItemCommandEvent".equals(type)) {
+                        JSONObject payload = new JSONObject(jObject.getString("payload"));
+                        String topic = jObject.getString("topic");
+                        String name = topic.split("/")[2];
+
+                        if (mCmdSubscriptions.containsKey(name)) {
+                            final String value = payload.getString("value");
+                            propagateCommand(name, value);
+                        }
                     }
                 } catch (JSONException e) {
                     Log.e("Habpanelview", "Error parsing JSON", e);
@@ -319,15 +345,27 @@ public class ServerConnection implements StatePropagator {
         }
 
         private void propagateItem(String name, String value) {
-            if (!value.equals(mValues.put(name, value))) {
-                final ArrayList<StateUpdateListener> listeners;
-                synchronized (mSubscriptions) {
-                    listeners = mSubscriptions.get(name);
-                }
+            if (!value.equals(mValues.get(name))) {
+                propagate(mSubscriptions, name, value);
+            }
+        }
 
-                for (StateUpdateListener l : listeners) {
-                    l.itemUpdated(name, value);
-                }
+        private void propagateCommand(String name, String value) {
+            propagate(mCmdSubscriptions, name, value);
+        }
+
+        private void propagate(HashMap<String, ArrayList<StateUpdateListener>> subscriptions, String name, String value) {
+            mValues.put(name, value);
+
+            Log.v("Habpanelview", "propagating item: " + name + "=" + value);
+
+            final ArrayList<StateUpdateListener> listeners;
+            synchronized (subscriptions) {
+                listeners = subscriptions.get(name);
+            }
+
+            for (StateUpdateListener l : listeners) {
+                l.itemUpdated(name, value);
             }
         }
 

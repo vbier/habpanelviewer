@@ -51,27 +51,23 @@ public class CommandQueue implements StateUpdateListener {
     @Override
     public void itemUpdated(String name, String value) {
         if (value != null && !value.isEmpty()) {
-            try {
-                synchronized (mHandlers) {
-                    for (CommandHandler mHandler : mHandlers) {
-                        try {
-                            if (mHandler.handleCommand(value)) {
-                                addToCmdLog(new CommandInfo(value, true));
-                                return;
-                            }
-                        } catch (Throwable t) {
-                            Log.e("Habpanelview", "unhandled exception", t);
-                            addToCmdLog(new CommandInfo(value, true, t));
+            synchronized (mHandlers) {
+                for (CommandHandler mHandler : mHandlers) {
+                    try {
+                        if (mHandler.handleCommand(value)) {
+                            addToCmdLog(new CommandInfo(value, true));
                             return;
                         }
+                    } catch (Throwable t) {
+                        Log.e("Habpanelview", "unhandled exception", t);
+                        addToCmdLog(new CommandInfo(value, true, t));
+                        return;
                     }
                 }
-
-                Log.w("Habpanelview", "received unhandled command: " + value);
-                addToCmdLog(new CommandInfo(value, false));
-            } finally {
-                mServerConnection.updateState(name, "");
             }
+
+            Log.w("Habpanelview", "received unhandled command: " + value);
+            addToCmdLog(new CommandInfo(value, false));
         }
     }
 
@@ -95,8 +91,6 @@ public class CommandQueue implements StateUpdateListener {
         });
 
 
-        if (mServerConnection.subscribeItems(this, false, mCmdItemName)) {
-            mServerConnection.updateState(mCmdItemName, "");
-        }
+        mServerConnection.subscribeCommandItems(this, mCmdItemName);
     }
 }
