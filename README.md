@@ -17,7 +17,7 @@ Main features:
 The app does support android from SDK version 19, which means it will run on devices running Android 4.4+ (Kitkat).
 
 The app uses the following libraries:
-- **com.tylerjroach:eventsource** licensed under the BSD License: http://www.opensource.org/licenses/bsd-license
+- **michaelklishin/eventsource-netty5** licensed under the BSD-3 License: https://opensource.org/licenses/BSD-3-Clause
 - **com.jakewharton:process-phoenix** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
 - **org.greenrobot:eventbus** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
 - **com.github.mukeshsolanki:MarkdownView-Android** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0

@@ -7,12 +7,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.util.Log;
-
-import com.tylerjroach.eventsource.CertificateIgnoringSSLEngineFactory;
-import com.tylerjroach.eventsource.EventSource;
-import com.tylerjroach.eventsource.EventSourceHandler;
-import com.tylerjroach.eventsource.MessageEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +24,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import de.vier_bier.habpanelviewer.openhab.average.AveragePropagator;
 import de.vier_bier.habpanelviewer.openhab.average.StatePropagator;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
+import io.opensensors.sse.client.EventSource;
+import io.opensensors.sse.client.EventSourceHandler;
+import io.opensensors.sse.client.MessageEvent;
 
 /**
  * Client for openHABs SSE service. Listens for item value changes.
@@ -196,13 +195,23 @@ public class ServerConnection implements StatePropagator {
                 }
 
                 client = new SSEHandler();
-                EventSource.Builder builder = new EventSource.Builder(uri).eventHandler(client);
-                if (mServerURL.startsWith("https:")) {
-                    builder = builder.sslEngineFactory(new CertificateIgnoringSSLEngineFactory());
-                }
-                mEventSource = builder.build();
-                mEventSource.connect();
-                Log.d("Habpanelview", "EventSource mConnected");
+                mEventSource = new EventSource(client);
+
+                final URI fUri = uri;
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        try {
+                            mEventSource.connect(fUri, ConnectionUtil.createSslContext());
+                        } catch (Exception e) {
+                            Log.e("Habpanelview", "failed to connect event source", e);
+                        }
+
+                        return null;
+                    }
+                }.execute();
+
+                Log.d("Habpanelview", "EventSource connection initiated");
             }
         } else {
             Log.d("Habpanelview", "EventSource connection skipped");
@@ -233,9 +242,13 @@ public class ServerConnection implements StatePropagator {
 
     private synchronized void close() {
         if (mEventSource != null) {
-            mEventSource.close();
-            mEventSource = null;
+            try {
+                mEventSource.close();
+            } catch (InterruptedException e) {
+                Log.v("Habpanelview", "failed to wait for EventSource closure");
+            }
             Log.d("Habpanelview", "EventSource closed");
+            mEventSource = null;
         }
 
         client = null;
@@ -288,10 +301,6 @@ public class ServerConnection implements StatePropagator {
         Log.v("Habpanelview", "Pending updates sent");
     }
 
-    /**
-     * All callbacks are currently returned on executor thread.
-     * If you want to update the ui from a callback, make sure to post to main thread
-     */
     private class SSEHandler implements EventSourceHandler {
 
         private SSEHandler() {
@@ -344,42 +353,9 @@ public class ServerConnection implements StatePropagator {
             }
         }
 
-        private void propagateItem(String name, String value) {
-            if (!value.equals(mValues.get(name))) {
-                propagate(mSubscriptions, name, value);
-            }
-        }
-
-        private void propagateCommand(String name, String value) {
-            propagate(mCmdSubscriptions, name, value);
-        }
-
-        private void propagate(HashMap<String, ArrayList<StateUpdateListener>> subscriptions, String name, String value) {
-            mValues.put(name, value);
-
-            Log.v("Habpanelview", "propagating item: " + name + "=" + value);
-
-            final ArrayList<StateUpdateListener> listeners;
-            synchronized (subscriptions) {
-                listeners = subscriptions.get(name);
-            }
-
-            for (StateUpdateListener l : listeners) {
-                l.itemUpdated(name, value);
-            }
-        }
-
-        @Override
-        public void onComment(String comment) {
-        }
-
         @Override
         public void onError(Throwable t) {
-        }
-
-        @Override
-        public void onClosed(boolean willReconnect) {
-            Log.v("Habpanelview", "SSE onClosed: reConnect=" + String.valueOf(willReconnect));
+            Log.v("Habpanelview", "SSE onError: t=" + t.getMessage());
 
             if (mConnected.getAndSet(false)) {
                 mValues.clear();
@@ -391,6 +367,11 @@ public class ServerConnection implements StatePropagator {
                     }
                 }
             }
+        }
+
+        @Override
+        public void onLogMessage(String s) {
+            Log.v("Habpanelview", "SSE onLogMessage: " + s);
         }
 
         private synchronized void fetchCurrentItemsState() {
@@ -420,6 +401,31 @@ public class ServerConnection implements StatePropagator {
             });
             Log.d("Habpanelview", "Actively fetching items state");
             task.execute(missingItems.toArray(new String[missingItems.size()]));
+        }
+
+        private void propagateItem(String name, String value) {
+            if (!value.equals(mValues.get(name))) {
+                propagate(mSubscriptions, name, value);
+            }
+        }
+
+        private void propagateCommand(String name, String value) {
+            propagate(mCmdSubscriptions, name, value);
+        }
+
+        private void propagate(HashMap<String, ArrayList<StateUpdateListener>> subscriptions, String name, String value) {
+            mValues.put(name, value);
+
+            Log.v("Habpanelview", "propagating item: " + name + "=" + value);
+
+            final ArrayList<StateUpdateListener> listeners;
+            synchronized (subscriptions) {
+                listeners = subscriptions.get(name);
+            }
+
+            for (StateUpdateListener l : listeners) {
+                l.itemUpdated(name, value);
+            }
         }
     }
 }

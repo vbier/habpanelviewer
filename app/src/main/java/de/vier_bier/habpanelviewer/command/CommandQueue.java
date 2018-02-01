@@ -90,7 +90,6 @@ public class CommandQueue implements StateUpdateListener {
             }
         });
 
-
         mServerConnection.subscribeCommandItems(this, mCmdItemName);
     }
 }

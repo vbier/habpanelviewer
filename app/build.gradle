@@ -26,8 +26,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    implementation(name: 'eventsource-debug', ext: 'aar')
-    implementation 'org.jboss.netty:netty:3.2.10.Final'
+    implementation 'io.netty:netty-all:4.1.20.Final'
     implementation 'com.github.mukeshsolanki:MarkdownView-Android:1.0.4'
     implementation 'com.android.support:appcompat-v7:26.+'
     implementation 'com.android.support:support-v4:26.+'
