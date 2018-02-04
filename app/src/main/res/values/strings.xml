@@ -123,7 +123,6 @@
     <string name="updated">HABPanelViewer Update</string>
     <string name="updatedText">The application has been updated. Find the bug fixes and new features below:</string>
     <string name="appRestarted">App restarted after crash</string>
-    <string name="buildDate">Build date:</string>
     <string name="unavailable">unavailable</string>
     <string name="restartCounter">Restart Counter</string>
     <string name="waitingNetwork">Waiting for network connection…</string>
@@ -189,4 +188,5 @@
     <string name="deviceAdminDescription">Is needed for immediate screen locking</string>
     <string name="device_not_muted">Device is not muted!</string>
     <string name="command_log_title">This is the list of all commands that have been processed during this run:</string>
+    <string name="startAtOnlineSince">Started: %s,\nConnected: %s</string>
 </resources>

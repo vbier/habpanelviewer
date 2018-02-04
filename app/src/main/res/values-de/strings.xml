@@ -119,7 +119,6 @@
     <string name="updated">HABPanelViewer Aktualisierung</string>
     <string name="updatedText">Die Anwendung wurde aktualisiert. Folgende Fehlerbehebungen und Verbesserungen wurden eingearbeitet:</string>
     <string name="appRestarted">App wurde nach Absturz neu gestartet</string>
-    <string name="buildDate">Build Datum:</string>
     <string name="unavailable">nicht verfügbar</string>
     <string name="restartCounter">Neustart Zähler</string>
     <string name="waitingNetwork">Warte auf Netzwerk Verbindung…</string>
@@ -185,4 +184,5 @@
     <string name="deviceAdminDescription">Wird benötigt, damit HABPanelViewer den Bildschrim ausschalten kann</string>
     <string name="device_not_muted">Das Gerät ist nicht lautlos!</string>
     <string name="command_log_title">Dies ist die Liste der prozessierten Kommandos seit Start der Applikation:</string>
+    <string name="startAtOnlineSince">Gestartet: %s\nVerbunden: %s</string>
 </resources>

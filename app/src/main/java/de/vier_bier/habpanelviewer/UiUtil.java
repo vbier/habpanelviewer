@@ -7,10 +7,18 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * UI utility methods.
  */
 public class UiUtil {
+    public static synchronized String formatDateTime(Date d) {
+        return d == null ? "-" : DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault()).format(d);
+    }
+
     public static void showDialog(final Activity activity, final String title, final String text) {
         activity.runOnUiThread(new Runnable() {
             @Override

@@ -39,7 +39,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import de.vier_bier.habpanelviewer.command.AdminHandler;
@@ -95,6 +94,8 @@ public class MainActivity extends AppCompatActivity
     private CommandQueue mCommandQueue;
 
     private int mRestartCount;
+    private Date mStartDate;
+    private Date mOnlineDate;
 
     @Override
     protected void onDestroy() {
@@ -170,6 +171,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
+        mStartDate = new Date();
 
         try {
             ConnectionUtil.initialize(this);
@@ -316,8 +318,10 @@ public class MainActivity extends AppCompatActivity
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
-        status.set(getString(R.string.app_name), "Version: " + BuildConfig.VERSION_NAME + "\n"
-                + getString(R.string.buildDate) + SimpleDateFormat.getDateTimeInstance().format(buildDate));
+        status.set(getString(R.string.app_name), "Version: " + BuildConfig.VERSION_NAME + " ("
+                + UiUtil.formatDateTime(buildDate) + ")\n"
+                + getString(R.string.startAtOnlineSince,
+                UiUtil.formatDateTime(mStartDate), UiUtil.formatDateTime(mOnlineDate)));
 
         if (mFlashService == null) {
             status.set(getString(R.string.pref_flash), getString(R.string.unavailable));
@@ -546,6 +550,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void connected(final String url) {
+        mOnlineDate = new Date();
         runOnUiThread(new Runnable() {
             public void run() {
                 mTextView.setText(url);
@@ -555,6 +560,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void disconnected() {
+        mOnlineDate = null;
         runOnUiThread(new Runnable() {
             public void run() {
                 mTextView.setText(R.string.not_connected);
