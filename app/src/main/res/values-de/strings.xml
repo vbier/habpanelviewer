@@ -5,10 +5,11 @@
     <string name="action_help">Hilfe</string>
     <string name="action_exit">Beenden</string>
     <string name="action_restart">Neustart</string>
-    <string name="action_goto_start_url">Lade Start URL</string>
     <string name="action_settings">Einstellungen</string>
-    <string name="action_reload">Lade Seite Neu</string>
     <string name="action_cmd_log">Kommando Log</string>
+
+    <string name="menu_goto_start_url">Gehe zur Startseite</string>
+    <string name="menu_reload">Lade Seite neu</string>
 
     <string name="pref_url_summ">Die URL des openHAB Servers</string>
     <string name="pref_desktop_mode">Desktop Modus</string>

@@ -22,8 +22,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.TextureView;
@@ -313,6 +315,32 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+        registerForContextMenu(mWebView);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.webview_context_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_reload:
+                mWebView.reload();
+                break;
+            case R.id.menu_goto_start_url:
+                mWebView.loadStartUrl();
+                break;
+            default:
+                super.onContextItemSelected(item);
+                return false;
+        }
+
+        return true;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -514,10 +542,6 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.action_settings) {
             showPreferences();
-        } else if (id == R.id.action_goto_start_url) {
-            mWebView.loadStartUrl();
-        } else if (id == R.id.action_reload) {
-            mWebView.reload();
         } else if (id == R.id.action_start_app) {
             Intent launchIntent = getLaunchIntent(this);
 
