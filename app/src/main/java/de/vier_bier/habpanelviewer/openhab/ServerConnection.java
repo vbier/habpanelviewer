@@ -159,8 +159,8 @@ public class ServerConnection implements StatePropagator {
 
     public void updateFromPreferences(SharedPreferences prefs) {
         // in case server url has changed reconnect
-        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_url", ""))) {
-            mServerURL = prefs.getString("pref_url", "");
+        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", ""))) {
+            mServerURL = prefs.getString("pref_server_url", "");
             close();
 
             ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);

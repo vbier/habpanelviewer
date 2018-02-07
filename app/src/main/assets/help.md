@@ -121,11 +121,8 @@ It first to find a HTTPS connection to the server and falls back to HTTP if that
 ### launcher functionality
 The application can be set as the device launcher. It then starts with the device on replaces the device home screen. This has to be configured in the android settings. 
 
-### HABPanel start panel configuration
-If you want to skip the HABPanel menu on start and directly want to go to a panel, set the name of this panel in the settings. 
-
-### kiosk mode (de)activation
-You can activate or de-active kiosk mode in the settings. Kiosk mode hides the HABPanel status bar and the menu.
+### Start page configuration
+Browse to an arbitrary page and set it as start page using the context menu.
 
 ### scrolling prevention
 In case you always scroll accidentally when trying to press buttons, activate **Prevent Dragging** in the Settings. This completely disables scrolling, and effectively disables the HABPanel menu.  

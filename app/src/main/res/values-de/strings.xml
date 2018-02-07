@@ -8,8 +8,10 @@
     <string name="action_settings">Einstellungen</string>
     <string name="action_cmd_log">Kommando Log</string>
 
-    <string name="menu_goto_start_url">Gehe zur Startseite</string>
     <string name="menu_reload">Lade Seite neu</string>
+    <string name="menu_goto_start_url">Gehe zur Startseite</string>
+    <string name="menu_goto_url">Gehe zu Webseite...</string>
+    <string name="menu_set_start_url">Als Startseite setzen</string>
 
     <string name="pref_url_summ">Die URL des openHAB Servers</string>
     <string name="pref_desktop_mode">Desktop Modus</string>
@@ -18,12 +20,10 @@
     <string name="pref_prevent_dragging_summ">Verhindert das Ziehen im Browser. Dies verhindert Scrolling.</string>
     <string name="pref_javascript">Javascript aktivieren</string>
     <string name="pref_javascript_summ">Javascript im Browser aktivieren</string>
-    <string name="pref_kiosk_mode">Kiosk Modus</string>
-    <string name="pref_kiosk_mode_summ">Benutze den HABPanel Kios Modus. DIeser blendet die Titelzeile und das Menü aus</string>
     <string name="pref_webview_title">Browser</string>
     <string name="not_connected">nicht verbunden</string>
-    <string name="pref_panel">Start Kachel</string>
-    <string name="pref_panel_summ">Die HABPanel Kachel, die beim Start gezeigt werden soll</string>
+    <string name="pref_start_url">Startseite</string>
+    <string name="pref_start_url_summ">Die Webseite, die beim Start gezeigt werden soll</string>
     <string name="pref_app">Start Eintrag</string>
     <string name="pref_app_name">Name der Applikation</string>
     <string name="pref_app_name_summ">Der Name der Applikation der im Menü gezeigt wird</string>
@@ -140,7 +140,8 @@
     <string name="storeSecurityException">Wollen Sie fortfahren und eine Ausnahme für dieses Zertifikat speichern?</string>
     <string name="configMissing">Konfiguration unvollständig</string>
     <string name="serverNotFound">Der openHAB server konnte nicht gefunden werden</string>
-    <string name="specifyServerInSettings">Bitte geben Sie die URL in den Einstellungen ein</string>
+    <string name="startPageNotSet">Weder die openHAB URL noch die Startseite ist in den Einstellungen definiert.</string>
+    <string name="specifyUrlInSettings">Bitte geben Sie sie in den Einstellungen ein.</string>
     <string name="invalid">ungültig</string>
     <string name="notValidUrl">ist keine gültige URL</string>
     <string name="couldNotConnect">Verbindung fehlgeschlagen zum Server mit der URL</string>

@@ -11,6 +11,8 @@
 - add completion support for item name preferences, improve checking
 - add "Track Browser connection" preference
 - improve SSE reconnect
+- new browser context menu (all browser related menu actions were moved here)
+- allow arbitrary start page
 
 0.9.13pre
 =========

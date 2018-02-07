@@ -137,7 +137,7 @@ public class SettingsFragment extends PreferenceFragment {
         adminPreference.setOnPreferenceChangeListener(new AdminValidatingListener());
 
         // add validation to the openHAB url
-        EditTextPreference urlPreference = (EditTextPreference) findPreference("pref_url");
+        EditTextPreference urlPreference = (EditTextPreference) findPreference("pref_server_url");
         urlPreference.setOnPreferenceChangeListener(new URLValidatingListener());
         mLoader.setServerUrl(urlPreference.getText());
 

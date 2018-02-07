@@ -9,4 +9,12 @@
         android:id="@+id/menu_goto_start_url"
         android:title="@string/menu_goto_start_url"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_goto_url"
+        android:title="@string/menu_goto_url"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_set_start_url"
+        android:title="@string/menu_set_start_url"
+        app:showAsAction="always" />
 </menu>

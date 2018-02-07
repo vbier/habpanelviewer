@@ -275,18 +275,13 @@
         android:key="pref_key_habpanel_settings"
         android:title="@string/pref_habpanel_title">
         <de.vier_bier.habpanelviewer.settings.ServerPreference
-            android:key="pref_url"
+            android:key="pref_server_url"
             android:summary="@string/pref_url_summ"
             android:title="@string/pref_url" />
         <EditTextPreference
-            android:key="pref_panel"
-            android:summary="@string/pref_panel_summ"
-            android:title="@string/pref_panel" />
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="pref_kiosk_mode"
-            android:summary="@string/pref_kiosk_mode_summ"
-            android:title="@string/pref_kiosk_mode" />
+            android:key="pref_start_url"
+            android:summary="@string/pref_start_url_summ"
+            android:title="@string/pref_start_url" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="pref_key_webview_settings"

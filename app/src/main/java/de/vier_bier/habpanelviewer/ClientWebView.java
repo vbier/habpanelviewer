@@ -14,6 +14,7 @@ import android.net.http.SslError;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -25,6 +26,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.EditText;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,9 +40,8 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
  */
 public class ClientWebView extends WebView {
     private boolean mDraggingPrevented;
-    private boolean mKioskMode;
     private String mServerURL;
-    private String mStartPanel;
+    private String mStartPage;
 
     private final BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
         @Override
@@ -213,39 +214,31 @@ public class ClientWebView extends WebView {
     void loadStartUrl() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
 
-        String url = mServerURL;
-        if ("".equals(mServerURL)) {
+        String url = prefs.getString("pref_start_url", "");
+        if ("".equals(url)) {
+            url = prefs.getString("pref_server_url", "");
+        }
+
+        if ("".equals(url)) {
             post(new Runnable() {
                 @Override
                 public void run() {
                     loadData("<html><body><h1>" + getContext().getString(R.string.configMissing)
-                            + "</h1><h2>" + getContext().getString(R.string.serverNotFound) + "."
-                            + getContext().getString(R.string.specifyServerInSettings)
+                            + "</h1><h2>" + getContext().getString(R.string.startPageNotSet) + "."
+                            + getContext().getString(R.string.specifyUrlInSettings)
                             + "</h2></body></html>", "text/html", "UTF-8");
                 }
             });
             return;
         }
 
-        String panel = prefs.getString("pref_panel", "");
-        url += "/habpanel/index.html#/";
-
-        if (!panel.isEmpty()) {
-            url += "view/" + panel;
-
-            Boolean isKiosk = prefs.getBoolean("pref_kiosk_mode", false);
-            if (isKiosk) {
-                url += "?kiosk=on";
-            }
-        }
-
-        final String newUrl = url;
+        mStartPage = url;
         post(new Runnable() {
             @Override
             public void run() {
-                if (getUrl() == null || !newUrl.equalsIgnoreCase(getUrl())) {
+                if (getUrl() == null || !mStartPage.equalsIgnoreCase(getUrl())) {
                     loadUrl("about:blank");
-                    loadUrl(newUrl);
+                    loadUrl(mStartPage);
                 }
             }
         });
@@ -269,14 +262,8 @@ public class ClientWebView extends WebView {
             mServerURL = prefs.getString("pref_url", "");
             loadStartUrl = true;
         }
-
-        if (mStartPanel == null || !mStartPanel.equalsIgnoreCase(prefs.getString("pref_panel", ""))) {
-            mStartPanel = prefs.getString("pref_panel", "");
-            loadStartUrl = true;
-        }
-
-        if (mKioskMode != prefs.getBoolean("pref_kiosk_mode", false)) {
-            mKioskMode = prefs.getBoolean("pref_kiosk_mode", false);
+        if (mStartPage == null || !mStartPage.equalsIgnoreCase(prefs.getString("pref_start_url", ""))) {
+            mStartPage = prefs.getString("pref_start_url", "");
             loadStartUrl = true;
         }
 
@@ -293,5 +280,29 @@ public class ClientWebView extends WebView {
 
     public void unregister() {
         getContext().unregisterReceiver(mNetworkReceiver);
+    }
+
+    public void enterUrl(Context ctx) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        builder.setTitle("Enter URL");
+
+        final EditText input = new EditText(ctx);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                loadUrl(input.getText().toString());
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 }

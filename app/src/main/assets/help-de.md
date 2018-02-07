@@ -121,11 +121,8 @@ Es wird zuerst versucht, eine HTTPS Verbindung zu finden, und falls das nicht fu
 ### Home Screen / Launcher Funktionalität
 Die Anwendung kann in den Android Settings als Launcher eingestellt werden. Dann startet Sie mit dem System und ersetzt den Standard Launcher.  
 
-### HABPanel Start Kachel
-Falls Sie direkt mit einer Kachel beginnen wollen anstatt im HABPanel Menü, stellen Sie den Namen der Kachel in den Einstellungen ein.
-
-### Kiosk Modus
-Sie können den HABPanel Kiosk Modus in den Einstellungen ein oder ausschalten. Der Kiosk Modus versteckt das HABPanel Menü und die Titelleiste.
+### Startseite
+Browsen Sie eine beliebige Seite und setzen Sie sie mit dem Kontextmenü als Startseite. 
 
 ### Ziehen verhindern
 Falls Sie aus Versehen Scrollen, wenn Sie einen Knopf drücken wollen, aktivieren Sie die Einstellung **Ziehen verhindern**. Dies deaktiviert Scrolling in der Anwendung komplett, und verhindert so auch das Öffnen des HABPanel Menüs.

@@ -231,12 +231,16 @@ public class MainActivity extends AppCompatActivity
             UiUtil.showScrollDialog(this, "HABPanelViewer", getString(R.string.welcome),
                     startText);
 
-            if (prefs.getString("pref_url", "").isEmpty()) {
+            if (prefs.getString("pref_server_url", "").isEmpty()) {
                 mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
                     @Override
                     public void found(String serverUrl) {
                         SharedPreferences.Editor editor1 = prefs.edit();
-                        editor1.putString("pref_url", serverUrl);
+                        editor1.putString("pref_server_url", serverUrl);
+
+                        if (prefs.getString("pref_start_url", "").isEmpty()) {
+                            editor1.putString("pref_start_url", serverUrl);
+                        }
                         editor1.apply();
                     }
 
@@ -334,6 +338,15 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.menu_goto_start_url:
                 mWebView.loadStartUrl();
+                break;
+            case R.id.menu_goto_url:
+                mWebView.enterUrl(this);
+                break;
+            case R.id.menu_set_start_url:
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                SharedPreferences.Editor editor1 = prefs.edit();
+                editor1.putString("pref_start_url", mWebView.getUrl());
+                editor1.apply();
                 break;
             default:
                 super.onContextItemSelected(item);
