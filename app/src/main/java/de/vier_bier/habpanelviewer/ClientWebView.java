@@ -288,6 +288,8 @@ public class ClientWebView extends WebView {
 
         final EditText input = new EditText(ctx);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_URI);
+        input.setText(getUrl());
+        input.selectAll();
         builder.setView(input);
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
