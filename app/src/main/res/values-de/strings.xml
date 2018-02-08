@@ -23,7 +23,7 @@
     <string name="pref_webview_title">Browser</string>
     <string name="not_connected">nicht verbunden</string>
     <string name="pref_start_url">Startseite</string>
-    <string name="pref_start_url_summ">Die Webseite, die beim Start gezeigt werden soll</string>
+    <string name="pref_start_url_summ">Die Webseite, die beim Start gezeigt werden soll. Falls leer, wird die openHAB URL als Startseite benutzt.</string>
     <string name="pref_app">Start Eintrag</string>
     <string name="pref_app_name">Name der Applikation</string>
     <string name="pref_app_name_summ">Der Name der Applikation der im Menü gezeigt wird</string>

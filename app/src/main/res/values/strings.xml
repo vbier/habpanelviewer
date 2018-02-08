@@ -27,7 +27,7 @@
     <string name="not_connected">not connected</string>
     <string name="pref_settings_title" translatable="false">HABPanelViewer</string>
     <string name="pref_start_url">Start page</string>
-    <string name="pref_start_url_summ">The page to load on start</string>
+    <string name="pref_start_url_summ">The page to load on start. If empty, the openHAB URL is used as start page.</string>
     <string name="pref_app">App Shortcut</string>
     <string name="pref_app_name">Application Name</string>
     <string name="pref_app_name_summ">The name of the application that will be shown in the menu</string>
