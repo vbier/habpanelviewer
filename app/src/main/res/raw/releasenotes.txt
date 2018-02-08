@@ -1,5 +1,5 @@
-0.9.14pre
-=========
+0.9.14
+======
 - add motion detection interval setting
 - reduce CPU usage
 - fix bug where adding a certificate exception did not lead to reconnect of SSE connection

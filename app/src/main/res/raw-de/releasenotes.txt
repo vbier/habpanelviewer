@@ -1,5 +1,5 @@
-0.9.14pre
-=========
+0.9.14
+======
 - neue Einstellung: Bewegungserkennung Erkennungsintervall
 - CPU Verbrauch reduziert
 - Fehler behoben, bei dem die SSE Verbindung nach dem Erstellen einer Zertifikatsausnahme nicht neu aufgebaut wurde
