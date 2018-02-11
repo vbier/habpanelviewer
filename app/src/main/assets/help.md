@@ -128,6 +128,6 @@ Browse to an arbitrary page and set it as start page using the context menu.
 In case you always scroll accidentally when trying to press buttons, activate **Prevent Dragging** in the Settings. This completely disables scrolling, and effectively disables the HABPanel menu.  
 
 ### app shortcut
-Configure menu entry name and the package name of an app that can then be started from the main menu. In order to find out the package name of your favorite app, open it in the playstore. The package name is shown as id in the URL.
+Start an app installed on your device from the main menu.
 
 [go back to top](#top)

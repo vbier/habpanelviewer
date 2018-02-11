@@ -4,27 +4,6 @@
         android:key="pref_key_settings"
         android:title="@string/pref_settings_title">
         <PreferenceScreen
-            android:key="pref_app"
-            android:persistent="false"
-            android:title="@string/pref_app">
-
-            <CheckBoxPreference
-                android:key="pref_app_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_app_enabled_summ"
-                android:title="@string/pref_app_enabled" />
-            <EditTextPreference
-                android:dependency="pref_app_enabled"
-                android:key="pref_app_name"
-                android:summary="@string/pref_app_name_summ"
-                android:title="@string/pref_app_name" />
-            <EditTextPreference
-                android:dependency="pref_app_enabled"
-                android:key="pref_app_package"
-                android:summary="@string/pref_app_package_summ"
-                android:title="@string/pref_app_package" />
-        </PreferenceScreen>
-        <PreferenceScreen
             android:key="pref_restart"
             android:persistent="false"
             android:title="@string/pref_restart">
