@@ -327,7 +327,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-        registerForContextMenu(mWebView);
     }
 
     @Override
@@ -531,6 +530,12 @@ public class MainActivity extends AppCompatActivity
         } else {
             previewView.setVisibility(View.INVISIBLE);
             motionView.setVisibility(View.INVISIBLE);
+        }
+
+        if (prefs.getBoolean("pref_show_context_menu", true)) {
+            registerForContextMenu(mWebView);
+        } else {
+            unregisterForContextMenu(mWebView);
         }
     }
 

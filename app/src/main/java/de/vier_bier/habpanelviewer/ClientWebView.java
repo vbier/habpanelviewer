@@ -12,7 +12,6 @@ import android.net.NetworkInfo;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -212,11 +211,9 @@ public class ClientWebView extends WebView {
     }
 
     void loadStartUrl() {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-
-        String url = prefs.getString("pref_start_url", "");
+        String url = mStartPage;
         if ("".equals(url)) {
-            url = prefs.getString("pref_server_url", "");
+            url = mServerURL;
         }
 
         if ("".equals(url)) {
@@ -232,13 +229,12 @@ public class ClientWebView extends WebView {
             return;
         }
 
-        mStartPage = url;
+        final String startPage = url;
         post(new Runnable() {
             @Override
             public void run() {
-                if (getUrl() == null || !mStartPage.equalsIgnoreCase(getUrl())) {
-                    loadUrl("about:blank");
-                    loadUrl(mStartPage);
+                if (getUrl() == null || !startPage.equalsIgnoreCase(getUrl())) {
+                    loadUrl(startPage);
                 }
             }
         });

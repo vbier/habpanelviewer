@@ -1,3 +1,8 @@
+0.9.16pre
+======
+- change start app menu entry to show app chooser and remove related preferences
+- add setting allowing to choose whether context menu shall be shown
+
 0.9.15
 ======
 - fix bug where initial loading of server url failed

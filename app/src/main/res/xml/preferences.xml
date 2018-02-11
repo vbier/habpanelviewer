@@ -292,6 +292,11 @@
             android:summary="@string/pref_prevent_dragging_summ"
             android:title="@string/pref_prevent_dragging" />
         <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="pref_show_context_menu"
+            android:summary="@string/pref_show_context_menu_summ"
+            android:title="@string/pref_show_context_menu" />
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="pref_desktop_mode"
             android:summary="@string/pref_desktop_mode_summ"

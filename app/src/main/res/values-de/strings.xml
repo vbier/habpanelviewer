@@ -105,6 +105,8 @@
     <string name="pref_volume_enabled_summ">Überwacht die Lautstärke und meldet Änderungen an openHAB</string>
     <string name="pref_volume_item">Lautstärke Item</string>
     <string name="pref_volume_item_summ">Name des openHAB Items an das die Lautstärke gemeldet wird</string>
+    <string name="pref_show_context_menu">Kontext Menü</string>
+    <string name="pref_show_context_menu_summ">Zeigt ein Kontext Menü wenn der Browser lange gedrückt wird</string>
 
     <string name="pref_device_admin">Geräte Admin</string>
     <string name="pref_device_admin_summ">Installiert HABPanelViewer als Geräte Admin. Dies erlaubt es HABPanelViewer die Bildschrimsperre zu aktivieren, wenn das Kommando dafür empfangen wurde</string>
