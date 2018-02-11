@@ -151,10 +151,9 @@ public class ServerConnection implements StatePropagator {
             }
         }
 
-        if (itemsChanged && isConnected()) {
+        if (itemsChanged) {
             reconnect();
         }
-
     }
 
     public void updateFromPreferences(SharedPreferences prefs) {
@@ -178,8 +177,8 @@ public class ServerConnection implements StatePropagator {
     public synchronized void reconnect() {
         if (isConnected()) {
             close();
-            connect();
         }
+        connect();
     }
 
     private synchronized void connect() {
