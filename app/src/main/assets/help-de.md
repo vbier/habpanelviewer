@@ -128,6 +128,6 @@ Browsen Sie eine beliebige Seite und setzen Sie sie mit dem Kontextmenü als Sta
 Falls Sie aus Versehen Scrollen, wenn Sie einen Knopf drücken wollen, aktivieren Sie die Einstellung **Ziehen verhindern**. Dies deaktiviert Scrolling in der Anwendung komplett, und verhindert so auch das Öffnen des HABPanel Menüs.
 
 ### Starte App
-Konfigurieren Sie einen Namen und den Paket Namen einer Android App, um diese aus dem Menü starten zu können. Um den Paketnamen heraus zu finden, öffnen Sie die Anwendung im Google Play Store. Der Paket Name wird dann als id in der URL angezeigt.
+Starten Sie eine auf dem Gerät installierte App über das Menü.
 
 [zurück nach oben](#top)

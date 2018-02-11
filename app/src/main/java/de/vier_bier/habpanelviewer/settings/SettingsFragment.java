@@ -141,10 +141,6 @@ public class SettingsFragment extends PreferenceFragment {
         urlPreference.setOnPreferenceChangeListener(new URLValidatingListener());
         mLoader.setServerUrl(urlPreference.getText());
 
-        // add validation to the package name
-        EditTextPreference pkgPreference = (EditTextPreference) findPreference("pref_app_package");
-        pkgPreference.setOnPreferenceChangeListener(new PackageValidatingListener());
-
         // add validation to the items
         for (String key : ITEMS_PREFS) {
             final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
@@ -193,21 +189,6 @@ public class SettingsFragment extends PreferenceFragment {
             ProcessPhoenix.triggerRebirth(getActivity());
         }
         super.onStop();
-    }
-
-    private class PackageValidatingListener implements Preference.OnPreferenceChangeListener {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object o) {
-            String pkg = (String) o;
-
-            if (!pkg.isEmpty()) {
-                Intent launchIntent = getActivity().getPackageManager().getLaunchIntentForPackage(pkg);
-                if (launchIntent == null) {
-                    UiUtil.showDialog(getActivity(), preference.getTitle() + " " + getString(R.string.invalid), getString(R.string.couldNotFindApp) + pkg);
-                }
-            }
-            return true;
-        }
     }
 
     private class URLValidatingListener implements Preference.OnPreferenceChangeListener {

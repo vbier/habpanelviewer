@@ -1,6 +1,5 @@
 package de.vier_bier.habpanelviewer;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
@@ -77,6 +76,8 @@ import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
  */
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ConnectionListener {
+
+    private final static int REQUEST_PICK_APPLICATION = 12352;
 
     private ClientWebView mWebView;
     private TextView mTextView;
@@ -364,6 +365,16 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_PICK_APPLICATION) {
+            if (resultCode == RESULT_OK && data != null && data.getComponent() != null) {
+                String pkgName = data.getComponent().getPackageName();
+                startActivity(getPackageManager().getLaunchIntentForPackage(pkgName));
+            }
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
@@ -470,13 +481,6 @@ public class MainActivity extends AppCompatActivity
             params.gravity = Gravity.END;
         }
 
-        MenuItem i = navigationView.getMenu().findItem(R.id.action_start_app);
-        Intent launchIntent = getLaunchIntent(this);
-        i.setVisible(launchIntent != null);
-        if (launchIntent != null) {
-            i.setTitle(getString(R.string.launch, prefs.getString("pref_app_name", "App")));
-        }
-
         if (mMotionDetector != null) {
             mMotionDetector.updateFromPreferences(prefs);
         }
@@ -564,10 +568,10 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             showPreferences();
         } else if (id == R.id.action_start_app) {
-            Intent launchIntent = getLaunchIntent(this);
+            Intent launchIntent = getLaunchIntent();
 
             if (launchIntent != null) {
-                startActivity(launchIntent);
+                startActivityForResult(launchIntent, REQUEST_PICK_APPLICATION);
             }
         } else if (id == R.id.action_info) {
             showInfoScreen();
@@ -613,19 +617,15 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private static Intent getLaunchIntent(Activity activity) {
-        Intent launchIntent = null;
+    private Intent getLaunchIntent() {
+        Intent main = new Intent(Intent.ACTION_MAIN);
+        main.addCategory(Intent.CATEGORY_LAUNCHER);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        if (prefs.getBoolean("pref_app_enabled", false)) {
-            String app = prefs.getString("pref_app_package", "");
+        Intent chooser = new Intent(Intent.ACTION_PICK_ACTIVITY);
+        chooser.putExtra(Intent.EXTRA_TITLE, "Select App to start");
+        chooser.putExtra(Intent.EXTRA_INTENT, main);
 
-            if (!app.isEmpty()) {
-                launchIntent = activity.getPackageManager().getLaunchIntentForPackage(app);
-            }
-        }
-
-        return launchIntent;
+        return chooser;
     }
 
     private void showInitialToastMessage(int restartCount) {

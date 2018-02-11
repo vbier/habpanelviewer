@@ -1,3 +1,7 @@
+0.9.16pre
+======
+- change start app menu entry to show app chooser and remove related preferences
+
 0.9.15
 ======
 - fix bug where initial loading of server url failed

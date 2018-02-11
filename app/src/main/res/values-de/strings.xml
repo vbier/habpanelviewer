@@ -24,13 +24,6 @@
     <string name="not_connected">nicht verbunden</string>
     <string name="pref_start_url">Startseite</string>
     <string name="pref_start_url_summ">Die Webseite, die beim Start gezeigt werden soll. Falls leer, wird die openHAB URL als Startseite benutzt.</string>
-    <string name="pref_app">Start Eintrag</string>
-    <string name="pref_app_name">Name der Applikation</string>
-    <string name="pref_app_name_summ">Der Name der Applikation der im Menü gezeigt wird</string>
-    <string name="pref_app_package">Applikations Name</string>
-    <string name="pref_app_package_summ">Der Paket Name der Applikation</string>
-    <string name="pref_app_enabled">Zeige App Start Eintrag im Menü</string>
-    <string name="pref_app_enabled_summ">Ermöglicht das Starten einer App aus dem Menü</string>
     <string name="pref_restart">Automatischer Neustart</string>
     <string name="pref_max_restarts">Anzahl der erlaubten Neustarts</string>
     <string name="pref_max_restarts_summ">Die Anzahl der erlaubten Neustarts bevor der automatische Neustart deaktiviert wird</string>
@@ -179,7 +172,6 @@
     <string name="boxesLeniency">%d Rechtecke, Erkennungs Schwelle %d</string>
     <string name="framesProcessed">%d Bilder, %d mal Bewegung erkannt</string>
     <string name="couldNotFindBackFlash">Konnte keine nach hinten gerichtete Kamera mit Blitz finden!</string>
-    <string name="launch">Starte %s</string>
     <string name="left">links</string>
     <string name="updateInterval">Meldeintervall ist %d Sekunden</string>
     <string name="deviceAdmin">HABPanelViewer</string>
