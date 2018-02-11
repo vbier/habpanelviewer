@@ -1,5 +1,6 @@
-0.9.15pre
+0.9.15
 ======
+- Fehler behoben, durch den die openHAB URL initial nicht geladen wurde
 
 0.9.14
 ======

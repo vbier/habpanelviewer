@@ -1,5 +1,6 @@
-0.9.15pre
+0.9.15
 ======
+- fix bug where initial loading of server url failed
 
 0.9.14
 ======

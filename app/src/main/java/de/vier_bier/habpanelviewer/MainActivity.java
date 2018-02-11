@@ -237,10 +237,6 @@ public class MainActivity extends AppCompatActivity
                     public void found(String serverUrl) {
                         SharedPreferences.Editor editor1 = prefs.edit();
                         editor1.putString("pref_server_url", serverUrl);
-
-                        if (prefs.getString("pref_start_url", "").isEmpty()) {
-                            editor1.putString("pref_start_url", serverUrl);
-                        }
                         editor1.apply();
                     }
 
@@ -250,6 +246,18 @@ public class MainActivity extends AppCompatActivity
                 }, true, true);
             }
         } else {
+            // make sure old server url preference is used in case it is still set
+            if (prefs.getString("pref_server_url", "").isEmpty()) {
+                final String oldUrl = prefs.getString("pref_url", "");
+
+                if (!oldUrl.isEmpty()) {
+                    SharedPreferences.Editor editor1 = prefs.edit();
+                    editor1.putString("pref_server_url", oldUrl);
+                    editor1.remove("pref_url");
+                    editor1.apply();
+                }
+            }
+
             String lastVersion = prefs.getString("pref_app_version", "0.9.2");
 
             if (!BuildConfig.VERSION_NAME.equals(lastVersion)) {

@@ -258,8 +258,8 @@ public class ClientWebView extends WebView {
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
         boolean loadStartUrl = false;
-        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_url", "!$%"))) {
-            mServerURL = prefs.getString("pref_url", "");
+        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", "!$%"))) {
+            mServerURL = prefs.getString("pref_server_url", "");
             loadStartUrl = true;
         }
         if (mStartPage == null || !mStartPage.equalsIgnoreCase(prefs.getString("pref_start_url", ""))) {
