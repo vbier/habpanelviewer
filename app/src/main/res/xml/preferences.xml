@@ -249,10 +249,6 @@
             android:key="pref_device_admin"
             android:summary="@string/pref_device_admin_summ"
             android:title="@string/pref_device_admin" />
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:key="pref_key_habpanel_settings"
-        android:title="@string/pref_habpanel_title">
         <de.vier_bier.habpanelviewer.settings.ServerPreference
             android:key="pref_server_url"
             android:summary="@string/pref_url_summ"
