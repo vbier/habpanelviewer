@@ -1,20 +1,19 @@
 # <img alt="Logo" src="app/src/main/res/mipmap-hdpi/ic_launcher.png" border="0"> HABPanelViewer
 
-An android launcher/home screen app as a HABPanel client.
+An openHAB integrated kiosk browser.
 
 Main features:
 - **mDNS server discovery**: finds the openHAB server on your network by using mDNS discovery
 - **launcher functionality**: the app can be set as launcher, thus starting automatically with the tablet
-- **HABPanel panel name configuration**: the configured panel is then shown on start
-- **kiosk mode activation**: simply check or uncheck to enable/disable kiosk mode
 - **scrolling prevention**: when checked, scrolling is completely disabled
-- **app shortcut**: allows to configure the package name of an app that can then be started from the main menu
-- **flashlight control**: allows to configure an openHAB item and regexps to enable/disable or blink the cameras flash (_available on Android 6+_)
-- **screen on control**: allows to configure an openHAB item and a regexp to turn on the screen
-- **motion detection**: reports motion to openHAB (_does not work at the same time as flashlight control. there are two different implementations, one using the old camera API and one using the Camera 2 API on Android 5+_).
+- **app shortcut**: allows to start an app from the main menu
+- **device control**: allows to control different device features via an openHAB item
+- **motion detection**: reports motion to openHAB
 - **device sensor value reporting**: reports device sensor values to openHAB
 
 The app does support android from SDK version 19, which means it will run on devices running Android 4.4+ (Kitkat).
+
+For further details see the <a href="app/src/main/assets/help.md">in app help</a>
 
 The app uses the following libraries:
 - **michaelklishin/eventsource-netty5** licensed under the BSD-3 License: https://opensource.org/licenses/BSD-3-Clause
