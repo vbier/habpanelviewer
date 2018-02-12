@@ -182,7 +182,7 @@ public class ServerConnection implements StatePropagator {
     }
 
     private synchronized void connect() {
-        if (!mServerURL.isEmpty() && !isConnected()) {
+        if (mServerURL != null && !mServerURL.isEmpty() && !isConnected()) {
             String topic = buildTopic();
 
             if (topic.length() > 0) {
