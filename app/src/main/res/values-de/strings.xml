@@ -10,8 +10,9 @@
 
     <string name="menu_reload">Lade Seite neu</string>
     <string name="menu_goto_start_url">Gehe zur Startseite</string>
-    <string name="menu_goto_url">Gehe zu Webseite...</string>
+    <string name="menu_goto_url">Gehe zu Webseite…</string>
     <string name="menu_set_start_url">Als Startseite setzen</string>
+    <string name="menu_clear_passwords">Logins vergessen</string>
 
     <string name="pref_url_summ">Die URL des openHAB Servers</string>
     <string name="pref_desktop_mode">Desktop Modus</string>
@@ -183,4 +184,10 @@
     <string name="device_not_muted">Das Gerät ist nicht lautlos!</string>
     <string name="command_log_title">Dies ist die Liste der prozessierten Kommandos seit Start der Applikation:</string>
     <string name="startAtOnlineSince">Gestartet: %s\nVerbunden: %s</string>
+    <string name="host_realm">Rechner: %s\nBereich: %s</string>
+    <string name="username">Benutzer</string>
+    <string name="password">Passwort</string>
+    <string name="login_required">Anmeldung erforderlich</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="okay">OK</string>
 </resources>

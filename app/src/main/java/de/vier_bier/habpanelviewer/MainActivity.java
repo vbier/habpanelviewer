@@ -356,6 +356,9 @@ public class MainActivity extends AppCompatActivity
                 editor1.putString("pref_start_url", mWebView.getUrl());
                 editor1.apply();
                 break;
+            case R.id.menu_clear_passwords:
+                mWebView.clearPasswords();
+                break;
             default:
                 super.onContextItemSelected(item);
                 return false;

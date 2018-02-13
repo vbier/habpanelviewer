@@ -11,8 +11,9 @@
 
     <string name="menu_reload">Reload page</string>
     <string name="menu_goto_start_url">Go to start page</string>
-    <string name="menu_goto_url">Go to URL...</string>
+    <string name="menu_goto_url">Go to URL…</string>
     <string name="menu_set_start_url">Set as start page</string>
+    <string name="menu_clear_passwords">Forget Logins</string>
 
     <string name="pref_url" translatable="false">openHAB URL</string>
     <string name="pref_url_summ">URL of the openHAB server</string>
@@ -186,4 +187,11 @@
     <string name="device_not_muted">Device is not muted!</string>
     <string name="command_log_title">This is the list of all commands that have been processed during this run:</string>
     <string name="startAtOnlineSince">Started: %s,\nConnected: %s</string>
+    <string name="host_realm">Host: %s\nRealm: %s</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="remember_login">Remember login</string>
+    <string name="login_required">Login required</string>
+    <string name="cancel">Cancel</string>
+    <string name="okay">OK</string>
 </resources>

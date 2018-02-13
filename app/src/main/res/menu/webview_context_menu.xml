@@ -17,4 +17,8 @@
         android:id="@+id/menu_set_start_url"
         android:title="@string/menu_set_start_url"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_clear_passwords"
+        android:title="@string/menu_clear_passwords"
+        app:showAsAction="always" />
 </menu>

@@ -20,11 +20,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
+import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebViewDatabase;
 import android.widget.EditText;
 
 import java.net.MalformedURLException;
@@ -47,7 +49,7 @@ public class ClientWebView extends WebView {
         @Override
         public void onReceive(Context context, Intent intent) {
             ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
 
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
                 loadStartUrl();
@@ -189,6 +191,34 @@ public class ClientWebView extends WebView {
                             }
                         }).show();
             }
+
+
+            @Override
+            public void onReceivedHttpAuthRequest(WebView view, final HttpAuthHandler handler, final String host, final String realm) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                        .setCancelable(false)
+                        .setTitle(R.string.login_required)
+                        .setMessage(getContext().getString(R.string.host_realm, host, realm))
+                        .setView(R.layout.dialog_login)
+                        .setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                EditText userT = ((AlertDialog) dialog).findViewById(R.id.username);
+                                EditText passT = ((AlertDialog) dialog).findViewById(R.id.password);
+
+                                handler.proceed(userT.getText().toString(), passT.getText().toString());
+                            }
+                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                handler.cancel();
+                            }
+                        });
+
+                final AlertDialog alert = dialog.create();
+                alert.show();
+                return;
+            }
         });
 
         setOnTouchListener(new View.OnTouchListener() {
@@ -252,20 +282,21 @@ public class ClientWebView extends WebView {
         webSettings.setJavaScriptEnabled(isJavascript);
 
         ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
 
         boolean loadStartUrl = false;
-        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", "!$%"))) {
-            mServerURL = prefs.getString("pref_server_url", "");
-            loadStartUrl = true;
-        }
+        boolean reloadUrl = false;
         if (mStartPage == null || !mStartPage.equalsIgnoreCase(prefs.getString("pref_start_url", ""))) {
             mStartPage = prefs.getString("pref_start_url", "");
             loadStartUrl = true;
         }
+        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", "!$%"))) {
+            mServerURL = prefs.getString("pref_server_url", "");
+            loadStartUrl = mStartPage == null || mStartPage.isEmpty();
+        }
         if (mAllowMixedContent != prefs.getBoolean("pref_allow_mixed_content", false)) {
             mAllowMixedContent = prefs.getBoolean("pref_allow_mixed_content", false);
-            loadStartUrl = true;
+            reloadUrl = true;
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -275,6 +306,8 @@ public class ClientWebView extends WebView {
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
             if (loadStartUrl) {
                 loadStartUrl();
+            } else if (reloadUrl) {
+                reload();
             }
         } else {
             loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
@@ -311,5 +344,10 @@ public class ClientWebView extends WebView {
         });
 
         builder.show();
+    }
+
+    public void clearPasswords() {
+        WebViewDatabase.getInstance(getContext()).clearHttpAuthUsernamePassword();
+        clearCache(true);
     }
 }
