@@ -2,6 +2,7 @@
 ======
 - change start app menu entry to show app chooser and remove related preferences
 - add setting allowing to choose whether context menu shall be shown
+- add setting that allows to embed http content in a https page
 
 0.9.15
 ======

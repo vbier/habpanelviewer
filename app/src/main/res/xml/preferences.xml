@@ -281,5 +281,11 @@
             android:key="pref_javascript"
             android:summary="@string/pref_javascript_summ"
             android:title="@string/pref_javascript" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="pref_allow_mixed_content"
+            android:enabled="@bool/is_post_api_21"
+            android:summary="@string/pref_allow_mixed_content_summ"
+            android:title="@string/pref_allow_mixed_content" />
     </PreferenceCategory>
 </PreferenceScreen>

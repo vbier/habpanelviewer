@@ -366,11 +366,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_PICK_APPLICATION) {
-            if (resultCode == RESULT_OK && data != null && data.getComponent() != null) {
-                String pkgName = data.getComponent().getPackageName();
-                startActivity(getPackageManager().getLaunchIntentForPackage(pkgName));
-            }
+        if (requestCode == REQUEST_PICK_APPLICATION && resultCode == RESULT_OK) {
+            startActivity(data);
         }
     }
 

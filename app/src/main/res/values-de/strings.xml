@@ -20,6 +20,8 @@
     <string name="pref_prevent_dragging_summ">Verhindert das Ziehen im Browser. Dies verhindert Scrolling.</string>
     <string name="pref_javascript">Javascript aktivieren</string>
     <string name="pref_javascript_summ">Javascript im Browser aktivieren</string>
+    <string name="pref_allow_mixed_content">Erlaube gemischte Inhalte</string>
+    <string name="pref_allow_mixed_content_summ">Erlaubt http Inhalte in https Seiten.</string>
     <string name="pref_webview_title">Browser</string>
     <string name="not_connected">nicht verbunden</string>
     <string name="pref_start_url">Startseite</string>

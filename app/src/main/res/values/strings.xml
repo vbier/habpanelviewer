@@ -22,6 +22,8 @@
     <string name="pref_prevent_dragging_summ">Prevents dragging in the WebView. This effectively disables scrolling and might also disable the pull-out of the HABPanel menu</string>
     <string name="pref_javascript">Enable Javascript</string>
     <string name="pref_javascript_summ">Enables Javascript in the WebView</string>
+    <string name="pref_allow_mixed_content">Allow mixed content</string>
+    <string name="pref_allow_mixed_content_summ">Allows http content in https pages.</string>
     <string name="pref_webview_title">Browsing</string>
     <string name="not_connected">not connected</string>
     <string name="pref_settings_title" translatable="false">HABPanelViewer</string>

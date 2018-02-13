@@ -38,6 +38,7 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
  * WebView
  */
 public class ClientWebView extends WebView {
+    private boolean mAllowMixedContent;
     private boolean mDraggingPrevented;
     private String mServerURL;
     private String mStartPage;
@@ -261,6 +262,14 @@ public class ClientWebView extends WebView {
         if (mStartPage == null || !mStartPage.equalsIgnoreCase(prefs.getString("pref_start_url", ""))) {
             mStartPage = prefs.getString("pref_start_url", "");
             loadStartUrl = true;
+        }
+        if (mAllowMixedContent != prefs.getBoolean("pref_allow_mixed_content", false)) {
+            mAllowMixedContent = prefs.getBoolean("pref_allow_mixed_content", false);
+            loadStartUrl = true;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            webSettings.setMixedContentMode(mAllowMixedContent ? WebSettings.MIXED_CONTENT_ALWAYS_ALLOW : WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         }
 
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {

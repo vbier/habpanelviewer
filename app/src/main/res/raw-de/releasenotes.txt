@@ -2,6 +2,7 @@
 ======
 - der Starte App Menüeintrag zeigt nun eine App Auswahl. Zugehörige Einstellungen wurden entfernt.
 - Neue Einstellung zum Auswählen, ob ein Kontext Menü angezeigt werden soll.
+- Neue Einstellung, die http Inhalte in https Seiten erlaubt
 
 0.9.15
 ======
