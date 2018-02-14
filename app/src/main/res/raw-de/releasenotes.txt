@@ -1,4 +1,4 @@
-0.9.16pre
+0.9.16
 ======
 - der Starte App Menüeintrag zeigt nun eine App Auswahl. Zugehörige Einstellungen wurden entfernt.
 - Neue Einstellung zum Auswählen, ob ein Kontext Menü angezeigt werden soll.

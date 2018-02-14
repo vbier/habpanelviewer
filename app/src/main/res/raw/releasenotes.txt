@@ -1,4 +1,4 @@
-0.9.16pre
+0.9.16
 ======
 - change start app menu entry to show app chooser and remove related preferences
 - add setting allowing to choose whether context menu shall be shown
