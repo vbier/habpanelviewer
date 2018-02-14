@@ -1,3 +1,6 @@
+0.9.17pre
+======
+
 0.9.16
 ======
 - change start app menu entry to show app chooser and remove related preferences
