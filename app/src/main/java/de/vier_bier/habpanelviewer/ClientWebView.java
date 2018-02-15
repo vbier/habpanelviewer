@@ -29,9 +29,15 @@ import android.webkit.WebViewClient;
 import android.webkit.WebViewDatabase;
 import android.widget.EditText;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import de.vier_bier.habpanelviewer.openhab.ConnectionListener;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
@@ -44,6 +50,7 @@ public class ClientWebView extends WebView {
     private boolean mDraggingPrevented;
     private String mServerURL;
     private String mStartPage;
+    private boolean mKioskMode;
 
     private final BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
         @Override
@@ -261,6 +268,7 @@ public class ClientWebView extends WebView {
         }
 
         final String startPage = url;
+        mKioskMode = startPage.toLowerCase().contains("/habpanel/") && startPage.toLowerCase().contains("kiosk=on");
         post(new Runnable() {
             @Override
             public void run() {
@@ -320,6 +328,46 @@ public class ClientWebView extends WebView {
         getContext().unregisterReceiver(mNetworkReceiver);
     }
 
+    @Override
+    public void reload() {
+        if (mKioskMode) {
+            String urlStr = getUrl();
+
+            if (urlStr.toLowerCase().contains("/habpanel/")) {
+                try {
+                    URI uri = new URI(urlStr);
+                    String query = uri.getQuery();
+
+                    boolean isKioskUrl = query != null && "ON".equalsIgnoreCase(splitQuery(query).get("kiosk"));
+                    if (!isKioskUrl) {
+                        if (query == null || query.isEmpty()) {
+                            urlStr = urlStr + "?kiosk=on";
+                        } else {
+                            urlStr = urlStr + "&kiosk=on";
+                        }
+
+                        loadUrl(urlStr);
+                        return;
+                    }
+                } catch (URISyntaxException | UnsupportedEncodingException e) {
+                    // call super.reload below
+                }
+            }
+        }
+
+        super.reload();
+    }
+
+    public static Map<String, String> splitQuery(String query) throws UnsupportedEncodingException {
+        Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+        String[] pairs = query.split("&");
+        for (String pair : pairs) {
+            int idx = pair.indexOf("=");
+            query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
+        }
+        return query_pairs;
+    }
+
     public void enterUrl(Context ctx) {
         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
         builder.setTitle("Enter URL");
@@ -333,7 +381,9 @@ public class ClientWebView extends WebView {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                loadUrl(input.getText().toString());
+                String url = input.getText().toString();
+                mKioskMode = url.toLowerCase().contains("/habpanel/") && url.toLowerCase().contains("kiosk=on");
+                loadUrl(url);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

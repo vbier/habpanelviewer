@@ -1,5 +1,6 @@
 0.9.17pre
 ======
+- add workaround for bug in HABPanel where kiosk mode flag is lost on navigation
 
 0.9.16
 ======
