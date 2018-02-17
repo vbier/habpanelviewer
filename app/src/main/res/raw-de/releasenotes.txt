@@ -1,6 +1,7 @@
 0.9.17pre
 ======
 - Umgehung für Fehler in HABPanel, bei dem der Kiosk Modus bei Navigation verloren geht
+- Verbindungsstatistik hinzugefügt
 
 0.9.16
 ======

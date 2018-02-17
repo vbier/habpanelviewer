@@ -183,11 +183,16 @@
     <string name="deviceAdminDescription">Wird benötigt, damit HABPanelViewer den Bildschrim ausschalten kann</string>
     <string name="device_not_muted">Das Gerät ist nicht lautlos!</string>
     <string name="command_log_title">Dies ist die Liste der prozessierten Kommandos seit Start der Applikation:</string>
-    <string name="startAtOnlineSince">Gestartet: %s\nVerbunden: %s</string>
     <string name="host_realm">Rechner: %s\nBereich: %s</string>
     <string name="username">Benutzer</string>
     <string name="password">Passwort</string>
     <string name="login_required">Anmeldung erforderlich</string>
     <string name="cancel">Abbrechen</string>
     <string name="okay">OK</string>
+    <string name="connection_statistics">Verbindungsstatistik</string>
+    <string name="connection_details">läuft seit %s\nVerbunden %s (%d mal)\nlängste %s\nDurchschnitt %s\nGetrennt %s (%d mal)\nlängste %s\nDurchschnitt %s</string>
+    <string name="days">%d Tage,</string>
+    <string name="hours">%d Stunden,</string>
+    <string name="minutes">%d Minuten,</string>
+    <string name="seconds">%d Sekunden,</string>
 </resources>

@@ -186,7 +186,6 @@
     <string name="deviceAdminDescription">Is needed for immediate screen locking</string>
     <string name="device_not_muted">Device is not muted!</string>
     <string name="command_log_title">This is the list of all commands that have been processed during this run:</string>
-    <string name="startAtOnlineSince">Started: %s,\nConnected: %s</string>
     <string name="host_realm">Host: %s\nRealm: %s</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -194,4 +193,10 @@
     <string name="login_required">Login required</string>
     <string name="cancel">Cancel</string>
     <string name="okay">OK</string>
+    <string name="connection_statistics">Connection Statistics</string>
+    <string name="connection_details">running for %s\nonline %s (%d times)\nlongest %s\naverage %s\noffline %s (%d times)\nlongest %s\naverage %s</string>
+    <string name="days">%d days,</string>
+    <string name="hours">%d hours,</string>
+    <string name="minutes">%d minutes,</string>
+    <string name="seconds">%d seconds,</string>
 </resources>

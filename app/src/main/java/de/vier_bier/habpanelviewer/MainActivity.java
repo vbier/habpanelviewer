@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity
 
     private final static int REQUEST_PICK_APPLICATION = 12352;
 
+    private ConnectionStatistics mConnections;
     private ClientWebView mWebView;
     private TextView mTextView;
     private ServerConnection mServerConnection;
@@ -97,8 +98,6 @@ public class MainActivity extends AppCompatActivity
     private CommandQueue mCommandQueue;
 
     private int mRestartCount;
-    private Date mStartDate;
-    private Date mOnlineDate;
 
     @Override
     protected void onDestroy() {
@@ -174,7 +173,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EventBus.getDefault().register(this);
-        mStartDate = new Date();
 
         try {
             ConnectionUtil.initialize(this);
@@ -195,6 +193,7 @@ public class MainActivity extends AppCompatActivity
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
+        mConnections = new ConnectionStatistics(this);
         mServerConnection = new ServerConnection(this);
         mServerConnection.addConnectionListener(this);
 
@@ -378,9 +377,7 @@ public class MainActivity extends AppCompatActivity
     public void onMessageEvent(ApplicationStatus status) {
         Date buildDate = new Date(BuildConfig.TIMESTAMP);
         status.set(getString(R.string.app_name), "Version: " + BuildConfig.VERSION_NAME + " ("
-                + UiUtil.formatDateTime(buildDate) + ")\n"
-                + getString(R.string.startAtOnlineSince,
-                UiUtil.formatDateTime(mStartDate), UiUtil.formatDateTime(mOnlineDate)));
+                + UiUtil.formatDateTime(buildDate) + ")");
 
         if (mFlashService == null) {
             status.set(getString(R.string.pref_flash), getString(R.string.unavailable));
@@ -604,7 +601,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void connected(final String url) {
-        mOnlineDate = new Date();
+        mConnections.connected();
         runOnUiThread(new Runnable() {
             public void run() {
                 mTextView.setText(url);
@@ -614,7 +611,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void disconnected() {
-        mOnlineDate = null;
+        mConnections.disconnected();
         runOnUiThread(new Runnable() {
             public void run() {
                 mTextView.setText(R.string.not_connected);
