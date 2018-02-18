@@ -1,0 +1,7 @@
+This is a native Android application for openHAB's HABPanel dashboard user interface - an open source home automation system.
+
+This application is indended to provide a customized kiosk mode for the HABPanel user interface, a part of the openHAB platform. www.openhab.org
+
+Features include: Auto-discovery of your openHAB server, Home Screen/Launcher, Kiosk Mode, Integration to use and set openHAB "Items", Motion detection, Several screen control options, Volume control, flashlight control, ability to report various tablet sensor/statues back to openHAB Items, many more!
+
+Works on KitKat (4.4) and higher, some features are not availble unless using Marshmallow (6.0) or higher.
