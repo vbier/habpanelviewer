@@ -1,1 +1,1 @@
-HABPanelViewer Kiosk browser für HABPanel openHAB
+HABPanelViewer Kiosk browser für openHAB's HABPanel

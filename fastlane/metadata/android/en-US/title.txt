@@ -1,1 +1,1 @@
-HABPanelViewer Kiosk utility for openHAB HABPanel
+HABPanelViewer Kiosk utility for openHAB's HABPanel
