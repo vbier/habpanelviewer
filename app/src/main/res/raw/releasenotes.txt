@@ -1,4 +1,4 @@
-0.9.17pre
+0.9.17
 ======
 - add workaround for bug in HABPanel where kiosk mode flag is lost on navigation
 - add connection statistics

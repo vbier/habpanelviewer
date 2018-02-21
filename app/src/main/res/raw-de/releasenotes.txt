@@ -1,4 +1,4 @@
-0.9.17pre
+0.9.17
 ======
 - Umgehung für Fehler in HABPanel, bei dem der Kiosk Modus bei Navigation verloren geht
 - Verbindungsstatistik hinzugefügt
