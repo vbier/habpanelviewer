@@ -375,9 +375,12 @@ public class MainActivity extends AppCompatActivity
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
-        Date buildDate = new Date(BuildConfig.TIMESTAMP);
-        status.set(getString(R.string.app_name), "Version: " + BuildConfig.VERSION_NAME + " ("
-                + UiUtil.formatDateTime(buildDate) + ")");
+        String version = BuildConfig.VERSION_NAME;
+        if (version.endsWith("pre")) {
+            Date buildDate = new Date(BuildConfig.TIMESTAMP);
+            version += " (" + UiUtil.formatDateTime(buildDate) + ")";
+        }
+        status.set(getString(R.string.app_name), "Version: " + version);
 
         if (mFlashService == null) {
             status.set(getString(R.string.pref_flash), getString(R.string.unavailable));
