@@ -14,6 +14,7 @@
     <string name="menu_goto_url">Go to URL…</string>
     <string name="menu_set_start_url">Set as start page</string>
     <string name="menu_clear_passwords">Forget Logins</string>
+    <string name="menu_toggle_kiosk">Toggle Kiosk Mode</string>
 
     <string name="pref_url" translatable="false">openHAB URL</string>
     <string name="pref_url_summ">URL of the openHAB server</string>

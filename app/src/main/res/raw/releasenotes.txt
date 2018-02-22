@@ -1,7 +1,12 @@
+0.9.18pre
+======
+- add context menu allowing to toggle kiosk mode when HABPanel is shown
+
 0.9.17
 ======
 - add workaround for bug in HABPanel where kiosk mode flag is lost on navigation
 - add connection statistics
+- remove build date from version for release versions
 
 0.9.16
 ======

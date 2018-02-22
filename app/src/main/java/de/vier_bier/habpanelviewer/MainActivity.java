@@ -335,6 +335,8 @@ public class MainActivity extends AppCompatActivity
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.webview_context_menu, menu);
+
+        menu.findItem(R.id.menu_toggle_kiosk).setVisible(mWebView.isShowingHabPanel());
     }
 
     @Override
@@ -357,6 +359,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.menu_clear_passwords:
                 mWebView.clearPasswords();
+                break;
+            case R.id.menu_toggle_kiosk:
+                mWebView.toggleKioskMode();
                 break;
             default:
                 super.onContextItemSelected(item);

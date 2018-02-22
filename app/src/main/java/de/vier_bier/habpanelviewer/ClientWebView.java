@@ -29,15 +29,11 @@ import android.webkit.WebViewClient;
 import android.webkit.WebViewDatabase;
 import android.widget.EditText;
 
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import de.vier_bier.habpanelviewer.openhab.ConnectionListener;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
@@ -268,7 +264,7 @@ public class ClientWebView extends WebView {
         }
 
         final String startPage = url;
-        mKioskMode = startPage.toLowerCase().contains("/habpanel/") && startPage.toLowerCase().contains("kiosk=on");
+        mKioskMode = isHabPanelUrl(startPage) && startPage.toLowerCase().contains("kiosk=on");
         post(new Runnable() {
             @Override
             public void run() {
@@ -330,42 +326,39 @@ public class ClientWebView extends WebView {
 
     @Override
     public void reload() {
-        if (mKioskMode) {
+        if (isShowingHabPanel()) {
+            Log.d("Kiosk", "reloading habpanel: mKioskMode = " + mKioskMode + ", url = " + getUrl());
+
             String urlStr = getUrl();
 
-            if (urlStr.toLowerCase().contains("/habpanel/")) {
-                try {
-                    URI uri = new URI(urlStr);
-                    String query = uri.getQuery();
+            try {
+                URI uri = new URI(urlStr);
+                String fragment = uri.getFragment();
+                boolean urlMatchesKioskMode;
 
-                    boolean isKioskUrl = query != null && "ON".equalsIgnoreCase(splitQuery(query).get("kiosk"));
-                    if (!isKioskUrl) {
-                        if (query == null || query.isEmpty()) {
-                            urlStr = urlStr + "?kiosk=on";
-                        } else {
-                            urlStr = urlStr + "&kiosk=on";
-                        }
-
-                        loadUrl(urlStr);
-                        return;
-                    }
-                } catch (URISyntaxException | UnsupportedEncodingException e) {
-                    // call super.reload below
+                if (mKioskMode) {
+                    urlMatchesKioskMode = fragment != null && fragment.contains("kiosk=on");
+                } else {
+                    urlMatchesKioskMode = fragment == null || !fragment.contains("kiosk=on");
                 }
+
+                if (!urlMatchesKioskMode) {
+                    fragment = "/?kiosk=" + (mKioskMode ? "on" : "off");
+
+                    urlStr = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(),
+                            uri.getQuery(), fragment).toString();
+
+                    Log.d("Kiosk", "loading url = " + urlStr);
+                    loadUrl(urlStr);
+                    return;
+                }
+            } catch (URISyntaxException e) {
+                // call super.reload below
             }
         }
 
+        Log.d("Kiosk", "reloading page");
         super.reload();
-    }
-
-    public static Map<String, String> splitQuery(String query) throws UnsupportedEncodingException {
-        Map<String, String> query_pairs = new LinkedHashMap<String, String>();
-        String[] pairs = query.split("&");
-        for (String pair : pairs) {
-            int idx = pair.indexOf("=");
-            query_pairs.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
-        }
-        return query_pairs;
     }
 
     public void enterUrl(Context ctx) {
@@ -382,7 +375,7 @@ public class ClientWebView extends WebView {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String url = input.getText().toString();
-                mKioskMode = url.toLowerCase().contains("/habpanel/") && url.toLowerCase().contains("kiosk=on");
+                mKioskMode = isHabPanelUrl(url) && url.toLowerCase().contains("kiosk=on");
                 loadUrl(url);
             }
         });
@@ -399,5 +392,20 @@ public class ClientWebView extends WebView {
     public void clearPasswords() {
         WebViewDatabase.getInstance(getContext()).clearHttpAuthUsernamePassword();
         clearCache(true);
+    }
+
+    public boolean isShowingHabPanel() {
+        return isHabPanelUrl(getUrl());
+    }
+
+    public void toggleKioskMode() {
+        Log.d("Kiosk", "toggleKioskMode: " + mKioskMode + "->" + !mKioskMode);
+
+        mKioskMode = !mKioskMode;
+        reload();
+    }
+
+    private boolean isHabPanelUrl(final String url) {
+        return url != null && url.toLowerCase().contains("/habpanel/");
     }
 }

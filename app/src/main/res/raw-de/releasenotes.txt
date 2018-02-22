@@ -1,7 +1,12 @@
+0.9.18pre
+======
+- neues Kontext Menü zum Umschalten des Kiosk Modus when HABPanel angezeigt wird
+
 0.9.17
 ======
 - Umgehung für Fehler in HABPanel, bei dem der Kiosk Modus bei Navigation verloren geht
 - Verbindungsstatistik hinzugefügt
+- Builddatum wurde aus veröffentlichten Versionen entfernt
 
 0.9.16
 ======

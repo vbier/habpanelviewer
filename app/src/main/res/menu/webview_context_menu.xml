@@ -6,6 +6,10 @@
         android:title="@string/menu_reload"
         app:showAsAction="always" />
     <item
+        android:id="@+id/menu_toggle_kiosk"
+        android:title="@string/menu_toggle_kiosk"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/menu_goto_start_url"
         android:title="@string/menu_goto_start_url"
         app:showAsAction="always" />
