@@ -22,6 +22,7 @@ import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -120,6 +121,21 @@ public class ClientWebView extends WebView {
         });
 
         setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+
+                if (isHabPanelUrl(url)) {
+                    evaluateJavascript("angular.element(document.body).scope().$root.kioskMode", new ValueCallback<String>() {
+                        @Override
+                        public void onReceiveValue(String s) {
+                            mKioskMode = Boolean.parseBoolean(s);
+                            Log.d("Kiosk", "HABPanel page loaded. kioskMode=" + mKioskMode);
+                        }
+                    });
+                }
+            }
+
             @Override
             public void onReceivedSslError(WebView view, final SslErrorHandler handler, final SslError error) {
                 Log.d("SSL", "onReceivedSslError: " + error.getUrl());
@@ -343,7 +359,8 @@ public class ClientWebView extends WebView {
                 }
 
                 if (!urlMatchesKioskMode) {
-                    fragment = "/?kiosk=" + (mKioskMode ? "on" : "off");
+                    String[] fragParts = fragment == null ? new String[]{""} : fragment.split("\\?");
+                    fragment = fragParts[0] + "?kiosk=" + (mKioskMode ? "on" : "off");
 
                     urlStr = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(),
                             uri.getQuery(), fragment).toString();
