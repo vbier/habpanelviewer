@@ -190,7 +190,6 @@
     <string name="host_realm">Host: %s\nRealm: %s</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="remember_login">Remember login</string>
     <string name="login_required">Login required</string>
     <string name="cancel">Cancel</string>
     <string name="okay">OK</string>
