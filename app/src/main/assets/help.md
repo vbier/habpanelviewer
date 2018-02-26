@@ -10,7 +10,7 @@ Its functionality can mainly be divided into three categories:
 ## <a name="configuration"/>Configuration
 **The following settings need to be configured for the initial operation of HABPanelViewer.**
 
-* "**Start page**":  This is the very minimum configuration needed for habPanelViewer to function.  This is the initial page loaded when the application is started or restarted.  While this can be any accessible URL, the intended use is for the habPanel dashboard that you want as your starting page when the application is launched or restarted.  
+>"**Start page**":  This is the very minimum configuration needed for habPanelViewer to function.  This is the initial page loaded when the application is started or restarted.  While this can be any accessible URL, the intended use is for the habPanel dashboard that you want as your starting page when the application is launched or restarted.  
 
 >This needs to be the full URL, examples:
 
@@ -22,11 +22,11 @@ Its functionality can mainly be divided into three categories:
 >**Kiosk Mode**  To enable "Kiosk Mode", simply add the URL parameter `?kiosk=on` at the end of either example listed above.
 
 
-* "**openHAB URL**":  This is the base URL of your openHAB instance and is required for the integrations (_examples; Command Items, Sensor Reporting, Connected Indicator_).  If this URL is not configured, these integration options will not function.
+>"**openHAB URL**":  This is the base URL of your openHAB instance and is required for the integrations (_examples; Command Items, Sensor Reporting, Connected Indicator_).  If this URL is not configured, these integration options will not function.
 
 >This URL can be automatically discovered using mDNS if the device is on the same subnet as your openHAB instance by clicking the "Discover Server" button in the "openHAB URL" settings.  If it cannot be discovered or you wish to manually enter it, an example for this base URL would be:
 
->`>http://{ip or hostname}:8080/`<br>
+>`http://{ip or hostname}:8080/`<br>
 >No additional URL paths should be configured here.
 
 >_Note:  If you are using https (ssl), your port would normally be 8443_
