@@ -1,6 +1,8 @@
-0.9.18pre
+0.9.18
 ======
 - neues Kontext Menü zum Umschalten des Kiosk Modus when HABPanel angezeigt wird
+- Beschreibung der initialen Konfiguration zur Hilfe hinzugefügt
+- Beispiel URL zum openHAB URL Einstellungsdialog hinzugefügt
 
 0.9.17
 ======

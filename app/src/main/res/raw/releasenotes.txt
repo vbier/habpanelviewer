@@ -1,6 +1,8 @@
-0.9.18pre
+0.9.18
 ======
 - add context menu allowing to toggle kiosk mode when HABPanel is shown
+- add configuration section to in-app help
+- added example URL to openHAB URL settings dialog
 
 0.9.17
 ======
