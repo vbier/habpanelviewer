@@ -16,6 +16,7 @@
     <string name="menu_toggle_kiosk">Kiosk Modus umschalten</string>
 
     <string name="pref_url_summ">Die URL des openHAB Servers</string>
+    <string name="pref_url_example">z.B. http://openhabianpi:8080</string>
     <string name="pref_desktop_mode">Desktop Modus</string>
     <string name="pref_desktop_mode_summ">Zeigt die Seiten im Desktop Modus an Stelle des Mobil Modus</string>
     <string name="pref_prevent_dragging">Ziehen verhindern</string>

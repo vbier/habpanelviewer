@@ -2,6 +2,7 @@ package de.vier_bier.habpanelviewer.settings;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.nsd.NsdManager;
 import android.os.AsyncTask;
 import android.preference.EditTextPreference;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import de.vier_bier.habpanelviewer.R;
@@ -37,6 +39,12 @@ public class ServerPreference extends EditTextPreference {
             final Button b = new Button(getContext());
             b.setText(R.string.discoverServer);
 
+            final TextView ex = new TextView(getContext());
+            ex.setText("  " + getContext().getResources().getString(R.string.pref_url_example));
+            ex.setTextColor(Color.GRAY);
+
+            container.addView(ex, ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
             container.addView(b, ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             container.addView(cb, ViewGroup.LayoutParams.WRAP_CONTENT,
