@@ -8,28 +8,38 @@ Its functionality can mainly be divided into three categories:
 - [usability features](#usability) making it easier to use HABPanel on a tablet
 
 ## <a name="configuration"/>Configuration
+
 **The following settings need to be configured for the initial operation of HABPanelViewer.**
 
->"**Start page**":  This is the very minimum configuration needed for habPanelViewer to function.  This is the initial page loaded when the application is started or restarted.  While this can be any accessible URL, the intended use is for the habPanel dashboard that you want as your starting page when the application is launched or restarted.  
+###openHAB URL
+This is the base URL of your openHAB instance and is required for the integrations (e.g Command Item, Sensor Reporting, Connected Indicator). If this URL is not configured, these integration options will not function.
 
->This needs to be the full URL, examples:
+This URL can be automatically discovered using mDNS if the device is on the same subnet as your openHAB instance by clicking the "Discover Server" button in the "openHAB URL" settings.  If it cannot be discovered or you wish to manually enter it, an example for this base URL would be:
 
->`http://{ip or hostname}:8080/habpanel/index.html#/` would start at the main menu of dashboards.<br>
->`http://{ip or hostname}:8080/habpanel/index.html#/view/Lights`  would start at a specific dashboard.<br>
+`http://{ip or hostname}:8080/` <br>
+No additional URL paths should be configured here.
+
+> If you are using https (ssl), your port would normally be 8443_
+
+###Start page
+This is the initial page loaded when the application is started or restarted.  While this can be any accessible URL, the intended use is for the HABPanel dashboard that you want as your starting page when the application is launched or restarted.
+
+You can leave this field empty, in which case the openHAB URL will be used as the start page.
+
+This needs to be the full URL, examples:
+
+`http://{ip or hostname}:8080/habpanel/index.html#/`<br>would start at the main menu of dashboards.
+
+`http://{ip or hostname}:8080/habpanel/index.html#/view/Lights`<br>would start at a specific dashboard.<br>
    
->*Note, the "dashboard" parameters are case sensitive.  In the example above, "view" is always all lower case and "Lights" is how you named it when creating the dashboard.  You can validate what your actual dashboard name and case is by navagating to it from your computer's browser.
+> The "dashboard" parameters are case sensitive.  In the example above, "view" is always all lower case and "Lights" is how you named it when creating the dashboard.  You can validate what your actual dashboard name and case is by navagating to it from your computer's browser.
 
->**Kiosk Mode**  To enable "Kiosk Mode", simply add the URL parameter `?kiosk=on` at the end of either example listed above.
+Instead of configuring the start page in the settings, it might be more comfortable to set it interactively. Simply leave it blank, then browse to the panel you want to have as start panel and select "Set as start page" from the context menu.
+ 
+###Kiosk Mode
+You can toggle "Kiosk Mode" by using the context menu. If you want to apply kiosk mode to your start page, simply activate kiosk mode with the context menu and then select "Set as start page" from the context menu.
 
-
->"**openHAB URL**":  This is the base URL of your openHAB instance and is required for the integrations (_examples; Command Items, Sensor Reporting, Connected Indicator_).  If this URL is not configured, these integration options will not function.
-
->This URL can be automatically discovered using mDNS if the device is on the same subnet as your openHAB instance by clicking the "Discover Server" button in the "openHAB URL" settings.  If it cannot be discovered or you wish to manually enter it, an example for this base URL would be:
-
->`http://{ip or hostname}:8080/`<br>
->No additional URL paths should be configured here.
-
->_Note:  If you are using https (ssl), your port would normally be 8443_
+Another way of activating kiosk mode is to add the URL parameter `?kiosk=on` at the end of either example listed above.
 
 ## <a name="control"/>Device Control
 ### command item
@@ -145,7 +155,7 @@ It first to find a HTTPS connection to the server and falls back to HTTP if that
 ### launcher functionality
 The application can be set as the device launcher. It then starts with the device on replaces the device home screen. This has to be configured in the android settings. 
 
-### Start page configuration
+### start page configuration
 Browse to an arbitrary page and set it as start page using the context menu.
 
 ### scrolling prevention

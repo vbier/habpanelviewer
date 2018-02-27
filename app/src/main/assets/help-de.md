@@ -7,6 +7,40 @@ Die Funktionalität kann in drei Bereiche aufgeteilt werden:
 - [Sensorwerte Meldung](#reporting) an openHAB
 - [Benutzerfreundlichkeit](#usability) macht es einfacher HABPanel auf einem Tablet zu benutzen
 
+## <a name="configuration"/>Konfiguration
+
+**Die folgenden Einstellungen sollten beim ersten Start der Applikation eingestellt werden.**
+
+###openHAB URL
+Die ist die URL des openHAB servers. Sie wird für die openHAB integration (d.h. Kommando Item, Sensortwerte Meldung, Verbindungsindikator) benötigt. Wenn die URL nicht richtig konfiguriert ist, wird die genannte Funktionalität nicht zur Verfügung stehen.
+
+Die URL kann automatisch per mDNS discovery gesucht werden, wenn sich das Gerät im selben Subnetz wie der openHAB server befindet. Drücken Sie dafür auf den "" Knopf im openHAB URL Einstellungsdialog. Wenn die Suche nicht funktioniert, oder Sie die URL selbst eingeben möchten, wäre ein Beispiel für die URL:
+
+`http://{ip or hostname}:8080/` <br>
+Es sollte kein weiterer Pfad an die URL angehängt werden.
+
+> Wenn Sie https (ssl) benutzen möchten, sollten Sie 8443 als Port verwenden.
+
+###Startseite
+Dies ist die Seite, die beim Starten der Applikation angezeigt werden soll. Dies kann eine beliebige URL sein, die vorgesehene Verwendung ist eine URL einer HABPanel Seite.    
+
+Wenn Sie diese Einstellung leer lassen, wird die openHAB URL beim Starten der Applikation angezeigt.
+
+Beispiele für HABPanel URLs:
+
+`http://{ip or hostname}:8080/habpanel/index.html#/`<br>startet im HABPanel Menü.
+
+`http://{ip or hostname}:8080/habpanel/index.html#/view/Info`<br>startet mit der speziellen HABPanel Seite Info<br>
+   
+> Achten Sie auf die richtige Groß- und Kleinschreibung der HABPanel URL.
+
+Anstatt die Startseite in den Einstellungen zu Konfigurieren, können Sie sie auch interaktiv setzen. Lassen Sie die Einstellung leer, navigieren Sie im Browser zur gewünschen Seite und wählen Sie "Als Startseite setzen" im Kontextmenü.
+ 
+###Kiosk Modus
+Sie können den Kiosk Modus über das Kontextmenü an- und auschalten. Wenn Sie den Kiosk Modus für die Startseite verwenden wollen, aktivieren Sie ihn mit dem Kontextmenü und wählen Sie danach "Als Startseite setzen" aus dem Kontextmenü.
+
+Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Parameter `?kiosk=on` anzuhängen.
+
 ## <a name="control"/>Geräte Steuerung
 ### Kommando Item
 Überwacht das openHAB **String Item** und wartet auf Kommandos. Erlaubte Kommandos sind:
