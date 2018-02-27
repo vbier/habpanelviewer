@@ -2,5 +2,6 @@ Die App sucht momentan den openHAB Server im lokalen Netz. Sobald der Server gef
 Benutzen sie das Kontextmenü, um die gewünschte Seite als Startseite zu markieren.
 
 Wenn der Server nicht gefunden werden kann, öffnen Sie das Menü und geben Sie die URL in den Einstellungen ein.
+Schauen Sie in die integrierte Hilfe für eine Beschreibung der initialen Konfiguration.
 
 Um das Menü zu öffnen, ziehen Sie den Finger vom rechten Rand zur Mitte des Bildschirms.

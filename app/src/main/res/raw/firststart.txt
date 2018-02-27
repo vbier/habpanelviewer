@@ -3,5 +3,6 @@ Once the server has been found, the web page will automatically be loaded. Pleas
 Use the context menu to set your desired page as start page.
 
 In case the server can not be found, open the menu to access the settings and enter the server URL manually.
+See the in-app help for a description of the initial configuration.
 
 To open the menu, swipe inwards from the right side of the screen.
