@@ -1,0 +1,1 @@
+* added commands: SHOW_START_URL, SHOW_URL, SHOW_DASHBOARD, RELOAD
