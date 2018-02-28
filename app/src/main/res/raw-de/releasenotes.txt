@@ -1,3 +1,6 @@
+0.9.19pre
+======
+
 0.9.18
 ======
 - neues Kontext Menü zum Umschalten des Kiosk Modus when HABPanel angezeigt wird

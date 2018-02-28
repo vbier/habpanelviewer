@@ -1,3 +1,6 @@
+0.9.19pre
+======
+
 0.9.18
 ======
 - add context menu allowing to toggle kiosk mode when HABPanel is shown
