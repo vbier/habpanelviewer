@@ -1,5 +1,6 @@
 0.9.19pre
 ======
+- added commands: SHOW_START_URL, SHOW_URL, SHOW_DASHBOARD, RELOAD
 
 0.9.18
 ======

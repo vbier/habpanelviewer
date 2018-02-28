@@ -11,7 +11,7 @@ Its functionality can mainly be divided into three categories:
 
 **The following settings need to be configured for the initial operation of HABPanelViewer.**
 
-###openHAB URL
+### openHAB URL
 This is the base URL of your openHAB instance and is required for the integrations (e.g Command Item, Sensor Reporting, Connected Indicator). If this URL is not configured, these integration options will not function.
 
 This URL can be automatically discovered using mDNS if the device is on the same subnet as your openHAB instance by clicking the "Discover Server" button in the "openHAB URL" settings.  If it cannot be discovered or you wish to manually enter it, an example for this base URL would be:
@@ -21,7 +21,7 @@ No additional URL paths should be configured here.
 
 > If you are using https (ssl), your port would normally be 8443_
 
-###Start page
+### Start page
 This is the initial page loaded when the application is started or restarted.  While this can be any accessible URL, the intended use is for the HABPanel dashboard that you want as your starting page when the application is launched or restarted.
 
 You can leave this field empty, in which case the openHAB URL will be used as the start page.
@@ -36,7 +36,7 @@ This needs to be the full URL, examples:
 
 Instead of configuring the start page in the settings, it might be more comfortable to set it interactively. Simply leave it blank, then browse to the panel you want to have as start panel and select "Set as start page" from the context menu.
  
-###Kiosk Mode
+### Kiosk Mode
 You can toggle "Kiosk Mode" by using the context menu. If you want to apply kiosk mode to your start page, simply activate kiosk mode with the context menu and then select "Set as start page" from the context menu.
 
 Another way of activating kiosk mode is to add the URL parameter `?kiosk=on` at the end of either example listed above.
@@ -61,6 +61,11 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 * UPDATE_ITEMS: forces an update of all openHAB reporting items
 * START_APP *app*: starts the app with the package name *app*
 * ADMIN_LOCK_SCREEN: activates the lock screen (requires the app to be set as device admin in the settings)
+* SHOW_URL *url*: shows the given URL
+* SHOW_DASHBOARD *dashboard*: shows the given HABPanel dashboard
+> This only works as long as HABPanel is available under its standard URL. If you have a custom HABPanel installation use SHOW_URL instead.
+* SHOW_START_URL: shows the configured start URL
+* RELOAD: reloads the current page
 
 ### command log
 Shows the last 100 commands that have been processed by HABPanelViewer. Color coding indicates processing status:

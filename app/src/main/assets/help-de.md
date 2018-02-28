@@ -61,6 +61,11 @@ Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Param
 * UPDATE_ITEMS: sendet alle aktuellen Item Werte an openHAB
 * START_APP *app*: started die app mit dem Paket Namen *app*
 * ADMIN_LOCK_SCREEN: aktiviert die Bildschirmsperre (beötigt, das die App in den Einstellungen als Device Admin aktiviert ist)
+* SHOW_URL *url*: zeigt die angegebene Webseite
+* SHOW_DASHBOARD *dashboard*: zeigt die angegebene Habpanel Seite
+> Die funktioniert nur wenn HABPanel unter der Standard URL verfügbar ist. Wenn Sie eine angepasste HABPanel installation haben, benutzen Sie statt dessen SHOW_URL.
+* SHOW_START_URL: zeigt die konfigurierte Startseite
+* RELOAD: lädt die angezeigte Seite neu
 
 ### Kommando Log
 Zeigt die letzten 100 von HABPanelViewer prozessierten Kommandos. Der Status wird durch die Textfarbe angezeigt:

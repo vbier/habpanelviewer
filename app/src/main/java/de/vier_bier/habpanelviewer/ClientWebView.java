@@ -260,7 +260,7 @@ public class ClientWebView extends WebView {
         getContext().registerReceiver(mNetworkReceiver, intentFilter);
     }
 
-    void loadStartUrl() {
+    public void loadStartUrl() {
         String url = mStartPage;
         if ("".equals(url)) {
             url = mServerURL;
@@ -424,5 +424,9 @@ public class ClientWebView extends WebView {
 
     private boolean isHabPanelUrl(final String url) {
         return url != null && url.toLowerCase().contains("/habpanel/");
+    }
+
+    public void loadDashboard(String panelName) {
+        loadUrl(mServerURL + "/habpanel/index.html#/view/" + panelName + "?kiosk=" + (mKioskMode ? "on" : "off"));
     }
 }

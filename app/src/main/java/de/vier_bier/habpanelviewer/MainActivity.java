@@ -49,6 +49,7 @@ import de.vier_bier.habpanelviewer.command.FlashHandler;
 import de.vier_bier.habpanelviewer.command.InternalCommandHandler;
 import de.vier_bier.habpanelviewer.command.ScreenHandler;
 import de.vier_bier.habpanelviewer.command.VolumeHandler;
+import de.vier_bier.habpanelviewer.command.WebViewHandler;
 import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.ConnectionListener;
@@ -327,6 +328,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+        mCommandQueue.addHandler(new WebViewHandler(mWebView));
     }
 
     @Override
