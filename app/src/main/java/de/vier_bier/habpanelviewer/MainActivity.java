@@ -612,21 +612,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void connected(final String url) {
         mConnections.connected();
-        runOnUiThread(new Runnable() {
-            public void run() {
-                mTextView.setText(url);
-            }
-        });
+        runOnUiThread(() -> mTextView.setText(url));
     }
 
     @Override
     public void disconnected() {
         mConnections.disconnected();
-        runOnUiThread(new Runnable() {
-            public void run() {
-                mTextView.setText(R.string.not_connected);
-            }
-        });
+        runOnUiThread(() -> mTextView.setText(R.string.not_connected));
     }
 
     private Intent getLaunchIntent() {

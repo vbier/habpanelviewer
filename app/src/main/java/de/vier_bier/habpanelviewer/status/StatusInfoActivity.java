@@ -35,18 +35,10 @@ public class StatusInfoActivity extends Activity {
         final StatusItemAdapter adapter = new StatusItemAdapter(this, status);
 
         executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                EventBus.getDefault().post(status);
+        executor.scheduleWithFixedDelay(() -> {
+            EventBus.getDefault().post(status);
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-            }
+            runOnUiThread(() -> adapter.notifyDataSetChanged());
         }, 0, 1, TimeUnit.SECONDS);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);

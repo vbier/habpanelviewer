@@ -70,16 +70,13 @@ public class ServerConnection implements StatePropagator {
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         mCtx.registerReceiver(mNetworkReceiver, intentFilter);
 
-        mCertListener = new ConnectionUtil.CertChangedListener() {
-            @Override
-            public void certAdded() {
-                Log.d("Habpanelview", "Cert added, reconnecting to server...");
+        mCertListener = () -> {
+            Log.d("Habpanelview", "Cert added, reconnecting to server...");
 
-                // if we are not connected, try to connect. connection may have failed due to
-                // certificate errors
-                if (!isConnected()) {
-                    connect();
-                }
+            // if we are not connected, try to connect. connection may have failed due to
+            // certificate errors
+            if (!isConnected()) {
+                connect();
             }
         };
 

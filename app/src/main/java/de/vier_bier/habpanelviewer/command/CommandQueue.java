@@ -70,23 +70,13 @@ public class CommandQueue implements StateUpdateListener {
     }
 
     private void addToCmdLog(final CommandInfo cmd) {
-        mCtx.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mCmdLog.add(cmd);
-            }
-        });
+        mCtx.runOnUiThread(() -> mCmdLog.add(cmd));
     }
 
     public void updateFromPreferences(final SharedPreferences prefs) {
         String mCmdItemName = prefs.getString("pref_command_item", "");
 
-        mCtx.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mCmdLog.setSize(prefs.getInt("pref_command_log_size", 100));
-            }
-        });
+        mCtx.runOnUiThread(() -> mCmdLog.setSize(prefs.getInt("pref_command_log_size", 100)));
 
         mServerConnection.subscribeCommandItems(this, mCmdItemName);
     }

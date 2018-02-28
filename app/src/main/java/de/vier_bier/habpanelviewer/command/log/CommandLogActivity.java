@@ -33,12 +33,7 @@ public class CommandLogActivity extends Activity {
     private ScheduledExecutorService executor;
     private CommandInfoAdapter adapter;
 
-    private final CommandLogClient logClient = new CommandLogClient() {
-        @Override
-        public void setCommandLog(CommandLog cmdLog) {
-            installAdapter(cmdLog);
-        }
-    };
+    private final CommandLogClient logClient = this::installAdapter;
 
     private void installAdapter(CommandLog cmdLog) {
         final ListView listView = findViewById(R.id.command_log_listview);
@@ -53,19 +48,11 @@ public class CommandLogActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleWithFixedDelay(new Runnable() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (adapter != null) {
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                });
+        executor.scheduleWithFixedDelay(() -> runOnUiThread(() -> {
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
             }
-        }, 0, 1, TimeUnit.SECONDS);
+        }), 0, 1, TimeUnit.SECONDS);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -148,12 +135,7 @@ public class CommandLogActivity extends Activity {
 
         @Override
         public void logChanged() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    notifyDataSetChanged();
-                }
-            });
+            runOnUiThread(() -> notifyDataSetChanged());
         }
     }
 }

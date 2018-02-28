@@ -7,7 +7,7 @@ class ItemState {
     final String mItemName;
     final String mItemState;
 
-    public ItemState(String itemName, String itemState) {
+    ItemState(String itemName, String itemState) {
         mItemName = itemName;
         mItemState = itemState;
     }

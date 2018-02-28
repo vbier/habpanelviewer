@@ -11,8 +11,6 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
  * Reports motion events to openHAB.
  */
 public class MotionReporter extends MotionListener.MotionAdapter {
-    private static final String TAG = "MotionReporter";
-
     private final ServerConnection mServerConnection;
     private final MotionListener mListener;
 

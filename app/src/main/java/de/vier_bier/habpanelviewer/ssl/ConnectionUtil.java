@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.security.auth.x500.X500Principal;
 
@@ -100,12 +99,7 @@ public class ConnectionUtil {
         if (urlConnection instanceof HttpsURLConnection) {
             ((HttpsURLConnection) urlConnection).setSSLSocketFactory(sslCtx.getSocketFactory());
 
-            HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return hostname.equalsIgnoreCase(url.getHost());
-                }
-            };
+            HostnameVerifier hostnameVerifier = (hostname, session) -> hostname.equalsIgnoreCase(url.getHost());
             ((HttpsURLConnection) urlConnection).setHostnameVerifier(hostnameVerifier);
         }
         urlConnection.setConnectTimeout(200);

@@ -59,12 +59,7 @@ public class ScreenHandler implements CommandHandler {
     }
 
     private void setKeepScreenOn(final boolean on) {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mActivity.findViewById(R.id.activity_main_webview).setKeepScreenOn(on);
-            }
-        });
+        mActivity.runOnUiThread(() -> mActivity.findViewById(R.id.activity_main_webview).setKeepScreenOn(on));
     }
 
     private void screenLock() {

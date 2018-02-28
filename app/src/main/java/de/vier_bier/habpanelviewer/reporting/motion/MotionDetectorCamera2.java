@@ -83,7 +83,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
                 CameraCharacteristics characteristics = mCamManager.getCameraCharacteristics(camId);
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-                if (facing == CameraCharacteristics.LENS_FACING_FRONT) {
+                if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
                     Log.d(TAG, "front-facing mCamera found: " + camId);
                     return camId;
                 }
@@ -174,24 +174,21 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
             ImageReader mImageReader = ImageReader.newInstance(mPreviewSize.x, mPreviewSize.y,
                     ImageFormat.YUV_420_888, 2);
-            mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
-                @Override
-                public void onImageAvailable(ImageReader reader) {
-                    Image i = reader.acquireLatestImage();
+            mImageReader.setOnImageAvailableListener(reader -> {
+                Image i = reader.acquireLatestImage();
 
-                    if (i != null) {
-                        // only process if we do not yet have a buffered preview image
-                        if (previewMissing()) {
-                            Log.v(TAG, "preview image available: size " + i.getWidth() + "x" + i.getHeight());
+                if (i != null) {
+                    // only process if we do not yet have a buffered preview image
+                    if (previewMissing()) {
+                        Log.v(TAG, "preview image available: size " + i.getWidth() + "x" + i.getHeight());
 
-                            ByteBuffer luma = i.getPlanes()[0].getBuffer();
-                            final byte[] data = new byte[luma.capacity()];
-                            luma.get(data);
+                        ByteBuffer luma = i.getPlanes()[0].getBuffer();
+                        final byte[] data = new byte[luma.capacity()];
+                        luma.get(data);
 
-                            setPreview(new LumaData(data, i.getWidth(), i.getHeight(), mBoxes));
-                        }
-                        i.close();
+                        setPreview(new LumaData(data, i.getWidth(), i.getHeight(), mBoxes));
                     }
+                    i.close();
                 }
             }, null);
 
@@ -272,8 +269,8 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
                 Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-                camStr.append(hasFlash ? mContext.getString(R.string.has) : mContext.getString(R.string.no)).append(" ").append(mContext.getString(R.string.flash)).append(", ");
-                camStr.append(facing == CameraCharacteristics.LENS_FACING_BACK ?
+                camStr.append(Boolean.TRUE.equals(hasFlash) ? mContext.getString(R.string.has) : mContext.getString(R.string.no)).append(" ").append(mContext.getString(R.string.flash)).append(", ");
+                camStr.append(facing != null && facing == CameraCharacteristics.LENS_FACING_BACK ?
                         mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing)).append("\n");
             }
         } catch (CameraAccessException e) {

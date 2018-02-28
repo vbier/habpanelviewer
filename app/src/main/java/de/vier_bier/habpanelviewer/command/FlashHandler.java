@@ -34,7 +34,8 @@ public class FlashHandler implements CommandHandler {
             Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
             Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-            if (facing == CameraCharacteristics.LENS_FACING_BACK && hasFlash) {
+            if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK
+                    && Boolean.TRUE.equals(hasFlash)) {
                 torchId = camId;
                 break;
             }

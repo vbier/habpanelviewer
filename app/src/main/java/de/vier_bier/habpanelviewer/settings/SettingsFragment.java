@@ -149,14 +149,11 @@ public class SettingsFragment extends PreferenceFragment {
                 public void afterTextChanged(final Editable editable) {
                     final String itemName = editable.toString();
 
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mLoader.isValid(itemName)) {
-                                editText.setTextColor(Color.GREEN);
-                            } else {
-                                editText.setTextColor(Color.RED);
-                            }
+                    getActivity().runOnUiThread(() -> {
+                        if (mLoader.isValid(itemName)) {
+                            editText.setTextColor(Color.GREEN);
+                        } else {
+                            editText.setTextColor(Color.RED);
                         }
                     });
                 }

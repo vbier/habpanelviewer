@@ -120,7 +120,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
                     mLeniency = newLeniency;
                     mDeviceRotation = newDeviceRotation;
 
-                    startDetection((TextureView) mContext.findViewById(R.id.previewView), newDeviceRotation * 90);
+                    startDetection(mContext.findViewById(R.id.previewView), newDeviceRotation * 90);
                     mEnabled = true;
                 } catch (CameraException e) {
                     Log.e(TAG, "Could not enable MotionDetector", e);

@@ -18,12 +18,11 @@ class FetchItemStateTask extends AsyncTask<String, Void, Void> {
     private final String serverUrl;
     private final SubscriptionListener subscriptionListener;
 
-    public FetchItemStateTask(String url, SubscriptionListener l) {
+    FetchItemStateTask(String url, SubscriptionListener l) {
         serverUrl = url;
         subscriptionListener = l;
     }
 
-    @SafeVarargs
     @Override
     protected final Void doInBackground(String... itemNames) {
         for (String itemName : itemNames) {

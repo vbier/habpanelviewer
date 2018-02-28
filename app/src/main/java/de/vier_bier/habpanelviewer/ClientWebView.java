@@ -3,7 +3,6 @@ package de.vier_bier.habpanelviewer;
 import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -22,7 +21,6 @@ import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
-import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -126,12 +124,9 @@ public class ClientWebView extends WebView {
                 super.onPageFinished(view, url);
 
                 if (isHabPanelUrl(url)) {
-                    evaluateJavascript("angular.element(document.body).scope().$root.kioskMode", new ValueCallback<String>() {
-                        @Override
-                        public void onReceiveValue(String s) {
-                            mKioskMode = Boolean.parseBoolean(s);
-                            Log.d("Kiosk", "HABPanel page loaded. kioskMode=" + mKioskMode);
-                        }
+                    evaluateJavascript("angular.element(document.body).scope().$root.kioskMode", s -> {
+                        mKioskMode = Boolean.parseBoolean(s);
+                        Log.d("Kiosk", "HABPanel page loaded. kioskMode=" + mKioskMode);
                     });
                 }
             }
@@ -192,23 +187,17 @@ public class ClientWebView extends WebView {
                                 + certInfo.replaceAll("<br/>", "\n") + "\n"
                                 + getContext().getString(R.string.storeSecurityException))
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                try {
-                                    ConnectionUtil.addCertificate(error.getCertificate());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                handler.proceed();
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            try {
+                                ConnectionUtil.addCertificate(error.getCertificate());
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
+                            handler.proceed();
                         })
-                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                loadData("<html><body><h1>" + getContext().getString(R.string.certInvalid)
-                                        + "</h1><h2>" + getContext().getString(R.string.sslCert) + "https://" + host + " "
-                                        + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8");
-                            }
-                        }).show();
+                        .setNegativeButton(android.R.string.no, (dialog, whichButton) -> loadData("<html><body><h1>" + getContext().getString(R.string.certInvalid)
+                                + "</h1><h2>" + getContext().getString(R.string.sslCert) + "https://" + host + " "
+                                + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8")).show();
             }
 
 
@@ -219,33 +208,19 @@ public class ClientWebView extends WebView {
                         .setTitle(R.string.login_required)
                         .setMessage(getContext().getString(R.string.host_realm, host, realm))
                         .setView(R.layout.dialog_login)
-                        .setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                EditText userT = ((AlertDialog) dialog).findViewById(R.id.username);
-                                EditText passT = ((AlertDialog) dialog).findViewById(R.id.password);
+                        .setPositiveButton(R.string.okay, (dialog12, id) -> {
+                            EditText userT = ((AlertDialog) dialog12).findViewById(R.id.username);
+                            EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
 
-                                handler.proceed(userT.getText().toString(), passT.getText().toString());
-                            }
-                        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                handler.cancel();
-                            }
-                        });
+                            handler.proceed(userT.getText().toString(), passT.getText().toString());
+                        }).setNegativeButton(R.string.cancel, (dialog1, which) -> handler.cancel());
 
                 final AlertDialog alert = dialog.create();
                 alert.show();
-                return;
             }
         });
 
-        setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return (event.getAction() == MotionEvent.ACTION_MOVE && mDraggingPrevented);
-            }
-        });
+        setOnTouchListener((v, event) -> (event.getAction() == MotionEvent.ACTION_MOVE && mDraggingPrevented));
 
         CookieManager.getInstance().setAcceptCookie(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -267,26 +242,18 @@ public class ClientWebView extends WebView {
         }
 
         if ("".equals(url)) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    loadData("<html><body><h1>" + getContext().getString(R.string.configMissing)
-                            + "</h1><h2>" + getContext().getString(R.string.startPageNotSet) + "."
-                            + getContext().getString(R.string.specifyUrlInSettings)
-                            + "</h2></body></html>", "text/html", "UTF-8");
-                }
-            });
+            post(() -> loadData("<html><body><h1>" + getContext().getString(R.string.configMissing)
+                    + "</h1><h2>" + getContext().getString(R.string.startPageNotSet) + "."
+                    + getContext().getString(R.string.specifyUrlInSettings)
+                    + "</h2></body></html>", "text/html", "UTF-8"));
             return;
         }
 
         final String startPage = url;
         mKioskMode = isHabPanelUrl(startPage) && startPage.toLowerCase().contains("kiosk=on");
-        post(new Runnable() {
-            @Override
-            public void run() {
-                if (getUrl() == null || !startPage.equalsIgnoreCase(getUrl())) {
-                    loadUrl(startPage);
-                }
+        post(() -> {
+            if (getUrl() == null || !startPage.equalsIgnoreCase(getUrl())) {
+                loadUrl(startPage);
             }
         });
     }
@@ -388,20 +355,12 @@ public class ClientWebView extends WebView {
         input.selectAll();
         builder.setView(input);
 
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String url = input.getText().toString();
-                mKioskMode = isHabPanelUrl(url) && url.toLowerCase().contains("kiosk=on");
-                loadUrl(url);
-            }
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            String url = input.getText().toString();
+            mKioskMode = isHabPanelUrl(url) && url.toLowerCase().contains("kiosk=on");
+            loadUrl(url);
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
         builder.show();
     }

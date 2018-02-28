@@ -52,51 +52,38 @@ public class ServerPreference extends EditTextPreference {
 
             final ProgressBar p = new ProgressBar(getContext());
 
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    b.setEnabled(false);
-                    ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                    ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+            b.setOnClickListener(view -> {
+                b.setEnabled(false);
+                ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
 
-                    AsyncTask discoveryTask = new AsyncTask() {
-                        @Override
-                        protected Object doInBackground(Object[] objects) {
-                            ServerDiscovery mDiscovery = new ServerDiscovery((NsdManager) getContext().getSystemService(Context.NSD_SERVICE));
-                            mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
-                                @Override
-                                public void found(final String serverUrl) {
-                                    b.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            editText.setText(serverUrl);
-                                        }
-                                    });
-                                }
+                AsyncTask discoveryTask = new AsyncTask() {
+                    @Override
+                    protected Object doInBackground(Object[] objects) {
+                        ServerDiscovery mDiscovery = new ServerDiscovery((NsdManager) getContext().getSystemService(Context.NSD_SERVICE));
+                        mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
+                            @Override
+                            public void found(final String serverUrl) {
+                                b.post(() -> editText.setText(serverUrl));
+                            }
 
-                                @Override
-                                public void notFound() {
-                                    b.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            Toast.makeText(getContext(), getContext().getString(R.string.serverNotFound), Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                }
-                            }, !cb.isChecked(), cb.isChecked());
+                            @Override
+                            public void notFound() {
+                                b.post(() -> Toast.makeText(getContext(), getContext().getString(R.string.serverNotFound), Toast.LENGTH_LONG).show());
+                            }
+                        }, !cb.isChecked(), cb.isChecked());
 
-                            return null;
-                        }
+                        return null;
+                    }
 
-                        @Override
-                        protected void onPostExecute(Object o) {
-                            b.setEnabled(true);
-                            ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                            ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
-                        }
-                    };
-                    discoveryTask.execute();
-                }
+                    @Override
+                    protected void onPostExecute(Object o) {
+                        b.setEnabled(true);
+                        ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+                    }
+                };
+                discoveryTask.execute();
             });
 
         }
