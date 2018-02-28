@@ -117,7 +117,9 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
             StreamConfigurationMap map = characteristics.get(
                     CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
-            chooseOptimalSize(toPointArray(map.getOutputSizes(ImageFormat.YUV_420_888)), 640, 480, new Point(4, 3));
+            if (map != null) {
+                chooseOptimalSize(toPointArray(map.getOutputSizes(ImageFormat.YUV_420_888)), 640, 480, new Point(4, 3));
+            }
 
             mCamManager.openCamera(mCameraId, new CameraDevice.StateCallback() {
                 @Override
@@ -249,7 +251,10 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
         try {
             CameraCharacteristics characteristics
                     = mCamManager.getCameraCharacteristics(String.valueOf(mCameraId));
-            return characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+            Integer orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+            if (orientation != null) {
+                return orientation;
+            }
         } catch (CameraAccessException e) {
             Log.e(TAG, "Couldn't find out camera sensor orientation");
         }
@@ -261,20 +266,22 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
     protected String getCameraInfo() {
         StringBuilder camStr = new StringBuilder(mContext.getString(R.string.camApi2) + "\n");
         CameraManager camManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
-        try {
-            for (String camId : camManager.getCameraIdList()) {
-                camStr.append(mContext.getString(R.string.cameraId, camId)).append(": ");
+        if (camManager != null) {
+            try {
+                for (String camId : camManager.getCameraIdList()) {
+                    camStr.append(mContext.getString(R.string.cameraId, camId)).append(": ");
 
-                CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
-                Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-                Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+                    CameraCharacteristics characteristics = camManager.getCameraCharacteristics(camId);
+                    Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                    Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-                camStr.append(Boolean.TRUE.equals(hasFlash) ? mContext.getString(R.string.has) : mContext.getString(R.string.no)).append(" ").append(mContext.getString(R.string.flash)).append(", ");
-                camStr.append(facing != null && facing == CameraCharacteristics.LENS_FACING_BACK ?
-                        mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing)).append("\n");
+                    camStr.append(Boolean.TRUE.equals(hasFlash) ? mContext.getString(R.string.has) : mContext.getString(R.string.no)).append(" ").append(mContext.getString(R.string.flash)).append(", ");
+                    camStr.append(facing != null && facing == CameraCharacteristics.LENS_FACING_BACK ?
+                            mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing)).append("\n");
+                }
+            } catch (CameraAccessException e) {
+                camStr = new StringBuilder(mActivity.getString(R.string.failedAccessCamera) + ":" + e.getMessage());
             }
-        } catch (CameraAccessException e) {
-            camStr = new StringBuilder(mActivity.getString(R.string.failedAccessCamera) + ":" + e.getMessage());
         }
 
         return camStr.toString().trim();

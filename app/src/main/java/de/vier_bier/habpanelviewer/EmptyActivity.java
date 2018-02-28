@@ -15,7 +15,7 @@ public class EmptyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean keep = this.getIntent().getExtras().getBoolean("keep");
+        boolean keep = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("keep");
         if (keep) {
             setContentView(R.layout.activity_empty);
 
@@ -60,7 +60,7 @@ public class EmptyActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        boolean keep = intent.getExtras().getBoolean("keep");
+        boolean keep = intent.getExtras() != null && intent.getExtras().getBoolean("keep");
         if (!keep) {
             finish();
         }

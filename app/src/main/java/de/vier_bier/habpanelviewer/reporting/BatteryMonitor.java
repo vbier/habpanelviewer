@@ -145,20 +145,20 @@ public class BatteryMonitor implements StateUpdateListener {
         private final AtomicBoolean fRunning = new AtomicBoolean(true);
         private final AtomicBoolean fPollAll = new AtomicBoolean(true);
 
-        public BatteryPollingThread() {
+        BatteryPollingThread() {
             super("BatteryPollingThread");
             setDaemon(true);
             start();
         }
 
-        public void stopPolling() {
+        void stopPolling() {
             synchronized (fRunning) {
                 fRunning.set(false);
                 fRunning.notifyAll();
             }
         }
 
-        public void pollNow() {
+        void pollNow() {
             synchronized (fRunning) {
                 fPollAll.set(true);
                 fRunning.notifyAll();
@@ -187,11 +187,13 @@ public class BatteryMonitor implements StateUpdateListener {
             if (!mBatteryLevelItem.isEmpty() || !mBatteryLowItem.isEmpty()) {
                 batteryStatus = mCtx.registerReceiver(null, ifilter);
 
-                int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-                int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-                int newBatteryLevelState = (int) ((level / (float) scale) * 100);
+                if (batteryStatus != null) {
+                    int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                    int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+                    int newBatteryLevelState = (int) ((level / (float) scale) * 100);
 
-                mServerConnection.updateState(mBatteryLevelItem, String.valueOf(newBatteryLevelState));
+                    mServerConnection.updateState(mBatteryLevelItem, String.valueOf(newBatteryLevelState));
+                }
             }
 
             if (fPollAll.getAndSet(false)) {
@@ -199,16 +201,18 @@ public class BatteryMonitor implements StateUpdateListener {
                     batteryStatus = mCtx.registerReceiver(null, ifilter);
                 }
 
-                int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-                mBatteryCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
-                        status == BatteryManager.BATTERY_STATUS_FULL;
-                int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-                int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-                mBatteryLevel = (int) ((level / (float) scale) * 100);
-                mBatteryLow = mBatteryLevel < 16;
+                if (batteryStatus != null) {
+                    int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+                    mBatteryCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
+                            status == BatteryManager.BATTERY_STATUS_FULL;
+                    int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                    int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+                    mBatteryLevel = (int) ((level / (float) scale) * 100);
+                    mBatteryLow = mBatteryLevel < 16;
 
-                mServerConnection.updateState(mBatteryChargingItem, mBatteryCharging ? "CLOSED" : "OPEN");
-                mServerConnection.updateState(mBatteryLowItem, mBatteryLow ? "CLOSED" : "OPEN");
+                    mServerConnection.updateState(mBatteryChargingItem, mBatteryCharging ? "CLOSED" : "OPEN");
+                    mServerConnection.updateState(mBatteryLowItem, mBatteryLow ? "CLOSED" : "OPEN");
+                }
             }
         }
     }

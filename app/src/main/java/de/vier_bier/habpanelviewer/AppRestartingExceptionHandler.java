@@ -25,13 +25,15 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     private static void restartApp(MainActivity context, int count) {
         Intent mStartActivity = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-        mStartActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        if (count != -1) {
-            mStartActivity.putExtra("crash", true);
-            mStartActivity.putExtra("restartCount", count + 1);
-        }
+        if (mStartActivity != null) {
+            mStartActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (count != -1) {
+                mStartActivity.putExtra("crash", true);
+                mStartActivity.putExtra("restartCount", count + 1);
+            }
 
-        context.destroy();
-        ProcessPhoenix.triggerRebirth(context, mStartActivity);
+            context.destroy();
+            ProcessPhoenix.triggerRebirth(context, mStartActivity);
+        }
     }
 }

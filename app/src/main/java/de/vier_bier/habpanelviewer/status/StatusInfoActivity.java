@@ -38,7 +38,7 @@ public class StatusInfoActivity extends Activity {
         executor.scheduleWithFixedDelay(() -> {
             EventBus.getDefault().post(status);
 
-            runOnUiThread(() -> adapter.notifyDataSetChanged());
+            runOnUiThread(adapter::notifyDataSetChanged);
         }, 0, 1, TimeUnit.SECONDS);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);

@@ -27,7 +27,7 @@ public class ConnectionStatistics {
     private long mOnlineMaxMillis = 0;
     private long mOnlineAverage = 0;
 
-    public ConnectionStatistics(Context context) {
+    ConnectionStatistics(Context context) {
         mCtx = context;
         EventBus.getDefault().register(this);
     }
@@ -95,7 +95,7 @@ public class ConnectionStatistics {
         return retVal.substring(0, retVal.length() - 1);
     }
 
-    public synchronized void disconnected() {
+    synchronized void disconnected() {
         if (mState == State.CONNECTED) {
             mLastOfflineTime = System.currentTimeMillis();
 
@@ -111,7 +111,7 @@ public class ConnectionStatistics {
         }
     }
 
-    public synchronized void connected() {
+    synchronized void connected() {
         if (mState == State.DISCONNECTED) {
             mLastOnlineTime = System.currentTimeMillis();
 

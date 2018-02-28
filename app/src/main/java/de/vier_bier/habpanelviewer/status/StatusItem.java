@@ -10,7 +10,7 @@ public class StatusItem {
     private final String mName;
     private String mValue;
 
-    public StatusItem(String name, String value) {
+    StatusItem(String name, String value) {
         mName = name;
         mValue = value;
     }

@@ -135,7 +135,7 @@ public class CommandLogActivity extends Activity {
 
         @Override
         public void logChanged() {
-            runOnUiThread(() -> notifyDataSetChanged());
+            runOnUiThread(this::notifyDataSetChanged);
         }
     }
 }

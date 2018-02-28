@@ -19,7 +19,7 @@ public class MotionReporter extends MotionListener.MotionAdapter {
 
     private String mMotionItem;
 
-    public MotionReporter(MotionListener l, ServerConnection serverConnection) {
+    MotionReporter(MotionListener l, ServerConnection serverConnection) {
         mServerConnection = serverConnection;
         mListener = l;
     }

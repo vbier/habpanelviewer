@@ -23,7 +23,7 @@ public class CommandInfo {
         return mCommand;
     }
 
-    public boolean isHandled() {
+    boolean isHandled() {
         return mHandled;
     }
 
@@ -31,7 +31,7 @@ public class CommandInfo {
         return mTime;
     }
 
-    public Throwable getThrowable() {
+    Throwable getThrowable() {
         return mException;
     }
 }

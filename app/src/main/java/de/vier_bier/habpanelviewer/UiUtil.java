@@ -14,7 +14,7 @@ import java.util.Locale;
  * UI utility methods.
  */
 public class UiUtil {
-    public static synchronized String formatDateTime(Date d) {
+    static synchronized String formatDateTime(Date d) {
         return d == null ? "-" : DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault()).format(d);
     }
 

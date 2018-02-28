@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,8 +48,6 @@ public class ServerPreference extends EditTextPreference {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             container.addView(cb, ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
-
-            final ProgressBar p = new ProgressBar(getContext());
 
             b.setOnClickListener(view -> {
                 b.setEnabled(false);

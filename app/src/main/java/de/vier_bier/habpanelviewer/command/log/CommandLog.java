@@ -52,7 +52,7 @@ public class CommandLog {
         }
     }
 
-    public void addListener(CommandLogListener listener) {
+    void addListener(CommandLogListener listener) {
         synchronized (mListeners) {
             mListeners.add(listener);
         }

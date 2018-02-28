@@ -21,11 +21,11 @@ public class ApplicationStatus {
         }
     }
 
-    public int getItemCount() {
+    int getItemCount() {
         return mValues.size();
     }
 
-    public StatusItem getItem(int i) {
+    StatusItem getItem(int i) {
         return mValues.get(i);
     }
 }

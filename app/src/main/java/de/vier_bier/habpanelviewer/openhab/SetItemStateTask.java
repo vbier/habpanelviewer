@@ -16,7 +16,7 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 class SetItemStateTask extends AsyncTask<ItemState, Void, Void> {
     private final String serverUrl;
 
-    public SetItemStateTask(String url) {
+    SetItemStateTask(String url) {
         serverUrl = url;
     }
 

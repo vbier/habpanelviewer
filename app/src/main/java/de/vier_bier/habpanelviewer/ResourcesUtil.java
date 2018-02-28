@@ -1,6 +1,7 @@
 package de.vier_bier.habpanelviewer;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.io.InputStreamReader;
  * Utility methods for reading resources.
  */
 class ResourcesUtil {
+    @NonNull
     private static String readRawTextFile(Context ctx, int resId) {
         InputStream inputStream = ctx.getResources().openRawResource(resId);
 
@@ -25,13 +27,15 @@ class ResourcesUtil {
                 text.append('\n');
             }
         } catch (IOException e) {
-            return null;
+            return "";
         }
+
         return text.toString();
     }
 
     static String fetchReleaseNotes(Context ctx, String lastVersion) {
         String text = readRawTextFile(ctx, R.raw.releasenotes);
+
         final int pos = text.indexOf(lastVersion);
 
         if (pos != -1) {
