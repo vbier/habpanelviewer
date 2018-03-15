@@ -53,6 +53,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
     private CaptureRequest.Builder mPreviewRequestBuilder;
     private CaptureRequest mPreviewRequest;
     private CameraCaptureSession mCaptureSession;
+    private ImageReader mImageReader; // do not use local variable, as this gets garbage collected
 
     private CameraDevice mCamera;
 
@@ -174,7 +175,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
             configureTransform(previewView);
 
-            ImageReader mImageReader = ImageReader.newInstance(mPreviewSize.x, mPreviewSize.y,
+            mImageReader = ImageReader.newInstance(mPreviewSize.x, mPreviewSize.y,
                     ImageFormat.YUV_420_888, 2);
             mImageReader.setOnImageAvailableListener(reader -> {
                 Image i = reader.acquireLatestImage();
