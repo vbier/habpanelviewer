@@ -1,8 +1,10 @@
 package de.vier_bier.habpanelviewer.command;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.preference.PreferenceManager;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
@@ -13,9 +15,11 @@ import java.util.regex.Pattern;
 import de.vier_bier.habpanelviewer.MainActivity;
 import de.vier_bier.habpanelviewer.ScreenCapturer;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
+import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 
 /**
- * Handler for RESTART, UPDATE_ITEMS commands.
+ * Handler for RESTART, UPDATE_ITEMS, ENABLE_MOTION_DETECTION, DISABLE_MOTION_DETECTION, START_APP,
+ * CAPTURE_SCREEN commands.
  */
 public class InternalCommandHandler implements CommandHandler {
     private final Pattern START_PATTERN = Pattern.compile("START_APP (.+)");
@@ -23,9 +27,11 @@ public class InternalCommandHandler implements CommandHandler {
 
     private final MainActivity mActivity;
     private final ServerConnection mConnection;
+    private final IMotionDetector mMotionDetector;
 
-    public InternalCommandHandler(MainActivity mainActivity, ServerConnection connection) {
+    public InternalCommandHandler(MainActivity mainActivity, IMotionDetector motionDetector, ServerConnection connection) {
         mActivity = mainActivity;
+        mMotionDetector = motionDetector;
         mConnection = connection;
     }
 
@@ -38,6 +44,10 @@ public class InternalCommandHandler implements CommandHandler {
             ProcessPhoenix.triggerRebirth(mActivity);
         } else if ("UPDATE_ITEMS".equals(cmd)) {
             mConnection.sendCurrentValues();
+        } else if ("ENABLE_MOTION_DETECTION".equals(cmd)) {
+            setMotionDetectionEnabled(true);
+        } else if ("DISABLE_MOTION_DETECTION".equals(cmd)) {
+            setMotionDetectionEnabled(false);
         } else if ((parameter = matchesRegexp(CAPTURE_PATTERN, cmd)) != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ScreenCapturer c = mActivity.getCapturer();
@@ -66,6 +76,16 @@ public class InternalCommandHandler implements CommandHandler {
         }
 
         return true;
+    }
+
+    private void setMotionDetectionEnabled(boolean enabled) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+
+        SharedPreferences.Editor editor1 = prefs.edit();
+        editor1.putBoolean("pref_motion_detection_enabled", enabled);
+        editor1.apply();
+
+        mActivity.runOnUiThread(() -> mActivity.updateMotionPreferences());
     }
 
     private String matchesRegexp(Pattern pattern, String text) {

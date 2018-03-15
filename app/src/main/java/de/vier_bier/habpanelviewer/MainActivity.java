@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity
 
         ScreenHandler mScreenHandler = new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this);
         mCommandQueue = new CommandQueue(this, mServerConnection);
-        mCommandQueue.addHandler(new InternalCommandHandler(this, mServerConnection));
+        mCommandQueue.addHandler(new InternalCommandHandler(this, mMotionDetector, mServerConnection));
         mCommandQueue.addHandler(new AdminHandler(this));
         mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
         mCommandQueue.addHandler(mScreenHandler);
@@ -518,10 +518,6 @@ public class MainActivity extends AppCompatActivity
             params.gravity = Gravity.END;
         }
 
-        if (mMotionDetector != null) {
-            mMotionDetector.updateFromPreferences(prefs);
-        }
-
         if (mProximityMonitor != null) {
             mProximityMonitor.updateFromPreferences(prefs);
         }
@@ -545,6 +541,22 @@ public class MainActivity extends AppCompatActivity
         mConnectedReporter.updateFromPreferences(prefs);
         mWebView.updateFromPreferences(prefs);
         mServerConnection.updateFromPreferences(prefs);
+
+        updateMotionPreferences();
+
+        if (prefs.getBoolean("pref_show_context_menu", true)) {
+            registerForContextMenu(mWebView);
+        } else {
+            unregisterForContextMenu(mWebView);
+        }
+    }
+
+    public void updateMotionPreferences() {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+
+        if (mMotionDetector != null) {
+            mMotionDetector.updateFromPreferences(prefs);
+        }
 
         TextureView previewView = findViewById(R.id.previewView);
         SurfaceView motionView = findViewById(R.id.motionView);
@@ -572,12 +584,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             previewView.setVisibility(View.INVISIBLE);
             motionView.setVisibility(View.INVISIBLE);
-        }
-
-        if (prefs.getBoolean("pref_show_context_menu", true)) {
-            registerForContextMenu(mWebView);
-        } else {
-            unregisterForContextMenu(mWebView);
         }
     }
 

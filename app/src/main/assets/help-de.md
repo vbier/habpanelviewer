@@ -68,6 +68,8 @@ Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Param
 * RELOAD: lädt die angezeigte Seite neu
 * CAPTURE_SCREEN *image item*: macht einen Screenshot und sendet diesen an das openHAB image item 
 > Dies funktioniert nur mit Android Lollipop oder neuer und mit einem in openHAB definierten item vom Typ **Image**
+* ENABLE_MOTION_DETECTION: aktiviert die Bewegungserkennung in den App Einstellungen
+* DISABLE_MOTION_DETECTION: deaktiviert die Bewegungserkennung in den App Einstellungen
 
 
 ### Kommando Log

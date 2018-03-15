@@ -67,6 +67,8 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 * SHOW_START_URL: shows the configured start URL
 * RELOAD: reloads the current page
 > This only works with Android Lollipop or newer and a defined openHAB item of type **Image**
+* ENABLE_MOTION_DETECTION: enables the motion detection in the app settings.
+* DISABLE_MOTION_DETECTION: disables the motion detection in the app settings.
 
 ### command log
 Shows the last 100 commands that have been processed by HABPanelViewer. Color coding indicates processing status:
