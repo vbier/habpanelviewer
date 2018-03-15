@@ -66,6 +66,7 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 > This only works as long as HABPanel is available under its standard URL. If you have a custom HABPanel installation use SHOW_URL instead.
 * SHOW_START_URL: shows the configured start URL
 * RELOAD: reloads the current page
+> This only works with Android Lollipop or newer and a defined openHAB item of type **Image**
 
 ### command log
 Shows the last 100 commands that have been processed by HABPanelViewer. Color coding indicates processing status:

@@ -8,12 +8,13 @@
             android:persistent="false"
             android:title="@string/pref_restart">
             <CheckBoxPreference
-                android:defaultValue="false"
                 android:key="pref_restart_enabled"
+                android:defaultValue="false"
                 android:summary="@string/pref_restart_enabled_summ"
                 android:title="@string/pref_restart_enabled" />
             <EditTextPreference
                 android:key="pref_max_restarts"
+                android:dependency="pref_restart_enabled"
                 android:maxLength="2"
                 android:numeric="integer"
                 android:summary="@string/pref_max_restarts_summ"
@@ -24,20 +25,20 @@
             android:persistent="false"
             android:title="@string/pref_connected">
             <CheckBoxPreference
-                android:defaultValue="false"
                 android:key="pref_connected_enabled"
+                android:defaultValue="false"
                 android:summary="@string/pref_connected_enabled_summ"
                 android:title="@string/pref_connected_enabled" />
             <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
-                android:dependency="pref_connected_enabled"
                 android:key="pref_connected_item"
+                android:dependency="pref_connected_enabled"
                 android:summary="@string/pref_connected_item_summ"
                 android:inputType="textPhonetic"
                 android:title="@string/pref_connected_item" />
             <EditTextPreference
+                android:key="pref_connected_interval"
                 android:dependency="pref_connected_enabled"
                 android:defaultValue="60"
-                android:key="pref_connected_interval"
                 android:inputType="number"
                 android:summary="@string/pref_connected_interval_summ"
                 android:title="@string/pref_connected_interval" />
@@ -48,8 +49,8 @@
             android:inputType="textPhonetic"
             android:title="@string/pref_command_item" />
         <ListPreference
-            android:defaultValue="right"
             android:key="pref_menu_position"
+            android:defaultValue="right"
             android:entries="@array/menupositions"
             android:entryValues="@array/menupositions"
             android:summary="@string/pref_menu_position_summ"
@@ -64,25 +65,25 @@
                 android:persistent="false"
                 android:title="@string/pref_battery">
                 <CheckBoxPreference
-                    android:defaultValue="false"
                     android:key="pref_battery_enabled"
+                    android:defaultValue="false"
                     android:summary="@string/pref_battery_enabled_summ"
                     android:title="@string/pref_battery_enabled" />
                 <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
-                    android:dependency="pref_battery_enabled"
                     android:key="pref_battery_item"
+                    android:dependency="pref_battery_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_battery_item_summ"
                     android:title="@string/pref_battery_item" />
                 <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
-                    android:dependency="pref_battery_enabled"
                     android:key="pref_battery_charging_item"
+                    android:dependency="pref_battery_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_battery_charging_item_summ"
                     android:title="@string/pref_battery_charging_item" />
                 <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
-                    android:dependency="pref_battery_enabled"
                     android:key="pref_battery_level_item"
+                    android:dependency="pref_battery_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_battery_level_item_summ"
                     android:title="@string/pref_battery_level_item" />
@@ -92,48 +93,48 @@
                 android:persistent="false"
                 android:title="@string/pref_motion">
                 <CheckBoxPreference
-                    android:defaultValue="false"
                     android:key="pref_motion_detection_enabled"
+                    android:defaultValue="false"
                     android:summary="@string/pref_motion_detection_enabled_summ"
                     android:title="@string/pref_motion_detection_enabled" />
                 <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
-                    android:dependency="pref_motion_detection_enabled"
                     android:key="pref_motion_item"
+                    android:dependency="pref_motion_detection_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_motion_item_summ"
                     android:title="@string/pref_motion_item" />
                 <CheckBoxPreference
-                    android:defaultValue="false"
                     android:key="pref_motion_detection_preview"
+                    android:defaultValue="false"
                     android:dependency="pref_motion_detection_enabled"
                     android:summary="@string/pref_motion_detection_preview_summ"
                     android:title="@string/pref_motion_detection_preview" />
                 <CheckBoxPreference
-                    android:defaultValue="true"
                     android:key="pref_motion_detection_new_api"
+                    android:defaultValue="true"
                     android:enabled="@bool/is_post_api_21"
                     android:dependency="pref_motion_detection_enabled"
                     android:summary="@string/pref_motion_detection_new_api_summ"
                     android:title="@string/pref_motion_detection_new_api" />
                 <ListPreference
-                    android:defaultValue="20"
                     android:key="pref_motion_detection_granularity"
+                    android:defaultValue="20"
                     android:entries="@array/granularity"
                     android:entryValues="@array/granularity"
                     android:dependency="pref_motion_detection_enabled"
                     android:summary="@string/pref_motion_detection_granularity_summ"
                     android:title="@string/pref_motion_detection_granularity" />
                 <ListPreference
-                    android:defaultValue="20"
                     android:key="pref_motion_detection_leniency"
+                    android:defaultValue="20"
                     android:entries="@array/leniency"
                     android:entryValues="@array/leniency"
                     android:dependency="pref_motion_detection_enabled"
                     android:summary="@string/pref_motion_detection_leniency_summ"
                     android:title="@string/pref_motion_detection_leniency" />
                 <ListPreference
-                    android:defaultValue="500"
                     android:key="pref_motion_detection_sleep"
+                    android:defaultValue="500"
                     android:entries="@array/sleep"
                     android:entryValues="@array/sleep"
                     android:dependency="pref_motion_detection_enabled"
@@ -145,13 +146,13 @@
                 android:persistent="false"
                 android:title="@string/pref_proximity">
                 <CheckBoxPreference
-                    android:defaultValue="false"
                     android:key="pref_proximity_enabled"
+                    android:defaultValue="false"
                     android:summary="@string/pref_proximity_enabled_summ"
                     android:title="@string/pref_proximity_enabled" />
                 <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
-                    android:dependency="pref_proximity_enabled"
                     android:key="pref_proximity_item"
+                    android:dependency="pref_proximity_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_proximity_item_summ"
                     android:title="@string/pref_proximity_item" />
@@ -161,26 +162,26 @@
                 android:persistent="false"
                 android:title="@string/pref_brightness">
                 <CheckBoxPreference
-                    android:defaultValue="false"
                     android:key="pref_brightness_enabled"
+                    android:defaultValue="false"
                     android:summary="@string/pref_brightness_enabled_summ"
                     android:title="@string/pref_brightness_enabled" />
                 <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
-                    android:dependency="pref_brightness_enabled"
                     android:key="pref_brightness_item"
+                    android:dependency="pref_brightness_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_brightness_item_summ"
                     android:title="@string/pref_brightness_item" />
                 <CheckBoxPreference
+                    android:key="pref_brightness_average"
                     android:dependency="pref_brightness_enabled"
                     android:defaultValue="true"
-                    android:key="pref_brightness_average"
                     android:summary="@string/pref_brightness_average_summ"
                     android:title="@string/pref_brightness_average" />
                 <EditTextPreference
+                    android:key="pref_brightness_intervall"
                     android:dependency="pref_brightness_average"
                     android:defaultValue="60"
-                    android:key="pref_brightness_intervall"
                     android:inputType="number"
                     android:summary="@string/pref_brightness_intervall_summ"
                     android:title="@string/pref_brightness_intervall" />
@@ -190,13 +191,13 @@
                 android:persistent="false"
                 android:title="@string/pref_pressure">
                 <CheckBoxPreference
-                    android:defaultValue="false"
                     android:key="pref_pressure_enabled"
+                    android:defaultValue="false"
                     android:summary="@string/pref_pressure_enabled_summ"
                     android:title="@string/pref_pressure_enabled" />
                 <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
-                    android:dependency="pref_pressure_enabled"
                     android:key="pref_pressure_item"
+                    android:dependency="pref_pressure_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_pressure_item_summ"
                     android:title="@string/pref_pressure_item" />
@@ -206,13 +207,13 @@
                 android:persistent="false"
                 android:title="@string/pref_temperature">
                 <CheckBoxPreference
-                    android:defaultValue="false"
                     android:key="pref_temperature_enabled"
+                    android:defaultValue="false"
                     android:summary="@string/pref_temperature_enabled_summ"
                     android:title="@string/pref_temperature_enabled" />
                 <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
-                    android:dependency="pref_temperature_enabled"
                     android:key="pref_temperature_item"
+                    android:dependency="pref_temperature_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_temperature_item_summ"
                     android:title="@string/pref_temperature_item" />
@@ -222,31 +223,31 @@
                 android:persistent="false"
                 android:title="@string/pref_volume">
                 <CheckBoxPreference
-                    android:defaultValue="false"
                     android:key="pref_volume_enabled"
+                    android:defaultValue="false"
                     android:summary="@string/pref_volume_enabled_summ"
                     android:title="@string/pref_volume_enabled" />
                 <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
-                    android:dependency="pref_volume_enabled"
                     android:key="pref_volume_item"
+                    android:dependency="pref_volume_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_volume_item_summ"
                     android:title="@string/pref_volume_item" />
             </PreferenceScreen>
         </PreferenceScreen>
         <CheckBoxPreference
-            android:defaultValue="false"
             android:key="pref_show_on_lock_screen"
+            android:defaultValue="false"
             android:summary="@string/pref_show_on_lock_screen_summ"
             android:title="@string/pref_show_on_lock_screen" />
         <CheckBoxPreference
-            android:defaultValue="false"
             android:key="pref_track_browser_connection"
+            android:defaultValue="false"
             android:summary="@string/pref_track_browser_connection_summ"
             android:title="@string/pref_track_browser_connection" />
         <CheckBoxPreference
-            android:defaultValue="false"
             android:key="pref_device_admin"
+            android:defaultValue="false"
             android:summary="@string/pref_device_admin_summ"
             android:title="@string/pref_device_admin" />
         <de.vier_bier.habpanelviewer.settings.ServerPreference
@@ -262,28 +263,28 @@
         android:key="pref_key_webview_settings"
         android:title="@string/pref_webview_title">
         <CheckBoxPreference
-            android:defaultValue="false"
             android:key="pref_prevent_dragging"
+            android:defaultValue="false"
             android:summary="@string/pref_prevent_dragging_summ"
             android:title="@string/pref_prevent_dragging" />
         <CheckBoxPreference
-            android:defaultValue="true"
             android:key="pref_show_context_menu"
+            android:defaultValue="true"
             android:summary="@string/pref_show_context_menu_summ"
             android:title="@string/pref_show_context_menu" />
         <CheckBoxPreference
-            android:defaultValue="false"
             android:key="pref_desktop_mode"
+            android:defaultValue="false"
             android:summary="@string/pref_desktop_mode_summ"
             android:title="@string/pref_desktop_mode" />
         <CheckBoxPreference
-            android:defaultValue="true"
             android:key="pref_javascript"
+            android:defaultValue="true"
             android:summary="@string/pref_javascript_summ"
             android:title="@string/pref_javascript" />
         <CheckBoxPreference
-            android:defaultValue="false"
             android:key="pref_allow_mixed_content"
+            android:defaultValue="false"
             android:enabled="@bool/is_post_api_21"
             android:summary="@string/pref_allow_mixed_content_summ"
             android:title="@string/pref_allow_mixed_content" />

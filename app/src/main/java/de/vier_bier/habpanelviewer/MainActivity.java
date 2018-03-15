@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.hardware.SensorManager;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.media.AudioManager;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
 import android.net.nsd.NsdManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,6 +23,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
@@ -97,6 +101,7 @@ public class MainActivity extends AppCompatActivity
     private TemperatureMonitor mTemperatureMonitor;
     private VolumeMonitor mVolumeMonitor;
     private CommandQueue mCommandQueue;
+    private ScreenCapturer mCapturer;
 
     private int mRestartCount;
 
@@ -108,6 +113,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void destroy() {
+        if (mCapturer != null) {
+            mCapturer = null;
+        }
+
         if (mFlashService != null) {
             mFlashService.terminate();
             mFlashService = null;
@@ -329,6 +338,11 @@ public class MainActivity extends AppCompatActivity
             }
         });
         mCommandQueue.addHandler(new WebViewHandler(mWebView));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            MediaProjectionManager projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+            startActivityForResult(projectionManager.createScreenCaptureIntent(), ScreenCapturer.REQUEST_MEDIA_PROJECTION);
+        }
     }
 
     @Override
@@ -373,10 +387,27 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public ScreenCapturer getCapturer() {
+        return mCapturer;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_PICK_APPLICATION && resultCode == RESULT_OK) {
             startActivity(data);
+        } else if (requestCode == ScreenCapturer.REQUEST_MEDIA_PROJECTION && resultCode == RESULT_OK
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            MediaProjectionManager projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+            MediaProjection projection = projectionManager.getMediaProjection(RESULT_OK, data);
+
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+            Point size = new Point();
+            getWindowManager().getDefaultDisplay().getSize(size);
+
+            mCapturer = new ScreenCapturer(projection, size.x, size.y, metrics.densityDpi);
         }
     }
 

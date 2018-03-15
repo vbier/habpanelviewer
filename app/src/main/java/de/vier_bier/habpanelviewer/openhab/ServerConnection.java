@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -291,6 +292,12 @@ public class ServerConnection implements StatePropagator {
                 SetItemStateTask t = new SetItemStateTask(mServerURL);
                 t.execute(new ItemState(item, state));
             }
+        }
+    }
+
+    public void updateJpeg(String item, byte[] data) {
+        if (data != null) {
+            updateState(item, "data:image/jpeg;base64," + Base64.encodeToString(data, Base64.NO_WRAP));
         }
     }
 
