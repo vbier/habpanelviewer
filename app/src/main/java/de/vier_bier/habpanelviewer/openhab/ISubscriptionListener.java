@@ -3,6 +3,6 @@ package de.vier_bier.habpanelviewer.openhab;
 /**
  * Listener for item subscriptions.
  */
-interface SubscriptionListener extends StateUpdateListener {
+interface ISubscriptionListener extends IStateUpdateListener {
     void itemInvalid(String name);
 }

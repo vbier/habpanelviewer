@@ -57,7 +57,7 @@ public class MotionDetectorCamera2 extends AbstractMotionDetector<LumaData> {
 
     private CameraDevice mCamera;
 
-    public MotionDetectorCamera2(Activity context, CameraManager manager, MotionListener l, Activity act, ServerConnection serverConnection) {
+    public MotionDetectorCamera2(Activity context, CameraManager manager, IMotionListener l, Activity act, ServerConnection serverConnection) {
         super(context, l, serverConnection);
 
         Log.d(TAG, "instantiating motion detection");

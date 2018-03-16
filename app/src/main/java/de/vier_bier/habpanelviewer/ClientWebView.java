@@ -34,7 +34,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 
-import de.vier_bier.habpanelviewer.openhab.ConnectionListener;
+import de.vier_bier.habpanelviewer.openhab.IConnectionListener;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
 /**
@@ -106,7 +106,7 @@ public class ClientWebView extends WebView {
         super.setKeepScreenOn(keepScreenOn);
     }
 
-    synchronized void initialize(final ConnectionListener cl) {
+    synchronized void initialize(final IConnectionListener cl) {
         setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {

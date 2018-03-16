@@ -13,17 +13,17 @@ import java.util.ArrayList;
 import de.vier_bier.habpanelviewer.command.log.CommandInfo;
 import de.vier_bier.habpanelviewer.command.log.CommandLog;
 import de.vier_bier.habpanelviewer.command.log.CommandLogClient;
+import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
-import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 
 /**
  * Queue for commands sent from openHAB.
  */
-public class CommandQueue implements StateUpdateListener {
+public class CommandQueue implements IStateUpdateListener {
     private final Activity mCtx;
     private final ServerConnection mServerConnection;
 
-    private final ArrayList<CommandHandler> mHandlers = new ArrayList<>();
+    private final ArrayList<ICommandHandler> mHandlers = new ArrayList<>();
     private final CommandLog mCmdLog = new CommandLog();
 
     public CommandQueue(Activity ctx, ServerConnection serverConnection) {
@@ -38,7 +38,7 @@ public class CommandQueue implements StateUpdateListener {
         client.setCommandLog(mCmdLog);
     }
 
-    public void addHandler(CommandHandler h) {
+    public void addHandler(ICommandHandler h) {
         synchronized (mHandlers) {
             if (!mHandlers.contains(h)) {
                 mHandlers.add(h);
@@ -50,7 +50,7 @@ public class CommandQueue implements StateUpdateListener {
     public void itemUpdated(String name, String value) {
         if (value != null && !value.isEmpty()) {
             synchronized (mHandlers) {
-                for (CommandHandler mHandler : mHandlers) {
+                for (ICommandHandler mHandler : mHandlers) {
                     try {
                         if (mHandler.handleCommand(value)) {
                             addToCmdLog(new CommandInfo(value, true));

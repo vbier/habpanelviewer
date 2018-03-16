@@ -9,7 +9,7 @@ import de.vier_bier.habpanelviewer.AdminReceiver;
 /**
  * Handler for ADMIN_LOCK_SCREEN command.
  */
-public class AdminHandler implements CommandHandler {
+public class AdminHandler implements ICommandHandler {
     private final DevicePolicyManager mDPM;
 
     public AdminHandler(Activity activity) {

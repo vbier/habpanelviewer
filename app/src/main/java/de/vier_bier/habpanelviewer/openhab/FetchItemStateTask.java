@@ -16,9 +16,9 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
  */
 class FetchItemStateTask extends AsyncTask<String, Void, Void> {
     private final String serverUrl;
-    private final SubscriptionListener subscriptionListener;
+    private final ISubscriptionListener subscriptionListener;
 
-    FetchItemStateTask(String url, SubscriptionListener l) {
+    FetchItemStateTask(String url, ISubscriptionListener l) {
         serverUrl = url;
         subscriptionListener = l;
     }

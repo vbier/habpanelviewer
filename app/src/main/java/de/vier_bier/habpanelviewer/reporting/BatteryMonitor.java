@@ -14,14 +14,14 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.vier_bier.habpanelviewer.R;
+import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
-import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Monitors battery state and reports to openHAB.
  */
-public class BatteryMonitor implements StateUpdateListener {
+public class BatteryMonitor implements IStateUpdateListener {
     private final Context mCtx;
     private final ServerConnection mServerConnection;
 

@@ -56,7 +56,7 @@ import de.vier_bier.habpanelviewer.command.VolumeHandler;
 import de.vier_bier.habpanelviewer.command.WebViewHandler;
 import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
-import de.vier_bier.habpanelviewer.openhab.ConnectionListener;
+import de.vier_bier.habpanelviewer.openhab.IConnectionListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.openhab.ServerDiscovery;
 import de.vier_bier.habpanelviewer.reporting.BatteryMonitor;
@@ -80,7 +80,7 @@ import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
  * Main activity showing the Webview for openHAB.
  */
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ConnectionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, IConnectionListener {
 
     private final static int REQUEST_PICK_APPLICATION = 12352;
 
@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity
         mTextView = navHeader.findViewById(R.id.textView);
 
         mWebView = findViewById(R.id.activity_main_webview);
-        mWebView.initialize(new ConnectionListener() {
+        mWebView.initialize(new IConnectionListener() {
             @Override
             public void connected(String url) {
             }

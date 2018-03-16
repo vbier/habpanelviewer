@@ -53,7 +53,7 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
     private LumaData mPreviousState;
     private Comparer mComparer;
 
-    AbstractMotionDetector(Activity context, MotionListener l, ServerConnection serverConnection) {
+    AbstractMotionDetector(Activity context, IMotionListener l, ServerConnection serverConnection) {
         super("AbstractMotionDetector");
 
         mContext = context;
@@ -64,6 +64,18 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         start();
     }
 
+    protected abstract int getSensorOrientation();
+
+    protected abstract LumaData getPreviewLumaData();
+
+    protected abstract void stopPreview();
+
+    protected abstract void startPreview();
+
+    protected abstract String getCameraInfo();
+
+    protected abstract String createCamera(int deviceDegrees) throws CameraException;
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
         status.set(mContext.getString(R.string.cameras), getCameraInfo());
@@ -71,20 +83,6 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
             status.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.enabled) + "\n" + getPreviewInfo());
         } else {
             status.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.disabled));
-        }
-    }
-
-    private String getPreviewInfo() {
-        if (mCameraId != null) {
-            String retVal = mContext.getString(R.string.cameraId, mCameraId);
-            if (mPreviewSize != null) {
-                retVal += ", " + mContext.getString(R.string.detectionResolution, mPreviewSize.x, mPreviewSize.y);
-            }
-            return retVal + "\n"
-                    + mContext.getString(R.string.boxesLeniency, mBoxes, mLeniency) + "\n"
-                    + mContext.getString(R.string.framesProcessed, mFrameCount, mDetectionCount);
-        } else {
-            return mContext.getString(R.string.failedAccessCamera);
         }
     }
 
@@ -135,8 +133,6 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         }
     }
 
-    protected abstract int getSensorOrientation();
-
     public void run() {
         try {
             while (!mStopped.get()) {
@@ -179,6 +175,21 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
             Log.v(TAG, "motion thread finished");
         }
     }
+
+    private String getPreviewInfo() {
+        if (mCameraId != null) {
+            String retVal = mContext.getString(R.string.cameraId, mCameraId);
+            if (mPreviewSize != null) {
+                retVal += ", " + mContext.getString(R.string.detectionResolution, mPreviewSize.x, mPreviewSize.y);
+            }
+            return retVal + "\n"
+                    + mContext.getString(R.string.boxesLeniency, mBoxes, mLeniency) + "\n"
+                    + mContext.getString(R.string.framesProcessed, mFrameCount, mDetectionCount);
+        } else {
+            return mContext.getString(R.string.failedAccessCamera);
+        }
+    }
+
 
     void setPreview(D p) {
         mPreview.set(p);
@@ -308,6 +319,12 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         }
     }
 
+    synchronized void stopDetection() {
+        stopPreview();
+        mComparer = null;
+        mPreviousState = null;
+    }
+
     private static class CompareSizesByArea implements Comparator<Point> {
         @Override
         public int compare(Point lhs, Point rhs) {
@@ -316,20 +333,4 @@ abstract class AbstractMotionDetector<D> extends Thread implements IMotionDetect
         }
 
     }
-
-    protected abstract LumaData getPreviewLumaData();
-
-    synchronized void stopDetection() {
-        stopPreview();
-        mComparer = null;
-        mPreviousState = null;
-    }
-
-    protected abstract void stopPreview();
-
-    protected abstract void startPreview();
-
-    protected abstract String getCameraInfo();
-
-    protected abstract String createCamera(int deviceDegrees) throws CameraException;
 }

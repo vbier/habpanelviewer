@@ -21,7 +21,7 @@ import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
  * Handler for RESTART, UPDATE_ITEMS, ENABLE_MOTION_DETECTION, DISABLE_MOTION_DETECTION, START_APP,
  * CAPTURE_SCREEN commands.
  */
-public class InternalCommandHandler implements CommandHandler {
+public class InternalCommandHandler implements ICommandHandler {
     private final Pattern START_PATTERN = Pattern.compile("START_APP (.+)");
     private final Pattern CAPTURE_PATTERN = Pattern.compile("CAPTURE_SCREEN (.+)");
 

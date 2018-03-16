@@ -9,7 +9,7 @@ import android.support.v4.content.ContextCompat;
 /**
  * Handles BLUETOOTH_ON and BLUETOOTH_OFF commands.
  */
-public class BluetoothHandler implements CommandHandler {
+public class BluetoothHandler implements ICommandHandler {
     private final Context mContext;
     private final BluetoothManager mManager;
 

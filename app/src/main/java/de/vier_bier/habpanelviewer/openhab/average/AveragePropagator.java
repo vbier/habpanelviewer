@@ -11,10 +11,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AveragePropagator extends Thread {
     private final AtomicBoolean mRunning = new AtomicBoolean(true);
     private final BlockingQueue<Average> mAvgQueue = new DelayQueue<>();
-    private final StatePropagator mStatePropagator;
+    private final IStatePropagator mStatePropagator;
     private final HashMap<String, Average> mAverages = new HashMap<>();
 
-    public AveragePropagator(StatePropagator statePropagator) {
+    public AveragePropagator(IStatePropagator statePropagator) {
         super("AveragePropagator");
         setDaemon(true);
 

@@ -19,7 +19,7 @@ import de.vier_bier.habpanelviewer.R;
  * Handler for FLASH_ON, FLASH_OFF, FLASH_BLINK commands.
  */
 @TargetApi(Build.VERSION_CODES.M)
-public class FlashHandler implements CommandHandler {
+public class FlashHandler implements ICommandHandler {
     private final Pattern BLINK_PATTERN = Pattern.compile("FLASH_BLINK ([0-9]+)");
 
     private final CameraManager mCameraManager;

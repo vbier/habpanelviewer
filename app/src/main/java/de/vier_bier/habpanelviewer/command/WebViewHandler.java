@@ -8,7 +8,7 @@ import de.vier_bier.habpanelviewer.ClientWebView;
 /**
  * Handler for SHOW_START_URL, SHOW_URL, SHOW_DASHBOARD, RELOAD command.
  */
-public class WebViewHandler implements CommandHandler {
+public class WebViewHandler implements ICommandHandler {
     private final Pattern SHOW_PATTERN = Pattern.compile("SHOW_(URL|DASHBOARD) (.+)");
 
     private ClientWebView mWebView;

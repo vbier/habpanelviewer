@@ -3,7 +3,7 @@ package de.vier_bier.habpanelviewer.openhab;
 /**
  * Item subscription listener
  */
-public interface StateUpdateListener {
+public interface IStateUpdateListener {
     /**
      * The state of an item has changed.
      */

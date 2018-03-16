@@ -12,14 +12,14 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import de.vier_bier.habpanelviewer.R;
+import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
-import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Abstract base class for device sensor monitors.
  */
-public abstract class SensorMonitor implements SensorEventListener, StateUpdateListener {
+public abstract class SensorMonitor implements SensorEventListener, IStateUpdateListener {
     final Context mCtx;
     private final SensorManager mSensorManager;
     final ServerConnection mServerConnection;

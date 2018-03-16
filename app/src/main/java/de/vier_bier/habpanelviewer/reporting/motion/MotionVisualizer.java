@@ -18,7 +18,7 @@ import de.vier_bier.habpanelviewer.R;
 /**
  * Visualizes motion areas on the given mSurface view.
  */
-public class MotionVisualizer implements MotionListener {
+public class MotionVisualizer implements IMotionListener {
     private final SurfaceView mMotionView;
     private final NavigationView mNavigationView;
     private final SharedPreferences mPreferences;

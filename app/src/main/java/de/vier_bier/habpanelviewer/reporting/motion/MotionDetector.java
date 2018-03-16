@@ -23,7 +23,7 @@ public class MotionDetector extends AbstractMotionDetector<ImageData> {
     private boolean mRunning;
     private Camera mCamera;
 
-    public MotionDetector(Activity context, MotionListener l, ServerConnection serverConnection) {
+    public MotionDetector(Activity context, IMotionListener l, ServerConnection serverConnection) {
         super(context, l, serverConnection);
     }
 

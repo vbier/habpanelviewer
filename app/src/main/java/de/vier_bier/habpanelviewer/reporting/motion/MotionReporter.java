@@ -10,16 +10,16 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 /**
  * Reports motion events to openHAB.
  */
-public class MotionReporter extends MotionListener.MotionAdapter {
+public class MotionReporter extends IMotionListener.MotionAdapter {
     private final ServerConnection mServerConnection;
-    private final MotionListener mListener;
+    private final IMotionListener mListener;
 
     private long mLastMotionTime;
     private boolean mMotion;
 
     private String mMotionItem;
 
-    MotionReporter(MotionListener l, ServerConnection serverConnection) {
+    MotionReporter(IMotionListener l, ServerConnection serverConnection) {
         mServerConnection = serverConnection;
         mListener = l;
     }

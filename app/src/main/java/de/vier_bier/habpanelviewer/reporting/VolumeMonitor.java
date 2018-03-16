@@ -11,14 +11,14 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import de.vier_bier.habpanelviewer.R;
+import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
-import de.vier_bier.habpanelviewer.openhab.StateUpdateListener;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Monitors the device volume.
  */
-public class VolumeMonitor implements StateUpdateListener {
+public class VolumeMonitor implements IStateUpdateListener {
     private final Context mCtx;
     private final AudioManager mAudioManager;
     private final ServerConnection mServerConnection;

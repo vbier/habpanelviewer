@@ -13,7 +13,7 @@ import de.vier_bier.habpanelviewer.R;
 /**
  * Handler for SCREEN_ON, KEEP_SCREEN_ON and ALLOW_SCREEN_OFF commands.
  */
-public class ScreenHandler implements CommandHandler {
+public class ScreenHandler implements ICommandHandler {
     private final DevicePolicyManager mDPM;
     private final PowerManager.WakeLock screenOnLock;
     private final Activity mActivity;

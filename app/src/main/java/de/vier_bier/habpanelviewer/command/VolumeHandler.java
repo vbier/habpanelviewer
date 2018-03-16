@@ -12,7 +12,7 @@ import de.vier_bier.habpanelviewer.R;
 /**
  * Handler for MUTE, UNMUTE, SET_VOLUME commands.
  */
-public class VolumeHandler implements CommandHandler {
+public class VolumeHandler implements ICommandHandler {
     private final Pattern SET_PATTERN = Pattern.compile("SET_VOLUME ([0-9]+)");
 
     private final Context mCtx;

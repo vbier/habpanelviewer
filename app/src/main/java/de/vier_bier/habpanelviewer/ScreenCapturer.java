@@ -37,7 +37,6 @@ public class ScreenCapturer {
         mDensity = density;
     }
 
-    //TODO.vb. image is distorted
     public synchronized Bitmap captureScreen() throws IllegalStateException {
         AtomicReference<Image> imageHolder = new AtomicReference<>();
         final CountDownLatch latch = new CountDownLatch(1);

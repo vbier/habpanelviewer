@@ -7,14 +7,14 @@ import java.util.ArrayList;
 /**
  * Interface for being notified about motion events.
  */
-public interface MotionListener {
+public interface IMotionListener {
     void motionDetected(ArrayList<Point> differing);
 
     void noMotion();
 
     void tooDark();
 
-    class MotionAdapter implements MotionListener {
+    class MotionAdapter implements IMotionListener {
         @Override
         public void motionDetected(ArrayList<Point> differing) {
         }
