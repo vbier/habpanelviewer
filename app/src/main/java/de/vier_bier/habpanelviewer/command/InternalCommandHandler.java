@@ -73,6 +73,8 @@ public class InternalCommandHandler implements ICommandHandler {
             } else {
                 throw new IllegalArgumentException("Could not find app for package " + parameter);
             }
+        } else {
+            return false;
         }
 
         return true;
