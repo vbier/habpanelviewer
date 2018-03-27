@@ -4,19 +4,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
 
-public class EmptyActivity extends AppCompatActivity {
+public class EmptyActivity extends ScreenControllingActivity {
     private float mScreenBrightness = 1F;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean keep = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("keep");
-        if (keep) {
+        boolean dim = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("dim");
+        if (dim) {
             setContentView(R.layout.activity_empty);
 
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -57,11 +56,16 @@ public class EmptyActivity extends AppCompatActivity {
     }
 
     @Override
+    public View getScreenOnView() {
+        return findViewById(R.id.blankView);
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        boolean keep = intent.getExtras() != null && intent.getExtras().getBoolean("keep");
-        if (!keep) {
+        boolean dim = intent.getExtras() != null && intent.getExtras().getBoolean("dim");
+        if (!dim) {
             finish();
         }
     }

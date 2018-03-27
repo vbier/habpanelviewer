@@ -25,11 +25,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import de.vier_bier.habpanelviewer.R;
+import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 
 /**
  * Activity showing the command log.
  */
-public class CommandLogActivity extends Activity {
+public class CommandLogActivity extends ScreenControllingActivity {
     private ScheduledExecutorService executor;
     private CommandInfoAdapter adapter;
 
@@ -70,6 +71,11 @@ public class CommandLogActivity extends Activity {
         logTitleView.setText(R.string.command_log_title);
 
         EventBus.getDefault().post(logClient);
+    }
+
+    @Override
+    public View getScreenOnView() {
+        return findViewById(R.id.command_log_titleview);
     }
 
     private class CommandInfoAdapter extends BaseAdapter implements CommandLog.CommandLogListener {

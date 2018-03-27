@@ -8,7 +8,7 @@ import android.os.PowerManager;
 
 import de.vier_bier.habpanelviewer.AdminReceiver;
 import de.vier_bier.habpanelviewer.EmptyActivity;
-import de.vier_bier.habpanelviewer.R;
+import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 
 /**
  * Handler for SCREEN_ON, KEEP_SCREEN_ON and ALLOW_SCREEN_OFF commands.
@@ -17,6 +17,7 @@ public class ScreenHandler implements ICommandHandler {
     private final DevicePolicyManager mDPM;
     private final PowerManager.WakeLock screenOnLock;
     private final Activity mActivity;
+    private boolean mKeepScreenOn;
 
     public ScreenHandler(PowerManager pwrManager, Activity activity) {
         mActivity = activity;
@@ -54,12 +55,14 @@ public class ScreenHandler implements ICommandHandler {
         intent.setClass(mActivity, EmptyActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("keep", dim);
+        intent.putExtra("dim", dim);
+        intent.putExtra("keepScreenOn", mKeepScreenOn);
         mActivity.startActivityForResult(intent, 0);
     }
 
     private void setKeepScreenOn(final boolean on) {
-        mActivity.runOnUiThread(() -> mActivity.findViewById(R.id.activity_main_webview).setKeepScreenOn(on));
+        mKeepScreenOn = on;
+        ScreenControllingActivity.setKeepScreenOn(mActivity, on);
     }
 
     private void screenLock() {

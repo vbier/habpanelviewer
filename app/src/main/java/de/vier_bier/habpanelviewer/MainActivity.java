@@ -22,7 +22,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -79,7 +78,7 @@ import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
 /**
  * Main activity showing the Webview for openHAB.
  */
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends ScreenControllingActivity
         implements NavigationView.OnNavigationItemSelectedListener, IConnectionListener {
 
     private final static int REQUEST_PICK_APPLICATION = 12352;
@@ -596,6 +595,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         super.onStop();
+    }
+
+    @Override
+    public View getScreenOnView() {
+        return mWebView;
     }
 
     @Override
