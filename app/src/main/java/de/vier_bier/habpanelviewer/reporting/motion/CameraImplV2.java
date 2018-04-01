@@ -65,7 +65,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
         mCamManager = (CameraManager) mActivity.getSystemService(Context.CAMERA_SERVICE);
         if (mCamManager == null) {
-            throw new CameraException("could not obtain camera service");
+            throw new CameraException(mActivity.getString(R.string.couldNotObtainCameraService));
         }
 
         try {
@@ -86,6 +86,10 @@ public class CameraImplV2 extends AbstractCameraImpl {
             }
         } catch (CameraAccessException e) {
             throw new CameraException(e);
+        }
+
+        if (mCameraId == null) {
+            throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
         }
 
         mPreviewThread = new HandlerThread("previewThread");
@@ -301,7 +305,9 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
     @Override
     protected void finalize() throws Throwable {
-        mPreviewThread.quitSafely();
+        if (mPictureThread != null) {
+            mPreviewThread.quitSafely();
+        }
         if (mPictureThread != null) {
             mPictureThread.quitSafely();
         }

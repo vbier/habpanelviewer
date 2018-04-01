@@ -225,20 +225,16 @@ public class MainActivity extends ScreenControllingActivity
                 }
             }
 
-            try {
-                if (mCam == null) {
-                    mCam = new Camera(this, findViewById(R.id.previewView), prefs);
-                }
+            if (mCam == null) {
+                mCam = new Camera(this, findViewById(R.id.previewView), prefs);
+            }
 
-                if (mMotionVisualizer == null) {
-                    int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
-                    final SurfaceView motionView = findViewById(R.id.motionView);
-                    mMotionVisualizer = new MotionVisualizer(motionView, navigationView, prefs, mCam.getSensorOrientation(), scaledSize);
+            if (mMotionVisualizer == null) {
+                int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
+                final SurfaceView motionView = findViewById(R.id.motionView);
+                mMotionVisualizer = new MotionVisualizer(motionView, navigationView, prefs, mCam.getSensorOrientation(), scaledSize);
 
-                    mMotionDetector = new MotionDetector(this, mCam, mMotionVisualizer, mServerConnection);
-                }
-            } catch (CameraException e) {
-                Log.d("Habpanelview", "Could not create camera");
+                mMotionDetector = new MotionDetector(this, mCam, mMotionVisualizer, mServerConnection);
             }
         }
 
@@ -471,7 +467,7 @@ public class MainActivity extends ScreenControllingActivity
         if (mFlashService == null) {
             status.set(getString(R.string.pref_flash), getString(R.string.unavailable));
         }
-        if (mMotionDetector == null) {
+        if (mMotionDetector == null || mCam == null || !mCam.isValid()) {
             status.set(getString(R.string.pref_motion), getString(R.string.unavailable));
         }
         if (mRestartCount != 0) {
@@ -727,7 +723,7 @@ public class MainActivity extends ScreenControllingActivity
         Intent intent = new Intent(MainActivity.this, SetPreferenceActivity.class);
         intent.putExtra("camera_enabled", mCam != null);
         intent.putExtra("flash_enabled", mFlashService != null);
-        intent.putExtra("motion_enabled", mMotionDetector != null);
+        intent.putExtra("motion_enabled", mMotionDetector != null && mCam != null && mCam.isValid());
         intent.putExtra("proximity_enabled", mProximityMonitor != null);
         intent.putExtra("pressure_enabled", mPressureMonitor != null);
         intent.putExtra("brightness_enabled", mBrightnessMonitor != null);

@@ -149,7 +149,7 @@
     <string name="couldNotConnect">Verbindung fehlgeschlagen zum Server mit der URL</string>
     <string name="acceptCertWhenOurOfSettings">Sie können eine Ausnahme für das Zertifikat erstellen, wenn Sie die Einstellungen verlassen haben.</string>
     <string name="couldNotFindApp">Konnte das Paket nicht finden</string>
-    <string name="notAvailableOnDevice">ist auf diesem Gerät nicht verfügbar</string>
+    <string name="notAvailableOnDevice">%s ist auf diesem Gerät nicht verfügbar</string>
     <string name="discoverHttps">HTTPS Verbindung suchen</string>
     <string name="discoverServer">Server Suchen</string>
     <string name="enabled">aktiviert</string>
@@ -202,11 +202,12 @@
     <string name="seconds">%d Sekunden,</string>
     <string name="pictureTaken">Bild aufgenommen</string>
     <string name="previewStarted">Vorschau gestartet</string>
-    <string name="lockingCamera">Sperre Kamera...</string>
-    <string name="waitingSurface">Warte auf Oberfläche...</string>
-    <string name="startingPreview">Starte Vorschau...</string>
+    <string name="lockingCamera">Sperre Kamera…</string>
+    <string name="waitingSurface">Warte auf Oberfläche…</string>
+    <string name="startingPreview">Starte Vorschau…</string>
     <string name="surfaceObtained">Oberfläche erhalten</string>
     <string name="errorSettingTexture">Fehler beim Setzen der Vorschau Oberfläche</string>
     <string name="pref_pref_take_pic_delay">CAPTURE_CAMERA Verzögerung</string>
     <string name="pref_pref_take_pic_delay_summ">Zeit in Millisekunden, die nach dem Starten der Vorschau geartet wird, bevor das Bild geschossen wird</string>
+    <string name="couldNotObtainCameraService">Android Camera Service nicht gefunden</string>
 </resources>

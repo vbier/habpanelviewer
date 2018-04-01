@@ -153,7 +153,7 @@
     <string name="couldNotConnect">Could not connect to openHAB at URL</string>
     <string name="acceptCertWhenOurOfSettings">You can accept the certificate once you have left the settings.</string>
     <string name="couldNotFindApp">Could not find app for package</string>
-    <string name="notAvailableOnDevice">is not available on this device</string>
+    <string name="notAvailableOnDevice">%s is not available on this device</string>
     <string name="discoverHttps">discover HTTPS connection</string>
     <string name="discoverServer">Discover Server</string>
     <string name="enabled">enabled</string>
@@ -206,11 +206,12 @@
     <string name="seconds">%d seconds,</string>
     <string name="pictureTaken">picture taken</string>
     <string name="previewStarted">preview started</string>
-    <string name="lockingCamera">locking camera...</string>
-    <string name="waitingSurface">waiting for surface...</string>
-    <string name="startingPreview">starting preview...</string>
+    <string name="lockingCamera">locking camera…</string>
+    <string name="waitingSurface">waiting for surface…</string>
+    <string name="startingPreview">starting preview…</string>
     <string name="surfaceObtained">surface obtained</string>
     <string name="errorSettingTexture">Error setting preview texture</string>
     <string name="pref_pref_take_pic_delay">CAPTURE_CAMERA delay</string>
     <string name="pref_pref_take_pic_delay_summ">Delay in milliseconds to wait after preview has been started until taking the picture for CAPTURE_CAMERA commands.</string>
+    <string name="couldNotObtainCameraService">Could not obtain Android Camera Service</string>
 </resources>

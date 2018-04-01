@@ -79,7 +79,6 @@ public class SettingsFragment extends PreferenceFragment {
         }
     };
 
-    private boolean cameraEnabled = false;
     private boolean motionEnabled = false;
     private boolean proximityEnabled = false;
     private boolean pressureEnabled = false;
@@ -92,7 +91,6 @@ public class SettingsFragment extends PreferenceFragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            cameraEnabled = bundle.getBoolean("camera_enabled");
             motionEnabled = bundle.getBoolean("motion_enabled");
             proximityEnabled = bundle.getBoolean("proximity_enabled");
             pressureEnabled = bundle.getBoolean("pressure_enabled");
@@ -109,7 +107,7 @@ public class SettingsFragment extends PreferenceFragment {
         // disable preferences if functionality is not available
         if (!cameraEnabled) {
             findPreference("pref_camera").setEnabled(false);
-            findPreference("pref_camera").setSummary(getString(R.string.pref_camera) + getString(R.string.notAvailableOnDevice));
+            findPreference("pref_camera").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_camera)));
         }
         if (!motionEnabled) {
             findPreference("pref_motion").setEnabled(false);

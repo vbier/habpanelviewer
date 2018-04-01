@@ -39,7 +39,7 @@ public class Camera {
 
     private List<ICamera.ILumaListener> mListeners = new ArrayList<>();
 
-    public Camera(Activity ctx, TextureView tv, SharedPreferences prefs) throws CameraException {
+    public Camera(Activity ctx, TextureView tv, SharedPreferences prefs) {
         mContext = ctx;
         mPreviewView = tv;
 
@@ -75,7 +75,6 @@ public class Camera {
             }
 
             mImplementation = createCamera(v);
-            mVersion = v;
 
             for (ICamera.ILumaListener l : mListeners) {
                 mImplementation.addLumaListener(l);
@@ -130,7 +129,8 @@ public class Camera {
             status.set(mContext.getString(R.string.pref_camera), mContext.getString(R.string.enabled) + "\n"
                     + mContext.getString(R.string.resolution, 640, 480) + "\n"
                     + (mVersion == CameraVersion.V1 ? mContext.getString(R.string.camApiPreLollipop) : mContext.getString(R.string.camApi2)));
-
+        } else if (mVersion == CameraVersion.NONE) {
+            status.set(mContext.getString(R.string.pref_camera), ((CameraImplNone) mImplementation).getMessage());
         } else {
             status.set(mContext.getString(R.string.pref_camera), mContext.getString(R.string.disabled));
         }
@@ -336,12 +336,19 @@ public class Camera {
         });
     }
 
-    private ICamera createCamera(CameraVersion version) throws CameraException {
-        if (version == CameraVersion.V2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return new CameraImplV2(mContext, mPreviewView, mDeviceOrientation);
-        }
+    private ICamera createCamera(CameraVersion version) {
+        try {
+            if (version == CameraVersion.V2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                mVersion = CameraVersion.V2;
+                return new CameraImplV2(mContext, mPreviewView, mDeviceOrientation);
+            }
 
-        return new CameraImplV1(mContext, mPreviewView, mDeviceOrientation);
+            mVersion = CameraVersion.V1;
+            return new CameraImplV1(mContext, mPreviewView, mDeviceOrientation);
+        } catch (CameraException e) {
+            mVersion = CameraVersion.NONE;
+            return new CameraImplNone(e.getMessage());
+        }
     }
 
     private CameraVersion getCameraVersion(SharedPreferences prefs) {
@@ -354,7 +361,11 @@ public class Camera {
         return CameraVersion.V1;
     }
 
+    public boolean isValid() {
+        return mVersion != CameraVersion.NONE && mImplementation != null;
+    }
+
     enum CameraVersion {
-        V1, V2
+        NONE, V1, V2
     }
 }

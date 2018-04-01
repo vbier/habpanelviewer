@@ -24,7 +24,7 @@ class CameraImplV1 extends AbstractCameraImpl {
     private int mCameraId = -1;
     private int mCameraOrientation = 0;
 
-    CameraImplV1(Activity context, TextureView previewView, int deviceOrientation) {
+    CameraImplV1(Activity context, TextureView previewView, int deviceOrientation) throws CameraException {
         super(context, previewView, deviceOrientation);
 
         Camera.CameraInfo info = new Camera.CameraInfo();
@@ -36,6 +36,10 @@ class CameraImplV1 extends AbstractCameraImpl {
 
                 Log.v(TAG, "found front-facing camera with id " + i + " and orientation " + mCameraOrientation);
             }
+        }
+
+        if (mCameraId == -1) {
+            throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
         }
     }
 
