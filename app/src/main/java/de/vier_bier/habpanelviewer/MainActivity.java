@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.SensorManager;
 import android.hardware.camera2.CameraAccessException;
@@ -30,7 +31,6 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SurfaceView;
-import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -66,9 +66,10 @@ import de.vier_bier.habpanelviewer.reporting.ProximityMonitor;
 import de.vier_bier.habpanelviewer.reporting.SensorMissingException;
 import de.vier_bier.habpanelviewer.reporting.TemperatureMonitor;
 import de.vier_bier.habpanelviewer.reporting.VolumeMonitor;
+import de.vier_bier.habpanelviewer.reporting.motion.Camera;
+import de.vier_bier.habpanelviewer.reporting.motion.CameraException;
 import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetector;
-import de.vier_bier.habpanelviewer.reporting.motion.MotionDetectorCamera2;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionVisualizer;
 import de.vier_bier.habpanelviewer.settings.SetPreferenceActivity;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
@@ -92,6 +93,7 @@ public class MainActivity extends ScreenControllingActivity
     private ServerDiscovery mDiscovery;
     private FlashHandler mFlashService;
     private IMotionDetector mMotionDetector;
+    private MotionVisualizer mMotionVisualizer;
     private BatteryMonitor mBatteryMonitor;
     private ConnectedIndicator mConnectedReporter;
     private ProximityMonitor mProximityMonitor;
@@ -101,6 +103,7 @@ public class MainActivity extends ScreenControllingActivity
     private VolumeMonitor mVolumeMonitor;
     private CommandQueue mCommandQueue;
     private ScreenCapturer mCapturer;
+    private Camera mCam;
 
     private int mRestartCount;
 
@@ -172,10 +175,12 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         if (mCommandQueue != null) {
+            mCommandQueue.terminate();
             mCommandQueue = null;
         }
 
         mWebView.unregister();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -202,12 +207,17 @@ public class MainActivity extends ScreenControllingActivity
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
-        mConnections = new ConnectionStatistics(this);
-        mServerConnection = new ServerConnection(this);
-        mServerConnection.addConnectionListener(this);
+        if (mServerConnection == null) {
+            mServerConnection = new ServerConnection(this);
+            mServerConnection.addConnectionListener(this);
+        }
+
+        if (mConnections == null) {
+            mConnections = new ConnectionStatistics(this);
+        }
 
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mFlashService == null) {
                 try {
                     mFlashService = new FlashHandler(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE));
                 } catch (CameraAccessException | IllegalAccessException e) {
@@ -215,20 +225,26 @@ public class MainActivity extends ScreenControllingActivity
                 }
             }
 
-            final SurfaceView motionView = findViewById(R.id.motionView);
+            try {
+                if (mCam == null) {
+                    mCam = new Camera(this, findViewById(R.id.previewView), prefs);
+                }
 
-            int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
-            MotionVisualizer mv = new MotionVisualizer(motionView, navigationView, prefs, scaledSize);
+                if (mMotionVisualizer == null) {
+                    int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
+                    final SurfaceView motionView = findViewById(R.id.motionView);
+                    mMotionVisualizer = new MotionVisualizer(motionView, navigationView, prefs, mCam.getSensorOrientation(), scaledSize);
 
-            boolean newApi = prefs.getBoolean("pref_motion_detection_new_api", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
-            if (newApi && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                mMotionDetector = new MotionDetectorCamera2(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE), mv, this, mServerConnection);
-            } else {
-                mMotionDetector = new MotionDetector(this, mv, mServerConnection);
+                    mMotionDetector = new MotionDetector(this, mCam, mMotionVisualizer, mServerConnection);
+                }
+            } catch (CameraException e) {
+                Log.d("Habpanelview", "Could not create camera");
             }
         }
 
-        mDiscovery = new ServerDiscovery((NsdManager) getSystemService(Context.NSD_SERVICE));
+        if (mDiscovery == null) {
+            mDiscovery = new ServerDiscovery((NsdManager) getSystemService(Context.NSD_SERVICE));
+        }
 
         if (prefs.getBoolean("pref_first_start", true)) {
             SharedPreferences.Editor editor1 = prefs.edit();
@@ -281,41 +297,59 @@ public class MainActivity extends ScreenControllingActivity
             }
         }
 
-        mBatteryMonitor = new BatteryMonitor(this, mServerConnection);
-        mVolumeMonitor = new VolumeMonitor(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection);
-        mConnectedReporter = new ConnectedIndicator(this, mServerConnection);
+        if (mBatteryMonitor == null) {
+            mBatteryMonitor = new BatteryMonitor(this, mServerConnection);
+        }
+
+        if (mVolumeMonitor == null) {
+            mVolumeMonitor = new VolumeMonitor(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection);
+        }
+
+        if (mConnectedReporter == null) {
+            mConnectedReporter = new ConnectedIndicator(this, mServerConnection);
+        }
 
         SensorManager m = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        try {
-            mProximityMonitor = new ProximityMonitor(this, m, mServerConnection);
-        } catch (SensorMissingException e) {
-            Log.d("Habpanelview", "Could not create proximity monitor");
+        if (mProximityMonitor == null) {
+            try {
+                mProximityMonitor = new ProximityMonitor(this, m, mServerConnection);
+            } catch (SensorMissingException e) {
+                Log.d("Habpanelview", "Could not create proximity monitor");
+            }
         }
-        try {
-            mBrightnessMonitor = new BrightnessMonitor(this, m, mServerConnection);
-        } catch (SensorMissingException e) {
-            Log.d("Habpanelview", "Could not create brightness monitor");
+        if (mBrightnessMonitor == null) {
+            try {
+                mBrightnessMonitor = new BrightnessMonitor(this, m, mServerConnection);
+            } catch (SensorMissingException e) {
+                Log.d("Habpanelview", "Could not create brightness monitor");
+            }
         }
-        try {
-            mPressureMonitor = new PressureMonitor(this, m, mServerConnection);
-        } catch (SensorMissingException e) {
-            Log.d("Habpanelview", "Could not create pressure monitor");
+        if (mPressureMonitor == null) {
+            try {
+                mPressureMonitor = new PressureMonitor(this, m, mServerConnection);
+            } catch (SensorMissingException e) {
+                Log.d("Habpanelview", "Could not create pressure monitor");
+            }
         }
-        try {
-            mTemperatureMonitor = new TemperatureMonitor(this, m, mServerConnection);
-        } catch (SensorMissingException e) {
-            Log.d("Habpanelview", "Could not create temperature monitor");
+        if (mTemperatureMonitor == null) {
+            try {
+                mTemperatureMonitor = new TemperatureMonitor(this, m, mServerConnection);
+            } catch (SensorMissingException e) {
+                Log.d("Habpanelview", "Could not create temperature monitor");
+            }
         }
 
-        ScreenHandler mScreenHandler = new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this);
-        mCommandQueue = new CommandQueue(this, mServerConnection);
-        mCommandQueue.addHandler(new InternalCommandHandler(this, mMotionDetector, mServerConnection));
-        mCommandQueue.addHandler(new AdminHandler(this));
-        mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
-        mCommandQueue.addHandler(mScreenHandler);
-        mCommandQueue.addHandler(new VolumeHandler(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE)));
-        if (mFlashService != null) {
-            mCommandQueue.addHandler(mFlashService);
+        if (mCommandQueue == null) {
+            ScreenHandler mScreenHandler = new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this);
+            mCommandQueue = new CommandQueue(this, mServerConnection);
+            mCommandQueue.addHandler(new InternalCommandHandler(this, mMotionDetector, mServerConnection));
+            mCommandQueue.addHandler(new AdminHandler(this));
+            mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
+            mCommandQueue.addHandler(mScreenHandler);
+            mCommandQueue.addHandler(new VolumeHandler(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE)));
+            if (mFlashService != null) {
+                mCommandQueue.addHandler(mFlashService);
+            }
         }
 
         mRestartCount = getIntent().getIntExtra("restartCount", 0);
@@ -341,6 +375,19 @@ public class MainActivity extends ScreenControllingActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             MediaProjectionManager projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
             startActivityForResult(projectionManager.createScreenCaptureIntent(), ScreenCapturer.REQUEST_MEDIA_PROJECTION);
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (mMotionVisualizer != null) {
+            mMotionVisualizer.setDeviceRotation(getWindowManager().getDefaultDisplay().getRotation());
+        }
+
+        if (mCam != null) {
+            mCam.setDeviceRotation(getWindowManager().getDefaultDisplay().getRotation());
         }
     }
 
@@ -406,7 +453,9 @@ public class MainActivity extends ScreenControllingActivity
             Point size = new Point();
             getWindowManager().getDefaultDisplay().getSize(size);
 
-            mCapturer = new ScreenCapturer(projection, size.x, size.y, metrics.densityDpi);
+            if (mCapturer == null) {
+                mCapturer = new ScreenCapturer(projection, size.x, size.y, metrics.densityDpi);
+            }
         }
     }
 
@@ -553,37 +602,27 @@ public class MainActivity extends ScreenControllingActivity
     public void updateMotionPreferences() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
+        if (mCam != null) {
+            try {
+                mCam.updateFromPreferences(prefs);
+            } catch (CameraException e) {
+                Toast.makeText(this, "failed to update camera state from preferences", Toast.LENGTH_LONG).show();
+            }
+        }
+
         if (mMotionDetector != null) {
             mMotionDetector.updateFromPreferences(prefs);
         }
 
-        TextureView previewView = findViewById(R.id.previewView);
         SurfaceView motionView = findViewById(R.id.motionView);
         boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
-        boolean motionDetection = prefs.getBoolean("pref_motion_detection_enabled", false);
-        if (motionDetection) {
-            previewView.setVisibility(View.VISIBLE);
-            if (showPreview) {
-                previewView.getLayoutParams().height = 480;
-                previewView.getLayoutParams().width = 640;
 
-                motionView.setVisibility(View.VISIBLE);
-            } else {
-                // if we have no preview, we still need a visible
-                // TextureView in order to have a working motion detection.
-                // Resize it to 1x1pxs so it does not get in the way.
-                previewView.getLayoutParams().height = 1;
-                previewView.getLayoutParams().width = 1;
-
-                motionView.setVisibility(View.INVISIBLE);
-            }
-
-            previewView.setLayoutParams(previewView.getLayoutParams());
-            motionView.setLayoutParams(motionView.getLayoutParams());
+        if (showPreview) {
+            motionView.setVisibility(View.VISIBLE);
         } else {
-            previewView.setVisibility(View.INVISIBLE);
             motionView.setVisibility(View.INVISIBLE);
         }
+        motionView.setLayoutParams(motionView.getLayoutParams());
     }
 
     @Override
@@ -686,6 +725,7 @@ public class MainActivity extends ScreenControllingActivity
 
     private void showPreferences() {
         Intent intent = new Intent(MainActivity.this, SetPreferenceActivity.class);
+        intent.putExtra("camera_enabled", mCam != null);
         intent.putExtra("flash_enabled", mFlashService != null);
         intent.putExtra("motion_enabled", mMotionDetector != null);
         intent.putExtra("proximity_enabled", mProximityMonitor != null);

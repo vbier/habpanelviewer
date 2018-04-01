@@ -2,7 +2,6 @@ package de.vier_bier.habpanelviewer.command.log;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -26,12 +25,12 @@ import java.util.concurrent.TimeUnit;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
+import de.vier_bier.habpanelviewer.command.Command;
 
 /**
  * Activity showing the command log.
  */
 public class CommandLogActivity extends ScreenControllingActivity {
-    private ScheduledExecutorService executor;
     private CommandInfoAdapter adapter;
 
     private final CommandLogClient logClient = this::installAdapter;
@@ -42,13 +41,18 @@ public class CommandLogActivity extends ScreenControllingActivity {
         adapter = new CommandInfoAdapter(this, cmdLog.getCommands());
         cmdLog.addListener(adapter);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener((arg0, arg1, position, arg3) -> {
+            cmdLog.getCommands().get(position).toggleShowDetails();
+            adapter.notifyDataSetChanged();
+        });
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        executor = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleWithFixedDelay(() -> runOnUiThread(() -> {
             if (adapter != null) {
                 adapter.notifyDataSetChanged();
@@ -80,10 +84,10 @@ public class CommandLogActivity extends ScreenControllingActivity {
 
     private class CommandInfoAdapter extends BaseAdapter implements CommandLog.CommandLogListener {
         private final Activity mContext;
-        private final ArrayList<CommandInfo> mCommands;
+        private final ArrayList<Command> mCommands;
         private final DateFormat mFormat = SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.MEDIUM);
 
-        CommandInfoAdapter(Activity context, ArrayList<CommandInfo> commands) {
+        CommandInfoAdapter(Activity context, ArrayList<Command> commands) {
             mContext = context;
             mCommands = commands;
         }
@@ -94,7 +98,7 @@ public class CommandLogActivity extends ScreenControllingActivity {
         }
 
         @Override
-        public CommandInfo getItem(int i) {
+        public Command getItem(int i) {
             return mCommands.get(i);
         }
 
@@ -112,22 +116,13 @@ public class CommandLogActivity extends ScreenControllingActivity {
             TextView txtTitle = rowView.findViewById(R.id.name);
             TextView txtValue = rowView.findViewById(R.id.value);
 
-            CommandInfo cmd = getItem(position);
+            Command cmd = getItem(position);
             txtTitle.setText(cmd.getCommand());
 
             String txt = mFormat.format(new Date(cmd.getTime()));
-            if (cmd.isHandled()) {
-                Throwable t = cmd.getThrowable();
-
-                if (t == null) {
-                    txtValue.setTextColor(Color.GREEN);
-                } else {
-                    txtValue.setTextColor(Color.RED);
-
-                    txt += "\n" + t.getLocalizedMessage();
-                }
-            } else {
-                txtValue.setTextColor(Color.YELLOW);
+            txtValue.setTextColor(cmd.getStatus().getColor());
+            if (cmd.hasVisibleDetails()) {
+                txt += "\n" + cmd.getDetails();
             }
             txtValue.setText(txt);
 

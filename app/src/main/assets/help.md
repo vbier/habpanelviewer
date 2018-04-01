@@ -66,7 +66,10 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 > This only works as long as HABPanel is available under its standard URL. If you have a custom HABPanel installation use SHOW_URL instead.
 * SHOW_START_URL: shows the configured start URL
 * RELOAD: reloads the current page
+* CAPTURE_SCREEN *image item*: captures a screenshot and send it to the openHAB image item
 > This only works with Android Lollipop or newer and a defined openHAB item of type **Image**
+* CAPTURE_CAMERA *image item*: takes a picture and sends it to the openHAB image item
+> In case the pictures are too dark, try to increase the CAPTURE_CAMERA delay in the settings.
 * ENABLE_MOTION_DETECTION: enables the motion detection in the app settings.
 * DISABLE_MOTION_DETECTION: disables the motion detection in the app settings.
 
@@ -74,9 +77,10 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 Shows the last 100 commands that have been processed by HABPanelViewer. Color coding indicates processing status:
 * green: command has been processed successfully
 * yellow: command is not known to HABPanelViewer
+* grey: command is currently executing
 * red: command processing resulted in an exception.
 
-In case of processing exceptions, the exception message is also shown in the command log.
+Click on a command to expand its details, if any.
 
 [go back to top](#top)
 

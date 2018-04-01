@@ -51,6 +51,7 @@ public abstract class SensorMonitor implements SensorEventListener, IStateUpdate
     }
 
     public synchronized void terminate() {
+        EventBus.getDefault().unregister(this);
         mSensorManager.unregisterListener(this);
     }
 

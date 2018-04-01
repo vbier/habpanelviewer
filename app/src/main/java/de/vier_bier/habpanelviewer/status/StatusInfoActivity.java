@@ -59,7 +59,6 @@ public class StatusInfoActivity extends Activity {
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
         executor.shutdown();
         executor = null;
         super.onDestroy();

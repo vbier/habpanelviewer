@@ -44,6 +44,9 @@ class Comparer {
     ArrayList<Point> isDifferent(LumaData s1, LumaData s2) {
         ArrayList<Point> differing = new ArrayList<>();
 
+        s1.setBoxCount(boxes);
+        s2.setBoxCount(boxes);
+
         int b1;
         int b2;
         int diff;

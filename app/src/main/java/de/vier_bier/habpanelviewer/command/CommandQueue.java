@@ -2,7 +2,6 @@ package de.vier_bier.habpanelviewer.command;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -10,7 +9,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
-import de.vier_bier.habpanelviewer.command.log.CommandInfo;
 import de.vier_bier.habpanelviewer.command.log.CommandLog;
 import de.vier_bier.habpanelviewer.command.log.CommandLogClient;
 import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
@@ -24,7 +22,7 @@ public class CommandQueue implements IStateUpdateListener {
     private final ServerConnection mServerConnection;
 
     private final ArrayList<ICommandHandler> mHandlers = new ArrayList<>();
-    private final CommandLog mCmdLog = new CommandLog();
+    private CommandLog mCmdLog = new CommandLog();
 
     public CommandQueue(Activity ctx, ServerConnection serverConnection) {
         EventBus.getDefault().register(this);
@@ -49,27 +47,25 @@ public class CommandQueue implements IStateUpdateListener {
     @Override
     public void itemUpdated(String name, String value) {
         if (value != null && !value.isEmpty()) {
+            Command cmd = new Command(value);
+            addToCmdLog(cmd);
+
             synchronized (mHandlers) {
                 for (ICommandHandler mHandler : mHandlers) {
                     try {
-                        if (mHandler.handleCommand(value)) {
-                            addToCmdLog(new CommandInfo(value, true));
-                            return;
+                        if (mHandler.handleCommand(cmd)) {
+                            break;
                         }
                     } catch (Throwable t) {
-                        Log.e("Habpanelview", "unhandled exception", t);
-                        addToCmdLog(new CommandInfo(value, true, t));
+                        cmd.failed(t.getLocalizedMessage());
                         return;
                     }
                 }
             }
-
-            Log.w("Habpanelview", "received unhandled command: " + value);
-            addToCmdLog(new CommandInfo(value, false));
         }
     }
 
-    private void addToCmdLog(final CommandInfo cmd) {
+    private void addToCmdLog(final Command cmd) {
         mCtx.runOnUiThread(() -> mCmdLog.add(cmd));
     }
 
@@ -79,5 +75,9 @@ public class CommandQueue implements IStateUpdateListener {
         mCtx.runOnUiThread(() -> mCmdLog.setSize(prefs.getInt("pref_command_log_size", 100)));
 
         mServerConnection.subscribeCommandItems(this, mCmdItemName);
+    }
+
+    public void terminate() {
+        EventBus.getDefault().unregister(this);
     }
 }

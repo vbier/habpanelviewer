@@ -20,8 +20,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
-import com.jakewharton.processphoenix.ProcessPhoenix;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -81,13 +79,12 @@ public class SettingsFragment extends PreferenceFragment {
         }
     };
 
+    private boolean cameraEnabled = false;
     private boolean motionEnabled = false;
     private boolean proximityEnabled = false;
     private boolean pressureEnabled = false;
     private boolean brightnessEnabled = false;
     private boolean temperatureEnabled = false;
-
-    private boolean newApi = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,6 +92,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
+            cameraEnabled = bundle.getBoolean("camera_enabled");
             motionEnabled = bundle.getBoolean("motion_enabled");
             proximityEnabled = bundle.getBoolean("proximity_enabled");
             pressureEnabled = bundle.getBoolean("pressure_enabled");
@@ -109,6 +107,10 @@ public class SettingsFragment extends PreferenceFragment {
         mLoader = new ItemsAsyncTaskLoader(getActivity());
 
         // disable preferences if functionality is not available
+        if (!cameraEnabled) {
+            findPreference("pref_camera").setEnabled(false);
+            findPreference("pref_camera").setSummary(getString(R.string.pref_camera) + getString(R.string.notAvailableOnDevice));
+        }
         if (!motionEnabled) {
             findPreference("pref_motion").setEnabled(false);
             findPreference("pref_motion").setSummary(getString(R.string.pref_motion) + getString(R.string.notAvailableOnDevice));
@@ -172,20 +174,6 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         getLoaderManager().initLoader(1234, null, mLoaderCallbacks);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        newApi = ((CheckBoxPreference) findPreference("pref_motion_detection_new_api")).isChecked();
-    }
-
-    @Override
-    public void onStop() {
-        if (newApi != ((CheckBoxPreference) findPreference("pref_motion_detection_new_api")).isChecked()) {
-            ProcessPhoenix.triggerRebirth(getActivity());
-        }
-        super.onStop();
     }
 
     private class URLValidatingListener implements Preference.OnPreferenceChangeListener {

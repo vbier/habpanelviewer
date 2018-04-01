@@ -22,6 +22,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -42,19 +43,22 @@ public class ConnectionUtil {
     private static SSLContext mSslContext;
 
     private static final ArrayList<CertChangedListener> mListeners = new ArrayList<>();
+    private static AtomicBoolean mInitialized = new AtomicBoolean();
 
     public static synchronized void initialize(Context ctx) throws GeneralSecurityException, IOException {
-        localTrustStoreFile = new File(ctx.getFilesDir(), "localTrustStore.bks");
-        if (!localTrustStoreFile.exists()) {
-            try (InputStream in = ctx.getResources().openRawResource(R.raw.mytruststore)) {
-                copy(in, localTrustStoreFile);
+        if (!mInitialized.getAndSet(true)) {
+            localTrustStoreFile = new File(ctx.getFilesDir(), "localTrustStore.bks");
+            if (!localTrustStoreFile.exists()) {
+                try (InputStream in = ctx.getResources().openRawResource(R.raw.mytruststore)) {
+                    copy(in, localTrustStoreFile);
+                }
             }
+
+            System.setProperty("javax.net.ssl.trustStore", localTrustStoreFile.getAbsolutePath());
+
+            SSLContext sslContext = createSslContext();
+            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
         }
-
-        System.setProperty("javax.net.ssl.trustStore", localTrustStoreFile.getAbsolutePath());
-
-        SSLContext sslContext = createSslContext();
-        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
     }
 
     public static synchronized void addCertificate(SslCertificate certificate) throws GeneralSecurityException, IOException {

@@ -1,12 +1,9 @@
 package de.vier_bier.habpanelviewer.command;
 
 import android.app.Activity;
-import android.app.admin.DevicePolicyManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 
-import de.vier_bier.habpanelviewer.AdminReceiver;
 import de.vier_bier.habpanelviewer.EmptyActivity;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 
@@ -14,15 +11,12 @@ import de.vier_bier.habpanelviewer.ScreenControllingActivity;
  * Handler for SCREEN_ON, KEEP_SCREEN_ON and ALLOW_SCREEN_OFF commands.
  */
 public class ScreenHandler implements ICommandHandler {
-    private final DevicePolicyManager mDPM;
     private final PowerManager.WakeLock screenOnLock;
     private final Activity mActivity;
     private boolean mKeepScreenOn;
 
     public ScreenHandler(PowerManager pwrManager, Activity activity) {
         mActivity = activity;
-        mDPM = (DevicePolicyManager) mActivity.getSystemService(Context.DEVICE_POLICY_SERVICE);
-
         screenOnLock = pwrManager.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "HabpanelViewer");
 
@@ -30,23 +24,28 @@ public class ScreenHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handleCommand(String cmd) {
-        if ("SCREEN_ON".equals(cmd)) {
+    public boolean handleCommand(Command cmd) {
+        final String cmdStr = cmd.getCommand();
+
+        if ("SCREEN_ON".equals(cmdStr)) {
+            cmd.start();
             screenOn();
             screenDim(false);
-        } else if ("ALLOW_SCREEN_OFF".equals(cmd)) {
+        } else if ("ALLOW_SCREEN_OFF".equals(cmdStr)) {
+            cmd.start();
             setKeepScreenOn(false);
-        } else if ("KEEP_SCREEN_ON".equals(cmd)) {
+        } else if ("KEEP_SCREEN_ON".equals(cmdStr)) {
+            cmd.start();
             screenOn();
             setKeepScreenOn(true);
-        } else if ("LOCK_SCREEN".equals(cmd) && mDPM.isAdminActive(AdminReceiver.COMP)) {
-            screenLock();
-        } else if ("SCREEN_DIM".equals(cmd)) {
+        } else if ("SCREEN_DIM".equals(cmdStr)) {
+            cmd.start();
             screenDim(true);
         } else {
             return false;
         }
 
+        cmd.finished();
         return true;
     }
 
@@ -63,10 +62,6 @@ public class ScreenHandler implements ICommandHandler {
     private void setKeepScreenOn(final boolean on) {
         mKeepScreenOn = on;
         ScreenControllingActivity.setKeepScreenOn(mActivity, on);
-    }
-
-    private void screenLock() {
-        mDPM.lockNow();
     }
 
     private synchronized void screenOn() {

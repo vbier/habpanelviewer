@@ -1,138 +1,209 @@
 package de.vier_bier.habpanelviewer.reporting.motion;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.hardware.Camera;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import java.io.IOException;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
+import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
- * Motion detection using the old Camera API.
+ * Base class for motion detectors.
  */
-@SuppressWarnings("deprecation")
-public class MotionDetector extends AbstractMotionDetector<ImageData> {
+public class MotionDetector extends Thread implements IMotionDetector, ICamera.ILumaListener {
     private static final String TAG = "MotionDetector";
 
-    private boolean mRunning;
+    private final AtomicBoolean mStopped = new AtomicBoolean(false);
+
+    private final Activity mContext;
+    private boolean mEnabled;
+    private int mBoxes = 50;
+
+    private int mSleepTime;
+    private int mLeniency = 20;
+    private final MotionReporter mMotionReporter;
+    private int mDetectionCount = 0;
+    private int mFrameCount = 0;
+
+    private LumaData mPreviousState;
+    private Comparer mComparer;
     private Camera mCamera;
+    private AtomicReference<LumaData> mLumaData = new AtomicReference<>();
 
-    public MotionDetector(Activity context, IMotionListener l, ServerConnection serverConnection) {
-        super(context, l, serverConnection);
+    public MotionDetector(Activity context, Camera camera, IMotionListener l, ServerConnection serverConnection) {
+        mContext = context;
+        mCamera = camera;
+
+        mMotionReporter = new MotionReporter(l, serverConnection);
+        EventBus.getDefault().register(this);
+
+        setDaemon(true);
+        start();
     }
 
-    @Override
-    protected int getSensorOrientation() {
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(Integer.parseInt(mCameraId), info);
+    public void run() {
+        try {
+            while (!mStopped.get()) {
+                try {
+                    Thread.sleep(mSleepTime);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
 
-        return info.orientation;
-    }
+                LumaData greyState = getLumaData();
 
-    @Override
-    protected LumaData getPreviewLumaData() {
-        ImageData p = getPreview();
-        if (p != null) {
-            return p.extractLumaData(mBoxes);
-        }
+                if (greyState != null) {
+                    Log.v(TAG, "processing frame");
 
-        return null;
-    }
+                    mFrameCount++;
 
-    protected String createCamera(int deviceDegrees) throws CameraException {
-        if (mCamera == null) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
-                Camera.getCameraInfo(i, info);
-                if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                    mCamera = Camera.open(i);
+                    int minLuma = 1000;
+                    if (greyState.isDarker(minLuma)) {
+                        Log.v(TAG, "too dark");
+                        mMotionReporter.tooDark();
+                    } else {
+                        ArrayList<Point> differing = detect(greyState);
+                        if (differing != null && !differing.isEmpty()) {
+                            mDetectionCount++;
+                            mMotionReporter.motionDetected(differing);
+                            Log.v(TAG, "motion");
+                        } else {
+                            mMotionReporter.noMotion();
+                        }
+                    }
 
-                    int result = (info.orientation + deviceDegrees) % 360;
-                    result = (360 - result) % 360;
-                    mCamera.setDisplayOrientation(result);
-
-                    return String.valueOf(i);
+                    Log.v(TAG, "processing done");
                 }
             }
-
-            throw new CameraException(mContext.getString(R.string.frontCameraMissing));
+        } finally {
+            Log.v(TAG, "motion thread finished");
         }
-
-        return null;
     }
 
-    protected synchronized void startPreview() {
-        if (mEnabled && !mRunning && mCamera != null && mSurface != null) {
-            try {
-                mCamera.stopPreview();
-                mCamera.setPreviewTexture(mSurface);
+    private LumaData getLumaData() {
+        return mLumaData.getAndSet(null);
+    }
 
-                Camera.Parameters parameters = mCamera.getParameters();
-                chooseOptimalSize(toPointArray(parameters.getSupportedPictureSizes()), 640, 480, new Point(640, 480));
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ApplicationStatus status) {
+        if (mEnabled) {
+            status.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.enabled) + "\n" + (mContext.getString(R.string.resolution, 640, 480) + "\n"
+                    + mContext.getString(R.string.boxesLeniency, mBoxes, mLeniency) + "\n"
+                    + mContext.getString(R.string.framesProcessed, mFrameCount, mDetectionCount) + "\n"
+                    + mContext.getString(R.string.timeBetweenDetections, mSleepTime)));
+        } else {
+            status.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.disabled));
+        }
+    }
 
-                parameters.setPreviewSize(mPreviewSize.x, mPreviewSize.y);
-                mCamera.setParameters(parameters);
+    @Override
+    public synchronized void terminate() {
+        EventBus.getDefault().unregister(this);
 
-                mCamera.setPreviewCallback((bytes, camera) -> {
-                    if (mCamera == camera && previewMissing()) {
-                        Log.v(TAG, "preview image available: size " + mPreviewSize.x + "x" + mPreviewSize.y);
+        mMotionReporter.terminate();
+        stopDetection();
 
-                        setPreview(new ImageData(bytes, mPreviewSize.x, mPreviewSize.y));
-                    }
-                });
+        mStopped.set(true);
+    }
 
-                mCamera.startPreview();
-                mRunning = true;
-            } catch (IOException e) {
-                Log.e(TAG, "Error setting preview texture", e);
+    @Override
+    public synchronized void updateFromPreferences(SharedPreferences prefs) {
+        boolean newEnabled = prefs.getBoolean("pref_motion_detection_enabled", false);
+        int newBoxes = Integer.parseInt(prefs.getString("pref_motion_detection_granularity", "20"));
+        int newLeniency = Integer.parseInt(prefs.getString("pref_motion_detection_leniency", "20"));
+
+        mSleepTime = Integer.parseInt(prefs.getString("pref_motion_detection_sleep", "500"));
+
+        if (newEnabled) {
+            boolean changed = newBoxes != mBoxes || newLeniency != mLeniency;
+
+            if (changed) {
+                mComparer = null;
+                mPreviousState = null;
             }
-        }
-    }
 
-    private Point[] toPointArray(List<Camera.Size> supportedPictureSizes) {
-        ArrayList<Point> result = new ArrayList<>();
-        for (Camera.Size s : supportedPictureSizes) {
-            result.add(new Point(s.width, s.height));
+            if (!mEnabled) {
+                mMotionReporter.updateFromPreferences(prefs);
+
+                if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    mBoxes = newBoxes;
+                    mLeniency = newLeniency;
+                    mDetectionCount = 0;
+                    mFrameCount = 0;
+
+                    try {
+                        mCamera.addLumaListener(this);
+                    } catch (CameraException e) {
+                        Log.e(TAG, "Could not enable MotionDetector", e);
+                    }
+                    mEnabled = true;
+                } else {
+                    ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA},
+                            MY_PERMISSIONS_MOTION_REQUEST_CAMERA);
+                }
+            }
+        } else if (mEnabled) {
+            stopDetection();
         }
-        return result.toArray(new Point[result.size()]);
     }
 
     @Override
-    protected synchronized void stopPreview() {
-        if (mCamera != null) {
-            mCamera.setPreviewCallback(null);
-            mCamera.stopPreview();
+    public Camera getCamera() {
+        return mCamera;
+    }
 
-            Camera c = mCamera;
-            mCamera = null;
-            c.release();
-
-            mRunning = false;
+    private synchronized ArrayList<Point> detect(LumaData s) {
+        if (mComparer == null) {
+            mComparer = new Comparer(s.getWidth(), s.getHeight(), mBoxes, mLeniency);
         }
+
+        if (mPreviousState == null) {
+            mPreviousState = s;
+            return null;
+        }
+
+        if (s.getWidth() != mPreviousState.getWidth() || s.getHeight() != mPreviousState.getHeight()) {
+            return null;
+        }
+
+        ArrayList<Point> differing = mComparer.isDifferent(s, mPreviousState);
+        mPreviousState = s;
+
+        return differing;
+    }
+
+    private synchronized void stopDetection() {
+        try {
+            mCamera.removeLumaListener(this);
+        } catch (CameraException e) {
+            Log.e(TAG, "Could not disable MotionDetector", e);
+        }
+        mEnabled = false;
+        mComparer = null;
+        mPreviousState = null;
     }
 
     @Override
-    protected String getCameraInfo() {
-        StringBuilder camStr = new StringBuilder(mContext.getString(R.string.camApiPreLollipop) + "\n");
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
-            Camera.getCameraInfo(i, info);
-            camStr.append(mContext.getString(R.string.cameraId, String.valueOf(i))).append(": ");
+    public void preview(LumaData greyState) {
+        mLumaData.set(greyState);
+    }
 
-            boolean hasFlash = mContext.getApplicationContext().getPackageManager()
-                    .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
-
-            camStr.append(hasFlash ? mContext.getString(R.string.has) : mContext.getString(R.string.no)).append(" ").append(mContext.getString(R.string.flash)).append(", ");
-            camStr.append(info.facing == Camera.CameraInfo.CAMERA_FACING_BACK ?
-                    mContext.getString(R.string.backFacing) : mContext.getString(R.string.frontFacing)).append("\n");
-        }
-
-        return camStr.toString().trim();
+    @Override
+    public boolean needsPreview() {
+        return mLumaData.get() == null;
     }
 }

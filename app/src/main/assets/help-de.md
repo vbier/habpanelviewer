@@ -68,6 +68,8 @@ Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Param
 * RELOAD: lädt die angezeigte Seite neu
 * CAPTURE_SCREEN *image item*: macht einen Screenshot und sendet diesen an das openHAB image item 
 > Dies funktioniert nur mit Android Lollipop oder neuer und mit einem in openHAB definierten item vom Typ **Image**
+* CAPTURE_CAMERA *image item*: macht ein Foto und sendet dieses an das openHAB image item
+> Falls die Bilder zu dunkel sein sollten, erhöhen Sie die CAPTURE_CAMERA Verzögerung in den Einstellungen.
 * ENABLE_MOTION_DETECTION: aktiviert die Bewegungserkennung in den App Einstellungen
 * DISABLE_MOTION_DETECTION: deaktiviert die Bewegungserkennung in den App Einstellungen
 
@@ -76,9 +78,10 @@ Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Param
 Zeigt die letzten 100 von HABPanelViewer prozessierten Kommandos. Der Status wird durch die Textfarbe angezeigt:
 * grün: Das Kommando wurde erfolgreich ausgeführt.
 * gelb: Das Kommando ist HABPanelViewer nicht bekannt.
+* grau: Das Kommando wird zur Zeit ausgeführt.
 * rot: Die Ausführung wurde aufgrund eines Fehlers abgebrochen.
 
-Im Fehlerfall wird außerdem noch die Fehlermeldung im Kommando Log angezeigt.
+Klicken Sie auf ein Kommando um die Details anuzeigen, falls es welche gibt.
 
 [zurück nach oben](#top)
 

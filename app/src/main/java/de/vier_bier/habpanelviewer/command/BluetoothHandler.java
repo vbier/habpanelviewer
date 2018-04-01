@@ -19,19 +19,28 @@ public class BluetoothHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handleCommand(String cmd) {
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        }
+    public boolean handleCommand(Command cmd) {
+        final String cmdStr = cmd.getCommand();
 
-        if ("BLUETOOTH_ON".equals(cmd)) {
+        if ("BLUETOOTH_ON".equals(cmdStr)) {
+            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                cmd.failed("bluetooth permission missing");
+            }
+
+            cmd.start();
             mManager.getAdapter().enable();
-        } else if ("BLUETOOTH_OFF".equals(cmd)) {
+        } else if ("BLUETOOTH_OFF".equals(cmdStr)) {
+            if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                cmd.failed("bluetooth permission missing");
+            }
+
+            cmd.start();
             mManager.getAdapter().disable();
         } else {
             return false;
         }
 
+        cmd.finished();
         return true;
     }
 }

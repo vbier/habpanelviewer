@@ -17,9 +17,17 @@ public class AdminHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handleCommand(String cmd) {
-        if ("ADMIN_LOCK_SCREEN".equals(cmd) && mDPM.isAdminActive(AdminReceiver.COMP)) {
-            mDPM.lockNow();
+    public boolean handleCommand(Command cmd) {
+        final String cmdStr = cmd.getCommand();
+
+        if ("ADMIN_LOCK_SCREEN".equals(cmdStr)) {
+            if (mDPM.isAdminActive(AdminReceiver.COMP)) {
+                cmd.start();
+                mDPM.lockNow();
+                cmd.finished();
+            } else {
+                cmd.failed("device admin privileges missing");
+            }
             return true;
         }
 

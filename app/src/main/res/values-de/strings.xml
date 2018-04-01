@@ -113,6 +113,8 @@
     <string name="pref_track_browser_connection">Überwache Browser Verbindung</string>
     <string name="pref_track_browser_connection_summ">Verbindet erneut mit openHAB, wenn der Browser die SSE Verbindung verliert.</string>
 
+    <string name="pref_camera">Kamera</string>
+
     <string name="helpFile">help-de.md</string>
 
     <string name="sslFailed">Konnte SSL nicht initialisieren</string>
@@ -175,16 +177,17 @@
     <string name="frontFacing">vorne</string>
     <string name="failedAccessCamera">Konnte Kamera nicht ansprechen:</string>
     <string name="cameras">Kameras</string>
-    <string name="detectionResolution">Auflösung %dx%d</string>
+    <string name="resolution">Auflösung %dx%d</string>
     <string name="boxesLeniency">%d Rechtecke, Erkennungs Schwelle %d</string>
     <string name="framesProcessed">%d Bilder, %d mal Bewegung erkannt</string>
+    <string name="timeBetweenDetections">Zeit zwischen Erkennungen %d ms</string>
     <string name="couldNotFindBackFlash">Konnte keine nach hinten gerichtete Kamera mit Blitz finden!</string>
     <string name="left">links</string>
     <string name="updateInterval">Meldeintervall ist %d Sekunden</string>
     <string name="deviceAdmin">HABPanelViewer</string>
     <string name="deviceAdminDescription">Wird benötigt, damit HABPanelViewer den Bildschrim ausschalten kann</string>
     <string name="device_not_muted">Das Gerät ist nicht lautlos!</string>
-    <string name="command_log_title">Dies ist die Liste der prozessierten Kommandos seit Start der Applikation:</string>
+    <string name="command_log_title">Empfangene Kommandos:</string>
     <string name="host_realm">Rechner: %s\nBereich: %s</string>
     <string name="username">Benutzer</string>
     <string name="password">Passwort</string>
@@ -197,4 +200,13 @@
     <string name="hours">%d Stunden,</string>
     <string name="minutes">%d Minuten,</string>
     <string name="seconds">%d Sekunden,</string>
+    <string name="pictureTaken">Bild aufgenommen</string>
+    <string name="previewStarted">Vorschau gestartet</string>
+    <string name="lockingCamera">Sperre Kamera...</string>
+    <string name="waitingSurface">Warte auf Oberfläche...</string>
+    <string name="startingPreview">Starte Vorschau...</string>
+    <string name="surfaceObtained">Oberfläche erhalten</string>
+    <string name="errorSettingTexture">Fehler beim Setzen der Vorschau Oberfläche</string>
+    <string name="pref_pref_take_pic_delay">CAPTURE_CAMERA Verzögerung</string>
+    <string name="pref_pref_take_pic_delay_summ">Zeit in Millisekunden, die nach dem Starten der Vorschau geartet wird, bevor das Bild geschossen wird</string>
 </resources>

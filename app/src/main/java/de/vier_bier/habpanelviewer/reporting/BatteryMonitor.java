@@ -70,6 +70,7 @@ public class BatteryMonitor implements IStateUpdateListener {
     }
 
     public synchronized void terminate() {
+        EventBus.getDefault().unregister(this);
         mCtx.unregisterReceiver(mBatteryReceiver);
 
         if (mPollBatteryLevel != null) {

@@ -91,6 +91,8 @@ public class ConnectedIndicator implements IStateUpdateListener {
     }
 
     public synchronized void terminate() {
+        EventBus.getDefault().unregister(this);
+
         if (mReportConnection != null) {
             mReportConnection.stopReporting();
             mReportConnection = null;

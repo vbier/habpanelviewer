@@ -56,6 +56,30 @@
             android:summary="@string/pref_menu_position_summ"
             android:title="@string/pref_menu_position" />
         <PreferenceScreen
+            android:key="pref_camera"
+            android:persistent="false"
+            android:title="@string/pref_camera">
+            <CheckBoxPreference
+                android:key="pref_motion_detection_new_api"
+                android:defaultValue="true"
+                android:enabled="@bool/is_post_api_21"
+                android:summary="@string/pref_motion_detection_new_api_summ"
+                android:title="@string/pref_motion_detection_new_api" />
+            <CheckBoxPreference
+                android:key="pref_motion_detection_preview"
+                android:defaultValue="false"
+                android:summary="@string/pref_motion_detection_preview_summ"
+                android:title="@string/pref_motion_detection_preview" />
+            <EditTextPreference
+                android:key="pref_take_pic_delay"
+                android:defaultValue="100"
+                android:inputType="number"
+                android:summary="@string/pref_pref_take_pic_delay_summ"
+                android:title="@string/pref_pref_take_pic_delay" />
+
+
+        </PreferenceScreen>
+        <PreferenceScreen
             android:key="pref_reporting"
             android:summary="@string/pref_reporting_summ"
             android:persistent="false"
@@ -103,19 +127,6 @@
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_motion_item_summ"
                     android:title="@string/pref_motion_item" />
-                <CheckBoxPreference
-                    android:key="pref_motion_detection_preview"
-                    android:defaultValue="false"
-                    android:dependency="pref_motion_detection_enabled"
-                    android:summary="@string/pref_motion_detection_preview_summ"
-                    android:title="@string/pref_motion_detection_preview" />
-                <CheckBoxPreference
-                    android:key="pref_motion_detection_new_api"
-                    android:defaultValue="true"
-                    android:enabled="@bool/is_post_api_21"
-                    android:dependency="pref_motion_detection_enabled"
-                    android:summary="@string/pref_motion_detection_new_api_summ"
-                    android:title="@string/pref_motion_detection_new_api" />
                 <ListPreference
                     android:key="pref_motion_detection_granularity"
                     android:defaultValue="20"

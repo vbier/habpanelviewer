@@ -4,5 +4,5 @@ package de.vier_bier.habpanelviewer.command;
  * Handler for commands sent from openHAB.
  */
 public interface ICommandHandler {
-    boolean handleCommand(String cmd);
+    boolean handleCommand(Command cmd);
 }

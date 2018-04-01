@@ -84,6 +84,7 @@ public class VolumeMonitor implements IStateUpdateListener {
     }
 
     public void terminate() {
+        EventBus.getDefault().unregister(this);
         mCtx.getContentResolver().unregisterContentObserver(mVolumeObserver);
     }
 

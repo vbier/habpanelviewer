@@ -18,9 +18,12 @@ public class WebViewHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handleCommand(String cmd) {
-        final Matcher m = SHOW_PATTERN.matcher(cmd);
+    public boolean handleCommand(Command cmd) {
+        final String cmdStr = cmd.getCommand();
+
+        final Matcher m = SHOW_PATTERN.matcher(cmdStr);
         if (m.matches()) {
+            cmd.start();
             final String type = m.group(1);
 
             mWebView.post(() -> {
@@ -29,11 +32,20 @@ public class WebViewHandler implements ICommandHandler {
                 } else {
                     mWebView.loadDashboard(m.group(2));
                 }
+                cmd.finished();
             });
-        } else if ("SHOW_START_URL".equals(cmd)) {
-            mWebView.post(() -> mWebView.loadStartUrl());
-        } else if ("RELOAD".equals(cmd)) {
-            mWebView.post(() -> mWebView.reload());
+        } else if ("SHOW_START_URL".equals(cmdStr)) {
+            cmd.start();
+            mWebView.post(() -> {
+                mWebView.loadStartUrl();
+                cmd.finished();
+            });
+        } else if ("RELOAD".equals(cmdStr)) {
+            cmd.start();
+            mWebView.post(() -> {
+                mWebView.reload();
+                cmd.finished();
+            });
         } else {
             return false;
         }

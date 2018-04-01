@@ -11,4 +11,6 @@ public interface IMotionDetector {
     void terminate();
 
     void updateFromPreferences(SharedPreferences prefs);
+
+    Camera getCamera();
 }

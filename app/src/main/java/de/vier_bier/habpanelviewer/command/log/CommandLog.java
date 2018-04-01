@@ -2,11 +2,13 @@ package de.vier_bier.habpanelviewer.command.log;
 
 import java.util.ArrayList;
 
+import de.vier_bier.habpanelviewer.command.Command;
+
 /**
  * Log for commands received from openHAB.
  */
 public class CommandLog {
-    private final ArrayList<CommandInfo> mCommands = new ArrayList<>();
+    private final ArrayList<Command> mCommands = new ArrayList<>();
     private final ArrayList<CommandLogListener> mListeners = new ArrayList<>();
     private int mSize;
 
@@ -15,7 +17,7 @@ public class CommandLog {
         trim();
     }
 
-    public void add(CommandInfo commandInfo) {
+    public void add(Command commandInfo) {
         synchronized (mCommands) {
             if (mCommands.isEmpty()) {
                 mCommands.add(commandInfo);
@@ -40,7 +42,7 @@ public class CommandLog {
         notifyListeners();
     }
 
-    public ArrayList<CommandInfo> getCommands() {
+    public ArrayList<Command> getCommands() {
         return mCommands;
     }
 

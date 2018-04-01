@@ -2,7 +2,6 @@ package de.vier_bier.habpanelviewer.command;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.util.Log;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,19 +27,23 @@ public class VolumeHandler implements ICommandHandler {
     }
 
     @Override
-    public boolean handleCommand(String cmd) {
-        Matcher m = SET_PATTERN.matcher(cmd);
+    public boolean handleCommand(Command cmd) {
+        final String cmdStr = cmd.getCommand();
 
-        if ("MUTE".equals(cmd)) {
+        Matcher m = SET_PATTERN.matcher(cmdStr);
+
+        if ("MUTE".equals(cmdStr)) {
+            cmd.start();
             mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, AudioManager.FLAG_SHOW_UI);
-        } else if ("UNMUTE".equals(cmd)) {
+        } else if ("UNMUTE".equals(cmdStr)) {
             if (mVolume == -1) {
-                throw new IllegalStateException(mCtx.getString(R.string.device_not_muted));
+                cmd.failed(mCtx.getString(R.string.device_not_muted));
+            } else {
+                cmd.start();
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mVolume, AudioManager.FLAG_SHOW_UI);
+                mVolume = -1;
             }
-
-            mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mVolume, AudioManager.FLAG_SHOW_UI);
-            mVolume = -1;
         } else if (m.matches()) {
             mVolume = -1;
             String value = m.group(1);
@@ -53,15 +56,16 @@ public class VolumeHandler implements ICommandHandler {
                     volume = mMaxVolume;
                 }
 
+                cmd.start();
                 mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, AudioManager.FLAG_SHOW_UI);
             } catch (NumberFormatException e) {
-                Log.e("Habpanelview", "failed to parse volume from command: " + cmd);
+                cmd.failed("failed to parse volume from command");
             }
         } else {
             return false;
         }
 
-
+        cmd.finished();
         return true;
     }
 }

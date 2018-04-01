@@ -117,6 +117,8 @@
     <string name="pref_track_browser_connection">Track Browser Connection</string>
     <string name="pref_track_browser_connection_summ">Reconnects to openHAB when a browser SSE connection loss is detected</string>
 
+    <string name="pref_camera">Camera</string>
+
     <string name="helpFile">help.md</string>
 
     <string name="sslFailed">Could not initialize SSL engine!</string>
@@ -179,16 +181,17 @@
     <string name="frontFacing">front-facing</string>
     <string name="failedAccessCamera">failed to access camera service:</string>
     <string name="cameras">Cameras</string>
-    <string name="detectionResolution">resolution %dx%d</string>
+    <string name="resolution">resolution %dx%d</string>
     <string name="boxesLeniency">%d boxes, leniency is %d</string>
     <string name="framesProcessed">%d frames, motion detected %d times</string>
+    <string name="timeBetweenDetections">time between detections %d ms</string>
     <string name="couldNotFindBackFlash">Could not find back facing camera with flash!</string>
     <string name="left">left</string>
     <string name="updateInterval">interval is %d seconds</string>
     <string name="deviceAdmin">HABPanelViewer</string>
     <string name="deviceAdminDescription">Is needed for immediate screen locking</string>
     <string name="device_not_muted">Device is not muted!</string>
-    <string name="command_log_title">This is the list of all commands that have been processed during this run:</string>
+    <string name="command_log_title">Received commands:</string>
     <string name="host_realm">Host: %s\nRealm: %s</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -201,4 +204,13 @@
     <string name="hours">%d hours,</string>
     <string name="minutes">%d minutes,</string>
     <string name="seconds">%d seconds,</string>
+    <string name="pictureTaken">picture taken</string>
+    <string name="previewStarted">preview started</string>
+    <string name="lockingCamera">locking camera...</string>
+    <string name="waitingSurface">waiting for surface...</string>
+    <string name="startingPreview">starting preview...</string>
+    <string name="surfaceObtained">surface obtained</string>
+    <string name="errorSettingTexture">Error setting preview texture</string>
+    <string name="pref_pref_take_pic_delay">CAPTURE_CAMERA delay</string>
+    <string name="pref_pref_take_pic_delay_summ">Delay in milliseconds to wait after preview has been started until taking the picture for CAPTURE_CAMERA commands.</string>
 </resources>

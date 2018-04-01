@@ -8,18 +8,26 @@ class LumaData {
     private byte[][] average = null;
     private int width;
     private int height;
+    private int mBoxes = -1;
 
-    LumaData(byte[] data, int width, int height, int mBoxes) {
+    LumaData(byte[] data, int width, int height) {
         if (data == null) throw new NullPointerException();
 
         this.data = data;
         this.width = width;
         this.height = height;
 
-        average = new byte[mBoxes][mBoxes];
-        for (int x = 0; x < mBoxes; x++) {
-            for (int y = 0; y < mBoxes; y++) {
-                average[x][y] = -1;
+    }
+
+    public void setBoxCount(int boxCount) {
+        if (boxCount != mBoxes) {
+            mBoxes = boxCount;
+
+            average = new byte[mBoxes][mBoxes];
+            for (int x = 0; x < mBoxes; x++) {
+                for (int y = 0; y < mBoxes; y++) {
+                    average[x][y] = -1;
+                }
             }
         }
     }

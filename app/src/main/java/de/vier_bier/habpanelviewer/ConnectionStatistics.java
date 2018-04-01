@@ -129,6 +129,10 @@ public class ConnectionStatistics {
         }
     }
 
+    public void terminate() {
+        EventBus.getDefault().unregister(this);
+    }
+
     private enum State {
         CONNECTED, DISCONNECTED
     }
