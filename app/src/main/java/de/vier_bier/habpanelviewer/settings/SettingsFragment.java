@@ -79,6 +79,7 @@ public class SettingsFragment extends PreferenceFragment {
         }
     };
 
+    private boolean cameraEnabled = false;
     private boolean motionEnabled = false;
     private boolean proximityEnabled = false;
     private boolean pressureEnabled = false;
@@ -91,6 +92,7 @@ public class SettingsFragment extends PreferenceFragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
+            cameraEnabled = bundle.getBoolean("camera_enabled");
             motionEnabled = bundle.getBoolean("motion_enabled");
             proximityEnabled = bundle.getBoolean("proximity_enabled");
             pressureEnabled = bundle.getBoolean("pressure_enabled");

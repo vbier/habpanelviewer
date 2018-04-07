@@ -5,9 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 
 /**
  * Activity that support controlling screen state.
@@ -25,8 +29,23 @@ public abstract class ScreenControllingActivity extends Activity {
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        boolean showOnLockScreen = prefs.getBoolean("pref_show_on_lock_screen", false);
+        if (showOnLockScreen) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        }
 
         IntentFilter f = new IntentFilter(ACTION_KEEP_SCREEN_ON);
         LocalBroadcastManager.getInstance(this).registerReceiver(onEvent, f);

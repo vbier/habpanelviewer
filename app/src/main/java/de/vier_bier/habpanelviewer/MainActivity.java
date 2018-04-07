@@ -32,7 +32,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -186,6 +185,7 @@ public class MainActivity extends ScreenControllingActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         EventBus.getDefault().register(this);
 
         try {
@@ -194,7 +194,6 @@ public class MainActivity extends ScreenControllingActivity
             Toast.makeText(MainActivity.this, R.string.sslFailed, Toast.LENGTH_LONG).show();
         }
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -306,28 +305,32 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         SensorManager m = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        if (mProximityMonitor == null) {
+        if (mProximityMonitor == null
+                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_PROXIMITY)) {
             try {
                 mProximityMonitor = new ProximityMonitor(this, m, mServerConnection);
             } catch (SensorMissingException e) {
                 Log.d("Habpanelview", "Could not create proximity monitor");
             }
         }
-        if (mBrightnessMonitor == null) {
+        if (mBrightnessMonitor == null
+                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_LIGHT)) {
             try {
                 mBrightnessMonitor = new BrightnessMonitor(this, m, mServerConnection);
             } catch (SensorMissingException e) {
                 Log.d("Habpanelview", "Could not create brightness monitor");
             }
         }
-        if (mPressureMonitor == null) {
+        if (mPressureMonitor == null
+                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_BAROMETER)) {
             try {
                 mPressureMonitor = new PressureMonitor(this, m, mServerConnection);
             } catch (SensorMissingException e) {
                 Log.d("Habpanelview", "Could not create pressure monitor");
             }
         }
-        if (mTemperatureMonitor == null) {
+        if (mTemperatureMonitor == null
+                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_AMBIENT_TEMPERATURE)) {
             try {
                 mTemperatureMonitor = new TemperatureMonitor(this, m, mServerConnection);
             } catch (SensorMissingException e) {
@@ -544,13 +547,6 @@ public class MainActivity extends ScreenControllingActivity
             Thread.setDefaultUncaughtExceptionHandler(new AppRestartingExceptionHandler(this, mRestartCount));
         } else {
             Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
-        }
-
-        boolean showOnLockScreen = prefs.getBoolean("pref_show_on_lock_screen", false);
-        if (showOnLockScreen) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         }
 
         NavigationView navigationView = findViewById(R.id.nav_view);

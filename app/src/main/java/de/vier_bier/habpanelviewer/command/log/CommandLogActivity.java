@@ -1,14 +1,11 @@
 package de.vier_bier.habpanelviewer.command.log;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -58,16 +55,6 @@ public class CommandLogActivity extends ScreenControllingActivity {
                 adapter.notifyDataSetChanged();
             }
         }), 0, 1, TimeUnit.SECONDS);
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean showOnLockScreen = prefs.getBoolean("pref_show_on_lock_screen", false);
-        if (showOnLockScreen) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        }
 
         setContentView(R.layout.command_log_main);
 

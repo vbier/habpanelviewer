@@ -1,9 +1,7 @@
 package de.vier_bier.habpanelviewer;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -12,21 +10,11 @@ public class EmptyActivity extends ScreenControllingActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         boolean dim = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("dim");
         if (dim) {
+            super.onCreate(savedInstanceState);
+
             setContentView(R.layout.activity_empty);
-
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            boolean showOnLockScreen = prefs.getBoolean("pref_show_on_lock_screen", false);
-            if (showOnLockScreen) {
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-            } else {
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-            }
 
             final WindowManager.LayoutParams layout = getWindow().getAttributes();
 

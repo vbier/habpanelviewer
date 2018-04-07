@@ -60,16 +60,16 @@
             android:persistent="false"
             android:title="@string/pref_camera">
             <CheckBoxPreference
+                android:key="pref_motion_detection_preview"
+                android:defaultValue="false"
+                android:summary="@string/pref_motion_detection_preview_summ"
+                android:title="@string/pref_motion_detection_preview" />
+            <CheckBoxPreference
                 android:key="pref_motion_detection_new_api"
                 android:defaultValue="true"
                 android:enabled="@bool/is_post_api_21"
                 android:summary="@string/pref_motion_detection_new_api_summ"
                 android:title="@string/pref_motion_detection_new_api" />
-            <CheckBoxPreference
-                android:key="pref_motion_detection_preview"
-                android:defaultValue="false"
-                android:summary="@string/pref_motion_detection_preview_summ"
-                android:title="@string/pref_motion_detection_preview" />
             <EditTextPreference
                 android:key="pref_take_pic_delay"
                 android:defaultValue="100"
