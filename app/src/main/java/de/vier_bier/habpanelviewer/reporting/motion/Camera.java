@@ -25,7 +25,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Generic camera implementation.
  */
 public class Camera {
-    private static final String TAG = "Camera";
+    private static final String TAG = "HPV-Camera";
 
     private Activity mContext;
     private TextureView mPreviewView;

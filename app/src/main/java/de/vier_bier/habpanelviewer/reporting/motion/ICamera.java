@@ -54,7 +54,7 @@ public interface ICamera {
     }
 
     class LoggingPreviewListener implements IPreviewListener {
-        private static final String TAG = "LoggingPreviewListener";
+        private static final String TAG = "HPV-LoggingPreviewLi";
 
         @Override
         public void started() {

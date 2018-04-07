@@ -21,6 +21,8 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
  * Async Task Loader for loading list of openHAB items via rest API.
  */
 class ItemsAsyncTaskLoader extends AsyncTaskLoader<List<String>> {
+    private static final String TAG = "HPV-ItemsAsyncTaskLo";
+
     private String mServerUrl = "";
     private List<String> mData;
 
@@ -77,7 +79,7 @@ class ItemsAsyncTaskLoader extends AsyncTaskLoader<List<String>> {
 
             return items;
         } catch (IOException | GeneralSecurityException | JSONException e) {
-            Log.e("Habpanelview", "Failed to fatch item names from server " + mServerUrl, e);
+            Log.e(TAG, "Failed to fatch item names from server " + mServerUrl, e);
             return new ArrayList<>();
         }
     }

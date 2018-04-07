@@ -41,6 +41,8 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
  * WebView
  */
 public class ClientWebView extends WebView {
+    private static final String TAG = "HPV-ClientWebView";
+
     private boolean mAllowMixedContent;
     private boolean mDraggingPrevented;
     private String mServerURL;
@@ -126,18 +128,18 @@ public class ClientWebView extends WebView {
                 if (isHabPanelUrl(url)) {
                     evaluateJavascript("angular.element(document.body).scope().$root.kioskMode", s -> {
                         mKioskMode = Boolean.parseBoolean(s);
-                        Log.d("Kiosk", "HABPanel page loaded. kioskMode=" + mKioskMode);
+                        Log.d(TAG, "HABPanel page loaded. kioskMode=" + mKioskMode);
                     });
                 }
             }
 
             @Override
             public void onReceivedSslError(WebView view, final SslErrorHandler handler, final SslError error) {
-                Log.d("SSL", "onReceivedSslError: " + error.getUrl());
+                Log.d(TAG, "onReceivedSslError: " + error.getUrl());
 
                 SslCertificate cert = error.getCertificate();
                 if (ConnectionUtil.isTrusted(error.getCertificate())) {
-                    Log.d("SSL", "certificate is trusted: " + error.getUrl());
+                    Log.d(TAG, "certificate is trusted: " + error.getUrl());
 
                     handler.proceed();
                     return;
@@ -310,7 +312,7 @@ public class ClientWebView extends WebView {
     @Override
     public void reload() {
         if (isShowingHabPanel()) {
-            Log.d("Kiosk", "reloading habpanel: mKioskMode = " + mKioskMode + ", url = " + getUrl());
+            Log.d(TAG, "reloading habpanel: mKioskMode = " + mKioskMode + ", url = " + getUrl());
 
             String urlStr = getUrl();
 
@@ -332,7 +334,7 @@ public class ClientWebView extends WebView {
                     urlStr = new URI(uri.getScheme(), uri.getAuthority(), uri.getPath(),
                             uri.getQuery(), fragment).toString();
 
-                    Log.d("Kiosk", "loading url = " + urlStr);
+                    Log.d(TAG, "loading url = " + urlStr);
                     loadUrl(urlStr);
                     return;
                 }
@@ -341,7 +343,7 @@ public class ClientWebView extends WebView {
             }
         }
 
-        Log.d("Kiosk", "reloading page");
+        Log.d(TAG, "reloading page");
         super.reload();
     }
 
@@ -375,7 +377,7 @@ public class ClientWebView extends WebView {
     }
 
     public void toggleKioskMode() {
-        Log.d("Kiosk", "toggleKioskMode: " + mKioskMode + "->" + !mKioskMode);
+        Log.d(TAG, "toggleKioskMode: " + mKioskMode + "->" + !mKioskMode);
 
         mKioskMode = !mKioskMode;
         reload();

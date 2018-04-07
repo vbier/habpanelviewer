@@ -14,6 +14,8 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
  * Asynchronous task that sets the value of an openHAB item using the openHAB rest API.
  */
 class SetItemStateTask extends AsyncTask<ItemState, Void, Void> {
+    private static final String TAG = "HPV-SetItemStateTask";
+
     private final String serverUrl;
 
     SetItemStateTask(String url) {
@@ -35,13 +37,13 @@ class SetItemStateTask extends AsyncTask<ItemState, Void, Void> {
                     osw.write(state.mItemState);
                     osw.flush();
                     osw.close();
-                    Log.v("Habpanelview", "set request response: " + urlConnection.getResponseMessage()
+                    Log.v(TAG, "set request response: " + urlConnection.getResponseMessage()
                             + "(" + urlConnection.getResponseCode() + ")");
                 } finally {
                     urlConnection.disconnect();
                 }
             } catch (IOException | GeneralSecurityException e) {
-                Log.e("Habpanelview", "Failed to set state for item " + state.mItemName, e);
+                Log.e(TAG, "Failed to set state for item " + state.mItemName, e);
             }
 
             if (isCancelled()) {

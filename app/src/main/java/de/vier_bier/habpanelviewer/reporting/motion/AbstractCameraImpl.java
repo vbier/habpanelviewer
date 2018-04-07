@@ -14,7 +14,7 @@ import java.util.List;
  * Base camera implementation.
  */
 abstract class AbstractCameraImpl implements ICamera {
-    private static final String TAG = "AbstractCameraImpl";
+    private static final String TAG = "HPV-AbstractCameraImpl";
 
     final Activity mActivity;
     final TextureView mPreviewView;

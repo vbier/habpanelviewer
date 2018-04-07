@@ -25,6 +25,8 @@ import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
  * CAPTURE_SCREEN commands.
  */
 public class InternalCommandHandler implements ICommandHandler {
+    private static final String TAG = "HPV-InternalCommandHa";
+
     private final Pattern START_PATTERN = Pattern.compile("START_APP (.+)");
     private final Pattern CAPTURE_SCREEN_PATTERN = Pattern.compile("CAPTURE_SCREEN (.+)");
     private final Pattern CAPTURE_CAMERA_PATTERN = Pattern.compile("CAPTURE_CAMERA (.+)");
@@ -46,7 +48,7 @@ public class InternalCommandHandler implements ICommandHandler {
             takePictureDelay = Integer.parseInt(prefs.getString("pref_take_pic_delay", "100"));
         } catch (NumberFormatException e) {
             takePictureDelay = 100;
-            Log.e("Habpanelview", "could not parse pref_take_pic_delay value " + prefs.getString("pref_take_pic_delay", "100") + ". using default 100");
+            Log.e(TAG, "could not parse pref_take_pic_delay value " + prefs.getString("pref_take_pic_delay", "100") + ". using default 100");
         }
     }
 

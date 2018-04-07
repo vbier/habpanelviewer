@@ -17,7 +17,7 @@ import de.vier_bier.habpanelviewer.R;
  * Concrete camera implementation using old camera API.
  */
 class CameraImplV1 extends AbstractCameraImpl {
-    private static final String TAG = "CameraImplV1";
+    private static final String TAG = "HPV-CameraImplV1";
 
     private Camera mCamera;
     private volatile boolean mPreviewRunning;

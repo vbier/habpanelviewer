@@ -80,6 +80,7 @@ import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
  */
 public class MainActivity extends ScreenControllingActivity
         implements NavigationView.OnNavigationItemSelectedListener, IConnectionListener {
+    private static final String TAG = "HPV-MainActivity";
 
     private final static int REQUEST_PICK_APPLICATION = 12352;
 
@@ -220,7 +221,7 @@ public class MainActivity extends ScreenControllingActivity
                 try {
                     mFlashService = new FlashHandler(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE));
                 } catch (CameraAccessException | IllegalAccessException e) {
-                    Log.d("Habpanelview", "Could not create flash controller");
+                    Log.d(TAG, "Could not create flash controller");
                 }
             }
 
@@ -310,7 +311,7 @@ public class MainActivity extends ScreenControllingActivity
             try {
                 mProximityMonitor = new ProximityMonitor(this, m, mServerConnection);
             } catch (SensorMissingException e) {
-                Log.d("Habpanelview", "Could not create proximity monitor");
+                Log.d(TAG, "Could not create proximity monitor");
             }
         }
         if (mBrightnessMonitor == null
@@ -318,7 +319,7 @@ public class MainActivity extends ScreenControllingActivity
             try {
                 mBrightnessMonitor = new BrightnessMonitor(this, m, mServerConnection);
             } catch (SensorMissingException e) {
-                Log.d("Habpanelview", "Could not create brightness monitor");
+                Log.d(TAG, "Could not create brightness monitor");
             }
         }
         if (mPressureMonitor == null
@@ -326,7 +327,7 @@ public class MainActivity extends ScreenControllingActivity
             try {
                 mPressureMonitor = new PressureMonitor(this, m, mServerConnection);
             } catch (SensorMissingException e) {
-                Log.d("Habpanelview", "Could not create pressure monitor");
+                Log.d(TAG, "Could not create pressure monitor");
             }
         }
         if (mTemperatureMonitor == null
@@ -334,7 +335,7 @@ public class MainActivity extends ScreenControllingActivity
             try {
                 mTemperatureMonitor = new TemperatureMonitor(this, m, mServerConnection);
             } catch (SensorMissingException e) {
-                Log.d("Habpanelview", "Could not create temperature monitor");
+                Log.d(TAG, "Could not create temperature monitor");
             }
         }
 
@@ -539,7 +540,7 @@ public class MainActivity extends ScreenControllingActivity
         try {
             maxRestarts = Integer.parseInt(prefs.getString("pref_max_restarts", "5"));
         } catch (NumberFormatException e) {
-            Log.e("Habpanelview", "could not parse pref_max_restarts value " + prefs.getString("pref_max_restarts", "5") + ". using default 5");
+            Log.e(TAG, "could not parse pref_max_restarts value " + prefs.getString("pref_max_restarts", "5") + ". using default 5");
         }
 
         boolean restartEnabled = prefs.getBoolean("pref_restart_enabled", false);

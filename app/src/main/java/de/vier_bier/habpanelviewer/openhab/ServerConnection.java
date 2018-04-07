@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -33,6 +34,8 @@ import io.opensensors.sse.client.MessageEvent;
  * Client for openHABs SSE service. Listens for item value changes.
  */
 public class ServerConnection implements IStatePropagator {
+    private static final String TAG = "HPV-ServerConnection";
+
     private final Context mCtx;
     private String mServerURL;
     private EventSource mEventSource;
@@ -51,15 +54,22 @@ public class ServerConnection implements IStatePropagator {
     private final BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "network state changed");
+
             ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
+            Log.d(TAG, "active network: " + activeNetwork);
 
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                Log.d(TAG, "active network is connected.");
                 if (!isConnected()) {
                     connect();
                 }
-            } else if (isConnected()) {
-                close();
+            } else {
+                Log.d(TAG, "active network is not connected.");
+                if (isConnected()) {
+                    close();
+                }
             }
         }
     };
@@ -72,7 +82,7 @@ public class ServerConnection implements IStatePropagator {
         mCtx.registerReceiver(mNetworkReceiver, intentFilter);
 
         mCertListener = () -> {
-            Log.d("Habpanelview", "Cert added, reconnecting to server...");
+            Log.d(TAG, "cert added, reconnecting to server...");
 
             // if we are not connected, try to connect. connection may have failed due to
             // certificate errors
@@ -101,10 +111,12 @@ public class ServerConnection implements IStatePropagator {
 
 
     public void subscribeCommandItems(IStateUpdateListener l, String... names) {
+        Log.d(TAG, "subscribing command items: " + Arrays.toString(names));
         subscribeItems(mCmdSubscriptions, l, false, names);
     }
 
     public void subscribeItems(IStateUpdateListener l, String... names) {
+        Log.d(TAG, "subscribing items: " + Arrays.toString(names));
         subscribeItems(mSubscriptions, l, true, names);
     }
 
@@ -158,12 +170,15 @@ public class ServerConnection implements IStatePropagator {
         // in case server url has changed reconnect
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", ""))) {
             mServerURL = prefs.getString("pref_server_url", "");
+            Log.d(TAG, "new server URL: " + mServerURL);
             close();
 
             ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
                 connect();
+            } else {
+                Log.d(TAG, "skipping connect due to missing network");
             }
         }
     }
@@ -190,14 +205,15 @@ public class ServerConnection implements IStatePropagator {
                     uri = new URI(mServerURL + "/rest/events?topics=" + topic);
 
                     if (uri.getPort() < 0 || uri.getPort() > 65535) {
-                        Log.e("Habpanelview", "Could not create SSE connection, port out of range: " + uri.getPort());
+                        Log.e(TAG, "Could not create SSE connection, port out of range: " + uri.getPort());
                         return;
                     }
                 } catch (URISyntaxException e) {
-                    Log.e("Habpanelview", "Could not create SSE connection", e);
+                    Log.e(TAG, "Could not create SSE connection", e);
                     return;
                 }
 
+                Log.d(TAG, "creating SSE handler and EventSource...");
                 client = new SSEHandler();
                 mEventSource = new EventSource(client);
 
@@ -208,17 +224,20 @@ public class ServerConnection implements IStatePropagator {
                         try {
                             mEventSource.connect(fUri, ConnectionUtil.createSslContext());
                         } catch (Exception e) {
-                            Log.e("Habpanelview", "failed to connect event source", e);
+                            Log.e(TAG, "failed to connect event source", e);
                         }
 
                         return null;
                     }
                 }.execute();
 
-                Log.d("Habpanelview", "EventSource connection initiated");
+                Log.d(TAG, "EventSource connection initiated");
+            } else {
+                Log.d(TAG, "EventSource connection skipped: no subscriptions");
             }
         } else {
-            Log.d("Habpanelview", "EventSource connection skipped");
+            Log.d(TAG, "EventSource connection skipped: serverURL=" + mServerURL
+                    + ", connected=" + isConnected());
         }
     }
 
@@ -249,9 +268,9 @@ public class ServerConnection implements IStatePropagator {
             try {
                 mEventSource.close();
             } catch (InterruptedException e) {
-                Log.v("Habpanelview", "failed to wait for EventSource closure");
+                Log.v(TAG, "failed to wait for EventSource closure");
             }
-            Log.d("Habpanelview", "EventSource closed");
+            Log.d(TAG, "EventSource closed");
             mEventSource = null;
         }
 
@@ -287,7 +306,7 @@ public class ServerConnection implements IStatePropagator {
             }
 
             if (isConnected()) {
-                Log.v("Habpanelview", "Sending state update for " + item + ": " + state);
+                Log.v(TAG, "Sending state update for " + item + ": " + state);
 
                 SetItemStateTask t = new SetItemStateTask(mServerURL);
                 t.execute(new ItemState(item, state));
@@ -302,13 +321,13 @@ public class ServerConnection implements IStatePropagator {
     }
 
     public void sendCurrentValues() {
-        Log.v("Habpanelview", "Sending pending updates...");
+        Log.v(TAG, "Sending pending updates...");
         synchronized (lastUpdates) {
             for (Map.Entry<String, String> entry : lastUpdates.entrySet()) {
                 updateState(entry.getKey(), entry.getValue(), true);
             }
         }
-        Log.v("Habpanelview", "Pending updates sent");
+        Log.v(TAG, "Pending updates sent");
     }
 
     private class SSEHandler implements EventSourceHandler {
@@ -319,7 +338,7 @@ public class ServerConnection implements IStatePropagator {
 
         @Override
         public void onConnect() {
-            Log.v("Habpanelview", "SSE onConnect");
+            Log.v(TAG, "SSE onConnect");
 
             if (!mConnected.getAndSet(true)) {
                 synchronized (connectionListeners) {
@@ -334,7 +353,7 @@ public class ServerConnection implements IStatePropagator {
 
         @Override
         public void onMessage(String event, MessageEvent message) {
-            Log.v("Habpanelview", "onMessage: message=" + message);
+            Log.v(TAG, "onMessage: message=" + message);
             if (message != null) {
                 try {
                     JSONObject jObject = new JSONObject(message.data);
@@ -359,14 +378,14 @@ public class ServerConnection implements IStatePropagator {
                         }
                     }
                 } catch (JSONException e) {
-                    Log.e("Habpanelview", "Error parsing JSON", e);
+                    Log.e(TAG, "Error parsing JSON", e);
                 }
             }
         }
 
         @Override
         public void onError(Throwable t) {
-            Log.v("Habpanelview", "SSE onError: t=" + t.getMessage());
+            Log.v(TAG, "SSE onError: t=" + t.getMessage());
 
             if (mConnected.getAndSet(false)) {
                 mValues.clear();
@@ -382,7 +401,7 @@ public class ServerConnection implements IStatePropagator {
 
         @Override
         public void onLogMessage(String s) {
-            Log.v("Habpanelview", "SSE onLogMessage: " + s);
+            Log.v(TAG, "SSE onLogMessage: " + s);
         }
 
         private synchronized void fetchCurrentItemsState() {
@@ -410,7 +429,7 @@ public class ServerConnection implements IStatePropagator {
                     propagateItem(name, "ITEM NOT FOUND");
                 }
             });
-            Log.d("Habpanelview", "Actively fetching items state");
+            Log.d(TAG, "Actively fetching items state");
             task.execute(missingItems.toArray(new String[missingItems.size()]));
         }
 
@@ -427,7 +446,7 @@ public class ServerConnection implements IStatePropagator {
         private void propagate(HashMap<String, ArrayList<IStateUpdateListener>> subscriptions, String name, String value) {
             mValues.put(name, value);
 
-            Log.v("Habpanelview", "propagating item: " + name + "=" + value);
+            Log.v(TAG, "propagating item: " + name + "=" + value);
 
             final ArrayList<IStateUpdateListener> listeners;
             synchronized (subscriptions) {

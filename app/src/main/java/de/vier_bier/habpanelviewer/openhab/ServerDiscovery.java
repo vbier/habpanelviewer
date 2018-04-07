@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * mDNS discovery for openHAB.
  */
 public class ServerDiscovery {
-    private static final String TAG = "ServerDiscovery";
+    private static final String TAG = "HPV-ServerDiscovery";
 
     private final NsdManager mNsdManager;
     private NsdManager.DiscoveryListener mDiscoveryListener;

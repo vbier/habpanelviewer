@@ -20,6 +20,8 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Abstract base class for device sensor monitors.
  */
 public abstract class SensorMonitor implements SensorEventListener, IStateUpdateListener {
+    private static final String TAG = "HPV-SensorMonitor";
+
     final Context mCtx;
     private final SensorManager mSensorManager;
     final ServerConnection mServerConnection;
@@ -79,7 +81,7 @@ public abstract class SensorMonitor implements SensorEventListener, IStateUpdate
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-        Log.v("SensorMonitor", "onAccuracyChanged" + i);
+        Log.v(TAG, "onAccuracyChanged" + i);
     }
 }
 

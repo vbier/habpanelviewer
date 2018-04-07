@@ -9,6 +9,8 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
  * UncaughtExceptionHandler that restarts the app in case of exceptions.
  */
 class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
+    private static final String TAG = "HPV-AppRestartingExHa";
+
     private final MainActivity myContext;
     private final int count;
 
@@ -18,7 +20,7 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
     }
 
     public void uncaughtException(Thread thread, Throwable exception) {
-        Log.e("Habpanelview", "Uncaught exception", exception);
+        Log.e(TAG, "Uncaught exception", exception);
 
         restartApp(myContext, count);
     }

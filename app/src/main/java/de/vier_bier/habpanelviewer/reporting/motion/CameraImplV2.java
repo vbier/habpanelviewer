@@ -44,7 +44,7 @@ import de.vier_bier.habpanelviewer.R;
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class CameraImplV2 extends AbstractCameraImpl {
-    private static final String TAG = "CameraImplV2";
+    private static final String TAG = "HPV-CameraImplV2";
 
     private final CameraManager mCamManager;
     private HandlerThread mPreviewThread;

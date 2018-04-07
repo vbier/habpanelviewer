@@ -15,6 +15,8 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
  * Asynchronous task that fetches the value of an openHAB item from the openHAB rest API.
  */
 class FetchItemStateTask extends AsyncTask<String, Void, Void> {
+    private static final String TAG = "HPV-FetchItemStateTask";
+
     private final String serverUrl;
     private final ISubscriptionListener subscriptionListener;
 
@@ -46,10 +48,10 @@ class FetchItemStateTask extends AsyncTask<String, Void, Void> {
                 subscriptionListener.itemUpdated(itemName, response.toString());
             } catch (FileNotFoundException e) {
                 subscriptionListener.itemInvalid(itemName);
-                Log.e("Habpanelview", "Failed to obtain state for item " + itemName + ". Item not found.");
+                Log.e(TAG, "Failed to obtain state for item " + itemName + ". Item not found.");
             } catch (IOException | GeneralSecurityException e) {
                 subscriptionListener.itemInvalid(itemName);
-                Log.e("Habpanelview", "Failed to obtain state for item " + itemName, e);
+                Log.e(TAG, "Failed to obtain state for item " + itemName, e);
             }
 
             if (isCancelled()) {

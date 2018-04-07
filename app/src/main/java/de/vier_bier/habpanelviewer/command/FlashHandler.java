@@ -20,6 +20,8 @@ import de.vier_bier.habpanelviewer.R;
  */
 @TargetApi(Build.VERSION_CODES.M)
 public class FlashHandler implements ICommandHandler {
+    private static final String TAG = "HPV-FlashHandler";
+
     private final Pattern BLINK_PATTERN = Pattern.compile("FLASH_BLINK ([0-9]+)");
 
     private final CameraManager mCameraManager;
@@ -119,7 +121,7 @@ public class FlashHandler implements ICommandHandler {
 
         @Override
         public void run() {
-            Log.d("Habpanelview", "FlashControlThread started");
+            Log.d(TAG, "FlashControlThread started");
 
             while (fRunning.get()) {
                 synchronized (fRunning) {
@@ -134,11 +136,11 @@ public class FlashHandler implements ICommandHandler {
             }
 
             setFlash(false);
-            Log.d("Habpanelview", "FlashControlThread finished");
+            Log.d(TAG, "FlashControlThread finished");
         }
 
         private void pulseFlash(int pulseLength) {
-            Log.d("Habpanelview", "pulseFlash: pulseLength=" + pulseLength);
+            Log.d(TAG, "pulseFlash: pulseLength=" + pulseLength);
 
             synchronized (fRunning) {
                 fPulseLength.set(pulseLength);
@@ -149,7 +151,7 @@ public class FlashHandler implements ICommandHandler {
         }
 
         private void disableFlash() {
-            Log.d("Habpanelview", "disableFlash");
+            Log.d(TAG, "disableFlash");
 
             synchronized (fRunning) {
                 fPulseLength.set(0);
@@ -160,7 +162,7 @@ public class FlashHandler implements ICommandHandler {
         }
 
         private void enableFlash() {
-            Log.d("Habpanelview", "disableFlash");
+            Log.d(TAG, "disableFlash");
 
             synchronized (fRunning) {
                 fPulseLength.set(0);
@@ -177,11 +179,11 @@ public class FlashHandler implements ICommandHandler {
                 try {
                     if (torchId != null) {
                         mCameraManager.setTorchMode(torchId, flashing);
-                        Log.d("Habpanelview", "Set torchmode " + flashing);
+                        Log.d(TAG, "Set torchmode " + flashing);
                     }
                 } catch (CameraAccessException e) {
                     if (e.getReason() != CameraAccessException.MAX_CAMERAS_IN_USE) {
-                        Log.e("Habpanelview", "Failed to toggle flash!", e);
+                        Log.e(TAG, "Failed to toggle flash!", e);
                     }
                 }
             }

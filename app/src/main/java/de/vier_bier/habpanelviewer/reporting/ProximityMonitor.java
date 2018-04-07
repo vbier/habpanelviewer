@@ -14,6 +14,8 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Monitors proximity sensor state and reports to openHAB.
  */
 public class ProximityMonitor extends SensorMonitor {
+    private static final String TAG = "HPV-ProximityMonitor";
+
     private Boolean mProximity;
 
     public ProximityMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
@@ -24,7 +26,7 @@ public class ProximityMonitor extends SensorMonitor {
     public void onSensorChanged(SensorEvent event) {
         float distance = event.values[0];
 
-        Log.v("ProximityMonitor", "onSensorChanged" + distance);
+        Log.v(TAG, "onSensorChanged" + distance);
 
         if (distance < mSensor.getMaximumRange()) {
             if (mProximity == null || !mProximity) {

@@ -25,7 +25,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Base class for motion detectors.
  */
 public class MotionDetector extends Thread implements IMotionDetector, ICamera.ILumaListener {
-    private static final String TAG = "MotionDetector";
+    private static final String TAG = "HPV-MotionDetector";
 
     private final AtomicBoolean mStopped = new AtomicBoolean(false);
 

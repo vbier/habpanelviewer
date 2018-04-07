@@ -17,11 +17,13 @@ import android.view.WindowManager;
  * Activity that support controlling screen state.
  */
 public abstract class ScreenControllingActivity extends Activity {
+    private static final String TAG = "HPV-ScreenControllingAc";
+
     public static final String ACTION_KEEP_SCREEN_ON = "ACTION_KEEP_SCREEN_ON";
     private static final String FLAG_KEEP_SCREEN_ON = "keepScreenOn";
 
     public static void setKeepScreenOn(Context ctx, boolean keepOn) {
-        Log.d("ScreenControl", "sending intent: " + keepOn);
+        Log.d(TAG, "sending intent: " + keepOn);
 
         Intent i = new Intent(ACTION_KEEP_SCREEN_ON);
         i.putExtra(FLAG_KEEP_SCREEN_ON, keepOn);
@@ -49,17 +51,17 @@ public abstract class ScreenControllingActivity extends Activity {
 
         IntentFilter f = new IntentFilter(ACTION_KEEP_SCREEN_ON);
         LocalBroadcastManager.getInstance(this).registerReceiver(onEvent, f);
-        Log.d("ScreenControl", "register receiver");
+        Log.d(TAG, "register receiver");
 
         boolean keepOn = getIntent().getBooleanExtra(FLAG_KEEP_SCREEN_ON, false);
-        Log.d("ScreenControl", "onStart: set keep on: " + keepOn);
+        Log.d(TAG, "onStart: set keep on: " + keepOn);
         getScreenOnView().setKeepScreenOn(keepOn);
     }
 
     @Override
     protected void onStop() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onEvent);
-        Log.d("ScreenControl", "receiver unregistered");
+        Log.d(TAG, "receiver unregistered");
 
         super.onStop();
     }
@@ -71,7 +73,7 @@ public abstract class ScreenControllingActivity extends Activity {
             final boolean keepOn = i.getBooleanExtra(FLAG_KEEP_SCREEN_ON, false);
 
             runOnUiThread(() -> {
-                Log.d("ScreenControl", "onReceive: set keep on: " + keepOn);
+                Log.d(TAG, "onReceive: set keep on: " + keepOn);
                 getScreenOnView().setKeepScreenOn(keepOn);
             });
         }
