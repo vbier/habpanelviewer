@@ -52,12 +52,15 @@ public class ClientWebView extends WebView {
     private final BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "network state changed");
             ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
 
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+                Log.d(TAG, "network is active: " + activeNetwork);
                 loadStartUrl();
             } else {
+                Log.d(TAG, "network is NOT active: " + activeNetwork);
                 loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
                         + "</h1><h2>" + getContext().getString(R.string.notConnected)
                         + "</h2></body></html>", "text/html", "UTF-8");
@@ -234,6 +237,7 @@ public class ClientWebView extends WebView {
 
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        Log.d(TAG, "registering network receiver...");
         getContext().registerReceiver(mNetworkReceiver, intentFilter);
     }
 
@@ -253,6 +257,8 @@ public class ClientWebView extends WebView {
 
         final String startPage = url;
         mKioskMode = isHabPanelUrl(startPage) && startPage.toLowerCase().contains("kiosk=on");
+        Log.d(TAG, "loadStartUrl: loading start page " + startPage + "...");
+
         post(() -> {
             if (getUrl() == null || !startPage.equalsIgnoreCase(getUrl())) {
                 loadUrl(startPage);
@@ -261,6 +267,8 @@ public class ClientWebView extends WebView {
     }
 
     void updateFromPreferences(SharedPreferences prefs) {
+        Log.d(TAG, "updateFromPreferences");
+
         Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
         Boolean isJavascript = prefs.getBoolean("pref_javascript", false);
         mDraggingPrevented = prefs.getBoolean("pref_prevent_dragging", false);
@@ -270,21 +278,21 @@ public class ClientWebView extends WebView {
         webSettings.setLoadWithOverviewMode(isDesktop);
         webSettings.setJavaScriptEnabled(isJavascript);
 
-        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
-
         boolean loadStartUrl = false;
         boolean reloadUrl = false;
         if (mStartPage == null || !mStartPage.equalsIgnoreCase(prefs.getString("pref_start_url", ""))) {
             mStartPage = prefs.getString("pref_start_url", "");
             loadStartUrl = true;
+            Log.d(TAG, "updateFromPreferences: mStartPage=" + mStartPage);
         }
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", "!$%"))) {
             mServerURL = prefs.getString("pref_server_url", "");
             loadStartUrl = mStartPage == null || mStartPage.isEmpty();
+            Log.d(TAG, "updateFromPreferences: mServerURL=" + mServerURL);
         }
         if (mAllowMixedContent != prefs.getBoolean("pref_allow_mixed_content", false)) {
             mAllowMixedContent = prefs.getBoolean("pref_allow_mixed_content", false);
+            Log.d(TAG, "updateFromPreferences: mAllowMixedContent=" + mAllowMixedContent);
             reloadUrl = true;
         }
 
@@ -292,13 +300,22 @@ public class ClientWebView extends WebView {
             webSettings.setMixedContentMode(mAllowMixedContent ? WebSettings.MIXED_CONTENT_ALWAYS_ALLOW : WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         }
 
+        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
+
+        Log.d(TAG, "updateFromPreferences: activeNetwork=" + activeNetwork);
         if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+            Log.d(TAG, "updateFromPreferences: network is active: " + activeNetwork);
+
             if (loadStartUrl) {
+                Log.d(TAG, "updateFromPreferences: trying to load start URL...");
                 loadStartUrl();
             } else if (reloadUrl) {
+                Log.d(TAG, "updateFromPreferences: reloading page...");
                 reload();
             }
         } else {
+            Log.d(TAG, "updateFromPreferences: network is NOT active: " + activeNetwork);
             loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
                     + "</h1><h2>" + getContext().getString(R.string.notConnected)
                     + "</h2></body></html>", "text/html", "UTF-8");
@@ -306,6 +323,7 @@ public class ClientWebView extends WebView {
     }
 
     public void unregister() {
+        Log.d(TAG, "unregistering network receiver...");
         getContext().unregisterReceiver(mNetworkReceiver);
     }
 
