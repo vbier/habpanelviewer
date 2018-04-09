@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.text.InputType;
 import android.util.AttributeSet;
@@ -407,5 +408,56 @@ public class ClientWebView extends WebView {
 
     public void loadDashboard(String panelName) {
         loadUrl(mServerURL + "/habpanel/index.html#/view/" + panelName + "?kiosk=" + (mKioskMode ? "on" : "off"));
+    }
+
+    @Override
+    public boolean canGoBack() {
+        Log.d(TAG, "canGoBack");
+        return super.canGoBack();
+    }
+
+    @Override
+    public void goBack() {
+        Log.d(TAG, "goBack");
+        super.goBack();
+        Log.d(TAG, "goBack: " + getOriginalUrl());
+    }
+
+    @Override
+    public boolean canGoForward() {
+        Log.d(TAG, "canGoForward");
+        return super.canGoForward();
+    }
+
+    @Override
+    public void goForward() {
+        Log.d(TAG, "goForward");
+        super.goForward();
+        Log.d(TAG, "goForward: " + getOriginalUrl());
+    }
+
+    @Override
+    public boolean canGoBackOrForward(int steps) {
+        Log.d(TAG, "canGoBackOrForward");
+        return super.canGoBackOrForward(steps);
+    }
+
+    @Override
+    public void goBackOrForward(int steps) {
+        Log.d(TAG, "goBackOrForward");
+        super.goBackOrForward(steps);
+        Log.d(TAG, "goBackOrForward: " + getOriginalUrl());
+    }
+
+    @Override
+    public void loadData(String data, @Nullable String mimeType, @Nullable String encoding) {
+        Log.d(TAG, "loadData: " + data);
+        super.loadData(data, mimeType, encoding);
+    }
+
+    @Override
+    public void loadDataWithBaseURL(@Nullable String baseUrl, String data, @Nullable String mimeType, @Nullable String encoding, @Nullable String historyUrl) {
+        Log.d(TAG, "loadDataWithBaseURL: " + data);
+        super.loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
     }
 }
