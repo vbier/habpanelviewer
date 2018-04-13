@@ -224,7 +224,9 @@ public class MainActivity extends ScreenControllingActivity
                     Log.d(TAG, "Could not create flash controller");
                 }
             }
+        }
 
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
             if (mCam == null) {
                 mCam = new Camera(this, findViewById(R.id.previewView), prefs);
             }
