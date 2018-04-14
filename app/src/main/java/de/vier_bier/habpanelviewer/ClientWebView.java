@@ -21,7 +21,9 @@ import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
+import android.webkit.WebHistoryItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -389,5 +391,77 @@ public class ClientWebView extends WebView {
 
     public void loadDashboard(String panelName) {
         loadUrl(mServerURL + "/habpanel/index.html#/view/" + panelName + "?kiosk=" + (mKioskMode ? "on" : "off"));
+    }
+
+    @Override
+    public boolean canGoBack() {
+        return canGoBackOrForward(-1);
+    }
+
+    @Override
+    public void goBack() {
+        goBackOrForward(-1);
+    }
+
+    @Override
+    public boolean canGoForward() {
+        return canGoBackOrForward(1);
+    }
+
+    @Override
+    public void goForward() {
+        goBackOrForward(1);
+    }
+
+    @Override
+    public boolean canGoBackOrForward(int steps) {
+        Log.d(TAG, "canGoBackOrForward: steps=" + steps);
+        int increment = steps < 0 ? -1 : 1;
+
+        WebBackForwardList list = copyBackForwardList();
+
+        int count = 0;
+        int startIdx = list.getCurrentIndex();
+        for (int i = startIdx + increment; i < list.getSize() && i >= 0; i += increment) {
+            WebHistoryItem item = list.getItemAtIndex(i);
+            Log.d(TAG, "canGoBackOrForward: item=" + item.getOriginalUrl());
+            if (!item.getOriginalUrl().startsWith("data:")) {
+                count += increment;
+
+                if (count == steps) {
+                    Log.d(TAG, "canGoBackOrForward: true");
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public void goBackOrForward(int steps) {
+        Log.d(TAG, "goBackOrForward: steps=" + steps);
+        int increment = steps < 0 ? -1 : 1;
+
+        WebBackForwardList list = copyBackForwardList();
+
+        int count = 0;
+        int intCount = 0;
+        int startIdx = list.getCurrentIndex();
+        for (int i = startIdx + increment; i < list.getSize() && i >= 0; i += increment) {
+            intCount++;
+            WebHistoryItem item = list.getItemAtIndex(i);
+            Log.d(TAG, "goBackOrForward: item=" + item.getOriginalUrl());
+            if (!item.getOriginalUrl().startsWith("data:")) {
+                count += increment;
+
+                if (count == steps) {
+                    Log.d(TAG, "goBackOrForward: intCount=" + intCount + ", item=" + item.getOriginalUrl());
+                    super.goBackOrForward(intCount);
+                    return;
+                }
+            }
+        }
+
     }
 }
