@@ -214,4 +214,6 @@
     <string name="pref_pref_take_pic_delay">CAPTURE_CAMERA delay</string>
     <string name="pref_pref_take_pic_delay_summ">Delay in milliseconds to wait after preview has been started until taking the picture for CAPTURE_CAMERA commands.</string>
     <string name="couldNotObtainCameraService">Could not obtain Android Camera Service</string>
+    <string name="pref_jpeg_quality">JPEG Quality</string>
+    <string name="pref_jpeg_quality_summ">JPEG compression quality</string>
 </resources>

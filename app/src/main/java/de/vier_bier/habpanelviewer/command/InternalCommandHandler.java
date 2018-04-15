@@ -28,8 +28,8 @@ public class InternalCommandHandler implements ICommandHandler {
     private static final String TAG = "HPV-InternalCommandHa";
 
     private final Pattern START_PATTERN = Pattern.compile("START_APP (.+)");
-    private final Pattern CAPTURE_SCREEN_PATTERN = Pattern.compile("CAPTURE_SCREEN (.+)");
-    private final Pattern CAPTURE_CAMERA_PATTERN = Pattern.compile("CAPTURE_CAMERA (.+)");
+    private final Pattern CAPTURE_SCREEN_PATTERN = Pattern.compile("CAPTURE_SCREEN (\\S+)( [0-9]+)?");
+    private final Pattern CAPTURE_CAMERA_PATTERN = Pattern.compile("CAPTURE_CAMERA (\\S+)( [0-9]+)?");
 
     private final MainActivity mActivity;
     private final ServerConnection mConnection;
@@ -56,7 +56,7 @@ public class InternalCommandHandler implements ICommandHandler {
     public boolean handleCommand(Command cmd) {
         final String cmdStr = cmd.getCommand();
 
-        String parameter;
+        String[] paras;
 
         if ("RESTART".equals(cmdStr)) {
             cmd.start();
@@ -71,28 +71,33 @@ public class InternalCommandHandler implements ICommandHandler {
         } else if ("DISABLE_MOTION_DETECTION".equals(cmdStr)) {
             cmd.start();
             setMotionDetectionEnabled(false);
-        } else if ((parameter = matchesRegexp(CAPTURE_SCREEN_PATTERN, cmdStr)) != null) {
+        } else if ((paras = matchesRegexp(CAPTURE_SCREEN_PATTERN, cmdStr)) != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ScreenCapturer c = mActivity.getCapturer();
                 if (c == null) {
                     cmd.failed("could not create capture class. Has the permission been granted?");
                 } else {
                     cmd.start();
+
+                    int compQuality = getQuality(paras);
+
                     Bitmap bmp = c.captureScreen();
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    bmp.compress(Bitmap.CompressFormat.JPEG, 90, os);
+                    bmp.compress(Bitmap.CompressFormat.JPEG, compQuality, os);
 
                     byte[] bytes = os.toByteArray();
 
-                    mConnection.updateJpeg(parameter, bytes);
+                    mConnection.updateJpeg(paras[0], bytes);
                 }
             } else {
                 cmd.failed("Lollipop or newer needed to capture the screen");
             }
-        } else if ((parameter = matchesRegexp(CAPTURE_CAMERA_PATTERN, cmdStr)) != null) {
+        } else if ((paras = matchesRegexp(CAPTURE_CAMERA_PATTERN, cmdStr)) != null) {
             cmd.start();
             try {
-                final String p = parameter;
+                final String p = paras[0];
+                final int compQuality = getQuality(paras);
+
                 mMotionDetector.getCamera().takePicture(new ICamera.IPictureListener() {
                     @Override
                     public void picture(byte[] data) {
@@ -109,19 +114,19 @@ public class InternalCommandHandler implements ICommandHandler {
                     public void progress(String message) {
                         cmd.progress(message);
                     }
-                }, takePictureDelay);
+                }, takePictureDelay, compQuality);
             } catch (CameraException e) {
                 cmd.failed(e.getLocalizedMessage());
             }
             return true;
-        } else if ((parameter = matchesRegexp(START_PATTERN, cmdStr)) != null) {
-            Intent launchIntent = mActivity.getPackageManager().getLaunchIntentForPackage(parameter);
+        } else if ((paras = matchesRegexp(START_PATTERN, cmdStr)) != null) {
+            Intent launchIntent = mActivity.getPackageManager().getLaunchIntentForPackage(paras[0]);
 
             if (launchIntent != null) {
                 cmd.start();
                 mActivity.startActivity(launchIntent);
             } else {
-                cmd.failed("could not find app for package " + parameter);
+                cmd.failed("could not find app for package " + paras[0]);
             }
         } else {
             return false;
@@ -129,6 +134,15 @@ public class InternalCommandHandler implements ICommandHandler {
 
         cmd.finished();
         return true;
+    }
+
+    private int getQuality(String[] paras) {
+        if (paras.length > 1 && paras[1] != null) {
+            return Integer.parseInt(paras[1]);
+        }
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        return Integer.parseInt(prefs.getString("pref_jpeg_quality", "70"));
     }
 
     private void setMotionDetectionEnabled(boolean enabled) {
@@ -141,11 +155,18 @@ public class InternalCommandHandler implements ICommandHandler {
         mActivity.runOnUiThread(() -> mActivity.updateMotionPreferences());
     }
 
-    private String matchesRegexp(Pattern pattern, String text) {
+    private String[] matchesRegexp(Pattern pattern, String text) {
         Matcher m = pattern.matcher(text);
 
         if (m.matches()) {
-            return m.group(1);
+            String name = m.group(1);
+            String num = m.group(2);
+
+            if (num != null) {
+                return new String[]{name, num.substring(1)};
+            } else {
+                return new String[]{name};
+            }
         }
 
         return null;

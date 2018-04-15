@@ -51,25 +51,27 @@ Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Param
 * SCREEN_DIM: regelt die Helligkeit so weit runter wie möglich und stellt sie zurück, wenn der Bildschirm berührt wird
 * MUTE: stellt das Gerät stumm
 * UNMUTE: stellt die Lautstärke auf den Wert, den das Gerät zum Zeitpunkt des MUTE Kommandos hatte
-* SET_VOLUME n: stellt die Lautstärke auf den Wert n, welcher eine Ganzzahl im Bereich 0.._Maximallautstärke des Geräts_ sein muss.
+* SET_VOLUME *\<n\>*: stellt die Lautstärke auf den Wert n, welcher eine Ganzzahl im Bereich 0.._Maximallautstärke des Geräts_ sein muss.
 * FLASH_ON: schaltet das Blitzlicht der hinteren Kamera ein
 * FLASH_OFF: schaltet das Blitzlicht der hinteren Kamera aus
 * FLASH_BLINK: lässt das Blitzlicht der hinteren Kamera im 1 Sekunden Intervall blinken
-* FLASH_BLINK *n*: lässt das Blitzlicht der hinteren Kamera im *n* Millisekunden Intervall blinken
+* FLASH_BLINK *\<n\>*: lässt das Blitzlicht der hinteren Kamera im *n* Millisekunden Intervall blinken
 * BLUETOOTH_ON: schaltet bluetooth ein
 * BLUETOOTH_OFF: schaltet bluetooth aus
 * UPDATE_ITEMS: sendet alle aktuellen Item Werte an openHAB
-* START_APP *app*: started die app mit dem Paket Namen *app*
+* START_APP *\<app\>*: started die app mit dem Paket Namen *app*
 * ADMIN_LOCK_SCREEN: aktiviert die Bildschirmsperre (beötigt, das die App in den Einstellungen als Device Admin aktiviert ist)
-* SHOW_URL *url*: zeigt die angegebene Webseite
-* SHOW_DASHBOARD *dashboard*: zeigt die angegebene Habpanel Seite
+* SHOW_URL *\<url\>*: zeigt die angegebene Webseite
+* SHOW_DASHBOARD *\<dashboard\>*: zeigt die angegebene Habpanel Seite
 > Dies funktioniert nur wenn HABPanel unter der Standard URL verfügbar ist. Wenn Sie eine angepasste HABPanel installation haben, benutzen Sie statt dessen SHOW_URL
 * SHOW_START_URL: zeigt die konfigurierte Startseite
 * RELOAD: lädt die angezeigte Seite neu
-* CAPTURE_SCREEN *image item*: macht einen Screenshot und sendet diesen an das openHAB image item 
-> Dies funktioniert nur mit Android Lollipop oder neuer und mit einem in openHAB definierten item vom Typ **Image**
-* CAPTURE_CAMERA *image item*: macht ein Foto und sendet dieses an das openHAB image item
+* CAPTURE_SCREEN *\<image item\>* *\<JPEG Qualität\>*: macht einen Screenshot und sendet diesen an das openHAB image item 
+> Dies funktioniert nur mit Android Lollipop oder neuer und mit einem in openHAB definierten item des Typs **Image**
+> Die JPEG Qualität ist optional. Es wird standardmäßig die in den App Einstellungen gesetzte Qualität genutzt.
+* CAPTURE_CAMERA *\<image item\>* *\<JPEG Qualität\>*: macht ein Foto und sendet dieses an das openHAB image item
 > Falls die Bilder zu dunkel sein sollten, erhöhen Sie die CAPTURE_CAMERA Verzögerung in den Einstellungen.
+> Die JPEG Qualität ist optional. Es wird standardmäßig die in den App Einstellungen gesetzte Qualität genutzt.
 * ENABLE_MOTION_DETECTION: aktiviert die Bewegungserkennung in den App Einstellungen
 * DISABLE_MOTION_DETECTION: deaktiviert die Bewegungserkennung in den App Einstellungen
 

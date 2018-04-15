@@ -170,7 +170,8 @@ public class Camera {
     }
 
     public synchronized void takePicture(ICamera.IPictureListener h,
-                                         int takeDelay) throws CameraException {
+                                         int takeDelay,
+                                         int compQuality) throws CameraException {
         boolean wasPreviewRunning = isPreviewRunning();
 
         final ICamera.IPreviewListener pl = new ICamera.IPreviewListener() {
@@ -182,7 +183,7 @@ public class Camera {
                     try {
                         Thread.sleep(takeDelay);
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "interrupted while waiting for take picture delay");
                     }
                 }
 
@@ -200,7 +201,7 @@ public class Camera {
                         Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
 
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        rotated.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        rotated.compress(Bitmap.CompressFormat.JPEG, compQuality, stream);
                         h.picture(stream.toByteArray());
 
                         try {

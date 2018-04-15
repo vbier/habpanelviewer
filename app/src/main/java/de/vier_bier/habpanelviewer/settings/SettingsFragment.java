@@ -113,23 +113,23 @@ public class SettingsFragment extends PreferenceFragment {
         }
         if (!motionEnabled) {
             findPreference("pref_motion").setEnabled(false);
-            findPreference("pref_motion").setSummary(getString(R.string.pref_motion) + getString(R.string.notAvailableOnDevice));
+            findPreference("pref_motion").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_motion)));
         }
         if (!proximityEnabled) {
             findPreference("pref_proximity").setEnabled(false);
-            findPreference("pref_proximity").setSummary(getString(R.string.pref_proximity) + getString(R.string.notAvailableOnDevice));
+            findPreference("pref_proximity").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_proximity)));
         }
         if (!pressureEnabled) {
             findPreference("pref_pressure").setEnabled(false);
-            findPreference("pref_pressure").setSummary(getString(R.string.pref_pressure) + getString(R.string.notAvailableOnDevice));
+            findPreference("pref_pressure").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_pressure)));
         }
         if (!brightnessEnabled) {
             findPreference("pref_brightness").setEnabled(false);
-            findPreference("pref_brightness").setSummary(getString(R.string.pref_brightness) + getString(R.string.notAvailableOnDevice));
+            findPreference("pref_brightness").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_brightness)));
         }
         if (!temperatureEnabled) {
             findPreference("pref_temperature").setEnabled(false);
-            findPreference("pref_temperature").setSummary(getString(R.string.pref_temperature) + getString(R.string.notAvailableOnDevice));
+            findPreference("pref_temperature").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_temperature)));
         }
 
         onActivityResult(42, RESULT_OK, null);

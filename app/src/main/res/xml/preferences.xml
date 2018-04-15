@@ -76,6 +76,13 @@
                 android:inputType="number"
                 android:summary="@string/pref_pref_take_pic_delay_summ"
                 android:title="@string/pref_pref_take_pic_delay" />
+            <ListPreference
+                android:key="pref_jpeg_quality"
+                android:defaultValue="70"
+                android:entries="@array/granularity"
+                android:entryValues="@array/granularity"
+                android:summary="@string/pref_jpeg_quality_summ"
+                android:title="@string/pref_jpeg_quality" />
 
 
         </PreferenceScreen>

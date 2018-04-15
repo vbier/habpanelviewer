@@ -51,25 +51,27 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 * SCREEN_DIM: dims the screen as much as possible and restores the brightness on touch event
 * MUTE: mutes the device
 * UNMUTE: restores the volume to the level the device had when it was muted
-* SET_VOLUME n: sets the device volume to n, being an integer between 0 and device max volume.
+* SET_VOLUME *\<n\>*: sets the device volume to n, being an integer between 0 and device max volume.
 * FLASH_ON: turns on the flashlight of the back-facing camera
 * FLASH_OFF: turns off the flashlight of the back-facing camera
 * FLASH_BLINK: blinks the flashlight of the back-facing camera with an interval of one second
-* FLASH_BLINK *n*: blinks the flashlight of the back-facing camera with an interval of *n* milliseconds
+* FLASH_BLINK *\<n\>*: blinks the flashlight of the back-facing camera with an interval of *n* milliseconds
 * BLUETOOTH_ON: turn bluetooth on
 * BLUETOOTH_OFF: turn bluetooth off
 * UPDATE_ITEMS: forces an update of all openHAB reporting items
-* START_APP *app*: starts the app with the package name *app*
+* START_APP *\<app\>*: starts the app with the package name *app*
 * ADMIN_LOCK_SCREEN: activates the lock screen (requires the app to be set as device admin in the settings)
-* SHOW_URL *url*: shows the given URL
-* SHOW_DASHBOARD *dashboard*: shows the given HABPanel dashboard
+* SHOW_URL *\<url\>*: shows the given URL
+* SHOW_DASHBOARD *\<dashboard\>*: shows the given HABPanel dashboard
 > This only works as long as HABPanel is available under its standard URL. If you have a custom HABPanel installation use SHOW_URL instead.
 * SHOW_START_URL: shows the configured start URL
 * RELOAD: reloads the current page
-* CAPTURE_SCREEN *image item*: captures a screenshot and send it to the openHAB image item
+* CAPTURE_SCREEN *\<image item\>* *\<jpeg quality\>*: captures a screenshot, creates a compressed jpeg with the given quality and sends it to the openHAB image item
 > This only works with Android Lollipop or newer and a defined openHAB item of type **Image**
-* CAPTURE_CAMERA *image item*: takes a picture and sends it to the openHAB image item
+> The jpeg quality is optional and defaults to the app setting.
+* CAPTURE_CAMERA *\<image item\>* *\<jpeg quality\>*: takes a picture, creates a compressed jpeg with the given quality and sends it to the openHAB image item
 > In case the pictures are too dark, try to increase the CAPTURE_CAMERA delay in the settings.
+> The jpeg quality is optional and defaults to the app setting.
 * ENABLE_MOTION_DETECTION: enables the motion detection in the app settings.
 * DISABLE_MOTION_DETECTION: disables the motion detection in the app settings.
 
