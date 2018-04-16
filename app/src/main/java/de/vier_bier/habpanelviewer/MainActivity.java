@@ -90,6 +90,7 @@ public class MainActivity extends ScreenControllingActivity
     private ServerConnection mServerConnection;
     private final Thread.UncaughtExceptionHandler exceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
 
+    private NetworkTracker mNetworkTracker;
     private ServerDiscovery mDiscovery;
     private FlashHandler mFlashService;
     private IMotionDetector mMotionDetector;
@@ -179,6 +180,10 @@ public class MainActivity extends ScreenControllingActivity
             mCommandQueue = null;
         }
 
+        if (mNetworkTracker != null) {
+            mNetworkTracker.terminate();
+            mNetworkTracker = null;
+        }
         mWebView.unregister();
         EventBus.getDefault().unregister(this);
     }
@@ -207,9 +212,15 @@ public class MainActivity extends ScreenControllingActivity
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
+        if (mNetworkTracker == null) {
+            mNetworkTracker = new NetworkTracker(this);
+        }
+
         if (mServerConnection == null) {
             mServerConnection = new ServerConnection(this);
             mServerConnection.addConnectionListener(this);
+
+            mNetworkTracker.addListener(mServerConnection);
         }
 
         if (mConnections == null) {
@@ -369,7 +380,7 @@ public class MainActivity extends ScreenControllingActivity
                     mServerConnection.reconnect();
                 }
             }
-        });
+        }, mNetworkTracker);
         mCommandQueue.addHandler(new WebViewHandler(mWebView));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

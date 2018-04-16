@@ -1,13 +1,10 @@
 package de.vier_bier.habpanelviewer;
 
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
@@ -41,7 +38,7 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 /**
  * WebView
  */
-public class ClientWebView extends WebView {
+public class ClientWebView extends WebView implements NetworkTracker.INetworkListener {
     private static final String TAG = "HPV-ClientWebView";
 
     private boolean mAllowMixedContent;
@@ -49,25 +46,7 @@ public class ClientWebView extends WebView {
     private String mServerURL;
     private String mStartPage;
     private boolean mKioskMode;
-
-    private final BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "network state changed");
-            ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
-
-            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                Log.d(TAG, "network is active: " + activeNetwork);
-                loadStartUrl();
-            } else {
-                Log.d(TAG, "network is NOT active: " + activeNetwork);
-                loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
-                        + "</h1><h2>" + getContext().getString(R.string.notConnected)
-                        + "</h2></body></html>", "text/html", "UTF-8");
-            }
-        }
-    };
+    private NetworkTracker mNetworkTracker;
 
     public ClientWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -112,7 +91,11 @@ public class ClientWebView extends WebView {
         super.setKeepScreenOn(keepScreenOn);
     }
 
-    synchronized void initialize(final IConnectionListener cl) {
+    synchronized void initialize(final IConnectionListener cl, final NetworkTracker nt) {
+        mNetworkTracker = nt;
+        Log.d(TAG, "registering as network listener...");
+        mNetworkTracker.addListener(this);
+
         setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
@@ -238,8 +221,6 @@ public class ClientWebView extends WebView {
 
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        Log.d(TAG, "registering network receiver...");
-        getContext().registerReceiver(mNetworkReceiver, intentFilter);
     }
 
     public void loadStartUrl() {
@@ -286,9 +267,11 @@ public class ClientWebView extends WebView {
             loadStartUrl = true;
             Log.d(TAG, "updateFromPreferences: mStartPage=" + mStartPage);
         }
+        loadStartUrl = loadStartUrl || isShowingErrorPage();
+
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", "!$%"))) {
             mServerURL = prefs.getString("pref_server_url", "");
-            loadStartUrl = mStartPage == null || mStartPage.isEmpty();
+            loadStartUrl = loadStartUrl || mStartPage == null || mStartPage.isEmpty();
             Log.d(TAG, "updateFromPreferences: mServerURL=" + mServerURL);
         }
         if (mAllowMixedContent != prefs.getBoolean("pref_allow_mixed_content", false)) {
@@ -301,12 +284,8 @@ public class ClientWebView extends WebView {
             webSettings.setMixedContentMode(mAllowMixedContent ? WebSettings.MIXED_CONTENT_ALWAYS_ALLOW : WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         }
 
-        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
-
-        Log.d(TAG, "updateFromPreferences: activeNetwork=" + activeNetwork);
-        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-            Log.d(TAG, "updateFromPreferences: network is active: " + activeNetwork);
+        if (mNetworkTracker.isConnected()) {
+            Log.d(TAG, "updateFromPreferences: connected");
 
             if (loadStartUrl) {
                 Log.d(TAG, "updateFromPreferences: trying to load start URL...");
@@ -316,7 +295,7 @@ public class ClientWebView extends WebView {
                 reload();
             }
         } else {
-            Log.d(TAG, "updateFromPreferences: network is NOT active: " + activeNetwork);
+            Log.d(TAG, "updateFromPreferences: NOT connected");
             loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
                     + "</h1><h2>" + getContext().getString(R.string.notConnected)
                     + "</h2></body></html>", "text/html", "UTF-8");
@@ -324,8 +303,8 @@ public class ClientWebView extends WebView {
     }
 
     public void unregister() {
-        Log.d(TAG, "unregistering network receiver...");
-        getContext().unregisterReceiver(mNetworkReceiver);
+        Log.d(TAG, "unregistering as network listener...");
+        mNetworkTracker.removeListener(this);
     }
 
     @Override
@@ -402,6 +381,11 @@ public class ClientWebView extends WebView {
         reload();
     }
 
+    private boolean isShowingErrorPage() {
+        String url = getUrl();
+
+        return url != null && url.startsWith("data:");
+    }
     private boolean isHabPanelUrl(final String url) {
         return url != null && url.toLowerCase().contains("/habpanel/");
     }
@@ -459,5 +443,19 @@ public class ClientWebView extends WebView {
     public void loadDataWithBaseURL(@Nullable String baseUrl, String data, @Nullable String mimeType, @Nullable String encoding, @Nullable String historyUrl) {
         Log.d(TAG, "loadDataWithBaseURL: " + data);
         super.loadDataWithBaseURL(baseUrl, data, mimeType, encoding, historyUrl);
+    }
+
+    @Override
+    public void disconnected() {
+        Log.d(TAG, "disconnected: showing error message...");
+        loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
+                + "</h1><h2>" + getContext().getString(R.string.notConnected)
+                + "</h2></body></html>", "text/html", "UTF-8");
+    }
+
+    @Override
+    public void connected() {
+        Log.d(TAG, "connected: loading start URL...");
+        loadStartUrl();
     }
 }

@@ -1,9 +1,6 @@
 package de.vier_bier.habpanelviewer.openhab;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import de.vier_bier.habpanelviewer.NetworkTracker;
 import de.vier_bier.habpanelviewer.openhab.average.AveragePropagator;
 import de.vier_bier.habpanelviewer.openhab.average.IStatePropagator;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
@@ -33,7 +31,7 @@ import io.opensensors.sse.client.MessageEvent;
 /**
  * Client for openHABs SSE service. Listens for item value changes.
  */
-public class ServerConnection implements IStatePropagator {
+public class ServerConnection implements IStatePropagator, NetworkTracker.INetworkListener {
     private static final String TAG = "HPV-ServerConnection";
 
     private final Context mCtx;
@@ -51,35 +49,8 @@ public class ServerConnection implements IStatePropagator {
     private final HashMap<String, String> lastUpdates = new HashMap<>();
     private final AveragePropagator averagePropagator = new AveragePropagator(this);
 
-    private final BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "network state changed");
-
-            ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
-            Log.d(TAG, "active network: " + activeNetwork);
-
-            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                Log.d(TAG, "active network is connected.");
-                if (!isConnected()) {
-                    connect();
-                }
-            } else {
-                Log.d(TAG, "active network is not connected.");
-                if (isConnected()) {
-                    close();
-                }
-            }
-        }
-    };
-
     public ServerConnection(Context context) {
         mCtx = context;
-
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        mCtx.registerReceiver(mNetworkReceiver, intentFilter);
 
         mCertListener = () -> {
             Log.d(TAG, "cert added, reconnecting to server...");
@@ -278,7 +249,6 @@ public class ServerConnection implements IStatePropagator {
     }
 
     public void terminate() {
-        mCtx.unregisterReceiver(mNetworkReceiver);
         averagePropagator.terminate();
         connectionListeners.clear();
         mSubscriptions.clear();
@@ -328,6 +298,20 @@ public class ServerConnection implements IStatePropagator {
             }
         }
         Log.v(TAG, "Pending updates sent");
+    }
+
+    @Override
+    public void disconnected() {
+        if (isConnected()) {
+            close();
+        }
+    }
+
+    @Override
+    public void connected() {
+        if (!isConnected()) {
+            connect();
+        }
     }
 
     private class SSEHandler implements EventSourceHandler {
