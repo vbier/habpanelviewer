@@ -1,9 +1,7 @@
 package de.vier_bier.habpanelviewer;
 
 import android.annotation.TargetApi;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -42,7 +40,7 @@ import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 /**
  * WebView
  */
-public class ClientWebView extends WebView {
+public class ClientWebView extends WebView implements NetworkTracker.INetworkListener {
     private static final String TAG = "HPV-ClientWebView";
 
     private boolean mAllowMixedContent;
@@ -50,22 +48,7 @@ public class ClientWebView extends WebView {
     private String mServerURL;
     private String mStartPage;
     private boolean mKioskMode;
-
-    private final BroadcastReceiver mNetworkReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
-
-            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                loadStartUrl();
-            } else {
-                loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
-                        + "</h1><h2>" + getContext().getString(R.string.notConnected)
-                        + "</h2></body></html>", "text/html", "UTF-8");
-            }
-        }
-    };
+    private NetworkTracker mNetworkTracker;
 
     public ClientWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -110,7 +93,11 @@ public class ClientWebView extends WebView {
         super.setKeepScreenOn(keepScreenOn);
     }
 
-    synchronized void initialize(final IConnectionListener cl) {
+    synchronized void initialize(final IConnectionListener cl, final NetworkTracker nt) {
+        mNetworkTracker = nt;
+        Log.d(TAG, "registering as network listener...");
+        mNetworkTracker.addListener(this);
+
         setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
@@ -236,7 +223,6 @@ public class ClientWebView extends WebView {
 
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        getContext().registerReceiver(mNetworkReceiver, intentFilter);
     }
 
     public void loadStartUrl() {
@@ -281,9 +267,11 @@ public class ClientWebView extends WebView {
             mStartPage = prefs.getString("pref_start_url", "");
             loadStartUrl = true;
         }
+        loadStartUrl = loadStartUrl || isShowingErrorPage();
+
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", "!$%"))) {
             mServerURL = prefs.getString("pref_server_url", "");
-            loadStartUrl = mStartPage == null || mStartPage.isEmpty();
+            loadStartUrl = loadStartUrl || mStartPage == null || mStartPage.isEmpty();
         }
         if (mAllowMixedContent != prefs.getBoolean("pref_allow_mixed_content", false)) {
             mAllowMixedContent = prefs.getBoolean("pref_allow_mixed_content", false);
@@ -294,7 +282,9 @@ public class ClientWebView extends WebView {
             webSettings.setMixedContentMode(mAllowMixedContent ? WebSettings.MIXED_CONTENT_ALWAYS_ALLOW : WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         }
 
-        if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
+        if (mNetworkTracker.isConnected()) {
+            Log.d(TAG, "updateFromPreferences: connected. loadStartUrl=" + loadStartUrl + ", reloadUrl=" + reloadUrl);
+
             if (loadStartUrl) {
                 loadStartUrl();
             } else if (reloadUrl) {
@@ -308,7 +298,8 @@ public class ClientWebView extends WebView {
     }
 
     public void unregister() {
-        getContext().unregisterReceiver(mNetworkReceiver);
+        Log.d(TAG, "unregistering as network listener...");
+        mNetworkTracker.removeListener(this);
     }
 
     @Override
@@ -383,6 +374,12 @@ public class ClientWebView extends WebView {
 
         mKioskMode = !mKioskMode;
         reload();
+    }
+
+    private boolean isShowingErrorPage() {
+        String url = getUrl();
+
+        return url != null && url.startsWith("data:");
     }
 
     private boolean isHabPanelUrl(final String url) {
@@ -462,6 +459,19 @@ public class ClientWebView extends WebView {
                 }
             }
         }
+    }
 
+    @Override
+    public void disconnected() {
+        Log.d(TAG, "disconnected: showing error message...");
+        loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
+                + "</h1><h2>" + getContext().getString(R.string.notConnected)
+                + "</h2></body></html>", "text/html", "UTF-8");
+    }
+
+    @Override
+    public void connected() {
+        Log.d(TAG, "connected: loading start URL...");
+        loadStartUrl();
     }
 }
