@@ -51,7 +51,8 @@ Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Param
 * SCREEN_DIM: regelt die Helligkeit so weit runter wie möglich und stellt sie zurück, wenn der Bildschirm berührt wird
 * MUTE: stellt das Gerät stumm
 * UNMUTE: stellt die Lautstärke auf den Wert, den das Gerät zum Zeitpunkt des MUTE Kommandos hatte
-* SET_VOLUME *\<n\>*: stellt die Lautstärke auf den Wert n, welcher eine Ganzzahl im Bereich 0.._Maximallautstärke des Geräts_ sein muss.
+* SET_VOLUME *\<n\>*: stellt die Lautstärke auf den Wert n (Ganzzahl im Bereich 0.._Maximallautstärke des Geräts_).
+* SET_BRIGHTNESS *\<n|AUTO\>*: stellt die Helligkeit auf den Wert n (Ganzzahl im Bereich 0..100), oder auf die Standardhelligkeit wenn AUTO angegeben wird.  
 * FLASH_ON: schaltet das Blitzlicht der hinteren Kamera ein
 * FLASH_OFF: schaltet das Blitzlicht der hinteren Kamera aus
 * FLASH_BLINK: lässt das Blitzlicht der hinteren Kamera im 1 Sekunden Intervall blinken

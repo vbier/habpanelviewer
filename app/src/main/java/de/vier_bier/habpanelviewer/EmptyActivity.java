@@ -6,8 +6,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 public class EmptyActivity extends ScreenControllingActivity {
-    private float mScreenBrightness = 1F;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         boolean dim = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("dim");
@@ -17,12 +15,6 @@ public class EmptyActivity extends ScreenControllingActivity {
             setContentView(R.layout.activity_empty);
 
             final WindowManager.LayoutParams layout = getWindow().getAttributes();
-
-            float screenBrightness = layout.screenBrightness;
-            if (screenBrightness != 0) {
-                mScreenBrightness = screenBrightness;
-            }
-
             layout.screenBrightness = 0F;
             getWindow().setAttributes(layout);
 
@@ -56,14 +48,5 @@ public class EmptyActivity extends ScreenControllingActivity {
         if (!dim) {
             finish();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        final WindowManager.LayoutParams layout = getWindow().getAttributes();
-        layout.screenBrightness = mScreenBrightness;
-        getWindow().setAttributes(layout);
-
-        super.onDestroy();
     }
 }

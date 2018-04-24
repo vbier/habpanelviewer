@@ -17,11 +17,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import de.vier_bier.habpanelviewer.R;
+import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 
 /**
  * Status Information Activity showing interesting app or hardware details.
  */
-public class StatusInfoActivity extends Activity {
+public class StatusInfoActivity extends ScreenControllingActivity {
     private final ApplicationStatus status = new ApplicationStatus();
     private ScheduledExecutorService executor;
 
@@ -42,6 +43,11 @@ public class StatusInfoActivity extends Activity {
 
         final ListView listview = findViewById(R.id.info_listview);
         listview.setAdapter(adapter);
+    }
+
+    @Override
+    public View getScreenOnView() {
+        return findViewById(R.id.info_listview);
     }
 
     @Override

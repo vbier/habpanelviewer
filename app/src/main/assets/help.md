@@ -51,7 +51,8 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 * SCREEN_DIM: dims the screen as much as possible and restores the brightness on touch event
 * MUTE: mutes the device
 * UNMUTE: restores the volume to the level the device had when it was muted
-* SET_VOLUME *\<n\>*: sets the device volume to n, being an integer between 0 and device max volume.
+* SET_VOLUME *\<n\>*: sets the device volume to n (being an integer between 0 and device max volume).
+* SET_BRIGHTNESS *\<n|AUTO\>*: sets the device beightness to n (being an integer between 0 and 100), or to the standard brightness if AUTO is specified. 
 * FLASH_ON: turns on the flashlight of the back-facing camera
 * FLASH_OFF: turns off the flashlight of the back-facing camera
 * FLASH_BLINK: blinks the flashlight of the back-facing camera with an interval of one second

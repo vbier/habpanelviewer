@@ -21,9 +21,24 @@ public abstract class ScreenControllingActivity extends Activity {
 
     public static final String ACTION_KEEP_SCREEN_ON = "ACTION_KEEP_SCREEN_ON";
     private static final String FLAG_KEEP_SCREEN_ON = "keepScreenOn";
+    private static boolean mKeepScreenOn = false;
+
+    public static final String ACTION_SET_BRIGHTNESS = "ACTION_SET_BRIGHTNESS";
+    private static final String FLAG_BRIGHTNESS = "brightness";
+    private static float mBrightness = -1;
+
+    public static void setBrightness(Context ctx, float brightness) {
+        Log.d(TAG, "sending brightness intent: " + brightness);
+        mBrightness = brightness;
+
+        Intent i = new Intent(ACTION_SET_BRIGHTNESS);
+        i.putExtra(FLAG_BRIGHTNESS, brightness);
+        LocalBroadcastManager.getInstance(ctx).sendBroadcast(i);
+    }
 
     public static void setKeepScreenOn(Context ctx, boolean keepOn) {
-        Log.d(TAG, "sending intent: " + keepOn);
+        Log.d(TAG, "sending keepOn intent: " + keepOn);
+        mKeepScreenOn = keepOn;
 
         Intent i = new Intent(ACTION_KEEP_SCREEN_ON);
         i.putExtra(FLAG_KEEP_SCREEN_ON, keepOn);
@@ -49,13 +64,17 @@ public abstract class ScreenControllingActivity extends Activity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         }
 
-        IntentFilter f = new IntentFilter(ACTION_KEEP_SCREEN_ON);
+        IntentFilter f = new IntentFilter();
+        f.addAction(ACTION_KEEP_SCREEN_ON);
+        f.addAction(ACTION_SET_BRIGHTNESS);
         LocalBroadcastManager.getInstance(this).registerReceiver(onEvent, f);
-        Log.d(TAG, "register receiver");
+        Log.d(TAG, "registered receiver");
 
-        boolean keepOn = getIntent().getBooleanExtra(FLAG_KEEP_SCREEN_ON, false);
-        Log.d(TAG, "onStart: set keep on: " + keepOn);
-        getScreenOnView().setKeepScreenOn(keepOn);
+        Log.d(TAG, "onStart: set keep on: " + mKeepScreenOn);
+        getScreenOnView().setKeepScreenOn(mKeepScreenOn);
+
+        Log.d(TAG, "onStart: set brightness: " + mBrightness);
+        setBrightness(mBrightness);
     }
 
     @Override
@@ -70,12 +89,28 @@ public abstract class ScreenControllingActivity extends Activity {
 
     private BroadcastReceiver onEvent = new BroadcastReceiver() {
         public void onReceive(Context ctx, Intent i) {
-            final boolean keepOn = i.getBooleanExtra(FLAG_KEEP_SCREEN_ON, false);
+            if (ACTION_KEEP_SCREEN_ON.equals(i.getAction())) {
+                final boolean keepOn = i.getBooleanExtra(FLAG_KEEP_SCREEN_ON, false);
 
-            runOnUiThread(() -> {
-                Log.d(TAG, "onReceive: set keep on: " + keepOn);
-                getScreenOnView().setKeepScreenOn(keepOn);
-            });
+                runOnUiThread(() -> {
+                    Log.d(TAG, "onReceive: set keep on: " + keepOn);
+                    getScreenOnView().setKeepScreenOn(keepOn);
+                });
+            } else if (ACTION_SET_BRIGHTNESS.equals(i.getAction())) {
+                final float brightness = i.getFloatExtra(FLAG_BRIGHTNESS, 1.0f);
+
+                runOnUiThread(() -> {
+                    Log.d(TAG, "onReceive: set brightness: " + brightness);
+                    setBrightness(brightness);
+                });
+
+            }
         }
     };
+
+    protected void setBrightness(float brightness) {
+        final WindowManager.LayoutParams layout = getWindow().getAttributes();
+        layout.screenBrightness = brightness;
+        getWindow().setAttributes(layout);
+    }
 }

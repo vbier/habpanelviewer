@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.PowerManager;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import de.vier_bier.habpanelviewer.EmptyActivity;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 
@@ -11,6 +14,8 @@ import de.vier_bier.habpanelviewer.ScreenControllingActivity;
  * Handler for SCREEN_ON, KEEP_SCREEN_ON and ALLOW_SCREEN_OFF commands.
  */
 public class ScreenHandler implements ICommandHandler {
+    private final Pattern SET_PATTERN = Pattern.compile("SET_BRIGHTNESS (AUTO|[01]?[0-9]?[0-9])");
+
     private final PowerManager.WakeLock screenOnLock;
     private final Activity mActivity;
     private boolean mKeepScreenOn;
@@ -26,6 +31,7 @@ public class ScreenHandler implements ICommandHandler {
     @Override
     public boolean handleCommand(Command cmd) {
         final String cmdStr = cmd.getCommand();
+        Matcher m = SET_PATTERN.matcher(cmdStr);
 
         if ("SCREEN_ON".equals(cmdStr)) {
             cmd.start();
@@ -41,6 +47,20 @@ public class ScreenHandler implements ICommandHandler {
         } else if ("SCREEN_DIM".equals(cmdStr)) {
             cmd.start();
             screenDim(true);
+        } else if (m.matches()) {
+            String value = m.group(1);
+
+            try {
+                int brightness = -100;
+                if (!"AUTO".equals(value)) {
+                    brightness = Integer.parseInt(value);
+                }
+
+                cmd.start();
+                ScreenControllingActivity.setBrightness(mActivity, brightness / 100f);
+            } catch (NumberFormatException e) {
+                cmd.failed("failed to parse brightness from command");
+            }
         } else {
             return false;
         }
