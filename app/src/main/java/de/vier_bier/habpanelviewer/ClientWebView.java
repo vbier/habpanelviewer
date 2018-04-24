@@ -241,6 +241,8 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
         final String startPage = url;
         mKioskMode = isHabPanelUrl(startPage) && startPage.toLowerCase().contains("kiosk=on");
+        Log.d(TAG, "loadStartUrl: loading start page " + startPage + "...");
+
         post(() -> {
             if (getUrl() == null || !startPage.equalsIgnoreCase(getUrl())) {
                 loadUrl(startPage);
@@ -249,6 +251,8 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     }
 
     void updateFromPreferences(SharedPreferences prefs) {
+        Log.d(TAG, "updateFromPreferences");
+
         Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
         Boolean isJavascript = prefs.getBoolean("pref_javascript", false);
         mDraggingPrevented = prefs.getBoolean("pref_prevent_dragging", false);
@@ -266,15 +270,18 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         if (mStartPage == null || !mStartPage.equalsIgnoreCase(prefs.getString("pref_start_url", ""))) {
             mStartPage = prefs.getString("pref_start_url", "");
             loadStartUrl = true;
+            Log.d(TAG, "updateFromPreferences: mStartPage=" + mStartPage);
         }
         loadStartUrl = loadStartUrl || isShowingErrorPage();
 
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", "!$%"))) {
             mServerURL = prefs.getString("pref_server_url", "");
             loadStartUrl = loadStartUrl || mStartPage == null || mStartPage.isEmpty();
+            Log.d(TAG, "updateFromPreferences: mServerURL=" + mServerURL);
         }
         if (mAllowMixedContent != prefs.getBoolean("pref_allow_mixed_content", false)) {
             mAllowMixedContent = prefs.getBoolean("pref_allow_mixed_content", false);
+            Log.d(TAG, "updateFromPreferences: mAllowMixedContent=" + mAllowMixedContent);
             reloadUrl = true;
         }
 
@@ -283,7 +290,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         }
 
         if (mNetworkTracker.isConnected()) {
-            Log.d(TAG, "updateFromPreferences: connected. loadStartUrl=" + loadStartUrl + ", reloadUrl=" + reloadUrl);
+            Log.d(TAG, "updateFromPreferences: connected");
 
             if (loadStartUrl) {
                 loadStartUrl();
@@ -291,6 +298,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                 reload();
             }
         } else {
+            Log.d(TAG, "updateFromPreferences: NOT connected");
             loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
                     + "</h1><h2>" + getContext().getString(R.string.notConnected)
                     + "</h2></body></html>", "text/html", "UTF-8");
