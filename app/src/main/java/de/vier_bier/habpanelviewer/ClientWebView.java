@@ -450,7 +450,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         int intCount = 0;
         int startIdx = list.getCurrentIndex();
         for (int i = startIdx + increment; i < list.getSize() && i >= 0; i += increment) {
-            intCount++;
+            intCount += increment;
             WebHistoryItem item = list.getItemAtIndex(i);
             Log.d(TAG, "goBackOrForward: item=" + item.getOriginalUrl());
             if (!item.getOriginalUrl().startsWith("data:")) {
