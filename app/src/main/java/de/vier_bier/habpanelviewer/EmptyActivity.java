@@ -8,10 +8,10 @@ import android.view.WindowManager;
 public class EmptyActivity extends ScreenControllingActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         boolean dim = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("dim");
         if (dim) {
-            super.onCreate(savedInstanceState);
-
             setContentView(R.layout.activity_empty);
 
             final WindowManager.LayoutParams layout = getWindow().getAttributes();
