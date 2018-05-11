@@ -7,8 +7,8 @@ android {
         applicationId "de.vier_bier.habpanelviewer"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 2
-        versionName "0.9.19"
+        versionCode 3
+        versionName "0.9.20pre"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
     }
