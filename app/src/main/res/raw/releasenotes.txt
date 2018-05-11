@@ -1,6 +1,14 @@
-0.9.19pre
+0.9.19
 ======
-- added commands: SHOW_START_URL, SHOW_URL, SHOW_DASHBOARD, RELOAD, CAPTURE_SCREEN, ENABLE_MOTION_DETECTION, DISABLE_MOTION_DETECTION
+* added commands: CAPTURE_CAMERA, CAPTURE_SCREEN, ENABLE_MOTION_DETECTION, DISABLE_MOTION_DETECTION, RELOAD, SET_BRIGHTNESS, SHOW_DASHBOARD, SHOW_URL, SHOW_START_URL
+* show command details on click in command log
+* fixed bug where KEEP_SCREEN_ON and ALLOW_SCREEN_OFF did not work on all activities
+* fixed camera detection on devices that do not have a back-facing camera
+* fixed crash on Kindle devices
+* fixed bug where event bus listeners were not properly unregistered
+* made most functionality survive orientation change instead of restarting everything
+* separated camera and motion detection code and settings
+* improved logging and camera instantiation
 
 0.9.18
 ======
