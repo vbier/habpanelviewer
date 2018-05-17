@@ -517,9 +517,11 @@ public class MainActivity extends ScreenControllingActivity
         } catch (PackageManager.NameNotFoundException ignored) {
         }
 
-        if (webview.isEmpty()) {
-            webview = mWebView.getSettings().getUserAgentString();
-        }
+        String userAgentString = mWebView.getSettings().getUserAgentString();
+        userAgentString = userAgentString.replaceAll(".* Chrome/", "");
+        userAgentString = userAgentString.replaceAll(" .*", "");
+
+        webview += "user agent " + userAgentString;
         status.set("Webview", webview.trim());
     }
 
