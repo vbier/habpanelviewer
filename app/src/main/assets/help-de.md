@@ -161,6 +161,15 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Number Tablet_Temperature
 
+### Bildschirm
+Setzt den Wert eines openHAB Items auf den Bildschirm Schaltzustand (an/aus).
+
+Der Kontakt wird geschlossen, wenn der Bildschirm an ist.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Contact Tablet_Screen
+
 [zurück nach oben](#top)
 
 ## <a name="usability"/>Benutzerfreundlichkeit 

@@ -160,6 +160,15 @@ A sample openHAB items file looks like this:
 
     Number Tablet_Temperature
 
+### screen
+Allows to set the value of an openHAB contact item depending on the device screen state (ON/OFF).
+
+The contact state will be *CLOSED* whenever when the screen is on, *OPEN* otherwise.
+
+A sample openHAB items file looks like this:
+
+    Contact Tablet_Screen
+
 [go back to top](#top)
 
 ## <a name="usability"/>Usability 

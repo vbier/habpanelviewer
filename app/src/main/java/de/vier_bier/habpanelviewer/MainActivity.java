@@ -62,6 +62,7 @@ import de.vier_bier.habpanelviewer.reporting.BrightnessMonitor;
 import de.vier_bier.habpanelviewer.reporting.ConnectedIndicator;
 import de.vier_bier.habpanelviewer.reporting.PressureMonitor;
 import de.vier_bier.habpanelviewer.reporting.ProximityMonitor;
+import de.vier_bier.habpanelviewer.reporting.ScreenMonitor;
 import de.vier_bier.habpanelviewer.reporting.SensorMissingException;
 import de.vier_bier.habpanelviewer.reporting.TemperatureMonitor;
 import de.vier_bier.habpanelviewer.reporting.VolumeMonitor;
@@ -96,6 +97,7 @@ public class MainActivity extends ScreenControllingActivity
     private IMotionDetector mMotionDetector;
     private MotionVisualizer mMotionVisualizer;
     private BatteryMonitor mBatteryMonitor;
+    private ScreenMonitor mScreenMonitor;
     private ConnectedIndicator mConnectedReporter;
     private ProximityMonitor mProximityMonitor;
     private BrightnessMonitor mBrightnessMonitor;
@@ -143,6 +145,11 @@ public class MainActivity extends ScreenControllingActivity
         if (mBatteryMonitor != null) {
             mBatteryMonitor.terminate();
             mBatteryMonitor = null;
+        }
+
+        if (mScreenMonitor != null) {
+            mScreenMonitor.terminate();
+            mScreenMonitor = null;
         }
 
         if (mConnectedReporter != null) {
@@ -308,6 +315,10 @@ public class MainActivity extends ScreenControllingActivity
 
         if (mBatteryMonitor == null) {
             mBatteryMonitor = new BatteryMonitor(this, mServerConnection);
+        }
+
+        if (mScreenMonitor == null) {
+            mScreenMonitor = new ScreenMonitor(this, mServerConnection);
         }
 
         if (mVolumeMonitor == null) {
@@ -594,6 +605,7 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         mBatteryMonitor.updateFromPreferences(prefs);
+        mScreenMonitor.updateFromPreferences(prefs);
         mConnectedReporter.updateFromPreferences(prefs);
         mWebView.updateFromPreferences(prefs);
         mServerConnection.updateFromPreferences(prefs);

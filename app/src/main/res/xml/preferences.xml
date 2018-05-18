@@ -120,6 +120,22 @@
                     android:title="@string/pref_battery_level_item" />
             </PreferenceScreen>
             <PreferenceScreen
+                android:key="pref_screen"
+                android:persistent="false"
+                android:title="@string/pref_screen">
+                <CheckBoxPreference
+                    android:key="pref_screen_enabled"
+                    android:defaultValue="false"
+                    android:summary="@string/pref_screen_enabled_summ"
+                    android:title="@string/pref_screen_enabled" />
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                    android:key="pref_screen_item"
+                    android:dependency="pref_screen_enabled"
+                    android:inputType="textPhonetic"
+                    android:summary="@string/pref_screen_item_summ"
+                    android:title="@string/pref_screen_item" />
+            </PreferenceScreen>
+            <PreferenceScreen
                 android:key="pref_motion"
                 android:persistent="false"
                 android:title="@string/pref_motion">
