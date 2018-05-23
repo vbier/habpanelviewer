@@ -626,7 +626,7 @@ public class MainActivity extends ScreenControllingActivity
             try {
                 mCam.updateFromPreferences(prefs);
             } catch (CameraException e) {
-                Toast.makeText(this, "failed to update camera state from preferences", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
 

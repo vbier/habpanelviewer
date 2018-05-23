@@ -181,7 +181,7 @@
     <string name="flash">Blitz</string>
     <string name="backFacing">hinten</string>
     <string name="frontFacing">vorne</string>
-    <string name="failedAccessCamera">Konnte Kamera nicht ansprechen:</string>
+    <string name="openCameraFailed">Konnte Kamera nicht öffnen! Wird sie von einer anderen App benutzt?</string>
     <string name="cameras">Kameras</string>
     <string name="resolution">Auflösung %dx%d</string>
     <string name="boxesLeniency">%d Rechtecke, Erkennungs Schwelle %d</string>

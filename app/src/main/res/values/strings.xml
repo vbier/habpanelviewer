@@ -185,7 +185,7 @@
     <string name="flash">flash</string>
     <string name="backFacing">back-facing</string>
     <string name="frontFacing">front-facing</string>
-    <string name="failedAccessCamera">failed to access camera service:</string>
+    <string name="openCameraFailed">Failed to open camera! Is the camera in use by another app?</string>
     <string name="cameras">Cameras</string>
     <string name="resolution">resolution %dx%d</string>
     <string name="boxesLeniency">%d boxes, leniency is %d</string>
