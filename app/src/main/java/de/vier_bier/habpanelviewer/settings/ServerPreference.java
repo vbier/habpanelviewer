@@ -75,9 +75,12 @@ public class ServerPreference extends EditTextPreference {
 
                     @Override
                     protected void onPostExecute(Object o) {
-                        b.setEnabled(true);
-                        ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                        ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+                        AlertDialog d = ((AlertDialog) getDialog());
+                        if (d != null) { // dialog may have been closed by back button
+                            b.setEnabled(true);
+                            d.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                            d.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+                        }
                     }
                 };
                 discoveryTask.execute();
