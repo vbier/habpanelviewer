@@ -193,11 +193,18 @@ public class SettingsFragment extends PreferenceFragment {
                         urlConnection.connect();
                         urlConnection.disconnect();
                     } catch (MalformedURLException e) {
-                        UiUtil.showDialog(getActivity(), preference.getTitle() + " " + getString(R.string.invalid), urls[0] + getString(R.string.notValidUrl));
+                        if (!getActivity().isFinishing())
+                            UiUtil.showDialog(getActivity(), preference.getTitle() + " "
+                                    + SettingsFragment.this.getResources().getString(R.string.invalid), urls[0]
+                                    + SettingsFragment.this.getResources().getString(R.string.notValidUrl));
                     } catch (SSLException e) {
-                        UiUtil.showDialog(getActivity(), getString(R.string.certInvalid), getString(R.string.couldNotConnect) + " " + urls[0] + ".\n" + getString(R.string.acceptCertWhenOurOfSettings));
+                        UiUtil.showDialog(getActivity(), SettingsFragment.this.getResources().getString(R.string.certInvalid),
+                                SettingsFragment.this.getResources().getString(R.string.couldNotConnect) + " " + urls[0] + ".\n"
+                                        + SettingsFragment.this.getResources().getString(R.string.acceptCertWhenOurOfSettings));
                     } catch (IOException | GeneralSecurityException e) {
-                        UiUtil.showDialog(getActivity(), preference.getTitle() + " " + getString(R.string.invalid), getString(R.string.couldNotConnect) + " " + urls[0]);
+                        UiUtil.showDialog(getActivity(), preference.getTitle() + " "
+                                        + SettingsFragment.this.getResources().getString(R.string.invalid),
+                                SettingsFragment.this.getResources().getString(R.string.couldNotConnect) + " " + urls[0]);
                     }
 
                     return null;
