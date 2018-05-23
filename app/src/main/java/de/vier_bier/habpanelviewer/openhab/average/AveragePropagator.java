@@ -39,7 +39,7 @@ public class AveragePropagator extends Thread {
                 mAverages.put(item, avg);
                 mAvgQueue.add(avg);
             } else if (avg.setInterval(updateInterval)) {
-                // the update intervall changed
+                // the update interval changed
                 mAvgQueue.remove(avg);
                 mAvgQueue.add(avg);
             }

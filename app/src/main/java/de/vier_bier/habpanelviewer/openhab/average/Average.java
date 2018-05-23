@@ -30,32 +30,39 @@ abstract class Average<R extends Number> implements Delayed {
     public void add(R state) {
         Sample<R> newSample = new Sample<>(state);
 
-        samples.add(newSample);
+        synchronized (samples) {
+            samples.add(newSample);
+        }
         addToTotal(newSample.getValue());
     }
 
     public String getAverage() {
         removeOldSamples(System.currentTimeMillis());
 
-        if (samples.isEmpty()) {
-            return null;
-        }
+        R avg;
+        synchronized (samples) {
+            if (samples.isEmpty()) {
+                return null;
+            }
 
-        R avg = divideTotal(samples.size());
+            avg = divideTotal(samples.size());
+        }
         return String.valueOf(avg);
     }
 
     private void removeOldSamples(long time) {
-        Iterator<Sample<R>> i = samples.iterator();
-        Sample<R> s;
-        while (i.hasNext()) {
-            s = i.next();
+        synchronized (samples) {
+            Iterator<Sample<R>> i = samples.iterator();
+            Sample<R> s;
+            while (i.hasNext()) {
+                s = i.next();
 
-            if (s.getTime() < time - delayInMillis) {
-                i.remove();
-                removeFromTotal(s.getValue());
-            } else {
-                return;
+                if (s.getTime() < time - delayInMillis) {
+                    i.remove();
+                    removeFromTotal(s.getValue());
+                } else {
+                    return;
+                }
             }
         }
     }
