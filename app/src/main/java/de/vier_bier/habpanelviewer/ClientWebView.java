@@ -1,6 +1,7 @@
 package de.vier_bier.habpanelviewer;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -171,7 +172,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
                 final String certInfo = c;
 
-                new AlertDialog.Builder(ClientWebView.this.getContext())
+                AlertDialog alert = new AlertDialog.Builder(getContext())
                         .setTitle(getContext().getString(R.string.certInvalid))
                         .setMessage(getContext().getString(R.string.sslCert) + "https://" + host + " " + reason + ".\n\n"
                                 + certInfo.replaceAll("<br/>", "\n") + "\n"
@@ -187,13 +188,17 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                         })
                         .setNegativeButton(android.R.string.no, (dialog, whichButton) -> loadData("<html><body><h1>" + getContext().getString(R.string.certInvalid)
                                 + "</h1><h2>" + getContext().getString(R.string.sslCert) + "https://" + host + " "
-                                + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8")).show();
+                                + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8")).create();
+
+                if (!((Activity) getContext()).isFinishing()) {
+                    alert.show();
+                }
             }
 
 
             @Override
             public void onReceivedHttpAuthRequest(WebView view, final HttpAuthHandler handler, final String host, final String realm) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getContext())
+                final AlertDialog alert = new AlertDialog.Builder(getContext())
                         .setCancelable(false)
                         .setTitle(R.string.login_required)
                         .setMessage(getContext().getString(R.string.host_realm, host, realm))
@@ -203,10 +208,12 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                             EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
 
                             handler.proceed(userT.getText().toString(), passT.getText().toString());
-                        }).setNegativeButton(R.string.cancel, (dialog1, which) -> handler.cancel());
+                        }).setNegativeButton(R.string.cancel, (dialog1, which) -> handler.cancel())
+                        .create();
 
-                final AlertDialog alert = dialog.create();
-                alert.show();
+                if (!((Activity) getContext()).isFinishing()) {
+                    alert.show();
+                }
             }
         });
 
