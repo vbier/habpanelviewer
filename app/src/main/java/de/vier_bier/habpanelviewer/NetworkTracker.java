@@ -82,7 +82,11 @@ public class NetworkTracker extends BroadcastReceiver {
 
     public void terminate() {
         Log.d(TAG, "unregistering network receiver...");
-        mCtx.unregisterReceiver(this);
+        try {
+            mCtx.unregisterReceiver(this);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "unregistering network receiver failed", e);
+        }
 
         synchronized (mListeners) {
             mListeners.clear();
