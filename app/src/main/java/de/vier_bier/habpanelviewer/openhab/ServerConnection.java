@@ -437,8 +437,10 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
                 listeners = subscriptions.get(name);
             }
 
-            for (IStateUpdateListener l : listeners) {
-                l.itemUpdated(name, value);
+            if (listeners != null) {
+                for (IStateUpdateListener l : listeners) {
+                    l.itemUpdated(name, value);
+                }
             }
         }
     }
