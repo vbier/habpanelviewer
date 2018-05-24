@@ -29,10 +29,11 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation 'com.github.vbier:eventsource-netty5:0.9.2'
+    implementation 'io.netty:netty-all:4.1.20.Final'
     implementation 'com.github.mukeshsolanki:MarkdownView-Android:1.0.4'
     implementation 'com.android.support:support-v4:26.1.0'
     implementation 'com.android.support:design:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.jakewharton:process-phoenix:2.0.0'
     testImplementation 'junit:junit:4.12'
