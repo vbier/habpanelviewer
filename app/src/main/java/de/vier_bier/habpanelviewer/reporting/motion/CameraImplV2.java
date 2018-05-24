@@ -166,8 +166,6 @@ public class CameraImplV2 extends AbstractCameraImpl {
             } catch (CameraAccessException e) {
                 e.printStackTrace();
             }
-
-            mDeviceOrientation = deviceOrientation;
         }
     }
 
@@ -180,6 +178,8 @@ public class CameraImplV2 extends AbstractCameraImpl {
         if (mCamera != null) {
             mCamera.close();
             mCamera = null;
+            mCaptureSession = null;
+            mPreviewRunning = false;
         }
     }
 
@@ -190,7 +190,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
     @Override
     public void startPreview(SurfaceTexture surface, IPreviewListener previewListener) {
-        if (mPreviewRunning) {
+        if (isPreviewRunning()) {
             previewListener.started();
             return;
         }
@@ -322,14 +322,14 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 mCaptureSession.close();
 
                 try {
-                    for (int i = 0; i < 10 && mPreviewRunning; i++) {
+                    for (int i = 0; i < 10 && isPreviewRunning(); i++) {
                         Thread.sleep(100);
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
 
-                if (mPreviewRunning) {
+                if (isPreviewRunning()) {
                     throw new CameraException("could not stop preview");
                 }
                 mCaptureSession = null;
@@ -341,7 +341,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
     @Override
     public boolean isPreviewRunning() {
-        return mPreviewRunning;
+        return mPreviewRunning && mCamera != null && mCaptureSession != null;
     }
 
     @Override
