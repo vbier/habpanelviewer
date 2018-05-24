@@ -195,7 +195,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
             return;
         }
 
-        if (mCamera != null) {
+        if (mCamera != null && surface != null) {
             Log.v(TAG, "trying to start preview...");
             try {
                 CameraCharacteristics characteristics
@@ -275,7 +275,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                                     // Finally, we start displaying the mCamera preview.
                                     cameraCaptureSession.setRepeatingRequest(mPreviewRequestBuilder.build(),
                                             null, null);
-                                } catch (CameraAccessException e) {
+                                } catch (CameraAccessException | IllegalStateException e) {
                                     previewListener.exception(e);
                                     previewListener.error("Could not create preview request");
                                 }
