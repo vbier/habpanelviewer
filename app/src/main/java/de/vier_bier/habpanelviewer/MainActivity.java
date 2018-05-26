@@ -89,7 +89,7 @@ public class MainActivity extends ScreenControllingActivity
     private ClientWebView mWebView;
     private TextView mTextView;
     private ServerConnection mServerConnection;
-    private final Thread.UncaughtExceptionHandler exceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
+    private AppRestartingExceptionHandler restartingExceptionHandler;
 
     private NetworkTracker mNetworkTracker;
     private ServerDiscovery mDiscovery;
@@ -107,8 +107,6 @@ public class MainActivity extends ScreenControllingActivity
     private CommandQueue mCommandQueue;
     private ScreenCapturer mCapturer;
     private Camera mCam;
-
-    private int mRestartCount;
 
     @Override
     protected void onDestroy() {
@@ -204,6 +202,7 @@ public class MainActivity extends ScreenControllingActivity
         try {
             ConnectionUtil.initialize(this);
         } catch (Exception e) {
+            Log.e(TAG, "failed to initialize ConnectionUtil", e);
             Toast.makeText(MainActivity.this, R.string.sslFailed, Toast.LENGTH_LONG).show();
         }
 
@@ -218,6 +217,12 @@ public class MainActivity extends ScreenControllingActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        int restartCount = getIntent().getIntExtra("restartCount", 0);
+
+        if (restartingExceptionHandler == null) {
+            restartingExceptionHandler = new AppRestartingExceptionHandler(this,
+                    Thread.getDefaultUncaughtExceptionHandler(), restartCount);
+        }
 
         if (mNetworkTracker == null) {
             mNetworkTracker = new NetworkTracker(this);
@@ -376,8 +381,7 @@ public class MainActivity extends ScreenControllingActivity
             }
         }
 
-        mRestartCount = getIntent().getIntExtra("restartCount", 0);
-        showInitialToastMessage(mRestartCount);
+        showInitialToastMessage(restartCount);
 
         mTextView = navHeader.findViewById(R.id.textView);
 
@@ -498,8 +502,9 @@ public class MainActivity extends ScreenControllingActivity
         if (mMotionDetector == null || mCam == null || !mCam.isValid()) {
             status.set(getString(R.string.pref_motion), getString(R.string.unavailable));
         }
-        if (mRestartCount != 0) {
-            status.set(getString(R.string.restartCounter), String.valueOf(mRestartCount));
+        int restartCount = restartingExceptionHandler.getRestartCount();
+        if (restartCount != 0) {
+            status.set(getString(R.string.restartCounter), String.valueOf(restartCount));
         }
         if (mProximityMonitor == null) {
             status.set(getString(R.string.pref_proximity), getString(R.string.unavailable));
@@ -562,20 +567,6 @@ public class MainActivity extends ScreenControllingActivity
         super.onStart();
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        int maxRestarts = 5;
-        try {
-            maxRestarts = Integer.parseInt(prefs.getString("pref_max_restarts", "5"));
-        } catch (NumberFormatException e) {
-            Log.e(TAG, "could not parse pref_max_restarts value " + prefs.getString("pref_max_restarts", "5") + ". using default 5");
-        }
-
-        boolean restartEnabled = prefs.getBoolean("pref_restart_enabled", false);
-        if (restartEnabled && mRestartCount < maxRestarts) {
-            Thread.setDefaultUncaughtExceptionHandler(new AppRestartingExceptionHandler(this, mRestartCount));
-        } else {
-            Thread.setDefaultUncaughtExceptionHandler(exceptionHandler);
-        }
-
         NavigationView navigationView = findViewById(R.id.nav_view);
         DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
         final String menuPos = prefs.getString("pref_menu_position", "");
@@ -583,6 +574,10 @@ public class MainActivity extends ScreenControllingActivity
             params.gravity = Gravity.START;
         } else {
             params.gravity = Gravity.END;
+        }
+
+        if (restartingExceptionHandler != null) {
+            restartingExceptionHandler.updateFromPreferences(prefs);
         }
 
         if (mProximityMonitor != null) {

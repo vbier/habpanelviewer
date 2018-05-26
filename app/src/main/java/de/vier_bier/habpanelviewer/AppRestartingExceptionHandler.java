@@ -1,6 +1,7 @@
 package de.vier_bier.habpanelviewer;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
@@ -14,15 +15,25 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
     private final MainActivity myContext;
     private final int count;
 
-    AppRestartingExceptionHandler(MainActivity context, int restartCount) {
+    private int mMaxRestarts;
+    private boolean mRestartEnabled;
+
+    private final Thread.UncaughtExceptionHandler mDefaultHandler;
+
+    AppRestartingExceptionHandler(MainActivity context, Thread.UncaughtExceptionHandler defaultHandler, int restartCount) {
         myContext = context;
+        mDefaultHandler = defaultHandler;
         count = restartCount;
     }
 
     public void uncaughtException(Thread thread, Throwable exception) {
         Log.e(TAG, "Uncaught exception", exception);
 
-        restartApp(myContext, count);
+        if (count < mMaxRestarts && mRestartEnabled) {
+            restartApp(myContext, count);
+        } else {
+            mDefaultHandler.uncaughtException(thread, exception);
+        }
     }
 
     private static void restartApp(MainActivity context, int count) {
@@ -37,5 +48,20 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
             context.destroy();
             ProcessPhoenix.triggerRebirth(context, mStartActivity);
         }
+    }
+
+    public void updateFromPreferences(SharedPreferences prefs) {
+        try {
+            mMaxRestarts = Integer.parseInt(prefs.getString("pref_max_restarts", "5"));
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "could not parse pref_max_restarts value " + prefs.getString("pref_max_restarts", "5") + ". using default 5");
+            mMaxRestarts = 5;
+        }
+
+        mRestartEnabled = prefs.getBoolean("pref_restart_enabled", false);
+    }
+
+    public int getRestartCount() {
+        return count;
     }
 }
