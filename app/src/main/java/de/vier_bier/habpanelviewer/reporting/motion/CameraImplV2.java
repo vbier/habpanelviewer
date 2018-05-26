@@ -213,13 +213,13 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
                 mImageReader = ImageReader.newInstance(previewSize.x, previewSize.y,
                         ImageFormat.YUV_420_888, 2);
-                mImageReader.setOnImageAvailableListener(reader -> {
+                mImageReader.setOnImageAvailableListener(imageReader -> {
                     if (!mPreviewRunning) {
                         mPreviewRunning = true;
                         previewListener.started();
                     }
 
-                    Image i = reader.acquireLatestImage();
+                    Image i = imageReader.acquireLatestImage();
 
                     try {
                         LumaData ld = null;
@@ -228,11 +228,8 @@ public class CameraImplV2 extends AbstractCameraImpl {
                                 if (ld == null && i != null) {
                                     Log.v(TAG, "preview image available and needed: size " + i.getWidth() + "x" + i.getHeight());
 
-                                    ByteBuffer luma = i.getPlanes()[0].getBuffer();
-                                    final byte[] data = new byte[luma.capacity()];
-                                    luma.get(data);
-
-                                    ld = new LumaData(data, i.getWidth(), i.getHeight());
+                                    ByteBuffer buffer = i.getPlanes()[0].getBuffer();
+                                    ld = new LumaData(buffer, i.getWidth(), i.getHeight());
                                 }
                                 l.preview(ld);
                             }
@@ -363,18 +360,26 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 final CaptureRequest.Builder captureBuilder = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
                 captureBuilder.addTarget(reader.getSurface());
                 captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-                ImageReader.OnImageAvailableListener readerListener = reader1 -> {
-                    Image image = null;
-                    try {
-                        image = reader1.acquireLatestImage();
-                        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                        byte[] bytes = new byte[buffer.capacity()];
-                        buffer.get(bytes);
+                ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
+                    byte[] mBuffer;
 
-                        iPictureHandler.picture(bytes);
-                    } finally {
-                        if (image != null) {
-                            image.close();
+                    @Override
+                    public void onImageAvailable(ImageReader imageReader) {
+                        Image image = null;
+                        try {
+                            image = imageReader.acquireLatestImage();
+                            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+
+                            if (mBuffer == null || mBuffer.length != buffer.capacity()) {
+                                mBuffer = new byte[buffer.capacity()];
+                            }
+                            buffer.get(mBuffer);
+
+                            iPictureHandler.picture(mBuffer);
+                        } finally {
+                            if (image != null) {
+                                image.close();
+                            }
                         }
                     }
                 };

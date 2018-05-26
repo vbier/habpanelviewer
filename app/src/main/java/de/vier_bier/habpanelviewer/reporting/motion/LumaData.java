@@ -1,34 +1,42 @@
 package de.vier_bier.habpanelviewer.reporting.motion;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Brightness data for an image.
  */
 class LumaData {
-    private byte[] data = null;
+    // as LumaData objects are created and disposed in rapid succession, reuse the underlying byte[]
+    private static final ArrayList<byte[][]> AVG_POOL = new ArrayList<>();
+    private static int mAvgPoolDim = -1;
+    private static final ArrayList<byte[]> DATA_POOL = new ArrayList<>();
+    private static int mDataPoolDim = -1;
+
+    private byte[] data;
     private byte[][] average = null;
     private int width;
     private int height;
     private int mBoxes = -1;
 
-    LumaData(byte[] data, int width, int height) {
-        if (data == null) throw new NullPointerException();
-
+    private LumaData(byte[] data, int width, int height) {
         this.data = data;
         this.width = width;
         this.height = height;
+    }
 
+    LumaData(ByteBuffer buffer, int width, int height) {
+        data = getFromDataPool(buffer.capacity());
+        buffer.get(data);
+        this.width = width;
+        this.height = height;
     }
 
     public void setBoxCount(int boxCount) {
         if (boxCount != mBoxes) {
             mBoxes = boxCount;
-
-            average = new byte[mBoxes][mBoxes];
-            for (int x = 0; x < mBoxes; x++) {
-                for (int y = 0; y < mBoxes; y++) {
-                    average[x][y] = -1;
-                }
-            }
+            average = getFromAvgPool(boxCount);
         }
     }
 
@@ -74,4 +82,72 @@ class LumaData {
         }
         return lumaSum < minLuma;
     }
+
+    private static byte[][] getFromAvgPool(int boxes) {
+        synchronized (AVG_POOL) {
+            if (boxes != mAvgPoolDim) {
+                AVG_POOL.clear();
+                mAvgPoolDim = boxes;
+            }
+
+            byte[][] average;
+            if (AVG_POOL.isEmpty()) {
+                average = new byte[boxes][boxes];
+            } else {
+                average = AVG_POOL.remove(0);
+            }
+
+            for (int x = 0; x < boxes; x++) {
+                Arrays.fill(average[x], (byte) -1);
+            }
+
+            return average;
+        }
+    }
+
+    private static byte[] getFromDataPool(int size) {
+        synchronized (DATA_POOL) {
+            if (size != mDataPoolDim) {
+                DATA_POOL.clear();
+                mDataPoolDim = size;
+            }
+
+            if (DATA_POOL.isEmpty()) {
+                return new byte[size];
+            } else {
+                return DATA_POOL.remove(0);
+            }
+        }
+    }
+
+    public static LumaData extractLuma(byte[] data, int width, int height) {
+        byte[] hsl = getFromDataPool(width * height);
+
+        for (int j = 0, yp = 0; j < height; j++) {
+            for (int i = 0; i < width; i++, yp++) {
+                int y = (0xff & (data[yp])) - 16;
+                if (y < 0) y = 0;
+                hsl[yp] = (byte) y;
+            }
+        }
+
+        return new LumaData(hsl, width, height);
+    }
+
+    public void release() {
+        synchronized (AVG_POOL) {
+            if (mBoxes == mAvgPoolDim) {
+                AVG_POOL.add(average);
+                average = null;
+            }
+        }
+
+        synchronized (DATA_POOL) {
+            if (data.length == mDataPoolDim) {
+                DATA_POOL.add(data);
+                data = null;
+            }
+        }
+    }
+
 }

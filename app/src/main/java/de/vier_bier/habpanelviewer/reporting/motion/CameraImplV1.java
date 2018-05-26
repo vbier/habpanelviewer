@@ -112,7 +112,7 @@ class CameraImplV1 extends AbstractCameraImpl {
                     for (ILumaListener l : mListeners) {
                         if (l.needsPreview()) {
                             Log.v(TAG, "preview image available and needed: size " + previewSize.x + "x" + previewSize.y);
-                            l.preview(extractLuma(bytes, previewSize.x, previewSize.y));
+                            l.preview(LumaData.extractLuma(bytes, previewSize.x, previewSize.y));
                         }
                     }
                 });
@@ -168,18 +168,4 @@ class CameraImplV1 extends AbstractCameraImpl {
         return result.toArray(new Point[result.size()]);
     }
 
-    private LumaData extractLuma(byte[] data, int width, int height) {
-        final int frameSize = width * height;
-        byte[] hsl = new byte[frameSize];
-
-        for (int j = 0, yp = 0; j < height; j++) {
-            for (int i = 0; i < width; i++, yp++) {
-                int y = (0xff & (data[yp])) - 16;
-                if (y < 0) y = 0;
-                hsl[yp] = (byte) y;
-            }
-        }
-
-        return new LumaData(hsl, width, height);
-    }
 }

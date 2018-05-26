@@ -181,6 +181,7 @@ public class MotionDetector extends Thread implements IMotionDetector, ICamera.I
         }
 
         ArrayList<Point> differing = mComparer.isDifferent(s, mPreviousState);
+        mPreviousState.release();
         mPreviousState = s;
 
         return differing;
