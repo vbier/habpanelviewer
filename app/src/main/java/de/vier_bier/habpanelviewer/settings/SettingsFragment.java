@@ -193,18 +193,23 @@ public class SettingsFragment extends PreferenceFragment {
                         urlConnection.connect();
                         urlConnection.disconnect();
                     } catch (MalformedURLException e) {
-                        if (!getActivity().isFinishing())
+                        if (!getActivity().isFinishing()) {
                             UiUtil.showDialog(getActivity(), preference.getTitle() + " "
                                     + SettingsFragment.this.getResources().getString(R.string.invalid), urls[0]
                                     + SettingsFragment.this.getResources().getString(R.string.notValidUrl));
+                        }
                     } catch (SSLException e) {
-                        UiUtil.showDialog(getActivity(), SettingsFragment.this.getResources().getString(R.string.certInvalid),
-                                SettingsFragment.this.getResources().getString(R.string.couldNotConnect) + " " + urls[0] + ".\n"
-                                        + SettingsFragment.this.getResources().getString(R.string.acceptCertWhenOurOfSettings));
+                        if (!getActivity().isFinishing()) {
+                            UiUtil.showDialog(getActivity(), SettingsFragment.this.getResources().getString(R.string.certInvalid),
+                                    SettingsFragment.this.getResources().getString(R.string.couldNotConnect) + " " + urls[0] + ".\n"
+                                            + SettingsFragment.this.getResources().getString(R.string.acceptCertWhenOurOfSettings));
+                        }
                     } catch (IOException | GeneralSecurityException e) {
-                        UiUtil.showDialog(getActivity(), preference.getTitle() + " "
-                                        + SettingsFragment.this.getResources().getString(R.string.invalid),
-                                SettingsFragment.this.getResources().getString(R.string.couldNotConnect) + " " + urls[0]);
+                        if (!getActivity().isFinishing()) {
+                            UiUtil.showDialog(getActivity(), preference.getTitle() + " "
+                                            + SettingsFragment.this.getResources().getString(R.string.invalid),
+                                    SettingsFragment.this.getResources().getString(R.string.couldNotConnect) + " " + urls[0]);
+                        }
                     }
 
                     return null;
