@@ -322,5 +322,10 @@
             android:enabled="@bool/is_post_api_21"
             android:summary="@string/pref_allow_mixed_content_summ"
             android:title="@string/pref_allow_mixed_content" />
+        <CheckBoxPreference
+            android:key="pref_hardware_accelerated"
+            android:defaultValue="false"
+            android:summary="@string/pref_hardware_accelerated_summ"
+            android:title="@string/pref_hardware_accelerated" />
     </PreferenceCategory>
 </PreferenceScreen>

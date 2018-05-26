@@ -48,6 +48,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     private String mServerURL;
     private String mStartPage;
     private boolean mKioskMode;
+    private boolean mHwAccelerated;
     private NetworkTracker mNetworkTracker;
 
     public ClientWebView(Context context, AttributeSet attrs) {
@@ -97,6 +98,8 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         mNetworkTracker = nt;
         Log.d(TAG, "registering as network listener...");
         mNetworkTracker.addListener(this);
+
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
 
         setWebChromeClient(new WebChromeClient() {
             @Override
@@ -287,6 +290,18 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             Log.d(TAG, "updateFromPreferences: mAllowMixedContent=" + mAllowMixedContent);
             reloadUrl = true;
         }
+
+        if (mHwAccelerated != prefs.getBoolean("pref_hardware_accelerated", false)) {
+            mHwAccelerated = prefs.getBoolean("pref_hardware_accelerated", false);
+            Log.d(TAG, "updateFromPreferences: mHwAccelerated=" + mHwAccelerated);
+
+            if (mHwAccelerated) {
+                setLayerType(LAYER_TYPE_HARDWARE, null);
+            } else {
+                setLayerType(LAYER_TYPE_SOFTWARE, null);
+            }
+        }
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             webSettings.setMixedContentMode(mAllowMixedContent ? WebSettings.MIXED_CONTENT_ALWAYS_ALLOW : WebSettings.MIXED_CONTENT_NEVER_ALLOW);

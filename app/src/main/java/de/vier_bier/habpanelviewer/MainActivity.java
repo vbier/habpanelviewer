@@ -199,13 +199,6 @@ public class MainActivity extends ScreenControllingActivity
 
         EventBus.getDefault().register(this);
 
-        try {
-            ConnectionUtil.initialize(this);
-        } catch (Exception e) {
-            Log.e(TAG, "failed to initialize ConnectionUtil", e);
-            Toast.makeText(MainActivity.this, R.string.sslFailed, Toast.LENGTH_LONG).show();
-        }
-
         setContentView(R.layout.activity_main);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
@@ -222,6 +215,13 @@ public class MainActivity extends ScreenControllingActivity
         if (restartingExceptionHandler == null) {
             restartingExceptionHandler = new AppRestartingExceptionHandler(this,
                     Thread.getDefaultUncaughtExceptionHandler(), restartCount);
+        }
+
+        try {
+            ConnectionUtil.initialize(this);
+        } catch (Exception e) {
+            Log.e(TAG, "failed to initialize ConnectionUtil", e);
+            Toast.makeText(MainActivity.this, R.string.sslFailed, Toast.LENGTH_LONG).show();
         }
 
         if (mNetworkTracker == null) {
