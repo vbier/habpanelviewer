@@ -160,7 +160,11 @@ public class InternalCommandHandler implements ICommandHandler {
 
         if (m.matches()) {
             String name = m.group(1);
-            String num = m.group(2);
+            String num = null;
+
+            if (m.groupCount() > 1) {
+                num = m.group(2);
+            }
 
             if (num != null) {
                 return new String[]{name, num.substring(1)};
