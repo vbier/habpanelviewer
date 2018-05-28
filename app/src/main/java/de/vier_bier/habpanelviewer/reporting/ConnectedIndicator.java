@@ -2,6 +2,7 @@ package de.vier_bier.habpanelviewer.reporting;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -20,6 +21,8 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Reports the current time to openHAB as an indicator for being connected.
  */
 public class ConnectedIndicator implements IStateUpdateListener {
+    private static final String TAG = "HPV-ConnectedIndicator";
+
     private boolean mEnabled;
     private String mStatusItem;
     private int mInterval;
@@ -56,10 +59,18 @@ public class ConnectedIndicator implements IStateUpdateListener {
     }
 
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        boolean intervalChanged = mInterval != Integer.parseInt(prefs.getString("pref_connected_interval", "60"));
+        int interval;
+        try {
+            interval = Integer.parseInt(prefs.getString("pref_connected_interval", "60"));
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "preferences contain invalid connected interval: "
+                    + prefs.getString("pref_connected_interval", "60"));
+            interval = 60;
+        }
+        boolean intervalChanged = mInterval != interval;
 
         if (intervalChanged) {
-            mInterval = Integer.parseInt(prefs.getString("pref_connected_interval", "60"));
+            mInterval = interval;
         }
 
         boolean started = false;

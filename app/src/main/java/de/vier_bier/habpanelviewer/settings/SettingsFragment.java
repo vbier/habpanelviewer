@@ -144,6 +144,10 @@ public class SettingsFragment extends PreferenceFragment {
         urlPreference.setOnPreferenceChangeListener(new URLValidatingListener());
         mLoader.setServerUrl(urlPreference.getText());
 
+        EditTextPreference connectedIntervalPreference =
+                (EditTextPreference) findPreference("pref_connected_interval");
+        connectedIntervalPreference.setOnPreferenceChangeListener(new NumberValidatingListener(0, 6000));
+
         // add validation to the items
         for (String key : ITEMS_PREFS) {
             final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
@@ -175,6 +179,38 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         getLoaderManager().initLoader(1234, null, mLoaderCallbacks);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 42 && resultCode == RESULT_OK) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            boolean isActive = mDPM.isAdminActive(AdminReceiver.COMP);
+
+            if (prefs.getBoolean("pref_device_admin", false) != isActive) {
+                SharedPreferences.Editor editor1 = prefs.edit();
+                editor1.putBoolean("pref_device_admin", isActive);
+                editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
+                editor1.apply();
+
+                CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
+                adminPreference.setChecked(isActive);
+            }
+        }
+    }
+
+    private void removeAsAdmin() {
+        mDPM.removeActiveAdmin(AdminReceiver.COMP);
+
+        CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
+        adminPreference.setChecked(false);
+    }
+
+    private void installAsAdmin() {
+        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, AdminReceiver.COMP);
+        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.deviceAdminDescription));
+        startActivityForResult(intent, 42);
     }
 
     private class URLValidatingListener implements Preference.OnPreferenceChangeListener {
@@ -237,35 +273,35 @@ public class SettingsFragment extends PreferenceFragment {
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 42 && resultCode == RESULT_OK) {
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            boolean isActive = mDPM.isAdminActive(AdminReceiver.COMP);
+    private class NumberValidatingListener implements Preference.OnPreferenceChangeListener {
+        private final int minVal;
+        private final int maxVal;
 
-            if (prefs.getBoolean("pref_device_admin", false) != isActive) {
-                SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putBoolean("pref_device_admin", isActive);
-                editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
-                editor1.apply();
+        NumberValidatingListener(int minVal, int maxVal) {
+            this.minVal = minVal;
+            this.maxVal = maxVal;
+        }
 
-                CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
-                adminPreference.setChecked(isActive);
+        @Override
+        public boolean onPreferenceChange(final Preference preference, Object o) {
+            boolean invalid;
+            try {
+                int val = Integer.parseInt((String) o);
+
+                invalid = val < minVal || val > maxVal;
+            } catch (NumberFormatException e) {
+                invalid = true;
             }
+
+            if (invalid && !getActivity().isFinishing()) {
+                UiUtil.showDialog(getActivity(), preference.getTitle() + " "
+                                + SettingsFragment.this.getResources().getString(R.string.invalid),
+                        getString(R.string.noValidIntInRange, minVal, maxVal));
+                return false;
+            }
+
+            return true;
         }
     }
 
-    private void removeAsAdmin() {
-        mDPM.removeActiveAdmin(AdminReceiver.COMP);
-
-        CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
-        adminPreference.setChecked(false);
-    }
-
-    private void installAsAdmin() {
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, AdminReceiver.COMP);
-        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.deviceAdminDescription));
-        startActivityForResult(intent, 42);
-    }
 }

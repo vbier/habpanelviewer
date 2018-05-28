@@ -220,5 +220,6 @@
     <string name="couldNotObtainCameraService">Android Camera Service nicht gefunden</string>
     <string name="pref_jpeg_quality">JPEG Qualität</string>
     <string name="pref_jpeg_quality_summ">JPEG Kompressionsqualität</string>
+    <string name="noValidIntInRange">Wert is keine Zahl im Bereich %d..%d</string>
 
 </resources>
