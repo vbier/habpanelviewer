@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
@@ -188,20 +187,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
                 client = new SSEHandler();
                 mEventSource = new EventSource(client);
 
-                final URI fUri = uri;
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        try {
-                            mEventSource.connect(fUri, ConnectionUtil.createSslContext());
-                        } catch (Exception e) {
-                            Log.e(TAG, "failed to connect event source", e);
-                        }
-
-                        return null;
-                    }
-                }.execute();
-
+                new AsyncConnectTask(uri).execute(mEventSource);
                 Log.d(TAG, "EventSource connection initiated");
             } else {
                 Log.d(TAG, "EventSource connection skipped: no subscriptions");
@@ -236,12 +222,8 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
 
     private synchronized void close() {
         if (mEventSource != null) {
-            try {
-                mEventSource.close();
-            } catch (InterruptedException e) {
-                Log.v(TAG, "failed to wait for EventSource closure");
-            }
-            Log.d(TAG, "EventSource closed");
+            AsyncCloseTask t = new AsyncCloseTask();
+            t.execute(mEventSource);
             mEventSource = null;
         }
 
