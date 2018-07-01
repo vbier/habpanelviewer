@@ -1,1 +1,1 @@
-Eine Android-Anwendung zur Vollbilddarstellung der HABPanel UI von openHAB
+Eine Android-Anwendung zur Vollbilddarstellung der HABPanel UI von openHAB.
