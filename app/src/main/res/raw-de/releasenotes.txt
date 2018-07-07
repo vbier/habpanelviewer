@@ -1,3 +1,9 @@
+0.9.20
+======
+* Bildschirmzustand kann nun an openHAB gemeldet werden
+* die Chrome Version aus dem User Agent wird nun auch in der Status Information angezeigt
+* verschiedene Fehler und Abstürze beseitigt
+
 0.9.19
 ======
 * neue Kommandos: CAPTURE_CAMERA, CAPTURE_SCREEN, ENABLE_MOTION_DETECTION, DISABLE_MOTION_DETECTION, RELOAD, SET_BRIGHTNESS, SHOW_DASHBOARD, SHOW_URL, SHOW_START_URL

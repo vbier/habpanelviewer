@@ -1,0 +1,4 @@
+* Bildschirmzustand kann nun an openHAB gemeldet werden
+* die Chrome Version aus dem User Agent wird nun auch in der Status Information angezeigt
+* verschiedene Fehler und Abstürze beseitigt
+
