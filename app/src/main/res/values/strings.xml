@@ -18,7 +18,7 @@
 
     <string name="pref_url" translatable="false">openHAB URL</string>
     <string name="pref_url_summ">URL of the openHAB server</string>
-    <string name="pref_url_example"> http://openhabianpi:8080</string>
+    <string name="pref_url_example">e.g. http://openhabianpi:8080</string>
 
     <string name="pref_desktop_mode">Desktop mode</string>
     <string name="pref_desktop_mode_summ">Show pages in desktop mode instead of mobile mode</string>

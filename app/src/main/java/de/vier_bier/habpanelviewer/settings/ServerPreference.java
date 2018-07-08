@@ -12,8 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.lang.ref.WeakReference;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerDiscovery;
@@ -39,11 +42,15 @@ public class ServerPreference extends EditTextPreference {
             b.setText(R.string.discoverServer);
 
             final TextView ex = new TextView(getContext());
-            ex.setText("  " + getContext().getResources().getString(R.string.pref_url_example));
+            ex.setText(getContext().getResources().getString(R.string.pref_url_example));
             ex.setTextColor(Color.GRAY);
 
-            container.addView(ex, ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(15,0,0,0);
+            ex.setLayoutParams(params);
+
+            container.addView(ex);
             container.addView(b, ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             container.addView(cb, ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -54,39 +61,89 @@ public class ServerPreference extends EditTextPreference {
                 ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
                 ((AlertDialog) getDialog()).getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
 
-                AsyncTask discoveryTask = new AsyncTask() {
-                    @Override
-                    protected Object doInBackground(Object[] objects) {
-                        ServerDiscovery mDiscovery = new ServerDiscovery((NsdManager) getContext().getSystemService(Context.NSD_SERVICE));
-                        mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
-                            @Override
-                            public void found(final String serverUrl) {
-                                b.post(() -> editText.setText(serverUrl));
-                            }
-
-                            @Override
-                            public void notFound() {
-                                b.post(() -> Toast.makeText(getContext(), getContext().getString(R.string.serverNotFound), Toast.LENGTH_LONG).show());
-                            }
-                        }, !cb.isChecked(), cb.isChecked());
-
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Object o) {
-                        AlertDialog d = ((AlertDialog) getDialog());
-                        if (d != null) { // dialog may have been closed by back button
-                            b.setEnabled(true);
-                            d.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                            d.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
-                        }
-                    }
-                };
+                ResultVisualizer v = new ResultVisualizer(b, editText);
+                AsyncTask discoveryTask =
+                        new DiscoverTask(new ServerDiscovery((NsdManager) getContext().getSystemService(Context.NSD_SERVICE)),
+                        v, !cb.isChecked(), cb.isChecked());
                 discoveryTask.execute();
             });
 
         }
 
+    }
+
+    private class ResultVisualizer {
+        private final Button b;
+        private final EditText editText;
+
+        ResultVisualizer(Button b, EditText editText) {
+            this.b = b;
+            this.editText = editText;
+        }
+
+        public void serverFound(String serverUrl) {
+            b.post(() -> editText.setText(serverUrl));
+        }
+
+        public void serverNotFound() {
+            b.post(() -> Toast.makeText(getContext(), getContext().getString(R.string.serverNotFound), Toast.LENGTH_LONG).show());
+        }
+
+        public void discoveryFinished() {
+            AlertDialog d = ((AlertDialog) getDialog());
+            if (d != null && d.isShowing()) { // dialog may have been closed by back button
+                b.setEnabled(true);
+                d.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                d.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(true);
+            }
+        }
+    }
+
+    private static class DiscoverTask extends AsyncTask {
+        private WeakReference<ServerDiscovery> discoveryServiceReference;
+        private WeakReference<ResultVisualizer> visualizerReference;
+        private boolean discoverHttp;
+        private boolean discoverHttps;
+
+        DiscoverTask(ServerDiscovery serverDiscovery, ResultVisualizer visualizer, boolean discoverHttp, boolean discoverHttps) {
+            discoveryServiceReference = new WeakReference<>(serverDiscovery);
+            visualizerReference = new WeakReference<>(visualizer);
+            this.discoverHttp = discoverHttp;
+            this.discoverHttps = discoverHttps;
+        }
+
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            ServerDiscovery mDiscovery = discoveryServiceReference.get();
+            if (mDiscovery != null) {
+                mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
+                    @Override
+                    public void found(final String serverUrl) {
+                        ResultVisualizer v = visualizerReference.get();
+                        if (v != null) {
+                            v.serverFound(serverUrl);
+                        }
+                    }
+
+                    @Override
+                    public void notFound() {
+                        ResultVisualizer v = visualizerReference.get();
+                        if (v != null) {
+                            v.serverNotFound();
+                        }
+                    }
+                }, discoverHttp, discoverHttps);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            ResultVisualizer v = visualizerReference.get();
+            if (v != null) {
+                v.discoveryFinished();
+            }
+        }
     }
 }
