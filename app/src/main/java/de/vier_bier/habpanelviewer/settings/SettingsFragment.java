@@ -1,5 +1,6 @@
 package de.vier_bier.habpanelviewer.settings;
 
+import android.app.Activity;
 import android.app.LoaderManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
@@ -20,7 +21,10 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
@@ -213,6 +217,72 @@ public class SettingsFragment extends PreferenceFragment {
         startActivityForResult(intent, 42);
     }
 
+    private static final class ValidateHabPanelTask extends AsyncTask<String, Void, Void> {
+        private WeakReference<Activity> activity;
+        private final CharSequence preferenceName;
+
+        ValidateHabPanelTask(Activity act, CharSequence prefName) {
+            activity = new WeakReference<>(act);
+            preferenceName = prefName;
+        }
+
+        @Override
+        protected Void doInBackground(String... urls) {
+            String dialogTitle = null;
+            String dialogText = null;
+            try {
+                String serverURL = urls[0] + "/rest/services";
+                HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(serverURL);
+                urlConnection.connect();
+
+                if (urlConnection.getResponseCode() != 200) {
+                    dialogText = getResString(R.string.notValidOpenHabUrl);
+                } else {
+                    try (BufferedReader br = new BufferedReader(new InputStreamReader((urlConnection.getInputStream())))) {
+                        String line;
+                        boolean habPanelFound = false;
+                        while (!habPanelFound && (line = br.readLine()) != null) {
+                            habPanelFound = line.contains("\"org.openhab.habpanel\"");
+                        }
+                        if (!habPanelFound) {
+                            dialogText = getResString(R.string.habPanelNotAvailable);
+                        }
+                    }
+                }
+
+                urlConnection.disconnect();
+            } catch (MalformedURLException e) {
+                dialogText = urls[0] + getResString(R.string.notValidUrl);
+            } catch (SSLException e) {
+                dialogTitle = getResString(R.string.certInvalid);
+                dialogText = getResString(R.string.couldNotConnect) + " " + urls[0] + ".\n" +
+                        getResString(R.string.acceptCertWhenOurOfSettings);
+            } catch (IOException | GeneralSecurityException e) {
+                dialogText = getResString(R.string.couldNotConnect) + " " + urls[0];
+            }
+
+            Activity a = activity.get();
+            if (dialogText != null && a != null && !a.isFinishing()) {
+                if (dialogTitle == null) {
+                    dialogTitle = preferenceName + " " + getResString(R.string.invalid);
+                }
+
+                UiUtil.showDialog(a, dialogTitle, dialogText);
+            }
+
+            return null;
+        }
+
+        private String getResString(int resId) {
+            Activity a = activity.get();
+            if (a != null) {
+                return a.getResources().getString(resId);
+            }
+
+            return "";
+        }
+    }
+
     private class URLValidatingListener implements Preference.OnPreferenceChangeListener {
         @Override
         public boolean onPreferenceChange(final Preference preference, Object o) {
@@ -222,56 +292,13 @@ public class SettingsFragment extends PreferenceFragment {
             if (text == null || text.isEmpty()) {
                 return true;
             }
-            AsyncTask<String, Void, Void> validator = new AsyncTask<String, Void, Void>() {
-                @Override
-                protected Void doInBackground(String... urls) {
-                    try {
-                        String serverURL = urls[0] + "/rest/services";
-                        HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(serverURL);
-                        urlConnection.connect();
-
-                        if (urlConnection.getResponseCode() != 200) {
-                            if (getActivity() != null && !getActivity().isFinishing()) {
-                                UiUtil.showDialog(getActivity(), preference.getTitle() + " "
-                                                + SettingsFragment.this.getResources().getString(R.string.invalid),
-                                        SettingsFragment.this.getResources().getString(R.string.notValidOpenHabUrl));
-                            }
-                        } else if (!urlConnection.getResponseMessage().contains("\"org.openhab.habpanel\"")) {
-                            if (getActivity() != null && !getActivity().isFinishing()) {
-                                UiUtil.showDialog(getActivity(), preference.getTitle() + " "
-                                                + SettingsFragment.this.getResources().getString(R.string.invalid),
-                                        SettingsFragment.this.getResources().getString(R.string.habPanelNotAvailable));
-                            }
-                        }
-
-                        urlConnection.disconnect();
-                    } catch (MalformedURLException e) {
-                        if (getActivity() != null && !getActivity().isFinishing()) {
-                            UiUtil.showDialog(getActivity(), preference.getTitle() + " "
-                                    + SettingsFragment.this.getResources().getString(R.string.invalid), urls[0]
-                                    + SettingsFragment.this.getResources().getString(R.string.notValidUrl));
-                        }
-                    } catch (SSLException e) {
-                        if (getActivity() != null && !getActivity().isFinishing()) {
-                            UiUtil.showDialog(getActivity(), SettingsFragment.this.getResources().getString(R.string.certInvalid),
-                                    SettingsFragment.this.getResources().getString(R.string.couldNotConnect) + " " + urls[0] + ".\n"
-                                            + SettingsFragment.this.getResources().getString(R.string.acceptCertWhenOurOfSettings));
-                        }
-                    } catch (IOException | GeneralSecurityException e) {
-                        if (getActivity() != null && !getActivity().isFinishing()) {
-                            UiUtil.showDialog(getActivity(), preference.getTitle() + " "
-                                            + SettingsFragment.this.getResources().getString(R.string.invalid),
-                                    SettingsFragment.this.getResources().getString(R.string.couldNotConnect) + " " + urls[0]);
-                        }
-                    }
-
-                    return null;
-                }
-            };
+            AsyncTask<String, Void, Void> validator =
+                    new ValidateHabPanelTask(SettingsFragment.this.getActivity(), preference.getTitle());
             validator.execute(text);
 
             return true;
         }
+
     }
 
     private class AdminValidatingListener implements Preference.OnPreferenceChangeListener {
