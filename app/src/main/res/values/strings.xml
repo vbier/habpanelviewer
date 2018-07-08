@@ -157,7 +157,9 @@
     <string name="specifyUrlInSettings">Please specify them in the application settings.</string>
     <string name="invalid">invalid</string>
     <string name="notValidUrl">is not a valid URL</string>
-    <string name="couldNotConnect">Could not connect to openHAB at URL</string>
+    <string name="notValidOpenHabUrl">Could not query available services from openHAB</string>
+    <string name="habPanelNotAvailable">HabPanel not available</string>
+    <string name="couldNotConnect">Could not connect to server at URL</string>
     <string name="acceptCertWhenOurOfSettings">You can accept the certificate once you have left the settings.</string>
     <string name="couldNotFindApp">Could not find app for package</string>
     <string name="notAvailableOnDevice">%s is not available on this device</string>

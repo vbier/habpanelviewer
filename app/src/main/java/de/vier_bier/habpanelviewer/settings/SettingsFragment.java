@@ -226,23 +226,39 @@ public class SettingsFragment extends PreferenceFragment {
                 @Override
                 protected Void doInBackground(String... urls) {
                     try {
-                        HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(urls[0]);
+                        String serverURL = urls[0] + "/rest/services";
+                        HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(serverURL);
                         urlConnection.connect();
+
+                        if (urlConnection.getResponseCode() != 200) {
+                            if (getActivity() != null && !getActivity().isFinishing()) {
+                                UiUtil.showDialog(getActivity(), preference.getTitle() + " "
+                                                + SettingsFragment.this.getResources().getString(R.string.invalid),
+                                        SettingsFragment.this.getResources().getString(R.string.notValidOpenHabUrl));
+                            }
+                        } else if (!urlConnection.getResponseMessage().contains("\"org.openhab.habpanel\"")) {
+                            if (getActivity() != null && !getActivity().isFinishing()) {
+                                UiUtil.showDialog(getActivity(), preference.getTitle() + " "
+                                                + SettingsFragment.this.getResources().getString(R.string.invalid),
+                                        SettingsFragment.this.getResources().getString(R.string.habPanelNotAvailable));
+                            }
+                        }
+
                         urlConnection.disconnect();
                     } catch (MalformedURLException e) {
-                        if (!getActivity().isFinishing()) {
+                        if (getActivity() != null && !getActivity().isFinishing()) {
                             UiUtil.showDialog(getActivity(), preference.getTitle() + " "
                                     + SettingsFragment.this.getResources().getString(R.string.invalid), urls[0]
                                     + SettingsFragment.this.getResources().getString(R.string.notValidUrl));
                         }
                     } catch (SSLException e) {
-                        if (!getActivity().isFinishing()) {
+                        if (getActivity() != null && !getActivity().isFinishing()) {
                             UiUtil.showDialog(getActivity(), SettingsFragment.this.getResources().getString(R.string.certInvalid),
                                     SettingsFragment.this.getResources().getString(R.string.couldNotConnect) + " " + urls[0] + ".\n"
                                             + SettingsFragment.this.getResources().getString(R.string.acceptCertWhenOurOfSettings));
                         }
                     } catch (IOException | GeneralSecurityException e) {
-                        if (!getActivity().isFinishing()) {
+                        if (getActivity() != null && !getActivity().isFinishing()) {
                             UiUtil.showDialog(getActivity(), preference.getTitle() + " "
                                             + SettingsFragment.this.getResources().getString(R.string.invalid),
                                     SettingsFragment.this.getResources().getString(R.string.couldNotConnect) + " " + urls[0]);
@@ -293,7 +309,7 @@ public class SettingsFragment extends PreferenceFragment {
                 invalid = true;
             }
 
-            if (invalid && !getActivity().isFinishing()) {
+            if (invalid && getActivity() != null && !getActivity().isFinishing()) {
                 UiUtil.showDialog(getActivity(), preference.getTitle() + " "
                                 + SettingsFragment.this.getResources().getString(R.string.invalid),
                         getString(R.string.noValidIntInRange, minVal, maxVal));

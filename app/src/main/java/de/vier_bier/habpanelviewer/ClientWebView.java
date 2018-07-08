@@ -193,7 +193,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                                 + "</h1><h2>" + getContext().getString(R.string.sslCert) + "https://" + host + " "
                                 + reason + ".</h2>" + certInfo + "</body></html>", "text/html", "UTF-8")).create();
 
-                if (!((Activity) getContext()).isFinishing()) {
+                if (getContext() != null && !((Activity) getContext()).isFinishing()) {
                     alert.show();
                 }
             }
@@ -214,7 +214,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                         }).setNegativeButton(R.string.cancel, (dialog1, which) -> handler.cancel())
                         .create();
 
-                if (!((Activity) getContext()).isFinishing()) {
+                if (getContext() != null && !((Activity) getContext()).isFinishing()) {
                     alert.show();
                 }
             }

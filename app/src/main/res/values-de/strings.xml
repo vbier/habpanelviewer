@@ -153,6 +153,8 @@
     <string name="specifyUrlInSettings">Bitte geben Sie sie in den Einstellungen ein.</string>
     <string name="invalid">ungültig</string>
     <string name="notValidUrl">ist keine gültige URL</string>
+    <string name="notValidOpenHabUrl">Konnte die Liste der verfügbaren Services nicht von openHAB laden</string>
+    <string name="habPanelNotAvailable">HabPanel nicht verfügbar</string>
     <string name="couldNotConnect">Verbindung fehlgeschlagen zum Server mit der URL</string>
     <string name="acceptCertWhenOurOfSettings">Sie können eine Ausnahme für das Zertifikat erstellen, wenn Sie die Einstellungen verlassen haben.</string>
     <string name="couldNotFindApp">Konnte das Paket nicht finden</string>
