@@ -508,7 +508,7 @@ public class MainActivity extends ScreenControllingActivity
         status.set(getString(R.string.app_name), "Version: " + version);
 
         if (mFlashService == null) {
-            status.set(getString(R.string.pref_flash), getString(R.string.unavailable));
+            status.set(getString(R.string.flashControl), getString(R.string.unavailable));
         }
         if (mMotionDetector == null || mCam == null || !mCam.isValid()) {
             status.set(getString(R.string.pref_motion), getString(R.string.unavailable));
@@ -724,7 +724,7 @@ public class MainActivity extends ScreenControllingActivity
     @Override
     public void disconnected() {
         mConnections.disconnected();
-        runOnUiThread(() -> mTextView.setText(R.string.not_connected));
+        runOnUiThread(() -> mTextView.setText(R.string.notConnected));
     }
 
     private Intent getLaunchIntent() {

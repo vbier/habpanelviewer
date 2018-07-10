@@ -8,7 +8,7 @@
     <item
         android:id="@+id/action_start_app"
         android:orderInCategory="100"
-        android:title="@string/action_start_app"
+        android:title="@string/action_startApp"
         android:icon="@drawable/ic_play_arrow_black_24dp" />
     <item
         android:id="@+id/action_info"
@@ -18,7 +18,7 @@
     <item
         android:id="@+id/action_cmd_log"
         android:orderInCategory="100"
-        android:title="@string/action_cmd_log"
+        android:title="@string/action_cmdLog"
         android:icon="@drawable/ic_access_time_black_24dp" />
     <item
         android:id="@+id/action_help"

@@ -41,8 +41,8 @@ public class ConnectionStatistics {
         long averageOnlineTime = mState == State.CONNECTED ? (mOnlineAverage * mOnlinePeriods + currentOnlineTime) / (mOnlinePeriods + 1) : mOnlineAverage;
         long averageOfflineTime = mState == State.DISCONNECTED ? (mOfflineAverage * mOfflinePeriods + currentOfflineTime) / (mOfflinePeriods + 1) : mOfflineAverage;
 
-        status.set(mCtx.getString(R.string.connection_statistics),
-                mCtx.getString(R.string.connection_details,
+        status.set(mCtx.getString(R.string.connectionStatistics),
+                mCtx.getString(R.string.connectionDetails,
                         toDuration(now - mStartTime),
                         toDuration(mOnlineMillis + currentOnlineTime),
                         (mOnlinePeriods + (mState == State.CONNECTED ? 1 : 0)),
