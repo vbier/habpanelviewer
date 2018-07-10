@@ -4,7 +4,7 @@ HABPanelViewer ist eine Android Anwendung zur Vollbild-Visualisierung von HABPan
 
 Die Funktionalität kann in drei Bereiche aufgeteilt werden:
 - [Geräte Steuerung](#control) als Reaktion auf openHAB Item Änderungen
-- [Sensorwerte Meldung](#reporting) an openHAB
+- [Werte Meldung](#reporting) an openHAB
 - [Benutzerfreundlichkeit](#usability) macht es einfacher HABPanel auf einem Tablet zu benutzen
 
 ## <a name="configuration"/>Konfiguration
@@ -88,8 +88,8 @@ Klicken Sie auf ein Kommando um die Details anuzeigen, falls es welche gibt.
 
 [zurück nach oben](#top)
 
-## <a name="reporting"/>Sensorwerte Meldung
-Ermöglicht es, Werte der Geräte Sensoren an openHAB zu melden. Die gemeldeten Werte können dann z.B. in Regeln verwendet werden, um Sie zu benachrichtigen, bevor die Batterie des Tablets leer ist. 
+## <a name="reporting"/>Werte Meldung
+Ermöglicht es, Werte der Geräte Sensoren oder andere Dinge an openHAB zu melden. Die gemeldeten Werte können dann z.B. in Regeln verwendet werden, um Sie zu benachrichtigen, bevor die Batterie des Tablets leer ist. 
 
 ### Batteriesensor
 Wenn aktiviert, ändert die Anwendung die Werte von bis zu drei openHAB Items in Abhängigkeit des Batteriezustands:
@@ -169,6 +169,15 @@ Der Kontakt wird geschlossen, wenn der Bildschirm an ist.
 Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Contact Tablet_Screen
+
+### Benutzung
+Ermöglicht das Schalten eines openHAB Kontakts bei erkannter aktive App Benutzung.
+
+Der Kontakt wird geschlossen, wenn die App aktive benutzt wird. Nach einer konfigurierbaren Zeit der Inaktivität wird der Kontakt wieder geöffnet.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Contact Tablet_Usage
 
 [zurück nach oben](#top)
 

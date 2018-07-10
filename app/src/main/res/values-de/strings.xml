@@ -43,8 +43,8 @@
     <string name="pref_command_item_summ">Name des openHAB Items in dem openHAB Kommandos an HABPanelViewer sendet</string>
     <string name="pref_flash">Blitzlichtsteuerung</string>
 
-    <string name="pref_reporting">Sensorwertemeldung</string>
-    <string name="pref_reporting_summ">Meldet Sensorwerte an openHAB</string>
+    <string name="pref_reporting">Wertemeldung</string>
+    <string name="pref_reporting_summ">Meldet Sensorwerte oder andere Dinge an openHAB</string>
     <string name="pref_battery">Batteriesensor</string>
     <string name="pref_battery_enabled_summ">Überwacht den Batteriezustand und meldet Änderungen an openHAB</string>
     <string name="pref_battery_enabled">Batterie Meldung aktiviert</string>
@@ -105,6 +105,13 @@
     <string name="pref_volume_enabled_summ">Überwacht die Lautstärke und meldet Änderungen an openHAB</string>
     <string name="pref_volume_item">Lautstärke Item</string>
     <string name="pref_volume_item_summ">Name des openHAB Items an das die Lautstärke gemeldet wird</string>
+    <string name="pref_usage">Benutzung</string>
+    <string name="pref_usage_enabled">Benutzungsmeldung aktiviert</string>
+    <string name="pref_usage_enabled_summ">Schaltet einen openHAB Kontakt wenn die App aktiv benutzt wird</string>
+    <string name="pref_usage_item">Benutzungs Kontakt</string>
+    <string name="pref_usage_item_summ">Name des openHAB Kontakts der geschaltet wird wenn Benutzung erkannt wird</string>
+    <string name="pref_usage_timeout_summ">Benutzungs Timeout</string>
+    <string name="pref_usage_timeout_intervall">Anzahl der Sekunden, nach deren Inaktivität der Kontakt geöffnet wird</string>
     <string name="pref_screen">Bildschirm</string>
     <string name="pref_screen_enabled">Bildschirmmeldung aktiviert</string>
     <string name="pref_screen_enabled_summ">Überwacht den Bildschirm und meldet Änderungen an openHAB</string>

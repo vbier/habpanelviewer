@@ -83,8 +83,6 @@
                 android:entryValues="@array/granularity"
                 android:summary="@string/pref_jpeg_quality_summ"
                 android:title="@string/pref_jpeg_quality" />
-
-
         </PreferenceScreen>
         <PreferenceScreen
             android:key="pref_reporting"
@@ -134,6 +132,29 @@
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_screen_item_summ"
                     android:title="@string/pref_screen_item" />
+            </PreferenceScreen>
+            <PreferenceScreen
+                android:key="pref_usage"
+                android:persistent="false"
+                android:title="@string/pref_usage">
+                <CheckBoxPreference
+                    android:key="pref_usage_enabled"
+                    android:defaultValue="false"
+                    android:summary="@string/pref_usage_enabled_summ"
+                    android:title="@string/pref_usage_enabled" />
+                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                    android:key="pref_usage_item"
+                    android:dependency="pref_usage_enabled"
+                    android:inputType="textPhonetic"
+                    android:summary="@string/pref_usage_item_summ"
+                    android:title="@string/pref_usage_item" />
+                <EditTextPreference
+                    android:key="pref_usage_timeout"
+                    android:dependency="pref_usage_enabled"
+                    android:defaultValue="60"
+                    android:inputType="number"
+                    android:summary="@string/pref_usage_timeout_summ"
+                    android:title="@string/pref_usage_timeout_intervall" />
             </PreferenceScreen>
             <PreferenceScreen
                 android:key="pref_motion"

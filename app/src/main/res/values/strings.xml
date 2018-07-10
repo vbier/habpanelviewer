@@ -47,8 +47,8 @@
     <string name="pref_command_item_summ">Name of the Item that is used by openHAB to send commands to HABPanelViewer</string>
     <string name="pref_flash">Flashlight Control</string>
 
-    <string name="pref_reporting">Sensor Reporting</string>
-    <string name="pref_reporting_summ">Report device sensor values to openHAB items</string>
+    <string name="pref_reporting">Value Reporting</string>
+    <string name="pref_reporting_summ">Report device sensor values or other things to openHAB</string>
     <string name="pref_battery">Battery</string>
     <string name="pref_battery_enabled">Monitor device battery state and report changes to openHAB</string>
     <string name="pref_battery_enabled_summ">Allows to set the states of openHAB items depending on the device battery status</string>
@@ -109,6 +109,13 @@
     <string name="pref_volume_enabled_summ">Allows to set the state of an openHAB item depending on the device volume</string>
     <string name="pref_volume_item">Volume Item</string>
     <string name="pref_volume_item_summ">>Name of the number item whose state shall be set</string>
+    <string name="pref_usage">Usage</string>
+    <string name="pref_usage_enabled">Toggle openHAB contact item when the app is actively used</string>
+    <string name="pref_usage_enabled_summ">Allows to set the state of an openHAB items depending on the app usage</string>
+    <string name="pref_usage_item">Usage Contact</string>
+    <string name="pref_usage_item_summ">Name of the contact item whose state shall be set depending on the app usage</string>
+    <string name="pref_usage_timeout_summ">Usage timeout</string>
+    <string name="pref_usage_timeout_intervall">Number of seconds after which usage times out</string>
     <string name="pref_screen">Screen</string>
     <string name="pref_screen_enabled">Toggle openHAB contact item depending on device screen state</string>
     <string name="pref_screen_enabled_summ">Allows to set the state of an openHAB items depending on the device screen state</string>

@@ -104,4 +104,9 @@ abstract class Average<R extends Number> implements Delayed {
 
         return false;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof Average && itemName.equals(((Average) obj).itemName);
+    }
 }

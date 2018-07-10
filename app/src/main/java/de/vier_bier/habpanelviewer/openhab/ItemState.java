@@ -12,6 +12,14 @@ class ItemState {
         mItemState = itemState;
     }
 
+    public String getItemName() {
+        return mItemName;
+    }
+
+    public String getItemState() {
+        return mItemState;
+    }
+
     @Override
     public int hashCode() {
         return mItemName.hashCode();

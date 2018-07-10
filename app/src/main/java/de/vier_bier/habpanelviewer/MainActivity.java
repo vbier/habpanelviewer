@@ -30,6 +30,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -404,6 +405,16 @@ public class MainActivity extends ScreenControllingActivity
             MediaProjectionManager projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
             startActivityForResult(projectionManager.createScreenCaptureIntent(), ScreenCapturer.REQUEST_MEDIA_PROJECTION);
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        //TODO.vb make item and timeout configurable and do this for all views.
+        boolean value = super.dispatchTouchEvent(ev);
+
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+        }
+        return value;
     }
 
     @Override

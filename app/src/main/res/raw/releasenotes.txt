@@ -1,3 +1,7 @@
+0.9.21pre
+=========
+* report active app usage to openHAB
+
 0.9.20
 ======
 * screen state can now be reported to openHAB

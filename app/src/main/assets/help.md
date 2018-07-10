@@ -4,7 +4,7 @@ HABPanelViewer is an Android home screen application visualizing HABPanel, a ded
 
 Its functionality can mainly be divided into three categories: 
 - [controlling the device](#control) in reaction to openHAB item state changes
-- [reporting device sensor values](#reporting) to openHAB
+- [reporting values](#reporting) to openHAB
 - [usability features](#usability) making it easier to use HABPanel on a tablet
 
 ## <a name="configuration"/>Configuration
@@ -87,8 +87,8 @@ Click on a command to expand its details, if any.
 
 [go back to top](#top)
 
-## <a name="reporting"/>Sensor Reporting
-Allows to set the values of openHAB items depending on the device sensors. You can then use the items in rules, e.g. for sending a notification when the battery is low.
+## <a name="reporting"/>Value Reporting
+Allows to set the values of openHAB items depending on the device sensors or other things. You can then use the items in rules, e.g. for sending a notification when the battery is low.
 
 ### battery reporting
 When enabled, the app updates the state of up to three openHAB items depending on the battery state:
@@ -168,6 +168,16 @@ The contact state will be *CLOSED* whenever when the screen is on, *OPEN* otherw
 A sample openHAB items file looks like this:
 
     Contact Tablet_Screen
+
+
+### usage
+Allows to set the value of an openHAB contact item depending on whether the app is currently in active use.
+
+The contact state will be *CLOSED* whenever someone is actively using the app. After a configurable time of inactivity, the state will be set to *OPEN*.
+
+A sample openHAB items file looks like this:
+
+    Contact Tablet_Usage
 
 [go back to top](#top)
 

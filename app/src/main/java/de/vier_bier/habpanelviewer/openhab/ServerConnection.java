@@ -1,9 +1,13 @@
 package de.vier_bier.habpanelviewer.openhab;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 import android.util.Log;
 
@@ -31,6 +35,12 @@ import io.opensensors.sse.client.MessageEvent;
  * Client for openHABs SSE service. Listens for item value changes.
  */
 public class ServerConnection implements IStatePropagator, NetworkTracker.INetworkListener {
+    public static final String ACTION_SET_WITH_TIMEOUT = "ACTION_SET_WITH_TIMEOUT";
+    public static final String FLAG_ITEM_NAME = "itemName";
+    public static final String FLAG_ITEM_STATE = "itemState";
+    public static final String FLAG_ITEM_TIMEOUT_STATE = "itemTimeoutState";
+    public static final String FLAG_TIMEOUT = "timeout";
+
     private static final String TAG = "HPV-ServerConnection";
 
     private final Context mCtx;
@@ -62,6 +72,20 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         };
 
         ConnectionUtil.addCertListener(mCertListener);
+
+        IntentFilter f = new IntentFilter();
+        f.addAction(ACTION_SET_WITH_TIMEOUT);
+        LocalBroadcastManager.getInstance(mCtx).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent i) {
+                final String item = i.getStringExtra(FLAG_ITEM_NAME);
+                final String state = i.getStringExtra(FLAG_ITEM_STATE);
+                final String timeoutState = i.getStringExtra(FLAG_ITEM_TIMEOUT_STATE);
+                final int timeout = i.getIntExtra(FLAG_TIMEOUT, 60);
+
+                updateStateWithTimeout(item, state, timeoutState, timeout);
+            }
+        }, f);
     }
 
     @Override
@@ -245,6 +269,12 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
             // in case this is the first value for the item propagate it
             updateState(item, state.toString());
         }
+    }
+
+    public void updateStateWithTimeout(String item, String state, String timeoutState, int timeoutInSeconds) {
+        updateState(item, state);
+
+        averagePropagator.setStateIn(item, timeoutState, timeoutInSeconds);
     }
 
     public void updateState(String item, String state) {

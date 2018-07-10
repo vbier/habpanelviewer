@@ -10,8 +10,11 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+
+import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 
 /**
  * Activity that support controlling screen state.
@@ -19,13 +22,18 @@ import android.view.WindowManager;
 public abstract class ScreenControllingActivity extends Activity {
     private static final String TAG = "HPV-ScreenControllingAc";
 
-    public static final String ACTION_KEEP_SCREEN_ON = "ACTION_KEEP_SCREEN_ON";
+    private static final String ACTION_KEEP_SCREEN_ON = "ACTION_KEEP_SCREEN_ON";
     private static final String FLAG_KEEP_SCREEN_ON = "keepScreenOn";
     private static boolean mKeepScreenOn = false;
 
-    public static final String ACTION_SET_BRIGHTNESS = "ACTION_SET_BRIGHTNESS";
+    private static final String ACTION_SET_BRIGHTNESS = "ACTION_SET_BRIGHTNESS";
     private static final String FLAG_BRIGHTNESS = "brightness";
     private static float mBrightness = -1;
+
+    private static boolean mTouchEnabled;
+    private static String mTouchItem;
+    private static long mTouchTime;
+    private static int mTouchTimeout;
 
     public static void setBrightness(Context ctx, float brightness) {
         Log.d(TAG, "sending brightness intent: " + brightness);
@@ -64,6 +72,10 @@ public abstract class ScreenControllingActivity extends Activity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         }
 
+        mTouchEnabled = prefs.getBoolean("pref_usage_enabled", false);
+        mTouchItem = prefs.getString("pref_usage_item", "");
+        mTouchTimeout = Integer.parseInt(prefs.getString("pref_usage_timeout", "60000"));
+
         IntentFilter f = new IntentFilter();
         f.addAction(ACTION_KEEP_SCREEN_ON);
         f.addAction(ACTION_SET_BRIGHTNESS);
@@ -75,6 +87,24 @@ public abstract class ScreenControllingActivity extends Activity {
 
         Log.d(TAG, "onStart: set brightness: " + mBrightness);
         setBrightness(mBrightness);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        boolean value = super.dispatchTouchEvent(ev);
+
+        if (mTouchEnabled && ev.getActionMasked() == MotionEvent.ACTION_DOWN
+                && mTouchTime + mTouchTimeout * 1000 < System.currentTimeMillis()) {
+            Intent i = new Intent(ServerConnection.ACTION_SET_WITH_TIMEOUT);
+            i.putExtra(ServerConnection.FLAG_ITEM_NAME, mTouchItem);
+            i.putExtra(ServerConnection.FLAG_ITEM_STATE, "CLOSED");
+            i.putExtra(ServerConnection.FLAG_ITEM_TIMEOUT_STATE, "OPEN");
+            i.putExtra(ServerConnection.FLAG_TIMEOUT, mTouchTimeout);
+            LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(i);
+
+            mTouchTime = System.currentTimeMillis();
+        }
+        return value;
     }
 
     @Override
