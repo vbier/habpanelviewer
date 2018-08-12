@@ -13,6 +13,9 @@ public class AsyncCloseTask extends AsyncTask<EventSource, Void, Void> {
         for (EventSource s : eventSources) {
             try {
                 s.close();
+            } catch (NullPointerException e) {
+                // no idea why this happens, but it should do no harm to ignore it as the
+                // event source is discarded anyway
             } catch (InterruptedException e) {
                 Log.v(TAG, "failed to wait for EventSource closure");
             }
