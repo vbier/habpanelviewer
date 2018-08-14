@@ -107,7 +107,9 @@ Leave item names empty in the settings in order to skip reporting for this speci
 The number item state will be set to the battery charging level (in percent).
 
 ### motion detection
-Allows to set the value of an openHAB item when motion is detected (_does not work at the same time as flashlight control. there are two different implementations, one using the old camera API and one using the Camera 2 API on Android 5+_).
+Allows to close or open an openHAB contact item when motion is detected. Whenever motion is detected, the contact will be closed. It will be opened again after one minute without motion.
+
+> Does not work at the same time as flashlight control.
 
 The detection process works as follows: it divides the picture into smaller areas, calculates a brightness average for every area and checks if this average deviates from the last value. If the deviation is higher than the leniency, motion is detected.
 
@@ -122,7 +124,7 @@ A sample openHAB items file looks like this:
 
     Contact Tablet_Motion
 
-The contact state will be *CLOSED* whenever motion has been detected by the camera, *OPEN* otherwise.
+The contact state will be *CLOSED* whenever motion has been detected by the camera, and will be *OPEN* again after one minute without motion.
 
 ### proximity sensor
 Allows to set the value of an openHAB contact item depending on the device proximity sensor.

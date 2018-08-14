@@ -107,7 +107,9 @@ Lassen sie Item Namen leer, um das Melden bestimmter Werte zu unterdrücken. Die
 Das Number Item reflektiert den Akku Ladezustand in Prozent.
 
 ### Bewegungserkennung
-Ermöglicht das Schalten eines openHAB Kontakts bei erkannter Bewegung (_funktioniert nicht gleichzeitig mit der Blitzlicht Steuerung_).
+Ermöglicht das Schalten eines openHAB Kontakts bei erkannter Bewegung. Bei erkannter Bewegung wird der Kontakt geschlossen, und nach einer Minute ohne Bewegung wieder geöffnet.
+ 
+> Funktioniert nicht gleichzeitig mit der Blitzlicht Steuerung.
 
 Die Erkennung funktioniert folgendermaßen: sie unterteilt das Bild in kleinere Bereiche und berechnet pro Bereich den Helligkeitsdurchschnitt. Wenn dieser Durchschnitt vom letzten Wert um mehr als die konfigurierte Schwelle abweicht,
 wird Bewegung erkannt.
