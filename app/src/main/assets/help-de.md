@@ -7,6 +7,8 @@ Die Funktionalität kann in drei Bereiche aufgeteilt werden:
 - [Werte Meldung](#reporting) an openHAB
 - [Benutzerfreundlichkeit](#usability) macht es einfacher HABPanel auf einem Tablet zu benutzen
 
+Eine Übersicht der Berechtigung die HPVbeötigt findet sich im Abschnitt [Berechtigungen](#permissions).
+
 ## <a name="configuration"/>Konfiguration
 
 **Die folgenden Einstellungen sollten beim ersten Start der Applikation eingestellt werden.**
@@ -200,5 +202,19 @@ Starten Sie eine auf dem Gerät installierte App über das Menü.
 Sie können den Kiosk Modus über das Kontextmenü an- und auschalten. Wenn Sie den Kiosk Modus für die Startseite verwenden wollen, aktivieren Sie ihn mit dem Kontextmenü und wählen Sie danach "Als Startseite setzen" aus dem Kontextmenü.
 
 Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Parameter `?kiosk=on` anzuhängen.
+
+## <a name="configuration"/>Permissions
+
+Habpanelviewer benötigt zwingend die folgenden Berechtigungen:  
+* android.permission.INTERNET - um openHAB anzuzeigen
+* android.permission.ACCESS_NETWORK_STATE - um den Verbindungsstatus zu openHAB zu überwachen
+
+Weitere Berechtigungen um die volle Funktionalität verfügbar zu machen:
+* android.permission.BLUETOOTH_ADMIN - um Bluetooth an- und auszuschalten
+* android.permission.FLASHLIGHT - um den Kamera Blitz zu kontrollieren
+* android.permission.CAMERA - um Fotos aufzunehmen und für die Bewegungserkennung
+* android.permission.WAKE_LOCK - um das Gerät aufzuwecken
+
+HPV kann zusätzlich in den Einstellungen als "Geräte Admin" eingetragen werden. Dies erlaubt es, bei entsprechendem Kommando die Bildschirmsperre zu aktivieren.
 
 [zurück nach oben](#top)

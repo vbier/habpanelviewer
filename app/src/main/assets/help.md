@@ -7,6 +7,8 @@ Its functionality can mainly be divided into three categories:
 - [reporting values](#reporting) to openHAB
 - [usability features](#usability) making it easier to use HABPanel on a tablet
 
+If you want to see which permissions are needed by HPV, check [permissions description](#permissions).
+
 ## <a name="configuration"/>Configuration
 
 **The following settings need to be configured for the initial operation of HABPanelViewer.**
@@ -201,5 +203,18 @@ You can toggle "Kiosk Mode" by using the context menu. If you want to apply kios
 
 Another way of activating kiosk mode is to add the URL parameter `?kiosk=on` at the end of either example listed above.
 
+## <a name="configuration"/>Permissions
+
+Habpanelviewer needs the following permissions:  
+* android.permission.INTERNET - for displaying openHAB in a webview
+* android.permission.ACCESS_NETWORK_STATE - for tracking state of connection to openHAB
+
+Additional optional permissions allowing to use the full functionality:
+* android.permission.BLUETOOTH_ADMIN - for turning bluetooth on and off
+* android.permission.FLASHLIGHT - for controlling the camera flashlight
+* android.permission.CAMERA - for capturing photos and motion detection
+* android.permission.WAKE_LOCK - for waking up the device
+
+HPV can be set as "Device Admin" in the Settings. This allows to lock the device when the appropriate command is received.
 
 [go back to top](#top)
