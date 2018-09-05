@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ScreenCapturer {
-    static final int REQUEST_MEDIA_PROJECTION = 12835;
+    public static final int REQUEST_MEDIA_PROJECTION = 12835;
 
     private MediaProjection mProjection;
     private Handler mHandler;
@@ -79,5 +79,9 @@ public class ScreenCapturer {
         } finally {
             display.release();
         }
+    }
+
+    public void terminate() {
+        mProjection.stop();
     }
 }

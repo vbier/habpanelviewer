@@ -2,6 +2,7 @@
 =========
 * aktive App Benutzung kann nun an openHAB gemeldet werden
 * SCREEN_ON: neuer optionaler Parameter, der das Gerät für die Anzahl an Sekunden wach hält
+* Neue Einstellung zum Auswählen, ob mit dem CAPTURE_SCREEN Kommando Bildschirm Fotos gemacht werden dürfen
 
 0.9.20
 ======

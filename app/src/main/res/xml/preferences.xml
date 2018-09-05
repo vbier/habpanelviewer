@@ -363,6 +363,11 @@
             android:defaultValue="false"
             android:summary="@string/pref_deviceAdmin_summ"
             android:title="@string/pref_deviceAdmin" />
+        <CheckBoxPreference
+            android:key="pref_capture_screen_enabled"
+            android:defaultValue="false"
+            android:summary="@string/pref_captureScreenEnabled_summ"
+            android:title="@string/pref_captureScreenEnabled" />
         <PreferenceScreen
             android:key="pref_restart"
             android:persistent="false"

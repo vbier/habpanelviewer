@@ -41,6 +41,8 @@
     <string name="pref_maxRestarts_summ">The number of restarts until auto restart is turned off</string>
     <string name="pref_restartEnabled">Restart on crash</string>
     <string name="pref_restartEnabled_summ">HABPanelViewer is automatically restarted after a crash</string>
+    <string name="pref_captureScreenEnabled">Screen Capturing</string>
+    <string name="pref_captureScreenEnabled_summ">Allow screen capturing. This is needed for the CAPTURE_SCREEN command</string>
     <string name="pref_deviceAdmin">Device Admin</string>
     <string name="pref_deviceAdmin_summ">Install HABPanelViewer as device admin. This allows to lock the device when the appropriate command is received</string>
 
@@ -52,7 +54,7 @@
     <string name="pref_allowMixedContent">Allow mixed content</string>
     <string name="pref_allowMixedContent_summ">Allows http content in https pages.</string>
     <string name="pref_hardwareAccelerated">Use hardware acceleration</string>
-    <string name="pref_hardwareAccelerated_summ">HW acceleration uses more resources and might make the app unstable. Please disable in case of crashes.</string>
+    <string name="pref_hardwareAccelerated_summ">HW acceleration uses more resources and might make the app unstable. Please disable in case of crashes</string>
 
     <string name="pref_commandItem">Command Item</string>
     <string name="pref_commandItem_summ">Name of the Item that is used by openHAB to send commands to HABPanelViewer</string>

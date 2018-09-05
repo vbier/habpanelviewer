@@ -36,11 +36,6 @@ Beispiele für HABPanel URLs:
 
 Anstatt die Startseite in den Einstellungen zu Konfigurieren, können Sie sie auch interaktiv setzen. Lassen Sie die Einstellung leer, navigieren Sie im Browser zur gewünschen Seite und wählen Sie "Als Startseite setzen" im Kontextmenü.
  
-###Kiosk Modus
-Sie können den Kiosk Modus über das Kontextmenü an- und auschalten. Wenn Sie den Kiosk Modus für die Startseite verwenden wollen, aktivieren Sie ihn mit dem Kontextmenü und wählen Sie danach "Als Startseite setzen" aus dem Kontextmenü.
-
-Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Parameter `?kiosk=on` anzuhängen.
-
 ## <a name="control"/>Geräte Steuerung
 ### Kommando Item
 Überwacht das openHAB **String Item** und wartet auf Kommandos. Erlaubte Kommandos sind:
@@ -200,5 +195,10 @@ Falls Sie aus Versehen Scrollen, wenn Sie einen Knopf drücken wollen, aktiviere
 
 ### Starte App
 Starten Sie eine auf dem Gerät installierte App über das Menü.
+
+### Kiosk Modus
+Sie können den Kiosk Modus über das Kontextmenü an- und auschalten. Wenn Sie den Kiosk Modus für die Startseite verwenden wollen, aktivieren Sie ihn mit dem Kontextmenü und wählen Sie danach "Als Startseite setzen" aus dem Kontextmenü.
+
+Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Parameter `?kiosk=on` anzuhängen.
 
 [zurück nach oben](#top)

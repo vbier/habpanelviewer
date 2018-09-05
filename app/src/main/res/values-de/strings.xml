@@ -39,8 +39,10 @@
     <string name="pref_maxRestarts_summ">Die Anzahl der erlaubten Neustarts bevor der automatische Neustart deaktiviert wird</string>
     <string name="pref_restartEnabled">Neustart bei Absturz</string>
     <string name="pref_restartEnabled_summ">HABPanelViewer wird bei einem Absturz automatisch neu gestartet</string>
+    <string name="pref_captureScreenEnabled">Bildschirm Foto</string>
+    <string name="pref_captureScreenEnabled_summ">Erlaubt das Aufnahmen von Bildschirm Fotos. Wird für das CAPTURE_SCREEN Kommando benötigt</string>
     <string name="pref_deviceAdmin">Geräte Admin</string>
-    <string name="pref_deviceAdmin_summ">Installiert HABPanelViewer als Geräte Admin. Dies erlaubt es HABPanelViewer die Bildschrimsperre zu aktivieren, wenn das Kommando dafür empfangen wurde</string>
+    <string name="pref_deviceAdmin_summ">Installiert HABPanelViewer als Geräte Admin. Dies erlaubt es HABPanelViewer die Bildschirmsperre zu aktivieren, wenn das Kommando dafür empfangen wurde</string>
 
     <string name="pref_browser">Browser</string>
     <string name="pref_desktopMode">Desktop Modus</string>

@@ -36,11 +36,6 @@ This needs to be the full URL, examples:
 
 Instead of configuring the start page in the settings, it might be more comfortable to set it interactively. Simply leave it blank, then browse to the panel you want to have as start panel and select "Set as start page" from the context menu.
  
-### Kiosk Mode
-You can toggle "Kiosk Mode" by using the context menu. If you want to apply kiosk mode to your start page, simply activate kiosk mode with the context menu and then select "Set as start page" from the context menu.
-
-Another way of activating kiosk mode is to add the URL parameter `?kiosk=on` at the end of either example listed above.
-
 ## <a name="control"/>Device Control
 ### command item
 Monitors an openHAB **String Item** for supported commands. Supported commands are:
@@ -200,5 +195,11 @@ In case you always scroll accidentally when trying to press buttons, activate **
 
 ### app shortcut
 Start an app installed on your device from the main menu.
+
+### kiosk mode
+You can toggle "Kiosk Mode" by using the context menu. If you want to apply kiosk mode to your start page, simply activate kiosk mode with the context menu and then select "Set as start page" from the context menu.
+
+Another way of activating kiosk mode is to add the URL parameter `?kiosk=on` at the end of either example listed above.
+
 
 [go back to top](#top)

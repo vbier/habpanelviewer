@@ -118,6 +118,7 @@ public class MainActivity extends ScreenControllingActivity
 
     public void destroy() {
         if (mCapturer != null) {
+            mCapturer.terminate();
             mCapturer = null;
         }
 
@@ -400,11 +401,6 @@ public class MainActivity extends ScreenControllingActivity
             }
         }, mNetworkTracker);
         mCommandQueue.addHandler(new WebViewHandler(mWebView));
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            MediaProjectionManager projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-            startActivityForResult(projectionManager.createScreenCaptureIntent(), ScreenCapturer.REQUEST_MEDIA_PROJECTION);
-        }
     }
 
     @Override
@@ -608,6 +604,15 @@ public class MainActivity extends ScreenControllingActivity
         }
         if (mCommandQueue != null) {
             mCommandQueue.updateFromPreferences(prefs);
+        }
+
+        if (mCapturer == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                && prefs.getBoolean("pref_capture_screen_enabled", false)) {
+            MediaProjectionManager projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+            startActivityForResult(projectionManager.createScreenCaptureIntent(), ScreenCapturer.REQUEST_MEDIA_PROJECTION);
+        } else if (mCapturer != null && !prefs.getBoolean("pref_capture_screen_enabled", false)) {
+            mCapturer.terminate();
+            mCapturer = null;
         }
 
         mBatteryMonitor.updateFromPreferences(prefs);
