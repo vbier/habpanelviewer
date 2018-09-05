@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.PowerManager;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -19,6 +20,8 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 import static android.content.Context.POWER_SERVICE;
 
 public class ScreenMonitor implements IStateUpdateListener {
+    private static final String TAG = "HPV-ScreenMonitor";
+
     private final Context mCtx;
     private final ServerConnection mServerConnection;
 
@@ -28,6 +31,7 @@ public class ScreenMonitor implements IStateUpdateListener {
     private String mScreenOnItem;
     private String mScreenOnState;
     private boolean mScreenOn;
+    private IntentFilter mIntentFilter;
 
     public ScreenMonitor(Context context, ServerConnection serverConnection) {
         mCtx = context;
@@ -43,10 +47,9 @@ public class ScreenMonitor implements IStateUpdateListener {
             }
         };
 
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
-        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        mCtx.registerReceiver(mScreenReceiver, intentFilter);
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        mIntentFilter.addAction(Intent.ACTION_SCREEN_OFF);
     }
 
     public synchronized void terminate() {
@@ -85,6 +88,12 @@ public class ScreenMonitor implements IStateUpdateListener {
                 PowerManager powerManager = (PowerManager) mCtx.getSystemService(POWER_SERVICE);
                 mScreenOn = powerManager.isScreenOn();
                 mServerConnection.updateState(mScreenOnItem, mScreenOn ? "CLOSED" : "OPEN");
+
+                Log.d(TAG, "registering screen receiver...");
+                mCtx.registerReceiver(mScreenReceiver, mIntentFilter);
+            } else {
+                Log.d(TAG, "unregistering screen receiver...");
+                mCtx.unregisterReceiver(mScreenReceiver);
             }
         }
 

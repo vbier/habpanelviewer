@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.BatteryManager;
+import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -22,6 +23,8 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Monitors battery state and reports to openHAB.
  */
 public class BatteryMonitor implements IStateUpdateListener {
+    private static final String TAG = "HPV-BatteryMonitor";
+
     private final Context mCtx;
     private final ServerConnection mServerConnection;
 
@@ -38,6 +41,7 @@ public class BatteryMonitor implements IStateUpdateListener {
     private String mBatteryLowState;
     private String mBatteryChargingState;
     private String mBatteryLevelState;
+    private IntentFilter mIntentFilter;
 
     private BatteryPollingThread mPollBatteryLevel;
 
@@ -61,12 +65,11 @@ public class BatteryMonitor implements IStateUpdateListener {
             }
         };
 
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
-        intentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
-        intentFilter.addAction(Intent.ACTION_BATTERY_LOW);
-        intentFilter.addAction(Intent.ACTION_BATTERY_OKAY);
-        mCtx.registerReceiver(mBatteryReceiver, intentFilter);
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Intent.ACTION_POWER_CONNECTED);
+        mIntentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+        mIntentFilter.addAction(Intent.ACTION_BATTERY_LOW);
+        mIntentFilter.addAction(Intent.ACTION_BATTERY_OKAY);
     }
 
     public synchronized void terminate() {
@@ -101,6 +104,14 @@ public class BatteryMonitor implements IStateUpdateListener {
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         if (mBatteryEnabled != prefs.getBoolean("pref_battery_enabled", false)) {
             mBatteryEnabled = !mBatteryEnabled;
+
+            if (mBatteryEnabled) {
+                Log.d(TAG, "registering battery receiver...");
+                mCtx.registerReceiver(mBatteryReceiver, mIntentFilter);
+            } else {
+                Log.d(TAG, "unregistering battery receiver...");
+                mCtx.unregisterReceiver(mBatteryReceiver);
+            }
         }
 
         if (!mBatteryEnabled && mPollBatteryLevel != null) {
