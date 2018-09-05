@@ -4,6 +4,8 @@
 * SCREEN_ON: neuer optionaler Parameter, der das Gerät für die Anzahl an Sekunden wach hält
 * Neue Einstellung zum Auswählen, ob mit dem CAPTURE_SCREEN Kommando Bildschirm Fotos gemacht werden dürfen
 * CPU Verbrauch verringert
+* Abstürze behoben
+* Einstellungen umstrukutiert
 
 0.9.20
 ======
