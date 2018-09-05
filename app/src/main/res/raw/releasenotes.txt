@@ -1,6 +1,7 @@
 0.9.21pre
 =========
 * report active app usage to openHAB
+* add optional parameter to SCREEN_ON to force screen to stay on for the given number of seconds
 
 0.9.20
 ======

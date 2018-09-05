@@ -45,7 +45,8 @@ Another way of activating kiosk mode is to add the URL parameter `?kiosk=on` at 
 ### command item
 Monitors an openHAB **String Item** for supported commands. Supported commands are:
 * RESTART: makes HabPanelViewer restart
-* SCREEN_ON: turns on the devices screen
+* SCREEN_ON: turns on the devices screen.
+* SCREEN_ON *\<n\>*: turns on the devices screen and forces it to stay on for the given number of seconds.
 * KEEP_SCREEN_ON: turns on the devices screen and prevents the system from turning off the screen
 * ALLOW_SCREEN_OFF: allows the system to turn of the screen
 * SCREEN_DIM: dims the screen as much as possible and restores the brightness on touch event

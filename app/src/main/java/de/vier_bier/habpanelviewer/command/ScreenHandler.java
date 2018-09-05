@@ -15,6 +15,7 @@ import de.vier_bier.habpanelviewer.ScreenControllingActivity;
  */
 public class ScreenHandler implements ICommandHandler {
     private final Pattern SET_PATTERN = Pattern.compile("SET_BRIGHTNESS (AUTO|[01]?[0-9]?[0-9])");
+    private final Pattern SCREEN_ON_PATTERN = Pattern.compile("SCREEN_ON ([0-9]+)");
 
     private final PowerManager.WakeLock screenOnLock;
     private final Activity mActivity;
@@ -31,24 +32,25 @@ public class ScreenHandler implements ICommandHandler {
     @Override
     public boolean handleCommand(Command cmd) {
         final String cmdStr = cmd.getCommand();
-        Matcher m = SET_PATTERN.matcher(cmdStr);
+        Matcher m1 = SET_PATTERN.matcher(cmdStr);
+        Matcher m2 = SCREEN_ON_PATTERN.matcher(cmdStr);
 
         if ("SCREEN_ON".equals(cmdStr)) {
             cmd.start();
-            screenOn();
+            screenOn(0);
             screenDim(false);
         } else if ("ALLOW_SCREEN_OFF".equals(cmdStr)) {
             cmd.start();
             setKeepScreenOn(false);
         } else if ("KEEP_SCREEN_ON".equals(cmdStr)) {
             cmd.start();
-            screenOn();
+            screenOn(0);
             setKeepScreenOn(true);
         } else if ("SCREEN_DIM".equals(cmdStr)) {
             cmd.start();
             screenDim(true);
-        } else if (m.matches()) {
-            String value = m.group(1);
+        } else if (m1.matches()) {
+            String value = m1.group(1);
 
             try {
                 int brightness = -100;
@@ -61,6 +63,19 @@ public class ScreenHandler implements ICommandHandler {
             } catch (NumberFormatException e) {
                 cmd.failed("failed to parse brightness from command");
             }
+        } else if (m2.matches()) {
+            String value = m2.group(1);
+
+            try {
+                int seconds = Integer.parseInt(value);
+                cmd.start();
+                screenOn(seconds);
+            } catch (NumberFormatException e) {
+                cmd.failed("failed to parse duration from command. Using 0 seconds.");
+                screenOn(0);
+            }
+
+            screenDim(false);
         } else {
             return false;
         }
@@ -84,7 +99,7 @@ public class ScreenHandler implements ICommandHandler {
         ScreenControllingActivity.setKeepScreenOn(mActivity, on);
     }
 
-    private synchronized void screenOn() {
-        screenOnLock.acquire(500);
+    private synchronized void screenOn(int durationSeconds) {
+        screenOnLock.acquire(durationSeconds == 0 ? 500 : durationSeconds * 1000);
     }
 }

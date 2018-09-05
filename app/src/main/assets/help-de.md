@@ -46,6 +46,7 @@ Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Param
 Überwacht das openHAB **String Item** und wartet auf Kommandos. Erlaubte Kommandos sind:
 * RESTART: startet HABPanelViewer neu
 * SCREEN_ON: schaltet den Bildschirm des Geräts ein
+* SCREEN_ON *\<n\>*: schaltet den Bildschirm des Geräts ein und hindert das System für n Sekunden daran, ihn auszuschalten
 * KEEP_SCREEN_ON: schaltet den Bildschirm des Geräts ein und hindert das System daran, ihn auszuschalten
 * ALLOW_SCREEN_OFF: erlaubt dem System, den Bildschirm auszuschalten
 * SCREEN_DIM: regelt die Helligkeit so weit runter wie möglich und stellt sie zurück, wenn der Bildschirm berührt wird
