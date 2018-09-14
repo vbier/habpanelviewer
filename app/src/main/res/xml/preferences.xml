@@ -366,6 +366,7 @@
         <CheckBoxPreference
             android:key="pref_capture_screen_enabled"
             android:defaultValue="false"
+            android:enabled="@bool/is_post_api_21"
             android:summary="@string/pref_captureScreenEnabled_summ"
             android:title="@string/pref_captureScreenEnabled" />
         <PreferenceScreen
