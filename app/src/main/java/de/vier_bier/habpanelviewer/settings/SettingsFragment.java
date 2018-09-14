@@ -194,7 +194,6 @@ public class SettingsFragment extends PreferenceFragment {
             if (prefs.getBoolean("pref_device_admin", false) != isActive) {
                 SharedPreferences.Editor editor1 = prefs.edit();
                 editor1.putBoolean("pref_device_admin", isActive);
-                editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
                 editor1.apply();
 
                 CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");

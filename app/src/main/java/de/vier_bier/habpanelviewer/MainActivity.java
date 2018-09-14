@@ -18,6 +18,7 @@ import android.net.nsd.NsdManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.preference.CheckBoxPreference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -476,20 +477,30 @@ public class MainActivity extends ScreenControllingActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_PICK_APPLICATION && resultCode == RESULT_OK) {
             startActivity(data);
-        } else if (requestCode == ScreenCapturer.REQUEST_MEDIA_PROJECTION && resultCode == RESULT_OK
+        } else if (requestCode == ScreenCapturer.REQUEST_MEDIA_PROJECTION
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            MediaProjectionManager projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-            MediaProjection projection = projectionManager.getMediaProjection(RESULT_OK, data);
+            boolean allowCapture = resultCode == RESULT_OK;
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            if (prefs.getBoolean("pref_capture_screen_enabled", false) != allowCapture) {
+                SharedPreferences.Editor editor1 = prefs.edit();
+                editor1.putBoolean("pref_capture_screen_enabled", allowCapture);
+                editor1.apply();
+            }
 
-            DisplayMetrics metrics = new DisplayMetrics();
-            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            if (resultCode == RESULT_OK) {
+                MediaProjectionManager projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+                MediaProjection projection = projectionManager.getMediaProjection(RESULT_OK, data);
 
-            Point size = new Point();
-            getWindowManager().getDefaultDisplay().getSize(size);
+                DisplayMetrics metrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-            if (mCapturer == null) {
-                mCapturer = new ScreenCapturer(projection, size.x, size.y, metrics.densityDpi);
+                Point size = new Point();
+                getWindowManager().getDefaultDisplay().getSize(size);
+
+                if (mCapturer == null) {
+                    mCapturer = new ScreenCapturer(projection, size.x, size.y, metrics.densityDpi);
+                }
             }
         }
     }
