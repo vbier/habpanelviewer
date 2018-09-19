@@ -49,4 +49,8 @@
         <item>900</item>
         <item>1000</item>
     </string-array>
+    <string-array name="themes">
+        <item>dunkel</item>
+        <item>hell</item>
+    </string-array>
 </resources>
