@@ -30,6 +30,12 @@
         android:key="pref_ui"
         android:title="@string/pref_ui">
         <ListPreference
+            android:key="pref_theme"
+            android:entries="@array/themes"
+            android:entryValues="@array/themeids"
+            android:summary="@string/pref_theme_summ"
+            android:title="@string/pref_theme" />
+        <ListPreference
             android:key="pref_menu_position"
             android:defaultValue="right"
             android:entries="@array/menupositions"

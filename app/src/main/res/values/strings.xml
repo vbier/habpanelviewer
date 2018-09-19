@@ -26,6 +26,8 @@
     <string name="pref_trackBrowserConnection_summ">Reconnects to openHAB when a browser SSE connection loss is detected</string>
 
     <string name="pref_ui">User Interface</string>
+    <string name="pref_theme">Theme</string>
+    <string name="pref_theme_summ">The theme to use for the app. A restart is required for a change to take effect</string>
     <string name="pref_menuPosition">Menu Position</string>
     <string name="pref_menuPosition_summ">The side from which the main menu can be pulled out</string>
     <string name="pref_showContextMenu">Show Context Menu</string>
@@ -241,4 +243,6 @@
     <string name="errorSettingTexture">Error setting preview texture</string>
     <string name="couldNotObtainCameraService">Could not obtain Android Camera Service</string>
     <string name="noValidIntInRange">Given value is no valid number in range %d..%d</string>
+    <string name="RestartRequired">Restart required</string>
+    <string name="WantToRestart">Do you want to restart the app so the new theme is used?</string>
 </resources>

@@ -12,14 +12,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v4.content.IntentCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -141,6 +146,29 @@ public class SettingsFragment extends PreferenceFragment {
 
         // add validation to the device admin
         CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
+        adminPreference.setOnPreferenceChangeListener(new AdminValidatingListener());
+
+        ListPreference themePreference = (ListPreference) findPreference("pref_theme");
+        themePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                AlertDialog alert = new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.RestartRequired)
+                        .setMessage(R.string.WantToRestart)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                            getActivity().finish();
+                            ProcessPhoenix.triggerRebirth(getActivity().getApplication());
+                        })
+                        .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {}).create();
+
+                if (getActivity() != null && !getActivity().isFinishing()) {
+                    alert.show();
+                }
+
+                return true;
+            }
+        });
         adminPreference.setOnPreferenceChangeListener(new AdminValidatingListener());
 
         // add validation to the openHAB url

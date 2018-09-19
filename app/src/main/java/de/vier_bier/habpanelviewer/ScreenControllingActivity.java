@@ -57,6 +57,15 @@ public abstract class ScreenControllingActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String theme = prefs.getString("pref_theme", "dark");
+
+        if ("dark".equals(theme)) {
+            setTheme(R.style.Theme_AppCompat);
+        } else {
+            setTheme(R.style.Theme_AppCompat_Light);
+        }
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
