@@ -54,8 +54,12 @@ public class ScreenMonitor implements IStateUpdateListener {
 
     public synchronized void terminate() {
         EventBus.getDefault().unregister(this);
-        mCtx.unregisterReceiver(mScreenReceiver);
-        mScreenReceiver = null;
+        try {
+            mCtx.unregisterReceiver(mScreenReceiver);
+            Log.d(TAG, "unregistering screen receiver...");
+        } catch (IllegalArgumentException e) {
+            // not registered
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

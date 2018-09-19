@@ -74,7 +74,12 @@ public class BatteryMonitor implements IStateUpdateListener {
 
     public synchronized void terminate() {
         EventBus.getDefault().unregister(this);
-        mCtx.unregisterReceiver(mBatteryReceiver);
+        try {
+            mCtx.unregisterReceiver(mBatteryReceiver);
+            Log.d(TAG, "unregistering battery receiver...");
+        } catch (IllegalArgumentException e) {
+            // not registered
+        }
 
         if (mPollBatteryLevel != null) {
             mPollBatteryLevel.stopPolling();
