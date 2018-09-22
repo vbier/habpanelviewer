@@ -1,5 +1,8 @@
+0.9.22pre
+======
+
 0.9.21
-=========
+======
 * report active app usage to openHAB
 * add optional parameter to SCREEN_ON to force screen to stay on for the given number of seconds
 * add setting allowing to enable CAPTURE_SCREEN functionality and disable it by default

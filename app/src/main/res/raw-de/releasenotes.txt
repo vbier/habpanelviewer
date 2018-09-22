@@ -1,3 +1,6 @@
+0.9.22pre
+======
+
 0.9.21
 ======
 * aktive App Benutzung kann nun an openHAB gemeldet werden
