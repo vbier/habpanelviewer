@@ -18,7 +18,6 @@ import android.net.nsd.NsdManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.preference.CheckBoxPreference;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -31,7 +30,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -266,10 +264,6 @@ public class MainActivity extends ScreenControllingActivity
             }
         }
 
-        if (mDiscovery == null) {
-            mDiscovery = new ServerDiscovery((NsdManager) getSystemService(Context.NSD_SERVICE));
-        }
-
         if (prefs.getBoolean("pref_first_start", true)) {
             SharedPreferences.Editor editor1 = prefs.edit();
             editor1.putBoolean("pref_first_start", false);
@@ -281,6 +275,10 @@ public class MainActivity extends ScreenControllingActivity
                     startText);
 
             if (prefs.getString("pref_server_url", "").isEmpty()) {
+                if (mDiscovery == null) {
+                    mDiscovery = new ServerDiscovery((NsdManager) getSystemService(Context.NSD_SERVICE));
+                }
+
                 mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
                     @Override
                     public void found(String serverUrl) {
@@ -402,16 +400,6 @@ public class MainActivity extends ScreenControllingActivity
             }
         }, mNetworkTracker);
         mCommandQueue.addHandler(new WebViewHandler(mWebView));
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        //TODO.vb make item and timeout configurable and do this for all views.
-        boolean value = super.dispatchTouchEvent(ev);
-
-        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
-        }
-        return value;
     }
 
     @Override
