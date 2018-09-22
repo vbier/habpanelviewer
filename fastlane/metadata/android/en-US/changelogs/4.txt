@@ -1,6 +1,6 @@
 * report active app usage to openHAB
 * add optional parameter to SCREEN_ON to force screen to stay on for the given number of seconds
-* add setting allowing to enable CAPTURE_SCREEN functionality and disable it be default
+* add setting allowing to enable CAPTURE_SCREEN functionality and disable it by default
 * add setting allowing to choose dark/light theme
 * improve cpu usage
 * fixed crashes
