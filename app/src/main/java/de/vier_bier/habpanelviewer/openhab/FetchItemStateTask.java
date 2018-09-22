@@ -31,7 +31,7 @@ class FetchItemStateTask extends AsyncTask<String, Void, Void> {
             StringBuilder response = new StringBuilder();
 
             try {
-                HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(serverUrl + "/rest/items/" + itemName + "/state");
+                HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(serverUrl + "/rest/items/" + itemName + "/state");
                 try {
                     BufferedInputStream in = new BufferedInputStream(urlConnection.getInputStream());
 

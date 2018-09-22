@@ -72,7 +72,6 @@ import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionVisualizer;
 import de.vier_bier.habpanelviewer.settings.SetPreferenceActivity;
-import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
 
@@ -196,6 +195,8 @@ public class MainActivity extends ScreenControllingActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        long start = System.currentTimeMillis();
+
         super.onCreate(savedInstanceState);
 
         EventBus.getDefault().register(this);
@@ -216,13 +217,6 @@ public class MainActivity extends ScreenControllingActivity
         if (restartingExceptionHandler == null) {
             restartingExceptionHandler = new AppRestartingExceptionHandler(this,
                     Thread.getDefaultUncaughtExceptionHandler(), restartCount);
-        }
-
-        try {
-            ConnectionUtil.initialize(this);
-        } catch (Exception e) {
-            Log.e(TAG, "failed to initialize ConnectionUtil", e);
-            Toast.makeText(MainActivity.this, R.string.sslFailed, Toast.LENGTH_LONG).show();
         }
 
         if (mNetworkTracker == null) {
@@ -400,6 +394,8 @@ public class MainActivity extends ScreenControllingActivity
             }
         }, mNetworkTracker);
         mCommandQueue.addHandler(new WebViewHandler(mWebView));
+
+        Log.d(TAG, "onCreate: " + (System.currentTimeMillis() - start));
     }
 
     @Override

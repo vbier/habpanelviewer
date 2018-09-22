@@ -33,7 +33,7 @@ class ItemsAsyncTaskLoader extends AsyncTaskLoader<List<String>> {
         super(context);
 
         try {
-            ConnectionUtil.initialize(context);
+            ConnectionUtil.getInstance().setContext(context);
         } catch (Exception e) {
             Log.e(TAG, "failed to initialize ConnectionUtil", e);
         }
@@ -64,7 +64,7 @@ class ItemsAsyncTaskLoader extends AsyncTaskLoader<List<String>> {
         }
 
         try {
-            HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(mServerUrl + "/rest/items/");
+            HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(mServerUrl + "/rest/items/");
             StringBuilder response = new StringBuilder();
             try {
                 BufferedInputStream in = new BufferedInputStream(urlConnection.getInputStream());

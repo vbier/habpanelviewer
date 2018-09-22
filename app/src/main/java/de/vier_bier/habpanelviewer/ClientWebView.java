@@ -130,7 +130,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                 Log.d(TAG, "onReceivedSslError: " + error.getUrl());
 
                 SslCertificate cert = error.getCertificate();
-                if (ConnectionUtil.isTrusted(error.getCertificate())) {
+                if (ConnectionUtil.getInstance().isTrusted(error.getCertificate())) {
                     Log.d(TAG, "certificate is trusted: " + error.getUrl());
 
                     handler.proceed();
@@ -183,7 +183,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
                             try {
-                                ConnectionUtil.addCertificate(error.getCertificate());
+                                ConnectionUtil.getInstance().addCertificate(error.getCertificate());
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

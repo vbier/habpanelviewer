@@ -36,16 +36,25 @@ import de.vier_bier.habpanelviewer.R;
  * SSL related utility methods.
  */
 public class ConnectionUtil {
-    private static File localTrustStoreFile;
-    private static final String TRUSTSTORE_PASSWORD = "secret";
+    private static ConnectionUtil mInstance;
 
-    private static LocalTrustManager mTrustManager;
-    private static SSLContext mSslContext;
+    private final String TRUSTSTORE_PASSWORD = "secret";
+    private final ArrayList<CertChangedListener> mListeners = new ArrayList<>();
 
-    private static final ArrayList<CertChangedListener> mListeners = new ArrayList<>();
-    private static AtomicBoolean mInitialized = new AtomicBoolean();
+    private File localTrustStoreFile;
+    private LocalTrustManager mTrustManager;
+    private SSLContext mSslContext;
+    private AtomicBoolean mInitialized = new AtomicBoolean();
 
-    public static synchronized void initialize(Context ctx) throws GeneralSecurityException, IOException {
+    public static synchronized ConnectionUtil getInstance() {
+        if (mInstance == null) {
+            mInstance = new ConnectionUtil();
+        }
+
+        return mInstance;
+    }
+
+    public synchronized void setContext(Context ctx) throws GeneralSecurityException, IOException {
         if (!mInitialized.getAndSet(true)) {
             localTrustStoreFile = new File(ctx.getFilesDir(), "localTrustStore.bks");
             if (!localTrustStoreFile.exists()) {
@@ -61,7 +70,10 @@ public class ConnectionUtil {
         }
     }
 
-    public static synchronized void addCertificate(SslCertificate certificate) throws GeneralSecurityException, IOException {
+    public synchronized void addCertificate(SslCertificate certificate) throws GeneralSecurityException, IOException {
+        if (!mInitialized.get()) {
+            throw new GeneralSecurityException("Certificate Store not yet initialized!");
+        }
         KeyStore localTrustStore = loadTrustStore();
         X509Certificate x509Certificate = getX509CertFromSslCertHack(certificate);
 
@@ -82,7 +94,7 @@ public class ConnectionUtil {
         }
     }
 
-    public static void addCertListener(CertChangedListener l) {
+    public void addCertListener(CertChangedListener l) {
         synchronized (mListeners) {
             if (!mListeners.contains(l)) {
                 mListeners.add(l);
@@ -90,13 +102,17 @@ public class ConnectionUtil {
         }
     }
 
-    public static void removeCertListener(CertChangedListener l) {
+    public void removeCertListener(CertChangedListener l) {
         synchronized (mListeners) {
             mListeners.remove(l);
         }
     }
 
-    public static synchronized HttpURLConnection createUrlConnection(final String urlStr) throws IOException, GeneralSecurityException {
+    public synchronized HttpURLConnection createUrlConnection(final String urlStr) throws IOException, GeneralSecurityException {
+        if (!mInitialized.get()) {
+            throw new GeneralSecurityException("Certificate Store not yet initialized!");
+        }
+
         final URL url = new URL(urlStr);
         SSLContext sslCtx = createSslContext();
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -111,7 +127,7 @@ public class ConnectionUtil {
         return urlConnection;
     }
 
-    public static synchronized boolean isTrusted(SslCertificate cert) {
+    public synchronized boolean isTrusted(SslCertificate cert) {
         if (mTrustManager == null) {
             KeyStore trustStore = loadTrustStore();
             mTrustManager = new LocalTrustManager(trustStore);
@@ -126,7 +142,7 @@ public class ConnectionUtil {
         return true;
     }
 
-    public static synchronized SSLContext createSslContext() throws GeneralSecurityException {
+    public synchronized SSLContext createSslContext() throws GeneralSecurityException {
         if (mSslContext != null) {
             return mSslContext;
         }
@@ -144,7 +160,7 @@ public class ConnectionUtil {
         return mSslContext;
     }
 
-    private static KeyStore loadTrustStore() {
+    private KeyStore loadTrustStore() {
         try {
             KeyStore localTrustStore = KeyStore.getInstance("BKS");
             try (InputStream in = new FileInputStream(localTrustStoreFile)) {
@@ -157,7 +173,7 @@ public class ConnectionUtil {
         }
     }
 
-    private static void copy(InputStream in, File dst) throws IOException {
+    private void copy(InputStream in, File dst) throws IOException {
         try (OutputStream out = new FileOutputStream(dst)) {
             // Transfer bytes from in to out
             byte[] buf = new byte[1024];
@@ -168,7 +184,7 @@ public class ConnectionUtil {
         }
     }
 
-    private static X509Certificate getX509CertFromSslCertHack(SslCertificate sslCert) {
+    private X509Certificate getX509CertFromSslCertHack(SslCertificate sslCert) {
         X509Certificate x509Certificate;
 
         Bundle bundle = SslCertificate.saveState(sslCert);
@@ -189,13 +205,13 @@ public class ConnectionUtil {
         return x509Certificate;
     }
 
-    private static void saveTrustStore(KeyStore localTrustStore)
+    private void saveTrustStore(KeyStore localTrustStore)
             throws IOException, GeneralSecurityException {
         FileOutputStream out = new FileOutputStream(localTrustStoreFile);
         localTrustStore.store(out, TRUSTSTORE_PASSWORD.toCharArray());
     }
 
-    private static String hashName(X500Principal principal) {
+    private String hashName(X500Principal principal) {
         try {
             byte[] digest = MessageDigest.getInstance("MD5").digest(
                     principal.getEncoded());
@@ -218,7 +234,7 @@ public class ConnectionUtil {
         }
     }
 
-    private static int leInt(byte[] bytes) {
+    private int leInt(byte[] bytes) {
         int offset = 0;
         return ((bytes[offset++] & 0xff))
                 | ((bytes[offset++] & 0xff) << 8)

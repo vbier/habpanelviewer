@@ -259,7 +259,7 @@ public class SettingsFragment extends PreferenceFragment {
             String dialogText = null;
             try {
                 String serverURL = urls[0] + "/rest/services";
-                HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(serverURL);
+                HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(serverURL);
                 urlConnection.connect();
 
                 if (urlConnection.getResponseCode() != 200) {

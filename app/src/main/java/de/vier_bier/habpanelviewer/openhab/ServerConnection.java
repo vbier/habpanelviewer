@@ -71,7 +71,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
             }
         };
 
-        ConnectionUtil.addCertListener(mCertListener);
+        ConnectionUtil.getInstance().addCertListener(mCertListener);
 
         IntentFilter f = new IntentFilter();
         f.addAction(ACTION_SET_WITH_TIMEOUT);
@@ -90,7 +90,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
 
     @Override
     protected void finalize() throws Throwable {
-        ConnectionUtil.removeCertListener(mCertListener);
+        ConnectionUtil.getInstance().removeCertListener(mCertListener);
 
         super.finalize();
     }

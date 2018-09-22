@@ -21,7 +21,7 @@ public class AsyncConnectTask extends AsyncTask<EventSource, Void, Void> {
     protected Void doInBackground(EventSource... eventSources) {
         for (EventSource s : eventSources) {
             try {
-                s.connect(fUri, ConnectionUtil.createSslContext());
+                s.connect(fUri, ConnectionUtil.getInstance().createSslContext());
                 Log.d(TAG, "EventSource connected");
             } catch (Exception e) {
                 Log.e(TAG, "failed to connect event source", e);

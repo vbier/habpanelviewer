@@ -26,7 +26,7 @@ class SetItemStateTask extends AsyncTask<ItemState, Void, Void> {
     protected final Void doInBackground(ItemState... itemStates) {
         for (ItemState state : itemStates) {
             try {
-                HttpURLConnection urlConnection = ConnectionUtil.createUrlConnection(serverUrl + "/rest/items/" + state.mItemName + "/state");
+                HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(serverUrl + "/rest/items/" + state.mItemName + "/state");
                 try {
                     urlConnection.setRequestMethod("PUT");
                     urlConnection.setDoOutput(true);
