@@ -187,17 +187,17 @@
     <string name="discoverServer">Discover Server</string>
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>
-    <string name="temperature">Temperature: %.1f°C [%s=%s]</string>
+    <string name="temperature" formatted="false">Temperature: %.1f°C [%s=%s]</string>
     <string name="deviceMissingSensor">Device does not have a sensor of type</string>
-    <string name="maxRangeResolution">Sensor max. range is %.1f, resolution is %.1f</string>
-    <string name="objectClose">Object close: %b [%s=%s]</string>
-    <string name="pressure">Pressure: %d hPa or mbar [%s=%s]</string>
-    <string name="brightness">Brightness: %d lx [%s=%s]</string>
-    <string name="battLow">Battery low: %b [%s=%s]</string>
-    <string name="battCharging">Battery charging: %b [%s=%s]</string>
-    <string name="battLevel">Battery level: %d%% [%s=%s]</string>
-    <string name="volumeIsOf">Volume: %d of %d [%s=%s]</string>
-    <string name="screenOn">Screen on: %b [%s=%s]</string>
+    <string name="maxRangeResolution" formatted="false">Sensor max. range is %.1f, resolution is %.1f</string>
+    <string name="objectClose" formatted="false">Object close: %b [%s=%s]</string>
+    <string name="pressure" formatted="false">Pressure: %d hPa or mbar [%s=%s]</string>
+    <string name="brightness" formatted="false">Brightness: %d lx [%s=%s]</string>
+    <string name="battLow" formatted="false">Battery low: %b [%s=%s]</string>
+    <string name="battCharging" formatted="false">Battery charging: %b [%s=%s]</string>
+    <string name="battLevel" formatted="false">Battery level: %d%% [%s=%s]</string>
+    <string name="volumeIsOf" formatted="false">Volume: %d of %d [%s=%s]</string>
+    <string name="screenOn" formatted="false">Screen on: %b [%s=%s]</string>
     <string name="tooDark">too dark</string>
     <string name="motion">Motion</string>
     <string name="frontCameraMissing">Could not find front facing camera!</string>
@@ -211,9 +211,9 @@
     <string name="frontFacing">front-facing</string>
     <string name="openCameraFailed">Failed to open camera! Is the camera in use by another app?</string>
     <string name="cameras">Cameras</string>
-    <string name="resolution">resolution %dx%d</string>
-    <string name="boxesLeniency">%d boxes, leniency is %d</string>
-    <string name="framesProcessed">%d frames, motion detected %d times</string>
+    <string name="resolution" formatted="false">resolution %dx%d</string>
+    <string name="boxesLeniency" formatted="false">%d boxes, leniency is %d</string>
+    <string name="framesProcessed" formatted="false">%d frames, motion detected %d times</string>
     <string name="timeBetweenDetections">time between detections %d ms</string>
     <string name="couldNotFindBackFlash">Could not find back facing camera with flash!</string>
     <string name="left">left</string>
@@ -222,14 +222,14 @@
     <string name="deviceAdminDescription">Is needed for immediate screen locking</string>
     <string name="device_not_muted">Device is not muted!</string>
     <string name="command_log_title">Received commands:</string>
-    <string name="host_realm">Host: %s\nRealm: %s</string>
+    <string name="host_realm" formatted="false">Host: %s\nRealm: %s</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login_required">Login required</string>
     <string name="cancel">Cancel</string>
     <string name="okay">OK</string>
     <string name="connectionStatistics">Connection Statistics</string>
-    <string name="connectionDetails">running for %s\nonline %s (%d times)\nlongest %s\naverage %s\noffline %s (%d times)\nlongest %s\naverage %s</string>
+    <string name="connectionDetails" formatted="false">running for %s\nonline %s (%d times)\nlongest %s\naverage %s\noffline %s (%d times)\nlongest %s\naverage %s</string>
     <string name="days">%d days,</string>
     <string name="hours">%d hours,</string>
     <string name="minutes">%d minutes,</string>
@@ -242,7 +242,7 @@
     <string name="surfaceObtained">surface obtained</string>
     <string name="errorSettingTexture">Error setting preview texture</string>
     <string name="couldNotObtainCameraService">Could not obtain Android Camera Service</string>
-    <string name="noValidIntInRange">Given value is no valid number in range %d..%d</string>
+    <string name="noValidIntInRange" formatted="false">Given value is no valid number in range %d..%d</string>
     <string name="RestartRequired">Restart required</string>
     <string name="WantToRestart">Do you want to restart the app so the new theme is used?</string>
 </resources>

@@ -185,17 +185,17 @@
     <string name="discoverServer">Server Suchen</string>
     <string name="enabled">aktiviert</string>
     <string name="disabled">deaktiviert</string>
-    <string name="temperature">Temperatur: %.1f°C [%s=%s]</string>
+    <string name="temperature" formatted="false">Temperatur: %.1f°C [%s=%s]</string>
     <string name="deviceMissingSensor">Das Gerät hat keinen Sensor des Typs</string>
-    <string name="maxRangeResolution">Max. Reichweite ist %.1f, Ausflösung ist %.1f</string>
-    <string name="objectClose">Objekt nah: %b [%s=%s]</string>
-    <string name="pressure">Druck: %d hPa oder mbar [%s=%s]</string>
-    <string name="brightness">Helligkeit: %d lx [%s=%s]</string>
-    <string name="battLow">Batterie leer: %b [%s=%s]</string>
-    <string name="battCharging">Batterie wird geladen: %b [%s=%s]</string>
-    <string name="battLevel">Batterie Ladung: %d%% [%s=%s]</string>
-    <string name="volumeIsOf">Lautstärke: %d von %d [%s=%s]</string>
-    <string name="screenOn">Bildschirm an: %b [%s=%s]</string>
+    <string name="maxRangeResolution" formatted="false">Max. Reichweite ist %.1f, Ausflösung ist %.1f</string>
+    <string name="objectClose" formatted="false">Objekt nah: %b [%s=%s]</string>
+    <string name="pressure" formatted="false">Druck: %d hPa oder mbar [%s=%s]</string>
+    <string name="brightness" formatted="false">Helligkeit: %d lx [%s=%s]</string>
+    <string name="battLow" formatted="false">Batterie leer: %b [%s=%s]</string>
+    <string name="battCharging" formatted="false">Batterie wird geladen: %b [%s=%s]</string>
+    <string name="battLevel" formatted="false">Batterie Ladung: %d%% [%s=%s]</string>
+    <string name="volumeIsOf" formatted="false">Lautstärke: %d von %d [%s=%s]</string>
+    <string name="screenOn" formatted="false">Bildschirm an: %b [%s=%s]</string>
     <string name="tooDark">zu dunkel</string>
     <string name="motion">Bewegung</string>
     <string name="frontCameraMissing">Konnte nach vorne gerichtete Kamera nicht finden!</string>
@@ -209,9 +209,9 @@
     <string name="frontFacing">vorne</string>
     <string name="openCameraFailed">Konnte Kamera nicht öffnen! Wird sie von einer anderen App benutzt?</string>
     <string name="cameras">Kameras</string>
-    <string name="resolution">Auflösung %dx%d</string>
-    <string name="boxesLeniency">%d Rechtecke, Erkennungs Schwelle %d</string>
-    <string name="framesProcessed">%d Bilder, %d mal Bewegung erkannt</string>
+    <string name="resolution" formatted="false">Auflösung %dx%d</string>
+    <string name="boxesLeniency" formatted="false">%d Rechtecke, Erkennungs Schwelle %d</string>
+    <string name="framesProcessed" formatted="false">%d Bilder, %d mal Bewegung erkannt</string>
     <string name="timeBetweenDetections">Zeit zwischen Erkennungen %d ms</string>
     <string name="couldNotFindBackFlash">Konnte keine nach hinten gerichtete Kamera mit Blitz finden!</string>
     <string name="left">links</string>
@@ -220,14 +220,14 @@
     <string name="deviceAdminDescription">Wird benötigt, damit HABPanelViewer den Bildschrim ausschalten kann</string>
     <string name="device_not_muted">Das Gerät ist nicht lautlos!</string>
     <string name="command_log_title">Empfangene Kommandos:</string>
-    <string name="host_realm">Rechner: %s\nBereich: %s</string>
+    <string name="host_realm" formatted="false">Rechner: %s\nBereich: %s</string>
     <string name="username">Benutzer</string>
     <string name="password">Passwort</string>
     <string name="login_required">Anmeldung erforderlich</string>
     <string name="cancel">Abbrechen</string>
     <string name="okay">OK</string>
     <string name="connectionStatistics">Verbindungsstatistik</string>
-    <string name="connectionDetails">läuft seit %s\nVerbunden %s (%d mal)\nlängste %s\nDurchschnitt %s\nGetrennt %s (%d mal)\nlängste %s\nDurchschnitt %s</string>
+    <string name="connectionDetails" formatted="false">läuft seit %s\nVerbunden %s (%d mal)\nlängste %s\nDurchschnitt %s\nGetrennt %s (%d mal)\nlängste %s\nDurchschnitt %s</string>
     <string name="days">%d Tage,</string>
     <string name="hours">%d Stunden,</string>
     <string name="minutes">%d Minuten,</string>
@@ -240,7 +240,7 @@
     <string name="surfaceObtained">Oberfläche erhalten</string>
     <string name="errorSettingTexture">Fehler beim Setzen der Vorschau Oberfläche</string>
     <string name="couldNotObtainCameraService">Android Camera Service nicht gefunden</string>
-    <string name="noValidIntInRange">Wert is keine Zahl im Bereich %d..%d</string>
+    <string name="noValidIntInRange" formatted="false">Wert is keine Zahl im Bereich %d..%d</string>
     <string name="RestartRequired">Neustart erforderlich</string>
     <string name="WantToRestart">Soll die App neu gestartet werden, damit das Theme angewendet wird?</string>
 
