@@ -139,22 +139,17 @@ public class MotionDetector extends Thread implements IMotionDetector, ICamera.I
             if (!mEnabled) {
                 mMotionReporter.updateFromPreferences(prefs);
 
-                if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                    mBoxes = newBoxes;
-                    mLeniency = newLeniency;
-                    mDetectionCount = 0;
-                    mFrameCount = 0;
+                mBoxes = newBoxes;
+                mLeniency = newLeniency;
+                mDetectionCount = 0;
+                mFrameCount = 0;
 
-                    try {
-                        mCamera.addLumaListener(this);
-                    } catch (CameraException e) {
-                        Log.e(TAG, "Could not enable MotionDetector", e);
-                    }
-                    mEnabled = true;
-                } else {
-                    ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA},
-                            MY_PERMISSIONS_MOTION_REQUEST_CAMERA);
+                try {
+                    mCamera.addLumaListener(this);
+                } catch (CameraException e) {
+                    Log.e(TAG, "Could not enable MotionDetector", e);
                 }
+                mEnabled = true;
             }
         } else if (mEnabled) {
             stopDetection();

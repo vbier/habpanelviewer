@@ -1,14 +1,18 @@
 package de.vier_bier.habpanelviewer.reporting.motion;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.TextureView;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -25,6 +29,8 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Generic camera implementation.
  */
 public class Camera {
+    public final static int MY_REQUEST_CAMERA = 42;
+
     private static final String TAG = "HPV-Camera";
 
     private Activity mContext;
@@ -54,7 +60,6 @@ public class Camera {
         }
     }
 
-
     public void setDeviceRotation(int rotation) {
         if (rotation != mDeviceOrientation) {
             mImplementation.setDeviceOrientation(rotation);
@@ -62,65 +67,69 @@ public class Camera {
         }
     }
 
-    public synchronized void updateFromPreferences(SharedPreferences prefs) throws CameraException {
-        CameraVersion v = getCameraVersion(prefs);
+    public synchronized void updateFromPreferences(SharedPreferences prefs) {
+        try {
+            CameraVersion v = getCameraVersion(prefs);
 
-        // if camera api changed, close old camera, create new one
-        if (v != mVersion) {
-            if (isPreviewRunning()) {
+            // if camera api changed, close old camera, create new one
+            if (v != mVersion) {
+                if (isPreviewRunning()) {
+                    mImplementation.stopPreview();
+                }
+                if (isCameraLocked()) {
+                    mImplementation.unlockCamera();
+                }
+
+                mImplementation = createCamera(v);
+
+                for (ICamera.ILumaListener l : mListeners) {
+                    mImplementation.addLumaListener(l);
+                }
+            }
+
+            mShowPreview = prefs.getBoolean("pref_motion_detection_preview", false);
+            if (mShowPreview) {
+                int deviceOrientation = mContext.getWindowManager().getDefaultDisplay().getRotation() * 90;
+
+                if (deviceOrientation != mDeviceOrientation) {
+                    mImplementation.setDeviceOrientation(deviceOrientation);
+                    mDeviceOrientation = deviceOrientation;
+                }
+            }
+
+            // ensure camera preview state is correct
+            // - preview state ON or lumalisteners -> preview running
+            // - preview state OFF and no lumalisteners -> preview not running
+            boolean shouldRun = mShowPreview || !mListeners.isEmpty();
+            if (shouldRun && !isPreviewRunning()) {
+                if (!isCameraLocked()) {
+                    lockCamera();
+                }
+
+                registerSurfaceListener(new ICamera.LoggingPreviewListener());
+            } else if (isPreviewRunning() && !shouldRun) {
                 mImplementation.stopPreview();
-            }
-            if (isCameraLocked()) {
-                mImplementation.unlockCamera();
+
+                if (isCameraLocked()) {
+                    mImplementation.unlockCamera();
+                }
             }
 
-            mImplementation = createCamera(v);
-
-            for (ICamera.ILumaListener l : mListeners) {
-                mImplementation.addLumaListener(l);
+            // make sure preview view has the correct size
+            if (mShowPreview) {
+                mPreviewView.getLayoutParams().height = 480;
+                mPreviewView.getLayoutParams().width = 640;
+            } else {
+                // if we have no preview, we still need a visible
+                // TextureView in order to have a working motion detection.
+                // Resize it to 1x1pxs so it does not get in the way.
+                mPreviewView.getLayoutParams().height = 1;
+                mPreviewView.getLayoutParams().width = 1;
             }
+            mPreviewView.setLayoutParams(mPreviewView.getLayoutParams());
+        } catch (CameraException e) {
+            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
-        mShowPreview = prefs.getBoolean("pref_motion_detection_preview", false);
-        if (mShowPreview) {
-            int deviceOrientation = mContext.getWindowManager().getDefaultDisplay().getRotation() * 90;
-
-            if (deviceOrientation != mDeviceOrientation) {
-                mImplementation.setDeviceOrientation(deviceOrientation);
-                mDeviceOrientation = deviceOrientation;
-            }
-        }
-
-        // ensure camera preview state is correct
-        // - preview state ON or lumalisteners -> preview running
-        // - preview state OFF and no lumalisteners -> preview not running
-        boolean shouldRun = mShowPreview || !mListeners.isEmpty();
-        if (shouldRun && !isPreviewRunning()) {
-            if (!isCameraLocked()) {
-                lockCamera();
-            }
-
-            registerSurfaceListener(new ICamera.LoggingPreviewListener());
-        } else if (isPreviewRunning() && !shouldRun) {
-            mImplementation.stopPreview();
-
-            if (isCameraLocked()) {
-                mImplementation.unlockCamera();
-            }
-        }
-
-        // make sure preview view has the correct size
-        if (mShowPreview) {
-            mPreviewView.getLayoutParams().height = 480;
-            mPreviewView.getLayoutParams().width = 640;
-        } else {
-            // if we have no preview, we still need a visible
-            // TextureView in order to have a working motion detection.
-            // Resize it to 1x1pxs so it does not get in the way.
-            mPreviewView.getLayoutParams().height = 1;
-            mPreviewView.getLayoutParams().width = 1;
-        }
-        mPreviewView.setLayoutParams(mPreviewView.getLayoutParams());
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -345,6 +354,10 @@ public class Camera {
 
     private ICamera createCamera(CameraVersion version) {
         try {
+            if (version == CameraVersion.PERMISSION_MISSING) {
+                return new CameraImplNone("Required permission missing: " + Manifest.permission.CAMERA);
+            }
+
             if (version == CameraVersion.V2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mVersion = CameraVersion.V2;
                 return new CameraImplV2(mContext, mPreviewView, mDeviceOrientation);
@@ -361,6 +374,13 @@ public class Camera {
     private CameraVersion getCameraVersion(SharedPreferences prefs) {
         boolean newApi = prefs.getBoolean("pref_motion_detection_new_api", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
 
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA},
+                    Camera.MY_REQUEST_CAMERA);
+
+            return CameraVersion.PERMISSION_MISSING;
+        }
+
         if (newApi && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return CameraVersion.V2;
         }
@@ -368,11 +388,11 @@ public class Camera {
         return CameraVersion.V1;
     }
 
-    public boolean isValid() {
+    public boolean canBeUsed() {
         return mVersion != CameraVersion.NONE && mImplementation != null;
     }
 
     enum CameraVersion {
-        NONE, V1, V2
+        PERMISSION_MISSING, NONE, V1, V2
     }
 }

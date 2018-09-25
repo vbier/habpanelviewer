@@ -102,6 +102,9 @@ public class CameraImplV2 extends AbstractCameraImpl {
         if (mCameraId != null && mCamera == null) {
             try {
                 if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.CAMERA},
+                            Camera.MY_REQUEST_CAMERA);
+
                     throw new CameraException("Required permission missing: " + Manifest.permission.CAMERA);
                 }
 

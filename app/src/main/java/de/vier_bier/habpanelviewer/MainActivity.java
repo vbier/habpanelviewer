@@ -67,7 +67,6 @@ import de.vier_bier.habpanelviewer.reporting.SensorMissingException;
 import de.vier_bier.habpanelviewer.reporting.TemperatureMonitor;
 import de.vier_bier.habpanelviewer.reporting.VolumeMonitor;
 import de.vier_bier.habpanelviewer.reporting.motion.Camera;
-import de.vier_bier.habpanelviewer.reporting.motion.CameraException;
 import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionVisualizer;
@@ -501,7 +500,7 @@ public class MainActivity extends ScreenControllingActivity
         if (mFlashService == null) {
             status.set(getString(R.string.flashControl), getString(R.string.unavailable));
         }
-        if (mMotionDetector == null || mCam == null || !mCam.isValid()) {
+        if (mMotionDetector == null || mCam == null || !mCam.canBeUsed()) {
             status.set(getString(R.string.pref_motion), getString(R.string.unavailable));
         }
         int restartCount = restartingExceptionHandler.getRestartCount();
@@ -547,17 +546,19 @@ public class MainActivity extends ScreenControllingActivity
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case MotionDetector.MY_PERMISSIONS_MOTION_REQUEST_CAMERA: {
+            case Camera.MY_REQUEST_CAMERA: {
                 // If request is cancelled, the result arrays are empty.
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (mMotionDetector != null) {
-                        mMotionDetector.updateFromPreferences(prefs);
+                    if (mCam != null) {
+                        mCam.updateFromPreferences(prefs);
+                        updateMotionPreferences();
                     }
                 } else {
                     SharedPreferences.Editor editor1 = prefs.edit();
                     editor1.putBoolean("pref_motion_detection_enabled", false);
+                    editor1.putBoolean("pref_motion_detection_preview", false);
                     editor1.apply();
                 }
             }
@@ -629,11 +630,7 @@ public class MainActivity extends ScreenControllingActivity
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
         if (mCam != null) {
-            try {
-                mCam.updateFromPreferences(prefs);
-            } catch (CameraException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-            }
+            mCam.updateFromPreferences(prefs);
         }
 
         if (mMotionDetector != null) {
@@ -753,7 +750,7 @@ public class MainActivity extends ScreenControllingActivity
         Intent intent = new Intent(MainActivity.this, SetPreferenceActivity.class);
         intent.putExtra("camera_enabled", mCam != null);
         intent.putExtra("flash_enabled", mFlashService != null);
-        intent.putExtra("motion_enabled", mMotionDetector != null && mCam != null && mCam.isValid());
+        intent.putExtra("motion_enabled", mMotionDetector != null && mCam != null && mCam.canBeUsed());
         intent.putExtra("proximity_enabled", mProximityMonitor != null);
         intent.putExtra("pressure_enabled", mPressureMonitor != null);
         intent.putExtra("brightness_enabled", mBrightnessMonitor != null);
