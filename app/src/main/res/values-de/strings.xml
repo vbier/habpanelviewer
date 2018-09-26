@@ -179,39 +179,31 @@
     <string name="habPanelNotAvailable">HabPanel nicht verfügbar</string>
     <string name="couldNotConnect">Verbindung fehlgeschlagen zum Server mit der URL</string>
     <string name="acceptCertWhenOurOfSettings">Sie können eine Ausnahme für das Zertifikat erstellen, wenn Sie die Einstellungen verlassen haben.</string>
-    <string name="couldNotFindApp">Konnte das Paket nicht finden</string>
     <string name="notAvailableOnDevice">%s ist auf diesem Gerät nicht verfügbar</string>
     <string name="discoverHttps">HTTPS Verbindung suchen</string>
     <string name="discoverServer">Server Suchen</string>
     <string name="enabled">aktiviert</string>
     <string name="disabled">deaktiviert</string>
-    <string name="temperature" formatted="false">Temperatur: %.1f°C [%s=%s]</string>
+    <string name="temperature">Temperatur: %1$.1f°C [%2$s=%3$s]</string>
     <string name="deviceMissingSensor">Das Gerät hat keinen Sensor des Typs</string>
-    <string name="maxRangeResolution" formatted="false">Max. Reichweite ist %.1f, Ausflösung ist %.1f</string>
-    <string name="objectClose" formatted="false">Objekt nah: %b [%s=%s]</string>
-    <string name="pressure" formatted="false">Druck: %d hPa oder mbar [%s=%s]</string>
-    <string name="brightness" formatted="false">Helligkeit: %d lx [%s=%s]</string>
-    <string name="battLow" formatted="false">Batterie leer: %b [%s=%s]</string>
-    <string name="battCharging" formatted="false">Batterie wird geladen: %b [%s=%s]</string>
-    <string name="battLevel" formatted="false">Batterie Ladung: %d%% [%s=%s]</string>
-    <string name="volumeIsOf" formatted="false">Lautstärke: %d von %d [%s=%s]</string>
-    <string name="screenOn" formatted="false">Bildschirm an: %b [%s=%s]</string>
+    <string name="maxRangeResolution">Max. Reichweite ist %1$.1f, Ausflösung ist %2$.1f</string>
+    <string name="objectClose">Objekt nah: %1$b [%2$s=%3$s]</string>
+    <string name="pressure">Druck: %1$d hPa oder mbar [%2$s=%3$s]</string>
+    <string name="brightness">Helligkeit: %1$d lx [%2$s=%3$s]</string>
+    <string name="battLow">Batterie leer: %1$b [%2$s=%3$s]</string>
+    <string name="battCharging">Batterie wird geladen: %1$b [%2$s=%3$s]</string>
+    <string name="battLevel">Batterie Ladung: %1$d%% [%2$s=%3$s]</string>
+    <string name="volumeIsOf">Lautstärke: %1$d von %2$d [%3$s=%4$s]</string>
+    <string name="screenOn">Bildschirm an: %1$b [%2$s=%3$s]</string>
     <string name="tooDark">zu dunkel</string>
     <string name="motion">Bewegung</string>
     <string name="frontCameraMissing">Konnte nach vorne gerichtete Kamera nicht finden!</string>
     <string name="camApiPreLollipop">Kamera API (Vor Lollipop)</string>
     <string name="camApi2">Kamera API 2 (Lollipop)</string>
-    <string name="cameraId">Kamera %s</string>
-    <string name="has">hat</string>
-    <string name="no">kein</string>
-    <string name="flash">Blitz</string>
-    <string name="backFacing">hinten</string>
-    <string name="frontFacing">vorne</string>
     <string name="openCameraFailed">Konnte Kamera nicht öffnen! Wird sie von einer anderen App benutzt?</string>
-    <string name="cameras">Kameras</string>
-    <string name="resolution" formatted="false">Auflösung %dx%d</string>
-    <string name="boxesLeniency" formatted="false">%d Rechtecke, Erkennungs Schwelle %d</string>
-    <string name="framesProcessed" formatted="false">%d Bilder, %d mal Bewegung erkannt</string>
+    <string name="resolution">Auflösung %1$dx%2$d</string>
+    <string name="boxesLeniency">%1$d Rechtecke, Erkennungs Schwelle %2$d</string>
+    <string name="framesProcessed">%1$d Bilder, %2$d mal Bewegung erkannt</string>
     <string name="timeBetweenDetections">Zeit zwischen Erkennungen %d ms</string>
     <string name="couldNotFindBackFlash">Konnte keine nach hinten gerichtete Kamera mit Blitz finden!</string>
     <string name="left">links</string>
@@ -220,14 +212,14 @@
     <string name="deviceAdminDescription">Wird benötigt, damit HABPanelViewer den Bildschrim ausschalten kann</string>
     <string name="device_not_muted">Das Gerät ist nicht lautlos!</string>
     <string name="command_log_title">Empfangene Kommandos:</string>
-    <string name="host_realm" formatted="false">Rechner: %s\nBereich: %s</string>
+    <string name="host_realm">Rechner: %1$s\nBereich: %2$s</string>
     <string name="username">Benutzer</string>
     <string name="password">Passwort</string>
     <string name="login_required">Anmeldung erforderlich</string>
     <string name="cancel">Abbrechen</string>
     <string name="okay">OK</string>
     <string name="connectionStatistics">Verbindungsstatistik</string>
-    <string name="connectionDetails" formatted="false">läuft seit %s\nVerbunden %s (%d mal)\nlängste %s\nDurchschnitt %s\nGetrennt %s (%d mal)\nlängste %s\nDurchschnitt %s</string>
+    <string name="connectionDetails">läuft seit %1$s\nVerbunden %2$s (%3$d mal)\nlängste %4$s\nDurchschnitt %5$s\nGetrennt %6$s (%7$d mal)\nlängste %8$s\nDurchschnitt %9$s</string>
     <string name="days">%d Tage,</string>
     <string name="hours">%d Stunden,</string>
     <string name="minutes">%d Minuten,</string>
@@ -240,7 +232,7 @@
     <string name="surfaceObtained">Oberfläche erhalten</string>
     <string name="errorSettingTexture">Fehler beim Setzen der Vorschau Oberfläche</string>
     <string name="couldNotObtainCameraService">Android Camera Service nicht gefunden</string>
-    <string name="noValidIntInRange" formatted="false">Wert is keine Zahl im Bereich %d..%d</string>
+    <string name="noValidIntInRange">Wert is keine Zahl im Bereich %1$d..%2$d</string>
     <string name="RestartRequired">Neustart erforderlich</string>
     <string name="WantToRestart">Soll die App neu gestartet werden, damit das Theme angewendet wird?</string>
 

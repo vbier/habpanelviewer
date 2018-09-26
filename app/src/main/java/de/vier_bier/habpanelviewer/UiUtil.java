@@ -28,7 +28,7 @@ public class UiUtil {
         });
     }
 
-    public static void showScrollDialog(Context ctx, String title, String text, String scrollText) {
+    static void showScrollDialog(Context ctx, String title, String text, String scrollText) {
         android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(ctx)
                 .setTitle(title)
                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> dialog1.dismiss())

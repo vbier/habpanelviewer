@@ -181,39 +181,31 @@
     <string name="habPanelNotAvailable">HabPanel not available</string>
     <string name="couldNotConnect">Could not connect to server at URL</string>
     <string name="acceptCertWhenOurOfSettings">You can accept the certificate once you have left the settings.</string>
-    <string name="couldNotFindApp">Could not find app for package</string>
     <string name="notAvailableOnDevice">%s is not available on this device</string>
     <string name="discoverHttps">discover HTTPS connection</string>
     <string name="discoverServer">Discover Server</string>
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>
-    <string name="temperature" formatted="false">Temperature: %.1f°C [%s=%s]</string>
+    <string name="temperature">Temperature: %1$.1f°C [%2$s=%3$s]</string>
     <string name="deviceMissingSensor">Device does not have a sensor of type</string>
-    <string name="maxRangeResolution" formatted="false">Sensor max. range is %.1f, resolution is %.1f</string>
-    <string name="objectClose" formatted="false">Object close: %b [%s=%s]</string>
-    <string name="pressure" formatted="false">Pressure: %d hPa or mbar [%s=%s]</string>
-    <string name="brightness" formatted="false">Brightness: %d lx [%s=%s]</string>
-    <string name="battLow" formatted="false">Battery low: %b [%s=%s]</string>
-    <string name="battCharging" formatted="false">Battery charging: %b [%s=%s]</string>
-    <string name="battLevel" formatted="false">Battery level: %d%% [%s=%s]</string>
-    <string name="volumeIsOf" formatted="false">Volume: %d of %d [%s=%s]</string>
-    <string name="screenOn" formatted="false">Screen on: %b [%s=%s]</string>
+    <string name="maxRangeResolution">Sensor max. range is %1$.1f, resolution is %2$.1f</string>
+    <string name="objectClose">Object close: %1$b [%2$s=%3$s]</string>
+    <string name="pressure">Pressure: %1$d hPa or mbar [%2$s=%3$s]</string>
+    <string name="brightness">Brightness: %1$d lx [%2$s=%3$s]</string>
+    <string name="battLow">Battery low: %1$b [%2$s=%3$s]</string>
+    <string name="battCharging">Battery charging: %1$b [%2$s=%3$s]</string>
+    <string name="battLevel">Battery level: %1$d%% [%2$s=%3$s]</string>
+    <string name="volumeIsOf">Volume: %1$d of %2$d [%3$s=%4$s]</string>
+    <string name="screenOn">Screen on: %1$b [%2$s=%3$s]</string>
     <string name="tooDark">too dark</string>
     <string name="motion">Motion</string>
     <string name="frontCameraMissing">Could not find front facing camera!</string>
     <string name="camApiPreLollipop">Camera API (Pre-Lollipop)</string>
     <string name="camApi2">Camera API 2 (Lollipop)</string>
-    <string name="cameraId">Camera %s</string>
-    <string name="has">has</string>
-    <string name="no">no</string>
-    <string name="flash">flash</string>
-    <string name="backFacing">back-facing</string>
-    <string name="frontFacing">front-facing</string>
     <string name="openCameraFailed">Failed to open camera! Is the camera in use by another app?</string>
-    <string name="cameras">Cameras</string>
-    <string name="resolution" formatted="false">resolution %dx%d</string>
-    <string name="boxesLeniency" formatted="false">%d boxes, leniency is %d</string>
-    <string name="framesProcessed" formatted="false">%d frames, motion detected %d times</string>
+    <string name="resolution">resolution %1$dx%2$d</string>
+    <string name="boxesLeniency">%1$d boxes, leniency is %2$d</string>
+    <string name="framesProcessed">%1$d frames, motion detected %2$d times</string>
     <string name="timeBetweenDetections">time between detections %d ms</string>
     <string name="couldNotFindBackFlash">Could not find back facing camera with flash!</string>
     <string name="left">left</string>
@@ -222,14 +214,14 @@
     <string name="deviceAdminDescription">Is needed for immediate screen locking</string>
     <string name="device_not_muted">Device is not muted!</string>
     <string name="command_log_title">Received commands:</string>
-    <string name="host_realm" formatted="false">Host: %s\nRealm: %s</string>
+    <string name="host_realm">Host: %1$s\nRealm: %2$s</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login_required">Login required</string>
     <string name="cancel">Cancel</string>
     <string name="okay">OK</string>
     <string name="connectionStatistics">Connection Statistics</string>
-    <string name="connectionDetails" formatted="false">running for %s\nonline %s (%d times)\nlongest %s\naverage %s\noffline %s (%d times)\nlongest %s\naverage %s</string>
+    <string name="connectionDetails">running for %1$s\nonline %2$s (%3$d times)\nlongest %4$s\naverage %5$s\noffline %6$s (%7$d times)\nlongest %8$s\naverage %9$s</string>
     <string name="days">%d days,</string>
     <string name="hours">%d hours,</string>
     <string name="minutes">%d minutes,</string>
@@ -242,7 +234,7 @@
     <string name="surfaceObtained">surface obtained</string>
     <string name="errorSettingTexture">Error setting preview texture</string>
     <string name="couldNotObtainCameraService">Could not obtain Android Camera Service</string>
-    <string name="noValidIntInRange" formatted="false">Given value is no valid number in range %d..%d</string>
+    <string name="noValidIntInRange">Given value is no valid number in range %1$d..%2$d</string>
     <string name="RestartRequired">Restart required</string>
     <string name="WantToRestart">Do you want to restart the app so the new theme is used?</string>
 </resources>

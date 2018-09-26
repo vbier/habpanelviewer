@@ -4,25 +4,25 @@
     <item
         android:id="@+id/menu_reload"
         android:title="@string/menu_reload"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_toggle_kiosk"
         android:title="@string/menu_toggleKiosk"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_goto_start_url"
         android:title="@string/menu_gotoStartUrl"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_goto_url"
         android:title="@string/menu_gotoUrl"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_set_start_url"
         android:title="@string/menu_setStartUrl"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_clear_passwords"
         android:title="@string/menu_clearPasswords"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

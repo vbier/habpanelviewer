@@ -372,15 +372,17 @@ public class Camera {
     }
 
     private CameraVersion getCameraVersion(SharedPreferences prefs) {
-        boolean newApi = prefs.getBoolean("pref_motion_detection_new_api", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
-
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA},
-                    Camera.MY_REQUEST_CAMERA);
+            boolean shouldRun = prefs.getBoolean("pref_motion_detection_preview", false) || !mListeners.isEmpty();
+            if (shouldRun) {
+                ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA},
+                        Camera.MY_REQUEST_CAMERA);
+            }
 
             return CameraVersion.PERMISSION_MISSING;
         }
 
+        boolean newApi = prefs.getBoolean("pref_motion_detection_new_api", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
         if (newApi && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return CameraVersion.V2;
         }

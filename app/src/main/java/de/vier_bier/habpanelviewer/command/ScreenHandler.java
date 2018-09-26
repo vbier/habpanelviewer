@@ -24,7 +24,8 @@ public class ScreenHandler implements ICommandHandler {
     public ScreenHandler(PowerManager pwrManager, Activity activity) {
         mActivity = activity;
         screenOnLock = pwrManager.newWakeLock(
-                PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE, "HabpanelViewer");
+                PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP
+                        | PowerManager.ON_AFTER_RELEASE, "HPV:ScreenOnWakeLock");
 
         setKeepScreenOn(false);
     }
