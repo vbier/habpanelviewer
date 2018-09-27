@@ -6,14 +6,20 @@ import android.util.Log;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import de.vier_bier.habpanelviewer.status.ApplicationStatus;
+
 /**
  * UncaughtExceptionHandler that restarts the app in case of exceptions.
  */
 class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
     private static final String TAG = "HPV-AppRestartingExHa";
 
-    private final MainActivity myContext;
-    private final int count;
+    private final MainActivity mCtx;
+    private final int mCount;
 
     private int mMaxRestarts;
     private boolean mRestartEnabled;
@@ -21,16 +27,31 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
     private final Thread.UncaughtExceptionHandler mDefaultHandler;
 
     AppRestartingExceptionHandler(MainActivity context, Thread.UncaughtExceptionHandler defaultHandler, int restartCount) {
-        myContext = context;
+        mCtx = context;
         mDefaultHandler = defaultHandler;
-        count = restartCount;
+        mCount = restartCount;
+
+        EventBus.getDefault().register(this);
+        Thread.setDefaultUncaughtExceptionHandler(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ApplicationStatus status) {
+        if (mRestartEnabled) {
+            String state = mCtx.getString(R.string.enabled);
+            state += "\n" + mCtx.getString(R.string.restartCounter, mCount, mMaxRestarts);
+
+            status.set(mCtx.getString(R.string.pref_restart), state);
+        } else {
+            status.set(mCtx.getString(R.string.pref_restart), mCtx.getString(R.string.disabled));
+        }
     }
 
     public void uncaughtException(Thread thread, Throwable exception) {
         Log.e(TAG, "Uncaught exception", exception);
 
-        if (count < mMaxRestarts && mRestartEnabled) {
-            restartApp(myContext, count);
+        if (mCount < mMaxRestarts && mRestartEnabled) {
+            restartApp(mCtx, mCount);
         } else {
             mDefaultHandler.uncaughtException(thread, exception);
         }
@@ -59,9 +80,5 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
         }
 
         mRestartEnabled = prefs.getBoolean("pref_restart_enabled", false);
-    }
-
-    public int getRestartCount() {
-        return count;
     }
 }

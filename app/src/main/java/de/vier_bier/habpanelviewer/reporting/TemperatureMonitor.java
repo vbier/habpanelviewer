@@ -12,11 +12,11 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 /**
  * Monitors temperature sensor state and reports to openHAB.
  */
-public class TemperatureMonitor extends SensorMonitor {
+public class TemperatureMonitor extends AbstractDeviceMonitor {
     private float fTemperature;
 
-    public TemperatureMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
-        super(ctx, sensorManager, serverConnection, "temperature", Sensor.TYPE_AMBIENT_TEMPERATURE);
+    public TemperatureMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) {
+        super(ctx, sensorManager, serverConnection, ctx.getString(R.string.pref_temperature), "temperature", Sensor.TYPE_AMBIENT_TEMPERATURE);
     }
 
     protected synchronized void addStatusItems(ApplicationStatus status) {

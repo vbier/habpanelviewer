@@ -19,7 +19,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 import static android.content.Context.POWER_SERVICE;
 
-public class ScreenMonitor implements IStateUpdateListener {
+public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
     private static final String TAG = "HPV-ScreenMonitor";
 
     private final Context mCtx;
@@ -52,6 +52,10 @@ public class ScreenMonitor implements IStateUpdateListener {
         mIntentFilter.addAction(Intent.ACTION_SCREEN_OFF);
     }
 
+    @Override
+    public void disablePreferences(Intent intent) { }
+
+    @Override
     public synchronized void terminate() {
         EventBus.getDefault().unregister(this);
         try {
@@ -82,6 +86,7 @@ public class ScreenMonitor implements IStateUpdateListener {
         }
     }
 
+    @Override
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         mScreenOnItem = prefs.getString("pref_screen_item", "");
 

@@ -152,7 +152,7 @@
     <string name="updatedText">Die Anwendung wurde aktualisiert. Folgende Fehlerbehebungen und Verbesserungen wurden eingearbeitet:</string>
     <string name="appRestarted">App wurde nach Absturz neu gestartet</string>
     <string name="unavailable">nicht verfügbar</string>
-    <string name="restartCounter">Neustart Zähler</string>
+    <string name="restartCounter">%1$d/%2$d Neustarts</string>
     <string name="waitingNetwork">Warte auf Netzwerk Verbindung…</string>
     <string name="notConnectedReloadPending">Das Gerät ist momentan nicht mit dem Netzwerk verbunden. Sobald die Verbindung hergestellt wurde, wird HABPanel automatisch geladen.</string>
     <string name="unknownHost">unbekannter Rechner</string>

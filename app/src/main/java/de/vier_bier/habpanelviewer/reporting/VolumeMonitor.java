@@ -1,6 +1,7 @@
 package de.vier_bier.habpanelviewer.reporting;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.ContentObserver;
 import android.media.AudioManager;
@@ -18,7 +19,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 /**
  * Monitors the device volume.
  */
-public class VolumeMonitor implements IStateUpdateListener {
+public class VolumeMonitor implements IDeviceMonitor, IStateUpdateListener {
     private final Context mCtx;
     private final AudioManager mAudioManager;
     private final ServerConnection mServerConnection;
@@ -50,6 +51,10 @@ public class VolumeMonitor implements IStateUpdateListener {
         mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
     }
 
+    @Override
+    public void disablePreferences(Intent intent) { }
+
+    @Override
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         mVolumeItem = prefs.getString("pref_volume_item", "");
 
@@ -83,6 +88,7 @@ public class VolumeMonitor implements IStateUpdateListener {
         }
     }
 
+    @Override
     public void terminate() {
         EventBus.getDefault().unregister(this);
         mCtx.getContentResolver().unregisterContentObserver(mVolumeObserver);

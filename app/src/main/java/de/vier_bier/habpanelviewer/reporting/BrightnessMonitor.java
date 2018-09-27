@@ -13,13 +13,13 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 /**
  * Monitors brightness sensor state and reports to openHAB.
  */
-public class BrightnessMonitor extends SensorMonitor {
+public class BrightnessMonitor extends AbstractDeviceMonitor {
     private boolean mDoAverage;
     private int mInterval;
     private Integer mBrightness;
 
-    public BrightnessMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
-        super(ctx, sensorManager, serverConnection, "brightness", Sensor.TYPE_LIGHT);
+    public BrightnessMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) {
+        super(ctx, sensorManager, serverConnection, ctx.getString(R.string.pref_brightness), "brightness", Sensor.TYPE_LIGHT);
     }
 
     protected synchronized void addStatusItems(ApplicationStatus status) {

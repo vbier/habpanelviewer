@@ -13,13 +13,13 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 /**
  * Monitors proximity sensor state and reports to openHAB.
  */
-public class ProximityMonitor extends SensorMonitor {
+public class ProximityMonitor extends AbstractDeviceMonitor {
     private static final String TAG = "HPV-ProximityMonitor";
 
     private Boolean mProximity;
 
-    public ProximityMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
-        super(ctx, sensorManager, serverConnection, "proximity", Sensor.TYPE_PROXIMITY);
+    public ProximityMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) {
+        super(ctx, sensorManager, serverConnection, ctx.getString(R.string.pref_proximity), "proximity", Sensor.TYPE_PROXIMITY);
     }
 
     @Override

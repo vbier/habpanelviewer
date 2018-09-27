@@ -154,7 +154,7 @@
     <string name="updatedText">The application has been updated. Find the bug fixes and new features below:</string>
     <string name="appRestarted">App restarted after crash</string>
     <string name="unavailable">unavailable</string>
-    <string name="restartCounter">Restart Counter</string>
+    <string name="restartCounter">%1$d/%2$d restarts</string>
     <string name="waitingNetwork">Waiting for network connection…</string>
     <string name="notConnectedReloadPending">The device is currently not connected to the network. Once the connection has been established, the configured HABPanel page will automatically be loaded.</string>
     <string name="unknownHost">unknown host</string>

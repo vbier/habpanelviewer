@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import de.vier_bier.habpanelviewer.command.AdminHandler;
@@ -60,10 +61,10 @@ import de.vier_bier.habpanelviewer.openhab.ServerDiscovery;
 import de.vier_bier.habpanelviewer.reporting.BatteryMonitor;
 import de.vier_bier.habpanelviewer.reporting.BrightnessMonitor;
 import de.vier_bier.habpanelviewer.reporting.ConnectedIndicator;
+import de.vier_bier.habpanelviewer.reporting.IDeviceMonitor;
 import de.vier_bier.habpanelviewer.reporting.PressureMonitor;
 import de.vier_bier.habpanelviewer.reporting.ProximityMonitor;
 import de.vier_bier.habpanelviewer.reporting.ScreenMonitor;
-import de.vier_bier.habpanelviewer.reporting.SensorMissingException;
 import de.vier_bier.habpanelviewer.reporting.TemperatureMonitor;
 import de.vier_bier.habpanelviewer.reporting.VolumeMonitor;
 import de.vier_bier.habpanelviewer.reporting.motion.Camera;
@@ -83,28 +84,23 @@ public class MainActivity extends ScreenControllingActivity
 
     private final static int REQUEST_PICK_APPLICATION = 12352;
 
-    private ConnectionStatistics mConnections;
     private ClientWebView mWebView;
     private TextView mTextView;
-    private ServerConnection mServerConnection;
-    private AppRestartingExceptionHandler restartingExceptionHandler;
 
+    private ConnectionStatistics mConnections;
+    private ServerConnection mServerConnection;
+    private AppRestartingExceptionHandler mRestartingExceptionHandler;
     private NetworkTracker mNetworkTracker;
     private ServerDiscovery mDiscovery;
     private FlashHandler mFlashService;
     private IMotionDetector mMotionDetector;
     private MotionVisualizer mMotionVisualizer;
-    private BatteryMonitor mBatteryMonitor;
-    private ScreenMonitor mScreenMonitor;
     private ConnectedIndicator mConnectedReporter;
-    private ProximityMonitor mProximityMonitor;
-    private BrightnessMonitor mBrightnessMonitor;
-    private PressureMonitor mPressureMonitor;
-    private TemperatureMonitor mTemperatureMonitor;
-    private VolumeMonitor mVolumeMonitor;
     private CommandQueue mCommandQueue;
     private ScreenCapturer mCapturer;
     private Camera mCam;
+
+    private ArrayList<IDeviceMonitor> mMonitors = new ArrayList<>();
 
     @Override
     protected void onDestroy() {
@@ -139,44 +135,13 @@ public class MainActivity extends ScreenControllingActivity
             mServerConnection = null;
         }
 
-        if (mBatteryMonitor != null) {
-            mBatteryMonitor.terminate();
-            mBatteryMonitor = null;
-        }
-
-        if (mScreenMonitor != null) {
-            mScreenMonitor.terminate();
-            mScreenMonitor = null;
-        }
-
         if (mConnectedReporter != null) {
             mConnectedReporter.terminate();
             mConnectedReporter = null;
         }
 
-        if (mProximityMonitor != null) {
-            mProximityMonitor.terminate();
-            mProximityMonitor = null;
-        }
-
-        if (mBrightnessMonitor != null) {
-            mBrightnessMonitor.terminate();
-            mBrightnessMonitor = null;
-        }
-
-        if (mPressureMonitor != null) {
-            mPressureMonitor.terminate();
-            mPressureMonitor = null;
-        }
-
-        if (mTemperatureMonitor != null) {
-            mTemperatureMonitor.terminate();
-            mTemperatureMonitor = null;
-        }
-
-        if (mVolumeMonitor != null) {
-            mVolumeMonitor.terminate();
-            mVolumeMonitor = null;
+        for (IDeviceMonitor m : mMonitors) {
+            m.terminate();
         }
 
         if (mCommandQueue != null) {
@@ -213,8 +178,8 @@ public class MainActivity extends ScreenControllingActivity
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         int restartCount = getIntent().getIntExtra("restartCount", 0);
 
-        if (restartingExceptionHandler == null) {
-            restartingExceptionHandler = new AppRestartingExceptionHandler(this,
+        if (mRestartingExceptionHandler == null) {
+            mRestartingExceptionHandler = new AppRestartingExceptionHandler(this,
                     Thread.getDefaultUncaughtExceptionHandler(), restartCount);
         }
 
@@ -312,64 +277,28 @@ public class MainActivity extends ScreenControllingActivity
             }
         }
 
-        if (mBatteryMonitor == null) {
-            mBatteryMonitor = new BatteryMonitor(this, mServerConnection);
-        }
-
-        if (mScreenMonitor == null) {
-            mScreenMonitor = new ScreenMonitor(this, mServerConnection);
-        }
-
-        if (mVolumeMonitor == null) {
-            mVolumeMonitor = new VolumeMonitor(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection);
-        }
-
         if (mConnectedReporter == null) {
             mConnectedReporter = new ConnectedIndicator(this, mServerConnection);
         }
 
+        mMonitors.add(new BatteryMonitor(this, mServerConnection));
+        mMonitors.add(new ScreenMonitor(this, mServerConnection));
+        mMonitors.add(new VolumeMonitor(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection));
+
         SensorManager m = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        if (mProximityMonitor == null
-                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_PROXIMITY)) {
-            try {
-                mProximityMonitor = new ProximityMonitor(this, m, mServerConnection);
-            } catch (SensorMissingException e) {
-                Log.d(TAG, "Could not create proximity monitor");
-            }
-        }
-        if (mBrightnessMonitor == null
-                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_LIGHT)) {
-            try {
-                mBrightnessMonitor = new BrightnessMonitor(this, m, mServerConnection);
-            } catch (SensorMissingException e) {
-                Log.d(TAG, "Could not create brightness monitor");
-            }
-        }
-        if (mPressureMonitor == null
-                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_BAROMETER)) {
-            try {
-                mPressureMonitor = new PressureMonitor(this, m, mServerConnection);
-            } catch (SensorMissingException e) {
-                Log.d(TAG, "Could not create pressure monitor");
-            }
-        }
-        if (mTemperatureMonitor == null
-                && getPackageManager().hasSystemFeature(PackageManager.FEATURE_SENSOR_AMBIENT_TEMPERATURE)) {
-            try {
-                mTemperatureMonitor = new TemperatureMonitor(this, m, mServerConnection);
-            } catch (SensorMissingException e) {
-                Log.d(TAG, "Could not create temperature monitor");
-            }
-        }
+        mMonitors.add(new ProximityMonitor(this, m, mServerConnection));
+        mMonitors.add(new BrightnessMonitor(this, m, mServerConnection));
+        mMonitors.add(new PressureMonitor(this, m, mServerConnection));
+        mMonitors.add(new TemperatureMonitor(this, m, mServerConnection));
 
         if (mCommandQueue == null) {
-            ScreenHandler mScreenHandler = new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this);
             mCommandQueue = new CommandQueue(this, mServerConnection);
             mCommandQueue.addHandler(new InternalCommandHandler(this, mMotionDetector, mServerConnection));
             mCommandQueue.addHandler(new AdminHandler(this));
             mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
-            mCommandQueue.addHandler(mScreenHandler);
+            mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this));
             mCommandQueue.addHandler(new VolumeHandler(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE)));
+
             if (mFlashService != null) {
                 mCommandQueue.addHandler(mFlashService);
             }
@@ -503,22 +432,6 @@ public class MainActivity extends ScreenControllingActivity
         if (mMotionDetector == null || mCam == null || !mCam.canBeUsed()) {
             status.set(getString(R.string.pref_motion), getString(R.string.unavailable));
         }
-        int restartCount = restartingExceptionHandler.getRestartCount();
-        if (restartCount != 0) {
-            status.set(getString(R.string.restartCounter), String.valueOf(restartCount));
-        }
-        if (mProximityMonitor == null) {
-            status.set(getString(R.string.pref_proximity), getString(R.string.unavailable));
-        }
-        if (mPressureMonitor == null) {
-            status.set(getString(R.string.pref_pressure), getString(R.string.unavailable));
-        }
-        if (mBrightnessMonitor == null) {
-            status.set(getString(R.string.pref_brightness), getString(R.string.unavailable));
-        }
-        if (mTemperatureMonitor == null) {
-            status.set(getString(R.string.pref_temperature), getString(R.string.unavailable));
-        }
 
         String webview = "";
         PackageManager pm = getPackageManager();
@@ -579,25 +492,10 @@ public class MainActivity extends ScreenControllingActivity
             params.gravity = Gravity.END;
         }
 
-        if (restartingExceptionHandler != null) {
-            restartingExceptionHandler.updateFromPreferences(prefs);
+        if (mRestartingExceptionHandler != null) {
+            mRestartingExceptionHandler.updateFromPreferences(prefs);
         }
 
-        if (mProximityMonitor != null) {
-            mProximityMonitor.updateFromPreferences(prefs);
-        }
-        if (mBrightnessMonitor != null) {
-            mBrightnessMonitor.updateFromPreferences(prefs);
-        }
-        if (mPressureMonitor != null) {
-            mPressureMonitor.updateFromPreferences(prefs);
-        }
-        if (mTemperatureMonitor != null) {
-            mTemperatureMonitor.updateFromPreferences(prefs);
-        }
-        if (mVolumeMonitor != null) {
-            mVolumeMonitor.updateFromPreferences(prefs);
-        }
         if (mCommandQueue != null) {
             mCommandQueue.updateFromPreferences(prefs);
         }
@@ -611,8 +509,10 @@ public class MainActivity extends ScreenControllingActivity
             mCapturer = null;
         }
 
-        mBatteryMonitor.updateFromPreferences(prefs);
-        mScreenMonitor.updateFromPreferences(prefs);
+        for (IDeviceMonitor m : mMonitors) {
+            m.updateFromPreferences(prefs);
+        }
+
         mConnectedReporter.updateFromPreferences(prefs);
         mWebView.updateFromPreferences(prefs);
         mServerConnection.updateFromPreferences(prefs);
@@ -751,10 +651,11 @@ public class MainActivity extends ScreenControllingActivity
         intent.putExtra("camera_enabled", mCam != null);
         intent.putExtra("flash_enabled", mFlashService != null);
         intent.putExtra("motion_enabled", mMotionDetector != null && mCam != null && mCam.canBeUsed());
-        intent.putExtra("proximity_enabled", mProximityMonitor != null);
-        intent.putExtra("pressure_enabled", mPressureMonitor != null);
-        intent.putExtra("brightness_enabled", mBrightnessMonitor != null);
-        intent.putExtra("temperature_enabled", mTemperatureMonitor != null);
+
+        for (IDeviceMonitor m : mMonitors) {
+            m.disablePreferences(intent);
+        }
+
         startActivityForResult(intent, 0);
     }
 

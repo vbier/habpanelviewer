@@ -22,7 +22,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 /**
  * Monitors battery state and reports to openHAB.
  */
-public class BatteryMonitor implements IStateUpdateListener {
+public class BatteryMonitor implements IDeviceMonitor, IStateUpdateListener {
     private static final String TAG = "HPV-BatteryMonitor";
 
     private final Context mCtx;
@@ -72,6 +72,10 @@ public class BatteryMonitor implements IStateUpdateListener {
         mIntentFilter.addAction(Intent.ACTION_BATTERY_OKAY);
     }
 
+    @Override
+    public void disablePreferences(Intent intent) { }
+
+    @Override
     public synchronized void terminate() {
         EventBus.getDefault().unregister(this);
         try {
@@ -106,6 +110,7 @@ public class BatteryMonitor implements IStateUpdateListener {
         }
     }
 
+    @Override
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         if (mBatteryEnabled != prefs.getBoolean("pref_battery_enabled", false)) {
             mBatteryEnabled = !mBatteryEnabled;

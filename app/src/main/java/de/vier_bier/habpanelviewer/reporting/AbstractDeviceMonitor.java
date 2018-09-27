@@ -1,6 +1,7 @@
 package de.vier_bier.habpanelviewer.reporting;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
@@ -19,8 +20,8 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 /**
  * Abstract base class for device sensor monitors.
  */
-public abstract class SensorMonitor implements SensorEventListener, IStateUpdateListener {
-    private static final String TAG = "HPV-SensorMonitor";
+public abstract class AbstractDeviceMonitor implements IDeviceMonitor, SensorEventListener, IStateUpdateListener {
+    private static final String TAG = "HPV-AbstractDevMon";
 
     final Context mCtx;
     private final SensorManager mSensorManager;
@@ -28,27 +29,29 @@ public abstract class SensorMonitor implements SensorEventListener, IStateUpdate
     final Sensor mSensor;
 
     private final String mPreferenceKey;
+    private final String mSensorName;
     boolean mSensorEnabled;
 
     String mSensorItem;
     String mSensorState;
 
-    SensorMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection, String prefkey, int sensorType) throws SensorMissingException {
+    AbstractDeviceMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection,
+                          String sensorName, String prefkey, int sensorType) {
         mCtx = ctx;
         mSensorManager = sensorManager;
         mServerConnection = serverConnection;
         mPreferenceKey = prefkey;
         mSensor = mSensorManager.getDefaultSensor(sensorType);
-
-        if (mSensor == null) {
-            throw new SensorMissingException(mCtx.getString(R.string.deviceMissingSensor) + sensorType);
-        }
+        mSensorName = sensorName;
 
         EventBus.getDefault().register(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
+        if (mSensor == null) {
+            status.set(mSensorName, mCtx.getString(R.string.unavailable));
+        }
         addStatusItems(status);
     }
 
@@ -57,21 +60,28 @@ public abstract class SensorMonitor implements SensorEventListener, IStateUpdate
         mSensorManager.unregisterListener(this);
     }
 
+    @Override
+    public void disablePreferences(Intent intent) {
+        intent.putExtra(mPreferenceKey + "_enabled", mSensor != null);
+    }
+
     protected abstract void addStatusItems(ApplicationStatus status);
 
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        if (mSensorEnabled != prefs.getBoolean("pref_" + mPreferenceKey + "_enabled", false)) {
-            mSensorEnabled = !mSensorEnabled;
+        if (mSensor != null) {
+            if (mSensorEnabled != prefs.getBoolean("pref_" + mPreferenceKey + "_enabled", false)) {
+                mSensorEnabled = !mSensorEnabled;
 
-            if (mSensorEnabled) {
-                mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            } else {
-                mSensorManager.unregisterListener(this);
+                if (mSensorEnabled) {
+                    mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                } else {
+                    mSensorManager.unregisterListener(this);
+                }
             }
-        }
 
-        mSensorItem = prefs.getString("pref_" + mPreferenceKey + "_item", "");
-        mServerConnection.subscribeItems(this, mSensorItem);
+            mSensorItem = prefs.getString("pref_" + mPreferenceKey + "_item", "");
+            mServerConnection.subscribeItems(this, mSensorItem);
+        }
     }
 
     @Override

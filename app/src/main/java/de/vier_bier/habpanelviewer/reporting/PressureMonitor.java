@@ -12,11 +12,11 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 /**
  * Monitors pressure sensor state and reports to openHAB.
  */
-public class PressureMonitor extends SensorMonitor {
+public class PressureMonitor extends AbstractDeviceMonitor {
     private int mPressure;
 
-    public PressureMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) throws SensorMissingException {
-        super(ctx, sensorManager, serverConnection, "pressure", Sensor.TYPE_PRESSURE);
+    public PressureMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) {
+        super(ctx, sensorManager, serverConnection, ctx.getString(R.string.pref_pressure), "pressure", Sensor.TYPE_PRESSURE);
     }
 
     protected synchronized void addStatusItems(ApplicationStatus status) {
