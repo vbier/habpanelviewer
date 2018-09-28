@@ -103,7 +103,7 @@ public class MainActivity extends ScreenControllingActivity
     private ScreenCapturer mCapturer;
     private Camera mCam;
 
-    private ArrayList<IDeviceMonitor> mMonitors = new ArrayList<>();
+    private final ArrayList<IDeviceMonitor> mMonitors = new ArrayList<>();
 
     @Override
     protected void onDestroy() {
@@ -126,6 +126,11 @@ public class MainActivity extends ScreenControllingActivity
         if (mMotionDetector != null) {
             mMotionDetector.terminate();
             mMotionDetector = null;
+        }
+
+        if (mCam != null) {
+            mCam.terminate();
+            mCam = null;
         }
 
         if (mDiscovery != null) {

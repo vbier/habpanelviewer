@@ -33,8 +33,8 @@ public class Camera {
 
     private static final String TAG = "HPV-Camera";
 
-    private Activity mContext;
-    private TextureView mPreviewView;
+    private final Activity mContext;
+    private final TextureView mPreviewView;
 
     private ICamera mImplementation;
     private SurfaceTexture mSurface;
@@ -43,7 +43,7 @@ public class Camera {
     private int mDeviceOrientation;
     private boolean mShowPreview;
 
-    private List<ICamera.ILumaListener> mListeners = new ArrayList<>();
+    private final List<ICamera.ILumaListener> mListeners = new ArrayList<>();
 
     public Camera(Activity ctx, TextureView tv, SharedPreferences prefs) {
         mContext = ctx;

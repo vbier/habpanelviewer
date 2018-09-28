@@ -191,7 +191,6 @@
     <string name="enabled">aktiviert</string>
     <string name="disabled">deaktiviert</string>
     <string name="temperature">Temperatur: %1$.1f°C [%2$s=%3$s]</string>
-    <string name="deviceMissingSensor">Das Gerät hat keinen Sensor des Typs</string>
     <string name="maxRangeResolution">Max. Reichweite ist %1$.1f, Ausflösung ist %2$.1f</string>
     <string name="objectClose">Objekt nah: %1$b [%2$s=%3$s]</string>
     <string name="pressure">Druck: %1$d hPa oder mbar [%2$s=%3$s]</string>

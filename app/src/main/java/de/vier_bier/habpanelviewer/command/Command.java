@@ -14,11 +14,6 @@ public class Command {
 
     private boolean mShowDetails;
 
-    public Command(String command, String errorMessage) {
-        this(command);
-        failed(errorMessage);
-    }
-
     public Command(String command) {
         mCommand = command;
         mStatus = CommandStatus.UNHANDLED;

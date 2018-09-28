@@ -219,9 +219,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                         previewListener.started();
                     }
 
-                    Image i = imageReader.acquireLatestImage();
-
-                    try {
+                    try (Image i = imageReader.acquireLatestImage()) {
                         LumaData ld = null;
                         for (ILumaListener l : mListeners) {
                             if (l.needsPreview()) {
@@ -233,10 +231,6 @@ public class CameraImplV2 extends AbstractCameraImpl {
                                 }
                                 l.preview(ld);
                             }
-                        }
-                    } finally {
-                        if (i != null) {
-                            i.close();
                         }
                     }
                 }, mPreviewHandler);
@@ -384,13 +378,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                     }
                 };
                 reader.setOnImageAvailableListener(readerListener, mPictureHandler);
-                final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
-                    @Override
-                    public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-                        super.onCaptureCompleted(session, request, result);
-                    }
-                };
-
+                final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {};
 
                 mCamera.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                     @Override
@@ -458,6 +446,6 @@ public class CameraImplV2 extends AbstractCameraImpl {
         for (Size s : supportedPictureSizes) {
             result.add(new Point(s.getWidth(), s.getHeight()));
         }
-        return result.toArray(new Point[result.size()]);
+        return result.toArray(new Point[0]);
     }
 }

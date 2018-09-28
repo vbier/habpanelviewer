@@ -41,7 +41,7 @@ public class BatteryMonitor implements IDeviceMonitor, IStateUpdateListener {
     private String mBatteryLowState;
     private String mBatteryChargingState;
     private String mBatteryLevelState;
-    private IntentFilter mIntentFilter;
+    private final IntentFilter mIntentFilter;
 
     private BatteryPollingThread mPollBatteryLevel;
 

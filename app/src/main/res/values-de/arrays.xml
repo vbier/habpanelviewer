@@ -53,4 +53,8 @@
         <item>dunkel</item>
         <item>hell</item>
     </string-array>
+    <string-array name="themeIds">
+        <item>dark</item>
+        <item>light</item>
+    </string-array>
 </resources>

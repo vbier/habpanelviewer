@@ -5,7 +5,7 @@ import android.util.Log;
 
 import io.opensensors.sse.client.EventSource;
 
-public class AsyncCloseTask extends AsyncTask<EventSource, Void, Void> {
+class AsyncCloseTask extends AsyncTask<EventSource, Void, Void> {
     private static final String TAG = "HPV-AsyncCloseTask";
 
     @Override

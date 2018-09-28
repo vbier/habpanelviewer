@@ -23,11 +23,11 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ScreenCapturer {
     public static final int REQUEST_MEDIA_PROJECTION = 12835;
 
-    private MediaProjection mProjection;
-    private Handler mHandler;
-    private int mWidth;
-    private int mHeight;
-    private int mDensity;
+    private final MediaProjection mProjection;
+    private final Handler mHandler;
+    private final int mWidth;
+    private final int mHeight;
+    private final int mDensity;
 
     ScreenCapturer(MediaProjection projection, int width, int height, int density) {
         mHandler = new Handler();
@@ -42,12 +42,9 @@ public class ScreenCapturer {
         final CountDownLatch latch = new CountDownLatch(1);
 
         ImageReader mImageReader = ImageReader.newInstance(mWidth, mHeight, PixelFormat.RGBA_8888, 2);
-        mImageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
-            @Override
-            public void onImageAvailable(ImageReader imageReader) {
-                imageHolder.set(mImageReader.acquireLatestImage());
-                latch.countDown();
-            }
+        mImageReader.setOnImageAvailableListener(imageReader -> {
+            imageHolder.set(mImageReader.acquireLatestImage());
+            latch.countDown();
         }, mHandler);
 
         VirtualDisplay display = mProjection.createVirtualDisplay("screen-mirror", mWidth, mHeight, mDensity,

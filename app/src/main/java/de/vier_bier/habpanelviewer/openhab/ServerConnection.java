@@ -271,7 +271,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         }
     }
 
-    public void updateStateWithTimeout(String item, String state, String timeoutState, int timeoutInSeconds) {
+    private void updateStateWithTimeout(String item, String state, String timeoutState, int timeoutInSeconds) {
         updateState(item, state);
 
         averagePropagator.setStateIn(item, timeoutState, timeoutInSeconds);
@@ -426,7 +426,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
                 }
             });
             Log.d(TAG, "Actively fetching items state");
-            task.execute(missingItems.toArray(new String[missingItems.size()]));
+            task.execute(missingItems.toArray(new String[0]));
         }
 
         private void propagateItem(String name, String value) {

@@ -22,7 +22,7 @@ public class CommandQueue implements IStateUpdateListener {
     private final ServerConnection mServerConnection;
 
     private final ArrayList<ICommandHandler> mHandlers = new ArrayList<>();
-    private CommandLog mCmdLog = new CommandLog();
+    private final CommandLog mCmdLog = new CommandLog();
 
     public CommandQueue(Activity ctx, ServerConnection serverConnection) {
         EventBus.getDefault().register(this);

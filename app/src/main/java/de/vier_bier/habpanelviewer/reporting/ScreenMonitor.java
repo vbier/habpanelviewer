@@ -26,14 +26,14 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
     private final ServerConnection mServerConnection;
     private final ScreenListener mListener;
 
-    private BroadcastReceiver mScreenReceiver;
+    private final BroadcastReceiver mScreenReceiver;
     private boolean mMonitorEnabled;
     private boolean mReceiverRegistered;
 
     private String mScreenOnItem;
     private String mScreenOnState;
     private boolean mScreenOn;
-    private IntentFilter mIntentFilter;
+    private final IntentFilter mIntentFilter;
 
     public ScreenMonitor(Context context, ServerConnection serverConnection, ScreenListener listener) {
         mCtx = context;

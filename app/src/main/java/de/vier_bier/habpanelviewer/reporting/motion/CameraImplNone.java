@@ -3,7 +3,7 @@ package de.vier_bier.habpanelviewer.reporting.motion;
 import android.graphics.SurfaceTexture;
 
 public class CameraImplNone implements ICamera {
-    private String mErrMsg;
+    private final String mErrMsg;
 
     CameraImplNone(String error) {
         mErrMsg = error;

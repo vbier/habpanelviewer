@@ -124,9 +124,9 @@ public abstract class ScreenControllingActivity extends Activity {
         super.onStop();
     }
 
-    public abstract View getScreenOnView();
+    protected abstract View getScreenOnView();
 
-    private BroadcastReceiver onEvent = new BroadcastReceiver() {
+    private final BroadcastReceiver onEvent = new BroadcastReceiver() {
         public void onReceive(Context ctx, Intent i) {
             if (ACTION_KEEP_SCREEN_ON.equals(i.getAction())) {
                 final boolean keepOn = i.getBooleanExtra(FLAG_KEEP_SCREEN_ON, false);
@@ -147,7 +147,7 @@ public abstract class ScreenControllingActivity extends Activity {
         }
     };
 
-    protected void setBrightness(float brightness) {
+    private void setBrightness(float brightness) {
         final WindowManager.LayoutParams layout = getWindow().getAttributes();
         layout.screenBrightness = brightness;
         getWindow().setAttributes(layout);

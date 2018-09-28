@@ -8,7 +8,7 @@ import java.net.URI;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 import io.opensensors.sse.client.EventSource;
 
-public class AsyncConnectTask extends AsyncTask<EventSource, Void, Void> {
+class AsyncConnectTask extends AsyncTask<EventSource, Void, Void> {
     private static final String TAG = "HPV-AsyncConnectTask";
 
     private final URI fUri;

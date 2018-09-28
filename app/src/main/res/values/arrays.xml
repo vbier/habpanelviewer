@@ -53,7 +53,7 @@
         <item>dark</item>
         <item>light</item>
     </string-array>
-    <string-array name="themeids">
+    <string-array name="themeIds">
         <item>dark</item>
         <item>light</item>
     </string-array>

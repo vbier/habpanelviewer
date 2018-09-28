@@ -83,7 +83,7 @@ class LocalTrustManager implements X509TrustManager {
             List<X509Certificate> allIssuers = new ArrayList<>();
             allIssuers.addAll(Arrays.asList(defaultTrustManager.getAcceptedIssuers()));
             allIssuers.addAll(Arrays.asList(localTrustManager.getAcceptedIssuers()));
-            acceptedIssuers = allIssuers.toArray(new X509Certificate[allIssuers.size()]);
+            acceptedIssuers = allIssuers.toArray(new X509Certificate[0]);
         } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
         }

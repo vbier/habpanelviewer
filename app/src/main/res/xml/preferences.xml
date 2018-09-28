@@ -32,7 +32,8 @@
         <ListPreference
             android:key="pref_theme"
             android:entries="@array/themes"
-            android:entryValues="@array/themeids"
+            android:defaultValue="dark"
+            android:entryValues="@array/themeIds"
             android:summary="@string/pref_theme_summ"
             android:title="@string/pref_theme" />
         <ListPreference

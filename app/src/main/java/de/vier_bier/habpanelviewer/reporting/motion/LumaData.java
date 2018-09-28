@@ -16,8 +16,8 @@ class LumaData {
 
     private byte[] data;
     private byte[][] average = null;
-    private int width;
-    private int height;
+    private final int width;
+    private final int height;
     private int mBoxes = -1;
 
     private LumaData(byte[] data, int width, int height) {

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">HABPanelViewer</string>
+    <string name="app_logo" translatable="false">App Logo</string>
 
     <string name="action_startApp">Start App</string>
     <string name="action_info">Status Information</string>
@@ -193,7 +194,6 @@
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>
     <string name="temperature">Temperature: %1$.1f°C [%2$s=%3$s]</string>
-    <string name="deviceMissingSensor">Device does not have a sensor of type</string>
     <string name="maxRangeResolution">Sensor max. range is %1$.1f, resolution is %2$.1f</string>
     <string name="objectClose">Object close: %1$b [%2$s=%3$s]</string>
     <string name="pressure">Pressure: %1$d hPa or mbar [%2$s=%3$s]</string>

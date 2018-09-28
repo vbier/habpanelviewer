@@ -6,7 +6,7 @@ import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
 public class FutureState extends ItemState implements Delayed {
-    private int delayInMillis;
+    private final int delayInMillis;
     private long origin = System.currentTimeMillis();
 
     public FutureState(String item, int interval, String state) {

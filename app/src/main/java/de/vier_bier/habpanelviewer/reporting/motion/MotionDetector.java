@@ -1,12 +1,8 @@
 package de.vier_bier.habpanelviewer.reporting.motion;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -41,8 +37,8 @@ public class MotionDetector extends Thread implements IMotionDetector, ICamera.I
 
     private LumaData mPreviousState;
     private Comparer mComparer;
-    private Camera mCamera;
-    private AtomicReference<LumaData> mLumaData = new AtomicReference<>();
+    private final Camera mCamera;
+    private final AtomicReference<LumaData> mLumaData = new AtomicReference<>();
 
     public MotionDetector(Activity context, Camera camera, IMotionListener l, ServerConnection serverConnection) {
         mContext = context;

@@ -11,7 +11,7 @@ import de.vier_bier.habpanelviewer.ClientWebView;
 public class WebViewHandler implements ICommandHandler {
     private final Pattern SHOW_PATTERN = Pattern.compile("SHOW_(URL|DASHBOARD) (.+)");
 
-    private ClientWebView mWebView;
+    private final ClientWebView mWebView;
 
     public WebViewHandler(ClientWebView webView) {
         mWebView = webView;

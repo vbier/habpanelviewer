@@ -16,7 +16,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -38,7 +37,6 @@ import java.util.List;
 import javax.net.ssl.SSLException;
 
 import de.vier_bier.habpanelviewer.AdminReceiver;
-import de.vier_bier.habpanelviewer.BuildConfig;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
@@ -149,25 +147,22 @@ public class SettingsFragment extends PreferenceFragment {
         adminPreference.setOnPreferenceChangeListener(new AdminValidatingListener());
 
         ListPreference themePreference = (ListPreference) findPreference("pref_theme");
-        themePreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object o) {
-                AlertDialog alert = new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.RestartRequired)
-                        .setMessage(R.string.WantToRestart)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                            getActivity().finish();
-                            ProcessPhoenix.triggerRebirth(getActivity().getApplication());
-                        })
-                        .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {}).create();
+        themePreference.setOnPreferenceChangeListener((preference, o) -> {
+            AlertDialog alert = new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.RestartRequired)
+                    .setMessage(R.string.WantToRestart)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                        getActivity().finish();
+                        ProcessPhoenix.triggerRebirth(getActivity().getApplication());
+                    })
+                    .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {}).create();
 
-                if (getActivity() != null && !getActivity().isFinishing()) {
-                    alert.show();
-                }
-
-                return true;
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                alert.show();
             }
+
+            return true;
         });
         adminPreference.setOnPreferenceChangeListener(new AdminValidatingListener());
 
@@ -245,7 +240,7 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     private static final class ValidateHabPanelTask extends AsyncTask<String, Void, Void> {
-        private WeakReference<Activity> activity;
+        private final WeakReference<Activity> activity;
         private final CharSequence preferenceName;
 
         ValidateHabPanelTask(Activity act, CharSequence prefName) {

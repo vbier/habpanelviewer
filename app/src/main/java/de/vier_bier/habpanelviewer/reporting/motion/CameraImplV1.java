@@ -165,7 +165,7 @@ class CameraImplV1 extends AbstractCameraImpl {
         for (Camera.Size s : supportedPictureSizes) {
             result.add(new Point(s.width, s.height));
         }
-        return result.toArray(new Point[result.size()]);
+        return result.toArray(new Point[0]);
     }
 
 }

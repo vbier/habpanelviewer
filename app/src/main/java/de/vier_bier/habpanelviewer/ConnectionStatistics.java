@@ -13,7 +13,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  */
 public class ConnectionStatistics {
     private final Context mCtx;
-    private long mStartTime = System.currentTimeMillis();
+    private final long mStartTime = System.currentTimeMillis();
     private State mState = State.DISCONNECTED;
 
     private long mLastOnlineTime = -1;

@@ -20,7 +20,7 @@ abstract class AbstractCameraImpl implements ICamera {
     final TextureView mPreviewView;
     int mDeviceOrientation;
 
-    List<ILumaListener> mListeners = new ArrayList<>();
+    final List<ILumaListener> mListeners = new ArrayList<>();
 
     AbstractCameraImpl(Activity activity, TextureView previewView, int orientation) {
         mActivity = activity;

@@ -81,15 +81,15 @@ public class ServerPreference extends EditTextPreference {
             this.editText = editText;
         }
 
-        public void serverFound(String serverUrl) {
+        void serverFound(String serverUrl) {
             b.post(() -> editText.setText(serverUrl));
         }
 
-        public void serverNotFound() {
+        void serverNotFound() {
             b.post(() -> Toast.makeText(getContext(), getContext().getString(R.string.serverNotFound), Toast.LENGTH_LONG).show());
         }
 
-        public void discoveryFinished() {
+        void discoveryFinished() {
             AlertDialog d = ((AlertDialog) getDialog());
             if (d != null && d.isShowing()) { // dialog may have been closed by back button
                 b.setEnabled(true);
@@ -100,10 +100,10 @@ public class ServerPreference extends EditTextPreference {
     }
 
     private static class DiscoverTask extends AsyncTask {
-        private WeakReference<ServerDiscovery> discoveryServiceReference;
-        private WeakReference<ResultVisualizer> visualizerReference;
-        private boolean discoverHttp;
-        private boolean discoverHttps;
+        private final WeakReference<ServerDiscovery> discoveryServiceReference;
+        private final WeakReference<ResultVisualizer> visualizerReference;
+        private final boolean discoverHttp;
+        private final boolean discoverHttps;
 
         DiscoverTask(ServerDiscovery serverDiscovery, ResultVisualizer visualizer, boolean discoverHttp, boolean discoverHttps) {
             discoveryServiceReference = new WeakReference<>(serverDiscovery);

@@ -152,7 +152,7 @@ public class InternalCommandHandler implements ICommandHandler {
         editor1.putBoolean("pref_motion_detection_enabled", enabled);
         editor1.apply();
 
-        mActivity.runOnUiThread(() -> mActivity.updateMotionPreferences());
+        mActivity.runOnUiThread(mActivity::updateMotionPreferences);
     }
 
     private String[] matchesRegexp(Pattern pattern, String text) {

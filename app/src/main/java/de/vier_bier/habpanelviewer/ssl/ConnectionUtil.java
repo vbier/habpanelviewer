@@ -46,8 +46,8 @@ public class ConnectionUtil {
     private LocalTrustManager mTrustManager;
     private SSLContext mSslContext;
 
-    private AtomicBoolean mInitialized = new AtomicBoolean();
-    private CountDownLatch mInitLatch = new CountDownLatch(1);
+    private final AtomicBoolean mInitialized = new AtomicBoolean();
+    private final CountDownLatch mInitLatch = new CountDownLatch(1);
 
     public static synchronized ConnectionUtil getInstance() {
         if (mInstance == null) {

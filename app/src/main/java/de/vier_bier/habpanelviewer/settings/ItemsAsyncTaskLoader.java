@@ -3,7 +3,6 @@ package de.vier_bier.habpanelviewer.settings;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,8 +15,6 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.vier_bier.habpanelviewer.MainActivity;
-import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
 /**
