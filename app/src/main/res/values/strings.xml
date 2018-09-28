@@ -36,6 +36,8 @@
     <string name="pref_preventDragging_summ">Prevents dragging in the WebView. This effectively disables scrolling and might also disable the pull-out of the HABPanel menu</string>
     <string name="pref_showOnLockScreen">Show on lock screen</string>
     <string name="pref_showOnLockScreen_summ">Whether the app shall be shown on the lock screen</string>
+    <string name="pref_immersive">Hide Soft Keys</string>
+    <string name="pref_immersive_summ">Hides the soft keys when the browser is visible</string>
 
     <string name="pref_other">Sonstiges</string>
     <string name="pref_restart">Auto Restart</string>

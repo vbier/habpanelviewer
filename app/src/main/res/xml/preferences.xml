@@ -53,6 +53,11 @@
             android:summary="@string/pref_showOnLockScreen_summ"
             android:title="@string/pref_showOnLockScreen" />
         <CheckBoxPreference
+            android:key="pref_immersive"
+            android:defaultValue="false"
+            android:summary="@string/pref_immersive_summ"
+            android:title="@string/pref_immersive" />
+        <CheckBoxPreference
             android:key="pref_prevent_dragging"
             android:defaultValue="false"
             android:summary="@string/pref_preventDragging_summ"

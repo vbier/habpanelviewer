@@ -33,7 +33,9 @@
     <string name="pref_showOnLockScreen">Sichtbar bei Bildschirmsperre</string>
     <string name="pref_showOnLockScreen_summ">Ob die Anwendung sichtbar sein soll, wenn der Bildschirm gesperrt ist</string>
     <string name="pref_preventDragging">Ziehen verhindern</string>
-    <string name="pref_preventDragging_summ">Verhindert das Ziehen im Browser. Dies verhindert Scrolling.</string>
+    <string name="pref_preventDragging_summ">Verhindert das Ziehen im Browser (dies verhindert Scrolling)</string>
+    <string name="pref_immersive">Verstecke Soft Keys</string>
+    <string name="pref_immersive_summ">Versteckt die Soft Keys, wenn der Browser angezeigt wird</string>
 
     <string name="pref_other">Sonstiges</string>
     <string name="pref_restart">Automatischer Neustart</string>
