@@ -42,6 +42,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -72,6 +74,7 @@ import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionVisualizer;
 import de.vier_bier.habpanelviewer.settings.SetPreferenceActivity;
+import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
 
@@ -168,6 +171,14 @@ public class MainActivity extends ScreenControllingActivity
         setContentView(R.layout.activity_main);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+        try {
+            ConnectionUtil.getInstance().setContext(this);
+            Log.d(TAG, "SSL context initialized");
+        } catch (GeneralSecurityException | IOException e) {
+            Log.e(TAG, "failed to initialize ConnectionUtil", e);
+            Toast.makeText(this, R.string.sslFailed, Toast.LENGTH_LONG).show();
+        }
 
         // inflate navigation header to make sure the textview holding the connection text is created
         NavigationView navigationView = findViewById(R.id.nav_view);
