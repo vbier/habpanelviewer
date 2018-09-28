@@ -1,15 +1,22 @@
 0.9.22pre
 ======
+* Neue Einstellung: Verstecke Soft Keys (standardmäßig abgeschaltet)
+* Neue Einstellung: Browser Cache kann ausgeschlatet werden
+* Neue Einstellung: Startseite laden wenn das Gerät eingeschaltet wird
+* das gewählte Theme wird jetzt auch für die in-app Hilfe benutzt
+* App Start wurde beschleunigt
+* BUG: Es wird jetzt nach Kamera Berechtigung gefragt, wenn nur die Vorschau aktiviert wird
+* BUG: Automatischer Neustart funktioniert jetzt wieder
 
 0.9.21
 ======
 * aktive App Benutzung kann nun an openHAB gemeldet werden
 * SCREEN_ON: neuer optionaler Parameter, der das Gerät für die Anzahl an Sekunden wach hält
-* Neue Einstellung zum Auswählen, ob mit dem CAPTURE_SCREEN Kommando Bildschirm Fotos gemacht werden dürfen
-* Neue Einstellung zum Auswählen des Themes
+* Neue Einstellung: Aktivierung des CAPTURE_SCREEN Kommandos (standardmäßig abgeschaltet)
+* Neue Einstellung: App Themes
+* Einstellungen umstrukturiert
 * CPU Verbrauch verringert
-* Abstürze behoben
-* Einstellungen umstrukutiert
+* BUG: Abstürze behoben
 
 0.9.20
 ======

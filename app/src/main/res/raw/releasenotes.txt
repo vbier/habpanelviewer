@@ -1,5 +1,12 @@
 0.9.22pre
 ======
+* add setting for immersive mode and disable it by default
+* add setting for disabling the browser cache
+* add setting for loading start page when device is turned on
+* apply theme to in-app help
+* app starts faster
+* BUG: fix asking for camera permission if only camera preview is activated without motion detection
+* BUG: fix broken restart on crash feature
 
 0.9.21
 ======
@@ -9,7 +16,7 @@
 * add setting allowing to choose dark/light theme
 * improve cpu usage
 * fixed crashes
-* restructured Settings
+* restructured settings
 
 0.9.20
 ======
