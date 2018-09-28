@@ -22,6 +22,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.HostnameVerifier;
@@ -44,7 +45,9 @@ public class ConnectionUtil {
     private File localTrustStoreFile;
     private LocalTrustManager mTrustManager;
     private SSLContext mSslContext;
+
     private AtomicBoolean mInitialized = new AtomicBoolean();
+    private CountDownLatch mInitLatch = new CountDownLatch(1);
 
     public static synchronized ConnectionUtil getInstance() {
         if (mInstance == null) {
@@ -56,17 +59,21 @@ public class ConnectionUtil {
 
     public synchronized void setContext(Context ctx) throws GeneralSecurityException, IOException {
         if (!mInitialized.getAndSet(true)) {
-            localTrustStoreFile = new File(ctx.getFilesDir(), "localTrustStore.bks");
-            if (!localTrustStoreFile.exists()) {
-                try (InputStream in = ctx.getResources().openRawResource(R.raw.mytruststore)) {
-                    copy(in, localTrustStoreFile);
+            try {
+                localTrustStoreFile = new File(ctx.getFilesDir(), "localTrustStore.bks");
+                if (!localTrustStoreFile.exists()) {
+                    try (InputStream in = ctx.getResources().openRawResource(R.raw.mytruststore)) {
+                        copy(in, localTrustStoreFile);
+                    }
                 }
+
+                System.setProperty("javax.net.ssl.trustStore", localTrustStoreFile.getAbsolutePath());
+
+                SSLContext sslContext = createSslContext();
+                HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+            } finally {
+                mInitLatch.countDown();
             }
-
-            System.setProperty("javax.net.ssl.trustStore", localTrustStoreFile.getAbsolutePath());
-
-            SSLContext sslContext = createSslContext();
-            HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
         }
     }
 
@@ -109,7 +116,7 @@ public class ConnectionUtil {
     }
 
     public synchronized HttpURLConnection createUrlConnection(final String urlStr) throws IOException, GeneralSecurityException {
-        if (!mInitialized.get()) {
+        if (!mInitialized.get() && urlStr.toLowerCase().startsWith("https://")) {
             throw new GeneralSecurityException("Certificate Store not yet initialized!");
         }
 
@@ -128,6 +135,13 @@ public class ConnectionUtil {
     }
 
     public synchronized boolean isTrusted(SslCertificate cert) {
+        try {
+            mInitLatch.await();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
+        }
+
         if (mTrustManager == null) {
             KeyStore trustStore = loadTrustStore();
             mTrustManager = new LocalTrustManager(trustStore);
