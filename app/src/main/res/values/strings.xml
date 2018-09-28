@@ -59,6 +59,8 @@
     <string name="pref_allowMixedContent_summ">Allows http content in https pages.</string>
     <string name="pref_hardwareAccelerated">Use hardware acceleration</string>
     <string name="pref_hardwareAccelerated_summ">HW acceleration uses more resources and might make the app unstable. Please disable in case of crashes</string>
+    <string name="pref_disableCache">Disable browser cache</string>
+    <string name="pref_disableCache_summ">Forces loading of every resource from the server.</string>
 
     <string name="pref_commandItem">Command Item</string>
     <string name="pref_commandItem_summ">Name of the Item that is used by openHAB to send commands to HABPanelViewer</string>

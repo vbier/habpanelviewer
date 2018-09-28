@@ -360,6 +360,11 @@
             android:summary="@string/pref_allowMixedContent_summ"
             android:title="@string/pref_allowMixedContent" />
         <CheckBoxPreference
+            android:key="pref_disable_cache"
+            android:defaultValue="false"
+            android:summary="@string/pref_disableCache_summ"
+            android:title="@string/pref_disableCache" />
+        <CheckBoxPreference
             android:key="pref_hardware_accelerated"
             android:defaultValue="false"
             android:summary="@string/pref_hardwareAccelerated_summ"

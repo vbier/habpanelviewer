@@ -57,6 +57,8 @@
     <string name="pref_allowMixedContent_summ">Erlaubt http Inhalte in https Seiten.</string>
     <string name="pref_hardwareAccelerated">Hardware Beschleunigung</string>
     <string name="pref_hardwareAccelerated_summ">Hardware Beschleunigung benötigt mehr Ressourcen und kann zu Abstürzen führen.</string>
+    <string name="pref_disableCache">Deaktiviere Browser Cache</string>
+    <string name="pref_disableCache_summ">Erzwingt, das jede Resource vom Server geladen wird.</string>
 
     <string name="pref_commandItem">Kommando Item</string>
     <string name="pref_commandItem_summ">Name des openHAB Items in dem openHAB Kommandos an HABPanelViewer sendet</string>

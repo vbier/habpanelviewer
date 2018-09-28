@@ -235,12 +235,15 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
         Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
         Boolean isJavascript = prefs.getBoolean("pref_javascript", false);
+        Boolean cacheDeactivated = prefs.getBoolean("pref_disable_cache", false);
+
         mDraggingPrevented = prefs.getBoolean("pref_prevent_dragging", false);
 
         WebSettings webSettings = getSettings();
         webSettings.setUseWideViewPort(isDesktop);
         webSettings.setLoadWithOverviewMode(isDesktop);
         webSettings.setJavaScriptEnabled(isJavascript);
+        webSettings.setCacheMode(cacheDeactivated ? WebSettings.LOAD_NO_CACHE : WebSettings.LOAD_DEFAULT);
 
         boolean loadStartUrl = false;
         boolean reloadUrl = false;
