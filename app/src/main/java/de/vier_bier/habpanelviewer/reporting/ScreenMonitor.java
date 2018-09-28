@@ -24,18 +24,21 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
 
     private final Context mCtx;
     private final ServerConnection mServerConnection;
+    private final ScreenListener mListener;
 
     private BroadcastReceiver mScreenReceiver;
     private boolean mMonitorEnabled;
+    private boolean mReceiverRegistered;
 
     private String mScreenOnItem;
     private String mScreenOnState;
     private boolean mScreenOn;
     private IntentFilter mIntentFilter;
 
-    public ScreenMonitor(Context context, ServerConnection serverConnection) {
+    public ScreenMonitor(Context context, ServerConnection serverConnection, ScreenListener listener) {
         mCtx = context;
         mServerConnection = serverConnection;
+        mListener = listener;
 
         EventBus.getDefault().register(this);
 
@@ -43,7 +46,13 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
             @Override
             public void onReceive(Context context, Intent intent) {
                 mScreenOn = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
-                mServerConnection.updateState(mScreenOnItem, mScreenOn ? "CLOSED" : "OPEN");
+                if (mListener.isActive() && mScreenOn) {
+                    mListener.screenOn();
+                }
+
+                if (mMonitorEnabled && mScreenOnItem != null) {
+                    mServerConnection.updateState(mScreenOnItem, mScreenOn ? "CLOSED" : "OPEN");
+                }
             }
         };
 
@@ -90,13 +99,18 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         mScreenOnItem = prefs.getString("pref_screen_item", "");
 
-        if (mMonitorEnabled != prefs.getBoolean("pref_screen_enabled", false)) {
-            mMonitorEnabled = !mMonitorEnabled;
+        if (mReceiverRegistered != (prefs.getBoolean("pref_screen_enabled", false) || mListener.isActive())) {
+            mReceiverRegistered = !mReceiverRegistered;
 
-            if (mMonitorEnabled && mScreenOnItem != null) {
+            mMonitorEnabled = prefs.getBoolean("pref_screen_enabled", false);
+
+            if (mReceiverRegistered) {
                 PowerManager powerManager = (PowerManager) mCtx.getSystemService(POWER_SERVICE);
                 mScreenOn = powerManager.isScreenOn();
-                mServerConnection.updateState(mScreenOnItem, mScreenOn ? "CLOSED" : "OPEN");
+
+                if (mMonitorEnabled && mScreenOnItem != null) {
+                    mServerConnection.updateState(mScreenOnItem, mScreenOn ? "CLOSED" : "OPEN");
+                }
 
                 Log.d(TAG, "registering screen receiver...");
                 mCtx.registerReceiver(mScreenReceiver, mIntentFilter);
@@ -104,9 +118,19 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
                 Log.d(TAG, "unregistering screen receiver...");
                 mCtx.unregisterReceiver(mScreenReceiver);
             }
+        } else if (mMonitorEnabled != prefs.getBoolean("pref_screen_enabled", false)) {
+            mMonitorEnabled = !mMonitorEnabled;
+
+            if (mMonitorEnabled && mScreenOnItem != null) {
+                mServerConnection.updateState(mScreenOnItem, mScreenOn ? "CLOSED" : "OPEN");
+            }
         }
 
-
         mServerConnection.subscribeItems(this, mScreenOnItem);
+    }
+
+    public interface ScreenListener {
+        void screenOn();
+        boolean isActive();
     }
 }

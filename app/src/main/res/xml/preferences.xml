@@ -344,6 +344,11 @@
         android:key="pref_browser"
         android:title="@string/pref_browser">
         <CheckBoxPreference
+            android:key="pref_load_start_url_on_screenon"
+            android:defaultValue="false"
+            android:summary="@string/pref_loadStartUrlOnScreenOn_summ"
+            android:title="@string/pref_loadStartUrlOnScreenOn" />
+        <CheckBoxPreference
             android:key="pref_desktop_mode"
             android:defaultValue="false"
             android:summary="@string/pref_desktopMode_summ"

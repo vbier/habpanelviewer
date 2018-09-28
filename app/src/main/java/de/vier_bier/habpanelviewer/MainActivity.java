@@ -293,7 +293,17 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         mMonitors.add(new BatteryMonitor(this, mServerConnection));
-        mMonitors.add(new ScreenMonitor(this, mServerConnection));
+        mMonitors.add(new ScreenMonitor(this, mServerConnection, new ScreenMonitor.ScreenListener() {
+            @Override
+            public void screenOn() {
+                mWebView.loadStartUrl();
+            }
+
+            @Override
+            public boolean isActive() {
+                return prefs.getBoolean("pref_load_start_url_on_screenon", false);
+            }
+        }));
         mMonitors.add(new VolumeMonitor(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection));
 
         SensorManager m = (SensorManager) getSystemService(Context.SENSOR_SERVICE);

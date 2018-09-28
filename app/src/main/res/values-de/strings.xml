@@ -19,9 +19,9 @@
     <string name="pref_url_summ">Die URL des openHAB Servers</string>
     <string name="pref_url_example">z.B. http://openhabianpi:8080</string>
     <string name="pref_startUrl">Startseite</string>
-    <string name="pref_startUrl_summ">Die Webseite, die beim Start gezeigt werden soll. Falls leer, wird die openHAB URL als Startseite benutzt.</string>
+    <string name="pref_startUrl_summ">Die Webseite, die beim Start gezeigt werden soll. Falls leer, wird die openHAB URL als Startseite benutzt</string>
     <string name="pref_trackBrowserConnection">Überwache Browser Verbindung</string>
-    <string name="pref_trackBrowserConnection_summ">Verbindet erneut mit openHAB, wenn der Browser die SSE Verbindung verliert.</string>
+    <string name="pref_trackBrowserConnection_summ">Verbindet erneut mit openHAB, wenn der Browser die SSE Verbindung verliert</string>
 
     <string name="pref_ui">Benutzeroberfläche</string>
     <string name="pref_theme">Theme</string>
@@ -59,6 +59,8 @@
     <string name="pref_hardwareAccelerated_summ">Hardware Beschleunigung benötigt mehr Ressourcen und kann zu Abstürzen führen.</string>
     <string name="pref_disableCache">Deaktiviere Browser Cache</string>
     <string name="pref_disableCache_summ">Erzwingt, das jede Resource vom Server geladen wird.</string>
+    <string name="pref_loadStartUrlOnScreenOn">Lade Startseite beim Aufwachen</string>
+    <string name="pref_loadStartUrlOnScreenOn_summ">Läft die Startseite jedes Mal, wenn das Gerät angeschaltet wird</string>
 
     <string name="pref_commandItem">Kommando Item</string>
     <string name="pref_commandItem_summ">Name des openHAB Items in dem openHAB Kommandos an HABPanelViewer sendet</string>
