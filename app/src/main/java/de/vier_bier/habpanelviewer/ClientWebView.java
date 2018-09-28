@@ -1,11 +1,8 @@
 package de.vier_bier.habpanelviewer;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
@@ -50,22 +47,10 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     private boolean mKioskMode;
     private boolean mHwAccelerated;
     private NetworkTracker mNetworkTracker;
+    private boolean mDarkTheme;
 
     public ClientWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public ClientWebView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public ClientWebView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
-    public ClientWebView(Context context) {
-        super(context);
     }
 
     @Override
@@ -229,9 +214,6 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
         WebSettings webSettings = getSettings();
         webSettings.setDomStorageEnabled(true);
-
-        final IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
     }
 
     public void loadStartUrl() {
@@ -241,10 +223,9 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         }
 
         if ("".equals(url)) {
-            post(() -> loadData("<html><body><h1>" + getContext().getString(R.string.configMissing)
-                    + "</h1><h2>" + getContext().getString(R.string.startPageNotSet) + "."
-                    + getContext().getString(R.string.specifyUrlInSettings)
-                    + "</h2></body></html>", "text/html", "UTF-8"));
+            post(() -> showHtml(getContext().getString(R.string.configMissing),
+                    getContext().getString(R.string.startPageNotSet) + "."
+                    + getContext().getString(R.string.specifyUrlInSettings)));
             return;
         }
 
@@ -261,6 +242,9 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
     void updateFromPreferences(SharedPreferences prefs) {
         Log.d(TAG, "updateFromPreferences");
+
+        String theme = prefs.getString("pref_theme", "dark");
+        mDarkTheme = "dark".equals(theme);
 
         Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
         Boolean isJavascript = prefs.getBoolean("pref_javascript", false);
@@ -317,10 +301,22 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             }
         } else {
             Log.d(TAG, "updateFromPreferences: NOT connected");
-            loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
-                    + "</h1><h2>" + getContext().getString(R.string.notConnectedReloadPending)
-                    + "</h2></body></html>", "text/html", "UTF-8");
+            showHtml(getContext().getString(R.string.waitingNetwork),
+                    getContext().getString(R.string.notConnectedReloadPending));
         }
+    }
+
+    private void showHtml(String title, String text) {
+        String bgColor = "white";
+        String fgColor = "black";
+        if (mDarkTheme) {
+            bgColor = "black";
+            fgColor = "white";
+        }
+
+        loadData("<html><body style=\"background-color:" + bgColor
+                + "; color:" + fgColor + " \"><h1>" + title + "</h1><h2>" + text
+                + "</h2></body></html>", "text/html", "UTF-8");
     }
 
     public void unregister() {
@@ -490,9 +486,8 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     @Override
     public void disconnected() {
         Log.d(TAG, "disconnected: showing error message...");
-        loadData("<html><body><h1>" + getContext().getString(R.string.waitingNetwork)
-                + "</h1><h2>" + getContext().getString(R.string.notConnectedReloadPending)
-                + "</h2></body></html>", "text/html", "UTF-8");
+        showHtml(getContext().getString(R.string.waitingNetwork),
+                getContext().getString(R.string.notConnectedReloadPending));
     }
 
     @Override
