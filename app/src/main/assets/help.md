@@ -1,4 +1,4 @@
-# <a name="top"/>HABPanelViewer
+# <a name="top">HABPanelViewer</a>
 
 HABPanelViewer is an Android home screen application visualizing HABPanel, a dedicated UI of openHAB.
 
@@ -18,7 +18,8 @@ This is the base URL of your openHAB instance and is required for the integratio
 
 This URL can be automatically discovered using mDNS if the device is on the same subnet as your openHAB instance by clicking the "Discover Server" button in the "openHAB URL" settings.  If it cannot be discovered or you wish to manually enter it, an example for this base URL would be:
 
-`http://{ip or hostname}:8080/` <br>
+<a href="javascript:void(0)">http://{host}:8080/</a>
+
 No additional URL paths should be configured here.
 
 > If you are using https (ssl), your port would normally be 8443_
@@ -30,9 +31,13 @@ You can leave this field empty, in which case the openHAB URL will be used as th
 
 This needs to be the full URL, examples:
 
-`http://{ip or hostname}:8080/habpanel/index.html#/`<br>would start at the main menu of dashboards.
+<a href="javascript:void(0)">http://{host}:8080/habpanel/index.html#/</a>
 
-`http://{ip or hostname}:8080/habpanel/index.html#/view/Lights`<br>would start at a specific dashboard.<br>
+would start at the main menu of dashboards.
+
+<a href="javascript:void(0)">http://{host}:8080/habpanel/index.html#/view/Lights</a>
+
+would start at a specific dashboard.
    
 > The "dashboard" parameters are case sensitive.  In the example above, "view" is always all lower case and "Lights" is how you named it when creating the dashboard.  You can validate what your actual dashboard name and case is by navagating to it from your computer's browser.
 

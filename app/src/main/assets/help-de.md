@@ -18,7 +18,8 @@ Die ist die URL des openHAB servers. Sie wird für die openHAB integration (d.h.
 
 Die URL kann automatisch per mDNS discovery gesucht werden, wenn sich das Gerät im selben Subnetz wie der openHAB server befindet. Drücken Sie dafür auf den "" Knopf im openHAB URL Einstellungsdialog. Wenn die Suche nicht funktioniert, oder Sie die URL selbst eingeben möchten, wäre ein Beispiel für die URL:
 
-`http://{ip or hostname}:8080/` <br>
+<a href="javascript:void(0)">http://{host}:8080/</a>
+
 Es sollte kein weiterer Pfad an die URL angehängt werden.
 
 > Wenn Sie https (ssl) benutzen möchten, sollten Sie 8443 als Port verwenden.
@@ -30,9 +31,13 @@ Wenn Sie diese Einstellung leer lassen, wird die openHAB URL beim Starten der Ap
 
 Beispiele für HABPanel URLs:
 
-`http://{ip or hostname}:8080/habpanel/index.html#/`<br>startet im HABPanel Menü.
+<a href="javascript:void(0)">http://{host}:8080/habpanel/index.html#/</a>
 
-`http://{ip or hostname}:8080/habpanel/index.html#/view/Info`<br>startet mit der speziellen HABPanel Seite Info<br>
+startet im HABPanel Menü.
+
+<a href="javascript:void(0)">http://{host}:8080/habpanel/index.html#/view/Info</a>
+
+startet mit der speziellen HABPanel Seite Info<br>
    
 > Achten Sie auf die richtige Groß- und Kleinschreibung der HABPanel URL.
 
@@ -203,7 +208,7 @@ Sie können den Kiosk Modus über das Kontextmenü an- und auschalten. Wenn Sie 
 
 Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Parameter `?kiosk=on` anzuhängen.
 
-## <a name="configuration"/>Permissions
+## <a name="configuration"/>Berechtigungen
 
 Habpanelviewer benötigt zwingend die folgenden Berechtigungen:  
 * android.permission.INTERNET - um openHAB anzuzeigen
