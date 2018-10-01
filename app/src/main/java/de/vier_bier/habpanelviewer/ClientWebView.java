@@ -107,7 +107,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                 if (isHabPanelUrl(url)) {
                     evaluateJavascript("angular.element(document.body).scope().$root.kioskMode", s -> {
                         mKioskMode = Boolean.parseBoolean(s);
-                        Log.d(TAG, "HABPanel page loaded. kioskMode=" + mKioskMode);
+                        Log.d(TAG, "habpanel page loaded. kioskMode=" + mKioskMode);
                     });
                 }
             }
@@ -164,7 +164,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
                 AlertDialog alert = new AlertDialog.Builder(getContext())
                         .setTitle(getContext().getString(R.string.certInvalid))
-                        .setMessage(getContext().getString(R.string.sslCert) + "https://" + host + " " + reason + ".\n\n"
+                        .setMessage(getContext().getString(R.string.sslCert) + " https://" + host + " " + reason + ".\n\n"
                                 + certInfo.replaceAll("<br/>", "\n") + "\n"
                                 + getContext().getString(R.string.storeSecurityException))
                         .setIcon(android.R.drawable.ic_dialog_alert)

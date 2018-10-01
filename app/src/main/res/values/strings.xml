@@ -2,6 +2,27 @@
     <string name="app_name" translatable="false">HABPanelViewer</string>
     <string name="app_logo" translatable="false">App Logo</string>
 
+    <string name="intro_urlNotFound">correct URL has not been found. I will edit the URL in the settings.</string>
+    <string name="intro_openhabServerDetection">openHAB Server Detection</string>
+    <string name="intro_discoveryInProgress">Server discovery is in progress…</string>
+    <string name="intro_initialConfiguration">Initial Configuration</string>
+    <string name="intro_discoveryFinished">Discovery has finished. Select one of the following URLs for your openHAB server:</string>
+    <string name="intro_pleaseSelectUrl">Please select an URL or choose to edit it later.</string>
+    <string name="intro_welcome">Welcome</string>
+    <string name="intro_welcome_text">Welcome to HABPanelViewer, a kiosk browser with some additional openHAB related features.</string>
+    <string name="intro_browser">Browser</string>
+    <string name="intro_browser_text">HPV can show your HABPanel in full screen mode. Open the context menu with long-press to toggle kiosk-mode.</string>
+    <string name="intro_reporting">Reporting</string>
+    <string name="intro_reporting_text">HPV can send device data, like sensor values or detected motion to openHAB.</string>
+    <string name="intro_commanding">Commanding</string>
+    <string name="intro_commanding_text">HPV can control your device on commands sent from openHAB. Turn the screen on or off, toggle bluetooth and more…</string>
+    <string name="intro_serverConfigured">Your openHAB server URL is already configured to %s.</string>
+    <string name="intro_configuration">Configuration</string>
+    <string name="intro_configuration_text">You can configure HPV by opening the menu and selecting Settings. To open the menu, swipe with your finger from the right side of the screen to the middle.</string>
+    <string name="intro_ready">Ready</string>
+    <string name="intro_ready_text">Your are ready to go.</string>
+    <string name="intro_pleaseComplete">The server is not yet configured. Please complete the initial configuration.</string>
+
     <string name="action_startApp">Start App</string>
     <string name="action_info">Status Information</string>
     <string name="action_help">Help</string>
@@ -9,6 +30,7 @@
     <string name="action_restart">Restart App</string>
     <string name="action_settings">Settings</string>
     <string name="action_cmdLog">Command Log</string>
+    <string name="action_intro">Show Intro</string>
 
     <string name="menu_reload">Reload page</string>
     <string name="menu_gotoStartUrl">Go to start page</string>
@@ -19,7 +41,7 @@
 
     <string name="pref_connection">Connection</string>
     <string name="pref_url" translatable="false">openHAB URL</string>
-    <string name="pref_url_summ">URL of the openHAB server</string>
+    <string name="pref_url_summ">URL of the openHAB server. To use discovery, set an empty URL and start the intro from the menu.</string>
     <string name="pref_url_example">e.g. http://openhabianpi:8080</string>
     <string name="pref_startUrl">Start page</string>
     <string name="pref_startUrl_summ">The page to load on start. If empty, the openHAB URL is used as start page</string>

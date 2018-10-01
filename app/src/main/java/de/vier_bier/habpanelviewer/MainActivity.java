@@ -14,7 +14,6 @@ import android.hardware.camera2.CameraManager;
 import android.media.AudioManager;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
-import android.net.nsd.NsdManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -59,7 +58,6 @@ import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.IConnectionListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
-import de.vier_bier.habpanelviewer.openhab.ServerDiscovery;
 import de.vier_bier.habpanelviewer.reporting.BatteryMonitor;
 import de.vier_bier.habpanelviewer.reporting.BrightnessMonitor;
 import de.vier_bier.habpanelviewer.reporting.ConnectedIndicator;
@@ -94,7 +92,6 @@ public class MainActivity extends ScreenControllingActivity
     private ServerConnection mServerConnection;
     private AppRestartingExceptionHandler mRestartingExceptionHandler;
     private NetworkTracker mNetworkTracker;
-    private ServerDiscovery mDiscovery;
     private FlashHandler mFlashService;
     private IMotionDetector mMotionDetector;
     private MotionVisualizer mMotionVisualizer;
@@ -104,6 +101,8 @@ public class MainActivity extends ScreenControllingActivity
     private Camera mCam;
 
     private final ArrayList<IDeviceMonitor> mMonitors = new ArrayList<>();
+
+    private boolean mIntroShowing;
 
     @Override
     protected void onDestroy() {
@@ -133,11 +132,6 @@ public class MainActivity extends ScreenControllingActivity
             mCam = null;
         }
 
-        if (mDiscovery != null) {
-            mDiscovery.terminate();
-            mDiscovery = null;
-        }
-
         if (mServerConnection != null) {
             mServerConnection.terminate();
             mServerConnection = null;
@@ -161,7 +155,9 @@ public class MainActivity extends ScreenControllingActivity
             mNetworkTracker.terminate();
             mNetworkTracker = null;
         }
-        mWebView.unregister();
+        if (mWebView != null) {
+            mWebView.unregister();
+        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -171,11 +167,17 @@ public class MainActivity extends ScreenControllingActivity
 
         super.onCreate(savedInstanceState);
 
-        EventBus.getDefault().register(this);
-
-        setContentView(R.layout.activity_main);
-
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        boolean introShown = prefs.getBoolean("pref_intro_shown", false);
+        if (!introShown) {
+            mIntroShowing = true;
+            showIntro();
+        }
+
+        EventBus.getDefault().register(this);
+        setContentView(R.layout.activity_main);
 
         try {
             ConnectionUtil.getInstance().setContext(this);
@@ -191,7 +193,6 @@ public class MainActivity extends ScreenControllingActivity
         navigationView.addHeaderView(navHeader);
         navigationView.setNavigationItemSelectedListener(this);
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         int restartCount = getIntent().getIntExtra("restartCount", 0);
 
         if (mRestartingExceptionHandler == null) {
@@ -238,59 +239,16 @@ public class MainActivity extends ScreenControllingActivity
             }
         }
 
-        if (prefs.getBoolean("pref_first_start", true)) {
+        String lastVersion = prefs.getString("pref_app_version", "");
+        if (!lastVersion.equals("") && !BuildConfig.VERSION_NAME.equals(lastVersion)) {
             SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putBoolean("pref_first_start", false);
             editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
             editor1.apply();
 
-            final String startText = ResourcesUtil.fetchFirstStart(this);
-            UiUtil.showScrollDialog(this, "HABPanelViewer", getString(R.string.welcome),
-                    startText);
-
-            if (prefs.getString("pref_server_url", "").isEmpty()) {
-                if (mDiscovery == null) {
-                    mDiscovery = new ServerDiscovery((NsdManager) getSystemService(Context.NSD_SERVICE));
-                }
-
-                mDiscovery.discover(new ServerDiscovery.DiscoveryListener() {
-                    @Override
-                    public void found(String serverUrl) {
-                        SharedPreferences.Editor editor1 = prefs.edit();
-                        editor1.putString("pref_server_url", serverUrl);
-                        editor1.apply();
-                    }
-
-                    @Override
-                    public void notFound() {
-                    }
-                }, true, true);
-            }
-        } else {
-            // make sure old server url preference is used in case it is still set
-            if (prefs.getString("pref_server_url", "").isEmpty()) {
-                final String oldUrl = prefs.getString("pref_url", "");
-
-                if (!oldUrl.isEmpty()) {
-                    SharedPreferences.Editor editor1 = prefs.edit();
-                    editor1.putString("pref_server_url", oldUrl);
-                    editor1.remove("pref_url");
-                    editor1.apply();
-                }
-            }
-
-            String lastVersion = prefs.getString("pref_app_version", "0.9.2");
-
-            if (!BuildConfig.VERSION_NAME.equals(lastVersion)) {
-                SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
-                editor1.apply();
-
-                final String relText = ResourcesUtil.fetchReleaseNotes(this, lastVersion);
-                UiUtil.showScrollDialog(this, getString(R.string.updated),
-                        getString(R.string.updatedText),
-                        relText);
-            }
+            final String relText = ResourcesUtil.fetchReleaseNotes(this, lastVersion);
+            UiUtil.showScrollDialog(this, getString(R.string.updated),
+                    getString(R.string.updatedText),
+                    relText);
         }
 
         if (mConnectedReporter == null) {
@@ -508,6 +466,12 @@ public class MainActivity extends ScreenControllingActivity
     public void onStart() {
         super.onStart();
 
+        if (mIntroShowing) {
+            // skip initialization if intro is showing
+            mIntroShowing = false;
+            return;
+        }
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         NavigationView navigationView = findViewById(R.id.nav_view);
         DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
@@ -575,17 +539,6 @@ public class MainActivity extends ScreenControllingActivity
     }
 
     @Override
-    protected void onStop() {
-        if (mDiscovery != null) {
-            // stop discover onStop, but do not set mDiscovery to null as it will be reused
-            // in onStart
-            mDiscovery.terminate();
-        }
-
-        super.onStop();
-    }
-
-    @Override
     public View getScreenOnView() {
         return mWebView;
     }
@@ -620,6 +573,8 @@ public class MainActivity extends ScreenControllingActivity
             showCmdLogScreen();
         } else if (id == R.id.action_help) {
             showHelpScreen();
+        } else if (id == R.id.action_intro) {
+            showIntro();
         } else if (id == R.id.action_restart) {
             destroy();
             ProcessPhoenix.triggerRebirth(this);
@@ -703,5 +658,9 @@ public class MainActivity extends ScreenControllingActivity
         Intent intent = new Intent();
         intent.setClass(MainActivity.this, HelpActivity.class);
         startActivityForResult(intent, 0);
+    }
+
+    private void showIntro() {
+        new Thread(() -> runOnUiThread(() -> startActivity(new Intent(MainActivity.this, IntroActivity.class)))).start();
     }
 }

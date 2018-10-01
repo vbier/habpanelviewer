@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="intro_urlNotFound">Die richtige URL wurde nicht gefunden. Ich werde diese in den Einstellungen eintragen.</string>
+    <string name="intro_openhabServerDetection">openHAB Server Suche</string>
+    <string name="intro_discoveryInProgress">Server Suche läuft…</string>
+    <string name="intro_initialConfiguration">Initiale Konfiguration</string>
+    <string name="intro_discoveryFinished">Suche beendet. Wähle eine der folgenden openHAB Server URLs:</string>
+    <string name="intro_pleaseSelectUrl">Bitte wähle eine URL oder \"Die richtige URL wurde nicht gefunden\".</string>
+    <string name="intro_welcome">Willkommen</string>
+    <string name="intro_welcome_text">Willkommen zu HABPanelViewer, einem Kiosk Browser mit ein paar zusätzlichen openHAB bezogenen Funktionen.</string>
+    <string name="intro_browser">Browser</string>
+    <string name="intro_browser_text">HPV kann dir HABPanel im Vollbildmodus zeigen. Öffne das Kontext Menü durch langes Drücken um den Kiosk Modus ein- order auszuschalten.</string>
+    <string name="intro_reporting">Werte Meldung</string>
+    <string name="intro_reporting_text">HPV kann Geräte Werte, wie Sensor Werte oder erkannte Bewegung an openHAB melden.</string>
+    <string name="intro_commanding">Geräte Steuerung</string>
+    <string name="intro_commanding_text">HPV kann dein Gerät steuern, wenn es Kommandos von openHAB bekommt. Schalte den Bildschirm ein und aus, schalte Bluetooth und mehr…</string>
+    <string name="intro_serverConfigured">Dein openHAB server is bereits mit %s konfiguriert.</string>
+    <string name="intro_configuration">Konfiguration</string>
+    <string name="intro_configuration_text">Du kannst HPV konfigurieren, in dem du das Menü öffnest und Einstellungen auswählst. Um das Menü zu öffnen, streiche mit dem Finger vom rechten Rand zur Mitte.</string>
+    <string name="intro_ready">Fertig</string>
+    <string name="intro_ready_text">Es kann losgehen.</string>
+    <string name="intro_pleaseComplete">Der Server ist noch nicht konfiguriert. Bitte beende die initiale Konfiguration.</string>
+
     <string name="action_startApp">Starte App</string>
     <string name="action_info">Status Information</string>
     <string name="action_help">Hilfe</string>
@@ -7,6 +28,7 @@
     <string name="action_restart">Neustart</string>
     <string name="action_settings">Einstellungen</string>
     <string name="action_cmdLog">Kommando Log</string>
+    <string name="action_intro">Zeige Intro</string>
 
     <string name="menu_reload">Lade Seite neu</string>
     <string name="menu_gotoStartUrl">Gehe zur Startseite</string>
@@ -16,7 +38,7 @@
     <string name="menu_toggleKiosk">Kiosk Modus umschalten</string>
 
     <string name="pref_connection">Verbindung</string>
-    <string name="pref_url_summ">Die URL des openHAB Servers</string>
+    <string name="pref_url_summ">Die URL des openHAB Servers. Um die Suche zu starten, setze eine leere URL und starte das Intro im Menü.</string>
     <string name="pref_url_example">z.B. http://openhabianpi:8080</string>
     <string name="pref_startUrl">Startseite</string>
     <string name="pref_startUrl_summ">Die Webseite, die beim Start gezeigt werden soll. Falls leer, wird die openHAB URL als Startseite benutzt</string>
@@ -140,7 +162,7 @@
 
     <string name="pref_camera">Kamera</string>
     <string name="pref_cameraNewApi">Benutze Lollipop Camera API 2</string>
-    <string name="pref_cameraNewApi_summ">Benutze das Camera API 2 das mit Lollipop eingeführt wurde. Verändern Sie dies nur, falls die Erkennung nicht funktioniert. Die App startet automatisch neu, wenn der Wert verändert wird.</string>
+    <string name="pref_cameraNewApi_summ">Benutze das Camera API 2 das mit Lollipop eingeführt wurde. Verändere dies nur, falls die Erkennung nicht funktioniert. Die App startet automatisch neu, wenn der Wert verändert wird.</string>
     <string name="pref_cameraPreview">Zeige Kamera Vorschau</string>
     <string name="pref_cameraPreview_summ">Blendet eine Kamera Vorschau über dem Browser ein</string>
     <string name="pref_takePicDelay">CAPTURE_CAMERA Verzögerung</string>
@@ -174,17 +196,17 @@
     <string name="validUntil">Gültig bis: </string>
     <string name="certInvalid">SSL Zertifikat Ungültig!</string>
     <string name="sslCert">Das SSL Zertifikat von</string>
-    <string name="storeSecurityException">Wollen Sie fortfahren und eine Ausnahme für dieses Zertifikat speichern?</string>
+    <string name="storeSecurityException">Willst du fortfahren und eine Ausnahme für dieses Zertifikat speichern?</string>
     <string name="configMissing">Konfiguration unvollständig</string>
     <string name="serverNotFound">Der openHAB server konnte nicht gefunden werden</string>
     <string name="startPageNotSet">Weder die openHAB URL noch die Startseite ist in den Einstellungen definiert.</string>
-    <string name="specifyUrlInSettings">Bitte geben Sie sie in den Einstellungen ein.</string>
+    <string name="specifyUrlInSettings">Bitte gib sie in den Einstellungen ein.</string>
     <string name="invalid">ungültig</string>
     <string name="notValidUrl">ist keine gültige URL</string>
     <string name="notValidOpenHabUrl">Konnte die Liste der verfügbaren Services nicht von openHAB laden</string>
     <string name="habPanelNotAvailable">HabPanel nicht verfügbar</string>
     <string name="couldNotConnect">Verbindung fehlgeschlagen zum Server mit der URL</string>
-    <string name="acceptCertWhenOurOfSettings">Sie können eine Ausnahme für das Zertifikat erstellen, wenn Sie die Einstellungen verlassen haben.</string>
+    <string name="acceptCertWhenOurOfSettings">Du kannst eine Ausnahme für das Zertifikat erstellen, wenn du die Einstellungen verlassen hast.</string>
     <string name="notAvailableOnDevice">%s ist auf diesem Gerät nicht verfügbar</string>
     <string name="discoverHttps">HTTPS Verbindung suchen</string>
     <string name="discoverServer">Server Suchen</string>

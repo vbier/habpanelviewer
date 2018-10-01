@@ -26,3 +26,10 @@ The app uses the following libraries:
 - **com.jakewharton:process-phoenix** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
 - **org.greenrobot:eventbus** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
 - **com.github.mukeshsolanki:MarkdownView-Android** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
+- **com.github.apl-devs:appintro** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
+
+The app uses following icons:
+- Icons made by <a href="https://www.flaticon.com/authors/webalys-freebies" title="Webalys Freebies">Webalys Freebies</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+- Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+- Icons made by <a href="https://www.flaticon.com/authors/itim2101" title="itim2101">itim2101</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+- Icons made by <a href="https://www.flaticon.com/authors/lucy-g" title="Lucy G">Lucy G</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>

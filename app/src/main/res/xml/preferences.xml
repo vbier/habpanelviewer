@@ -6,7 +6,7 @@
         <PreferenceCategory
             android:key="pref_openhab_settings"
             android:title="openHAB">
-            <de.vier_bier.habpanelviewer.settings.ServerPreference
+            <EditTextPreference
                 android:key="pref_server_url"
                 android:summary="@string/pref_url_summ"
                 android:title="@string/pref_url" />

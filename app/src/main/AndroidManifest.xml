@@ -50,6 +50,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".settings.SetPreferenceActivity"
             android:label="Settings" />
@@ -79,6 +80,11 @@
         <activity
             android:name=".EmptyActivity"
             android:launchMode="singleTop" />
+
+        <activity android:name=".IntroActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:label="Intro">
+        </activity>
     </application>
 
 </manifest>
