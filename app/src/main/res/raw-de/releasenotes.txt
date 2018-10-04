@@ -1,5 +1,7 @@
 0.9.22pre
 ======
+* Intro, das die grundsätzliche Bedienung erklärt
+* Export/Import von Einstellungen
 * Neue Einstellung: Verstecke Soft Keys (standardmäßig abgeschaltet)
 * Neue Einstellung: Browser Cache kann ausgeschlatet werden
 * Neue Einstellung: Startseite laden wenn das Gerät eingeschaltet wird

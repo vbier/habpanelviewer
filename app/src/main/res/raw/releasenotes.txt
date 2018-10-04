@@ -1,5 +1,7 @@
 0.9.22pre
 ======
+* add intro explaining basic usage
+* add export/import of settings
 * add setting for immersive mode and disable it by default
 * add setting for disabling the browser cache
 * add setting for loading start page when device is turned on

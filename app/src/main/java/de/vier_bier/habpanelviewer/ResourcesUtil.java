@@ -44,8 +44,4 @@ class ResourcesUtil {
 
         return text;
     }
-
-    static String fetchFirstStart(Context ctx) {
-        return readRawTextFile(ctx, R.raw.firststart);
-    }
 }
