@@ -409,4 +409,17 @@
                 android:title="@string/pref_maxRestarts" />
         </PreferenceScreen>
     </PreferenceScreen>
+
+    <PreferenceScreen
+        android:key="pref_export_import"
+        android:title="@string/pref_export_import"
+        android:summary="@string/pref_export_import_summ">
+        <Preference android:title="@string/pref_export"
+            android:key="pref_export"
+            android:summary="@string/pref_export_summ" />
+
+        <Preference android:title="@string/pref_import"
+            android:key="pref_import"
+            android:summary="@string/pref_import_summ" />
+    </PreferenceScreen>
 </PreferenceScreen>

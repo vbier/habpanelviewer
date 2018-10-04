@@ -142,24 +142,28 @@ public class SettingsFragment extends PreferenceFragment {
 
         onActivityResult(42, RESULT_OK, null);
 
+        Preference button = findPreference("pref_export");
+        button.setOnPreferenceClickListener(preference -> {
+            PreferenceUtil.saveSharedPreferencesToFile(getActivity());
+            return true;
+        });
+        button = findPreference("pref_import");
+        button.setOnPreferenceClickListener(preference -> {
+            PreferenceUtil.loadSharedPreferencesFromFile(getActivity());
+            return true;
+        });
+
         // add validation to the device admin
         CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
         adminPreference.setOnPreferenceChangeListener(new AdminValidatingListener());
 
         ListPreference themePreference = (ListPreference) findPreference("pref_theme");
         themePreference.setOnPreferenceChangeListener((preference, o) -> {
-            AlertDialog alert = new AlertDialog.Builder(getActivity())
-                    .setTitle(R.string.RestartRequired)
-                    .setMessage(R.string.WantToRestart)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                        getActivity().finish();
-                        ProcessPhoenix.triggerRebirth(getActivity().getApplication());
-                    })
-                    .setNegativeButton(android.R.string.no, (dialog, whichButton) -> {}).create();
-
             if (getActivity() != null && !getActivity().isFinishing()) {
-                alert.show();
+                PreferenceUtil.askRestart(getActivity(), (dialog, whichButton) -> {
+                    getActivity().finish();
+                    ProcessPhoenix.triggerRebirth(getActivity().getApplication());
+                }, (dialog, whichButton) -> {});
             }
 
             return true;

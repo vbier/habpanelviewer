@@ -42,7 +42,6 @@
     <string name="pref_connection">Connection</string>
     <string name="pref_url" translatable="false">openHAB URL</string>
     <string name="pref_url_summ">URL of the openHAB server. To use discovery, set an empty URL and start the intro from the menu.</string>
-    <string name="pref_url_example">e.g. http://openhabianpi:8080</string>
     <string name="pref_startUrl">Start page</string>
     <string name="pref_startUrl_summ">The page to load on start. If empty, the openHAB URL is used as start page</string>
     <string name="pref_trackBrowserConnection">Track Browser Connection</string>
@@ -173,12 +172,18 @@
     <string name="pref_jpegQuality">JPEG Quality</string>
     <string name="pref_jpegQuality_summ">JPEG compression quality</string>
 
+    <string name="pref_export_import">Export/Import Settings</string>
+    <string name="pref_export_import_summ">Useful when switching from the play store version to an apk or vice versa.</string>
+    <string name="pref_export">Export</string>
+    <string name="pref_export_summ">Export the settings to a file.</string>
+    <string name="pref_import">Import</string>
+    <string name="pref_import_summ">Import the settings from a file</string>
+
     <string name="helpFile">help.md</string>
 
     <string name="flashControl">Flashlight Control</string>
     <string name="notConnected">not connected</string>
     <string name="sslFailed">Could not initialize SSL engine!</string>
-    <string name="welcome">Welcome to HABPanelViewer!</string>
     <string name="updated">HABPanelViewer Update</string>
     <string name="updatedText">The application has been updated. Find the bug fixes and new features below:</string>
     <string name="appRestarted">App restarted after crash</string>
@@ -201,7 +206,6 @@
     <string name="sslCert">The SSL Certificate served by</string>
     <string name="storeSecurityException">Do you want to proceed and store a security exception for this certificate ?</string>
     <string name="configMissing">Configuration missing</string>
-    <string name="serverNotFound">The openHAB server could not be found</string>
     <string name="startPageNotSet">Neither the openHAB server URL nor a start page has not been defined in the settings.</string>
     <string name="specifyUrlInSettings">Please specify them in the application settings.</string>
     <string name="invalid">invalid</string>
@@ -211,8 +215,6 @@
     <string name="couldNotConnect">Could not connect to server at URL</string>
     <string name="acceptCertWhenOurOfSettings">You can accept the certificate once you have left the settings.</string>
     <string name="notAvailableOnDevice">%s is not available on this device</string>
-    <string name="discoverHttps">discover HTTPS connection</string>
-    <string name="discoverServer">Discover Server</string>
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>
     <string name="temperature">Temperature: %1$.1f°C [%2$s=%3$s]</string>
@@ -265,4 +267,9 @@
     <string name="noValidIntInRange">Given value is no valid number in range %1$d..%2$d</string>
     <string name="RestartRequired">Restart required</string>
     <string name="WantToRestart">Do you want to restart the app so the new theme is used?</string>
+    <string name="chooseTargetDirectory">Choose the target directory</string>
+    <string name="prefsExported">Preferences exported</string>
+    <string name="prefsExportFailed">Failed to export preferences!</string>
+    <string name="prefsImported">Preferences imported</string>
+    <string name="prefsImportFailed">Failed to import preferences!</string>
 </resources>

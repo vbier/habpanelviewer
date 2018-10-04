@@ -39,7 +39,6 @@
 
     <string name="pref_connection">Verbindung</string>
     <string name="pref_url_summ">Die URL des openHAB Servers. Um die Suche zu starten, setze eine leere URL und starte das Intro im Menü.</string>
-    <string name="pref_url_example">z.B. http://openhabianpi:8080</string>
     <string name="pref_startUrl">Startseite</string>
     <string name="pref_startUrl_summ">Die Webseite, die beim Start gezeigt werden soll. Falls leer, wird die openHAB URL als Startseite benutzt</string>
     <string name="pref_trackBrowserConnection">Überwache Browser Verbindung</string>
@@ -170,12 +169,18 @@
     <string name="pref_jpegQuality">JPEG Qualität</string>
     <string name="pref_jpegQuality_summ">JPEG Kompressionsqualität</string>
 
+    <string name="pref_export_import">Export/Import der Einstellungen</string>
+    <string name="pref_export_import_summ">Nützlich wenn man von einer Play Store Version zu einem manuell installierten APK wechselt, oder umgekehrt.</string>
+    <string name="pref_export">Export</string>
+    <string name="pref_export_summ">Exportiert die Einstellungen in eine Datei</string>
+    <string name="pref_import">Import</string>
+    <string name="pref_import_summ">Importiert die Einstellungen aus einer Datei</string>
+
     <string name="helpFile">help-de.md</string>
 
     <string name="flashControl">Blitzlichtsteuerung</string>
     <string name="notConnected">nicht verbunden</string>
     <string name="sslFailed">Konnte SSL nicht initialisieren</string>
-    <string name="welcome">Willkommen bei HABPanelViewer!</string>
     <string name="updated">HABPanelViewer Aktualisierung</string>
     <string name="updatedText">Die Anwendung wurde aktualisiert. Folgende Fehlerbehebungen und Verbesserungen wurden eingearbeitet:</string>
     <string name="appRestarted">App wurde nach Absturz neu gestartet</string>
@@ -198,7 +203,6 @@
     <string name="sslCert">Das SSL Zertifikat von</string>
     <string name="storeSecurityException">Willst du fortfahren und eine Ausnahme für dieses Zertifikat speichern?</string>
     <string name="configMissing">Konfiguration unvollständig</string>
-    <string name="serverNotFound">Der openHAB server konnte nicht gefunden werden</string>
     <string name="startPageNotSet">Weder die openHAB URL noch die Startseite ist in den Einstellungen definiert.</string>
     <string name="specifyUrlInSettings">Bitte gib sie in den Einstellungen ein.</string>
     <string name="invalid">ungültig</string>
@@ -208,8 +212,6 @@
     <string name="couldNotConnect">Verbindung fehlgeschlagen zum Server mit der URL</string>
     <string name="acceptCertWhenOurOfSettings">Du kannst eine Ausnahme für das Zertifikat erstellen, wenn du die Einstellungen verlassen hast.</string>
     <string name="notAvailableOnDevice">%s ist auf diesem Gerät nicht verfügbar</string>
-    <string name="discoverHttps">HTTPS Verbindung suchen</string>
-    <string name="discoverServer">Server Suchen</string>
     <string name="enabled">aktiviert</string>
     <string name="disabled">deaktiviert</string>
     <string name="temperature">Temperatur: %1$.1f°C [%2$s=%3$s]</string>
@@ -262,5 +264,10 @@
     <string name="noValidIntInRange">Wert is keine Zahl im Bereich %1$d..%2$d</string>
     <string name="RestartRequired">Neustart erforderlich</string>
     <string name="WantToRestart">Soll die App neu gestartet werden, damit das Theme angewendet wird?</string>
+    <string name="chooseTargetDirectory">Wähle das Zielverzeichnis</string>
+    <string name="prefsExported">Einstellungen exportiert</string>
+    <string name="prefsExportFailed">Export fehlgeschlagen!</string>
+    <string name="prefsImported">Einstellungen importiert</string>
+    <string name="prefsImportFailed">Import fehlgeschlagen!</string>
 
 </resources>
