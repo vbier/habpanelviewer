@@ -1,4 +1,4 @@
-0.9.22pre
+0.9.22
 ======
 * add intro explaining basic usage
 * add export/import of settings
