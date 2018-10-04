@@ -61,9 +61,9 @@ public abstract class ScreenControllingActivity extends Activity {
         String theme = prefs.getString("pref_theme", "dark");
 
         if ("dark".equals(theme)) {
-            setTheme(R.style.Theme_AppCompat);
+            setTheme(R.style.Theme_AppCompat_NoActionBar);
         } else {
-            setTheme(R.style.Theme_AppCompat_Light);
+            setTheme(R.style.Theme_AppCompat_Light_NoActionBar);
         }
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
