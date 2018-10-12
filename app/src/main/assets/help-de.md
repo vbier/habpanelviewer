@@ -7,7 +7,7 @@ Die Funktionalität kann in drei Bereiche aufgeteilt werden:
 - [Werte Meldung](#reporting) an openHAB
 - [Benutzerfreundlichkeit](#usability) macht es einfacher HABPanel auf einem Tablet zu benutzen
 
-Eine Übersicht der Berechtigung die HPVbeötigt findet sich im Abschnitt [Berechtigungen](#permissions).
+Eine Übersicht der Berechtigungen die HPV benötigt findet sich im Abschnitt [Berechtigungen](#permissions).
 
 ## <a name="configuration"/>Konfiguration
 
@@ -219,6 +219,7 @@ Weitere Berechtigungen um die volle Funktionalität verfügbar zu machen:
 * android.permission.FLASHLIGHT - um den Kamera Blitz zu kontrollieren
 * android.permission.CAMERA - um Fotos aufzunehmen und für die Bewegungserkennung
 * android.permission.WAKE_LOCK - um das Gerät aufzuwecken
+* android.permission.WRITE_EXTERNAL_STORAGE - für den Export der Einstellungen
 
 HPV kann zusätzlich in den Einstellungen als "Geräte Admin" eingetragen werden. Dies erlaubt es, bei entsprechendem Kommando die Bildschirmsperre zu aktivieren.
 

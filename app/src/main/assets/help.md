@@ -7,7 +7,7 @@ Its functionality can mainly be divided into three categories:
 - [reporting values](#reporting) to openHAB
 - [usability features](#usability) making it easier to use HABPanel on a tablet
 
-If you want to see which permissions are needed by HPV, check [permissions description](#permissions).
+If you want to see which permissions are needed by HPV, check the [permissions description](#permissions).
 
 ## <a name="configuration"/>Configuration
 
@@ -219,6 +219,7 @@ Additional optional permissions allowing to use the full functionality:
 * android.permission.FLASHLIGHT - for controlling the camera flashlight
 * android.permission.CAMERA - for capturing photos and motion detection
 * android.permission.WAKE_LOCK - for waking up the device
+* android.permission.WRITE_EXTERNAL_STORAGE - for exporting settings
 
 HPV can be set as "Device Admin" in the Settings. This allows to lock the device when the appropriate command is received.
 
