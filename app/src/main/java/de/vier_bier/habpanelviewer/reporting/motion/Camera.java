@@ -147,6 +147,15 @@ public class Camera {
 
     public synchronized void terminate() {
         EventBus.getDefault().unregister(this);
+
+        if (isPreviewRunning()) {
+            try {
+                stopPreview();
+            } catch (CameraException e) {
+                Log.e(TAG, "failed to stop preview on termiation", e);
+            }
+        }
+
         mImplementation = null;
     }
 
