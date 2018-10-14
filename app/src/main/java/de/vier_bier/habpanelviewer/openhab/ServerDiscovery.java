@@ -19,7 +19,6 @@ public class ServerDiscovery {
     private final NsdManager mNsdManager;
     private NsdManager.DiscoveryListener mDiscoveryListener;
     private final HashSet<String> mUrls = new HashSet<>();
-    private DiscoveryListener mListener;
 
     public ServerDiscovery(NsdManager nsdManager) {
         mNsdManager = nsdManager;
@@ -30,7 +29,6 @@ public class ServerDiscovery {
             return;
         }
 
-        mListener = l;
         Log.v(TAG, "starting discovery...");
         mUrls.clear();
 
@@ -42,7 +40,7 @@ public class ServerDiscovery {
             for (String serviceType : types) {
                 try {
                     Log.v(TAG, "starting discovery for " + serviceType + "...");
-                    mDiscoveryListener = new NsdDiscoveryListener();
+                    mDiscoveryListener = new NsdDiscoveryListener(l);
                     mNsdManager.discoverServices(
                             serviceType, NsdManager.PROTOCOL_DNS_SD, mDiscoveryListener);
 
@@ -59,7 +57,6 @@ public class ServerDiscovery {
             stopDiscovery();
         }
 
-        mListener = null;
         Log.v(TAG, "discovery finished.");
     }
 
@@ -76,9 +73,11 @@ public class ServerDiscovery {
 
     private class ResolveListener implements NsdManager.ResolveListener {
         CountDownLatch mLatch;
+        DiscoveryListener mListener;
 
-        ResolveListener(CountDownLatch finishLatch) {
+        ResolveListener(CountDownLatch finishLatch, DiscoveryListener l) {
             mLatch = finishLatch;
+            mListener = l;
         }
 
         @Override
@@ -113,6 +112,12 @@ public class ServerDiscovery {
 
     private class NsdDiscoveryListener implements NsdManager.DiscoveryListener {
         ExecutorService executor = Executors.newSingleThreadExecutor();
+        DiscoveryListener mListener;
+
+        NsdDiscoveryListener(DiscoveryListener l) {
+            mListener = l;
+        }
+
         @Override
         public void onDiscoveryStarted(String regType) {
             Log.v(TAG, "discovery started");
@@ -125,7 +130,7 @@ public class ServerDiscovery {
                         + service.getHost() + ":" + service.getPort() + "...");
 
                 CountDownLatch finishLatch = new CountDownLatch(1);
-                mNsdManager.resolveService(service, new ResolveListener(finishLatch));
+                mNsdManager.resolveService(service, new ResolveListener(finishLatch, mListener));
 
                 try {
                     finishLatch.await();
