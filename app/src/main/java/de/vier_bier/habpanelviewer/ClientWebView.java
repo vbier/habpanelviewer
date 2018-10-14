@@ -224,7 +224,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             url = mServerURL;
         }
 
-        if ("".equals(url)) {
+        if (url == null || "".equals(url)) {
             post(() -> showHtml(getContext().getString(R.string.configMissing),
                     getContext().getString(R.string.startPageNotSet) + "."
                     + getContext().getString(R.string.specifyUrlInSettings)));
