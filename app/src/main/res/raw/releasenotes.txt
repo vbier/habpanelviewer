@@ -1,3 +1,7 @@
+0.9.23pre
+======
+* BUG: fix crashes
+
 0.9.22
 ======
 * add intro explaining basic usage

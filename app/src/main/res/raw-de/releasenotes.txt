@@ -1,3 +1,7 @@
+0.9.23pre
+======
+* BUG: Abstürze behoben
+
 0.9.22
 ======
 * Intro, das die grundsätzliche Bedienung erklärt
