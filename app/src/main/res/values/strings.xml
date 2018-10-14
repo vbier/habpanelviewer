@@ -206,7 +206,7 @@
     <string name="sslCert">The SSL Certificate served by</string>
     <string name="storeSecurityException">Do you want to proceed and store a security exception for this certificate ?</string>
     <string name="configMissing">Configuration missing</string>
-    <string name="startPageNotSet">Neither the openHAB server URL nor a start page has not been defined in the settings.</string>
+    <string name="startPageNotSet">Neither the openHAB server URL nor a start page has been defined in the settings.</string>
     <string name="specifyUrlInSettings">Please specify them in the application settings.</string>
     <string name="invalid">invalid</string>
     <string name="notValidUrl">is not a valid URL</string>

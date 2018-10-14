@@ -1,7 +1,7 @@
 * Intro, das die grundsätzliche Bedienung erklärt
 * Export/Import von Einstellungen
 * Neue Einstellung: Verstecke Soft Keys (standardmäßig abgeschaltet)
-* Neue Einstellung: Browser Cache kann ausgeschlatet werden
+* Neue Einstellung: Browser Cache kann ausgeschaltet werden
 * Neue Einstellung: Startseite laden wenn das Gerät eingeschaltet wird
 * das gewählte Theme wird jetzt auch für die in-app Hilfe benutzt
 * App Start wurde beschleunigt
