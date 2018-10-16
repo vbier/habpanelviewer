@@ -16,7 +16,6 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
@@ -359,9 +358,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
                     @Override
                     public void onImageAvailable(ImageReader imageReader) {
-                        Image image = null;
-                        try {
-                            image = imageReader.acquireLatestImage();
+                        try (Image image = imageReader.acquireLatestImage()) {
                             ByteBuffer buffer = image.getPlanes()[0].getBuffer();
 
                             if (mBuffer == null || mBuffer.length != buffer.capacity()) {
@@ -370,10 +367,6 @@ public class CameraImplV2 extends AbstractCameraImpl {
                             buffer.get(mBuffer);
 
                             iPictureHandler.picture(mBuffer);
-                        } finally {
-                            if (image != null) {
-                                image.close();
-                            }
                         }
                     }
                 };

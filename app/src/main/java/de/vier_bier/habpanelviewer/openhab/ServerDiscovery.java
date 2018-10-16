@@ -72,8 +72,8 @@ public class ServerDiscovery {
     }
 
     private class ResolveListener implements NsdManager.ResolveListener {
-        CountDownLatch mLatch;
-        DiscoveryListener mListener;
+        final CountDownLatch mLatch;
+        final DiscoveryListener mListener;
 
         ResolveListener(CountDownLatch finishLatch, DiscoveryListener l) {
             mLatch = finishLatch;
@@ -111,8 +111,8 @@ public class ServerDiscovery {
     }
 
     private class NsdDiscoveryListener implements NsdManager.DiscoveryListener {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        DiscoveryListener mListener;
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        final DiscoveryListener mListener;
 
         NsdDiscoveryListener(DiscoveryListener l) {
             mListener = l;
