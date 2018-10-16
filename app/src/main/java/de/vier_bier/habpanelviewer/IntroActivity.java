@@ -125,7 +125,7 @@ public class IntroActivity extends AppIntro2 {
         private NsdManager mSystemService;
         private ServerDiscovery mDiscovery;
 
-        public void setSystemService(NsdManager systemService) {
+        void setSystemService(NsdManager systemService) {
             mSystemService = systemService;
         }
 
@@ -138,7 +138,7 @@ public class IntroActivity extends AppIntro2 {
             }
         }
 
-        public String getSelectedUrl() {
+        String getSelectedUrl() {
             View v = getView();
             if (v != null) {
                 final RadioGroup rg = getView().findViewById(R.id.intro_discover_radioGroup);
@@ -168,7 +168,7 @@ public class IntroActivity extends AppIntro2 {
                 final ProgressBar pbar = getView().findViewById(R.id.intro_discover_progressBar);
                 final TextView tv = getView().findViewById(R.id.intro_discover_text);
 
-                AsyncTask t = new AsyncTask() {
+                new AsyncTask() {
                     @Override
                     protected void onPreExecute() {
                         tv.setText(R.string.intro_discoveryInProgress);

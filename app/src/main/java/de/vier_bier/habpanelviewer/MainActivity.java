@@ -155,6 +155,11 @@ public class MainActivity extends ScreenControllingActivity
             mNetworkTracker.terminate();
             mNetworkTracker = null;
         }
+
+        if (mConnections != null) {
+            mConnections.terminate();
+            mConnections = null;
+        }
         if (mWebView != null) {
             mWebView.unregister();
         }

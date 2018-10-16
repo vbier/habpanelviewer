@@ -16,7 +16,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
@@ -141,17 +140,6 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
         onActivityResult(42, RESULT_OK, null);
-
-        Preference button = findPreference("pref_export");
-        button.setOnPreferenceClickListener(preference -> {
-            PreferenceUtil.saveSharedPreferencesToFile(getActivity());
-            return true;
-        });
-        button = findPreference("pref_import");
-        button.setOnPreferenceClickListener(preference -> {
-            PreferenceUtil.loadSharedPreferencesFromFile(getActivity());
-            return true;
-        });
 
         // add validation to the device admin
         CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");

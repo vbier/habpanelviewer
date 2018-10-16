@@ -1,9 +1,15 @@
 package de.vier_bier.habpanelviewer.command.log;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -31,6 +37,7 @@ public class CommandLogActivity extends ScreenControllingActivity {
     private CommandInfoAdapter adapter;
 
     private final CommandLogClient logClient = this::installAdapter;
+    private MenuItem mClearItem;
 
     private void installAdapter(CommandLog cmdLog) {
         final ListView listView = findViewById(R.id.command_log_listview);
@@ -54,19 +61,60 @@ public class CommandLogActivity extends ScreenControllingActivity {
             if (adapter != null) {
                 adapter.notifyDataSetChanged();
             }
+            if (mClearItem != null) {
+                mClearItem.setEnabled(adapter.getCount() > 0);
+            }
         }), 0, 1, TimeUnit.SECONDS);
 
         setContentView(R.layout.command_log_main);
 
-        final TextView logTitleView = findViewById(R.id.command_log_titleview);
-        logTitleView.setText(R.string.command_log_title);
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String theme = prefs.getString("pref_theme", "dark");
+
+        if ("dark".equals(theme)) {
+            myToolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Dark);
+        } else {
+            myToolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Light);
+        }
 
         EventBus.getDefault().post(logClient);
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.command_log_toolbar_menu, menu);
+
+        mClearItem = menu.findItem(R.id.action_clear_log);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_clear_log) {
+            adapter.clear();
+
+            if (mClearItem != null) {
+                mClearItem.setEnabled(false);
+            }
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public View getScreenOnView() {
-        return findViewById(R.id.command_log_titleview);
+        return findViewById(R.id.command_log_listview);
     }
 
     private class CommandInfoAdapter extends BaseAdapter implements CommandLog.CommandLogListener {
@@ -124,6 +172,11 @@ public class CommandLogActivity extends ScreenControllingActivity {
         @Override
         public void logChanged() {
             runOnUiThread(this::notifyDataSetChanged);
+        }
+
+        void clear() {
+            mCommands.clear();
+            logChanged();
         }
     }
 }

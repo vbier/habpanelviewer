@@ -29,6 +29,9 @@
     <string name="action_settings">Einstellungen</string>
     <string name="action_cmdLog">Kommando Log</string>
     <string name="action_intro">Zeige Intro</string>
+    <string name="action_goto_forum">Gehe zum openHAB Forum</string>
+    <string name="action_show_help">Hilfe anzeigen</string>
+    <string name="action_clear_log">Log leeren</string>
 
     <string name="menu_reload">Lade Seite neu</string>
     <string name="menu_gotoStartUrl">Gehe zur Startseite</string>
@@ -169,12 +172,8 @@
     <string name="pref_jpegQuality">JPEG Qualität</string>
     <string name="pref_jpegQuality_summ">JPEG Kompressionsqualität</string>
 
-    <string name="pref_export_import">Export/Import der Einstellungen</string>
-    <string name="pref_export_import_summ">Nützlich wenn man von einer Play Store Version zu einem manuell installierten APK wechselt, oder umgekehrt.</string>
-    <string name="pref_export">Export</string>
-    <string name="pref_export_summ">Exportiert die Einstellungen in eine Datei</string>
-    <string name="pref_import">Import</string>
-    <string name="pref_import_summ">Importiert die Einstellungen aus einer Datei</string>
+    <string name="pref_export">Exportieren</string>
+    <string name="pref_import">Importieren</string>
 
     <string name="helpFile">help-de.md</string>
 
@@ -240,7 +239,6 @@
     <string name="deviceAdmin">HABPanelViewer</string>
     <string name="deviceAdminDescription">Wird benötigt, damit HABPanelViewer den Bildschrim ausschalten kann</string>
     <string name="device_not_muted">Das Gerät ist nicht lautlos!</string>
-    <string name="command_log_title">Empfangene Kommandos:</string>
     <string name="host_realm">Rechner: %1$s\nBereich: %2$s</string>
     <string name="username">Benutzer</string>
     <string name="password">Passwort</string>

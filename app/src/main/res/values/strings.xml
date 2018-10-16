@@ -31,6 +31,9 @@
     <string name="action_settings">Settings</string>
     <string name="action_cmdLog">Command Log</string>
     <string name="action_intro">Show Intro</string>
+    <string name="action_goto_forum">Goto to openHAB forum</string>
+    <string name="action_show_help">Show Help</string>
+    <string name="action_clear_log">Clear Log</string>
 
     <string name="menu_reload">Reload page</string>
     <string name="menu_gotoStartUrl">Go to start page</string>
@@ -172,12 +175,8 @@
     <string name="pref_jpegQuality">JPEG Quality</string>
     <string name="pref_jpegQuality_summ">JPEG compression quality</string>
 
-    <string name="pref_export_import">Export/Import Settings</string>
-    <string name="pref_export_import_summ">Useful when switching from the play store version to an apk or vice versa.</string>
     <string name="pref_export">Export</string>
-    <string name="pref_export_summ">Export the settings to a file.</string>
     <string name="pref_import">Import</string>
-    <string name="pref_import_summ">Import the settings from a file</string>
 
     <string name="helpFile">help.md</string>
 
@@ -243,7 +242,6 @@
     <string name="deviceAdmin">HABPanelViewer</string>
     <string name="deviceAdminDescription">Is needed for immediate screen locking</string>
     <string name="device_not_muted">Device is not muted!</string>
-    <string name="command_log_title">Received commands:</string>
     <string name="host_realm">Host: %1$s\nRealm: %2$s</string>
     <string name="username">Username</string>
     <string name="password">Password</string>

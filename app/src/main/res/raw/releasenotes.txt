@@ -1,5 +1,9 @@
 0.9.23pre
 ======
+* add toolbars to non-browser views
+* move settings export/import to toolbar
+* add clear log action to command log toolbar
+* add goto forum action to help toolbar
 * BUG: fix crashes
 
 0.9.22

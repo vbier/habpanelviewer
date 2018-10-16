@@ -1,5 +1,9 @@
 0.9.23pre
 ======
+* Toolbars hinzugefügt
+* Einstellungsexport und -import in die Toolbar verschoben
+* Leere Log Aktion zur Kommando Log Toolbar hinzugefügt
+* Gehe zu openHAB Forum Aktion zur Hilfe Toolbar hinzugefügt
 * BUG: Abstürze behoben
 
 0.9.22

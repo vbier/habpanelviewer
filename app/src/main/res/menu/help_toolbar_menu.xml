@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_goto_forum"
+        android:title="@string/action_goto_forum"
+        android:icon="@drawable/ic_forum_black_24dp"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_show_help"
+        android:title="@string/action_show_help"
+        android:icon="@drawable/ic_help_outline_black_24dp"
+        android:enabled="false"
+        app:showAsAction="ifRoom"/>
+
+</menu>

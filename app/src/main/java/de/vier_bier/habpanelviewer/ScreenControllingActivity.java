@@ -1,6 +1,5 @@
 package de.vier_bier.habpanelviewer;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,7 +19,7 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 /**
  * Activity that support controlling screen state.
  */
-public abstract class ScreenControllingActivity extends Activity {
+public abstract class ScreenControllingActivity extends AppCompatActivity {
     private static final String TAG = "HPV-ScreenControllingAc";
 
     private static final String ACTION_KEEP_SCREEN_ON = "ACTION_KEEP_SCREEN_ON";

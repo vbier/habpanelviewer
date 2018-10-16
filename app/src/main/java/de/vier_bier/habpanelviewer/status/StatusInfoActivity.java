@@ -3,6 +3,8 @@ package de.vier_bier.habpanelviewer.status;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +42,12 @@ public class StatusInfoActivity extends ScreenControllingActivity {
         }, 0, 1, TimeUnit.SECONDS);
 
         setContentView(R.layout.info_main);
+
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
 
         final ListView listview = findViewById(R.id.info_listview);
         listview.setAdapter(adapter);

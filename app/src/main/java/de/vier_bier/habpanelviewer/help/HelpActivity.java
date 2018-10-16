@@ -3,6 +3,10 @@ package de.vier_bier.habpanelviewer.help;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.mukesh.MarkdownView;
@@ -19,12 +23,41 @@ import de.vier_bier.habpanelviewer.ScreenControllingActivity;
  * Activity showing the help markdown file.
  */
 public class HelpActivity extends ScreenControllingActivity {
+    private MenuItem mForumItem;
+    private MenuItem mFileItem;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.help_main);
 
+        Toolbar myToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
+        ActionBar ab = getSupportActionBar();
+        ab.setDisplayHomeAsUpEnabled(true);
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String theme = prefs.getString("pref_theme", "dark");
+
+        if ("dark".equals(theme)) {
+            myToolbar.setPopupTheme(R.style.Theme_AppCompat_NoActionBar);
+        } else {
+            myToolbar.setPopupTheme(R.style.Theme_AppCompat_Light_NoActionBar);
+        }
+
+        showHelp();
+    }
+
+    private void showHelp() {
+        if (mFileItem != null) {
+            mFileItem.setEnabled(false);
+        }
+
+        if (mForumItem != null) {
+            mForumItem.setEnabled(true);
+        }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String theme = prefs.getString("pref_theme", "dark");
@@ -32,7 +65,38 @@ public class HelpActivity extends ScreenControllingActivity {
         loadMarkdownFromAssets(getString(R.string.helpFile), "dark".equals(theme));
     }
 
-    public void loadMarkdownFromAssets(String assetsFilePath, boolean dark) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.help_toolbar_menu, menu);
+
+        mForumItem = menu.findItem(R.id.action_goto_forum);
+        mFileItem = menu.findItem(R.id.action_show_help);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_goto_forum) {
+            mFileItem.setEnabled(true);
+            mForumItem.setEnabled(false);
+
+            final MarkdownView markdownView = findViewById(R.id.activity_help_webview);
+            markdownView.loadUrl("https://community.openhab.org/t/habpanelviewer/34112/");
+            return true;
+        }
+
+        if (id == R.id.action_show_help) {
+            showHelp();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void loadMarkdownFromAssets(String assetsFilePath, boolean dark) {
         try {
             StringBuilder buf = new StringBuilder();
             if (dark) {
