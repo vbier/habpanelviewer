@@ -20,6 +20,7 @@
     <string name="intro_ready">Fertig</string>
     <string name="intro_ready_text">Es kann losgehen.</string>
     <string name="intro_pleaseComplete">Der Server ist noch nicht konfiguriert. Bitte beende die initiale Konfiguration.</string>
+    <string name="intro_discoveryNotAvailable">Die Suche ist auf deinem Gerät nicht verfügbar. Bitte gib die URL in den Einstellungen ein.</string>
 
     <string name="action_startApp">Starte App</string>
     <string name="action_info">Status Information</string>

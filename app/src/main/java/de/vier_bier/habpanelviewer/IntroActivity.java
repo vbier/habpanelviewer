@@ -56,9 +56,17 @@ public class IntroActivity extends AppIntro2 {
                 getString(R.string.intro_commanding_text), R.drawable.commanding, bgColor));
 
         if (!serverConfigured) {
-            DiscoverSlide ds = new DiscoverSlide();
-            ds.setSystemService((NsdManager) getSystemService(Context.NSD_SERVICE));
-            addSlide(ds);
+            NsdManager nsdm = (NsdManager) getSystemService(Context.NSD_SERVICE);
+
+            if (nsdm != null) {
+                DiscoverSlide ds = new DiscoverSlide();
+                ds.setSystemService(nsdm);
+                addSlide(ds);
+            } else {
+                addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_openhabServerDetection),
+                        getString(R.string.intro_discoveryNotAvailable),
+                        R.drawable.server, bgColor));
+            }
         } else {
             addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_openhabServerDetection),
                     getString(R.string.intro_serverConfigured, prefs.getString("pref_server_url", "")),
@@ -133,7 +141,7 @@ public class IntroActivity extends AppIntro2 {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-            if (mDiscovery == null) {
+            if (mDiscovery == null && mSystemService != null) {
                 mDiscovery = new ServerDiscovery(mSystemService);
             }
         }
@@ -163,7 +171,7 @@ public class IntroActivity extends AppIntro2 {
             super.onStart();
 
             View v = getView();
-            if (v != null) {
+            if (v != null && mDiscovery != null) {
                 final RadioGroup rg = getView().findViewById(R.id.intro_discover_radioGroup);
                 final ProgressBar pbar = getView().findViewById(R.id.intro_discover_progressBar);
                 final TextView tv = getView().findViewById(R.id.intro_discover_text);

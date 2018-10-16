@@ -22,6 +22,7 @@
     <string name="intro_ready">Ready</string>
     <string name="intro_ready_text">Your are ready to go.</string>
     <string name="intro_pleaseComplete">The server is not yet configured. Please complete the initial configuration.</string>
+    <string name="intro_discoveryNotAvailable">Discovery is not available on your device. Please enter the URL in the settings.</string>
 
     <string name="action_startApp">Start App</string>
     <string name="action_info">Status Information</string>

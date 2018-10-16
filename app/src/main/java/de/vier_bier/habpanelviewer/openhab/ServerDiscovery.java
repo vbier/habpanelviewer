@@ -25,7 +25,7 @@ public class ServerDiscovery {
     }
 
     public synchronized void discover(final DiscoveryListener l) {
-        if (mDiscoveryListener != null) {
+        if (mDiscoveryListener != null || mNsdManager == null) {
             return;
         }
 
