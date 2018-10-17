@@ -271,4 +271,5 @@
     <string name="prefsExportFailed">Failed to export preferences!</string>
     <string name="prefsImported">Preferences imported</string>
     <string name="prefsImportFailed">Failed to import preferences!</string>
+    <string name="storeInDb">Store credentials in database</string>
 </resources>

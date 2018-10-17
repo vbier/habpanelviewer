@@ -23,6 +23,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebViewDatabase;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import java.net.MalformedURLException;
@@ -31,6 +32,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 
+import de.vier_bier.habpanelviewer.db.CredentialsHelper;
 import de.vier_bier.habpanelviewer.openhab.IConnectionListener;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
@@ -100,6 +102,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         });
 
         setWebViewClient(new WebViewClient() {
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -185,25 +188,35 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                 }
             }
 
-
             @Override
             public void onReceivedHttpAuthRequest(WebView view, final HttpAuthHandler handler, final String host, final String realm) {
-                final AlertDialog alert = new AlertDialog.Builder(getContext())
-                        .setCancelable(false)
-                        .setTitle(R.string.login_required)
-                        .setMessage(getContext().getString(R.string.host_realm, host, realm))
-                        .setView(R.layout.dialog_login)
-                        .setPositiveButton(R.string.okay, (dialog12, id) -> {
-                            EditText userT = ((AlertDialog) dialog12).findViewById(R.id.username);
-                            EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
+                Log.i(TAG, "realm " + realm);
+                CredentialsHelper.getInstance(getContext()).handleAuthRequest(host, realm, handler, new Runnable() {
+                    @Override
+                    public void run() {
+                        final AlertDialog alert = new AlertDialog.Builder(getContext())
+                                .setCancelable(false)
+                                .setTitle(R.string.login_required)
+                                .setMessage(getContext().getString(R.string.host_realm, host, realm))
+                                .setView(R.layout.dialog_login)
+                                .setPositiveButton(R.string.okay, (dialog12, id) -> {
+                                    EditText userT = ((AlertDialog) dialog12).findViewById(R.id.username);
+                                    EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
+                                    CheckBox storeCB = ((AlertDialog) dialog12).findViewById(R.id.checkBox);
 
-                            handler.proceed(userT.getText().toString(), passT.getText().toString());
-                        }).setNegativeButton(R.string.cancel, (dialog1, which) -> handler.cancel())
-                        .create();
+                                    if (storeCB.isChecked()) {
+                                        CredentialsHelper.getInstance(getContext()).registerCredentials(host, realm, userT.getText().toString(), passT.getText().toString());
+                                    }
 
-                if (getContext() != null && !((Activity) getContext()).isFinishing()) {
-                    alert.show();
-                }
+                                    handler.proceed(userT.getText().toString(), passT.getText().toString());
+                                }).setNegativeButton(R.string.cancel, (dialog1, which) -> handler.cancel())
+                                .create();
+
+                        if (getContext() != null && !((Activity) getContext()).isFinishing()) {
+                            alert.show();
+                        }
+                    }
+                });
             }
         });
 
@@ -390,6 +403,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
     public void clearPasswords() {
         WebViewDatabase.getInstance(getContext()).clearHttpAuthUsernamePassword();
+        CredentialsHelper.getInstance(getContext()).clearCredentials();
         clearCache(true);
     }
 

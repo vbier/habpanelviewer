@@ -268,5 +268,6 @@
     <string name="prefsExportFailed">Export fehlgeschlagen!</string>
     <string name="prefsImported">Einstellungen importiert</string>
     <string name="prefsImportFailed">Import fehlgeschlagen!</string>
+    <string name="storeInDb">Speichere Login in Datenbank</string>
 
 </resources>

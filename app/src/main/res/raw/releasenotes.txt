@@ -1,5 +1,7 @@
 0.9.23pre
 ======
+* allow to store web page credentials across app restarts
+  (CREDENTIALS ARE STORED UNENCRYPTED IN A PRIVATE PART OF THE FILESYSTEM THAT CAN ONLY BE READ BY ROOT WHEN THE DEVICE IS ROOTED!)
 * add toolbars to non-browser views
 * move settings export/import to toolbar
 * add clear log action to command log toolbar

@@ -1,5 +1,7 @@
 0.9.23pre
 ======
+* Erlaubt das Speichern von Login Informationen
+  (LOGINS WERDEN UNVERSCHLÜSSELT IN EINEM PRIVATEN TEIL DES DATEISYSTEMS GESPEICHERT DAS NUR VON ROOT GELESEN WERDEN KANN WENN DAS GERÄT GEROOTET WURDE)
 * Toolbars hinzugefügt
 * Einstellungsexport und -import in die Toolbar verschoben
 * Leere Log Aktion zur Kommando Log Toolbar hinzugefügt
