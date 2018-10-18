@@ -1,4 +1,4 @@
-package de.vier_bier.habpanelviewer.settings;
+package de.vier_bier.habpanelviewer.preferences;
 
 import android.app.Activity;
 import android.content.Context;

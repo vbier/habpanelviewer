@@ -3,7 +3,7 @@
 * allow to store web page credentials across app restarts
   (CREDENTIALS ARE STORED UNENCRYPTED IN A PRIVATE PART OF THE FILESYSTEM THAT CAN ONLY BE READ BY ROOT WHEN THE DEVICE IS ROOTED!)
 * add toolbars to non-browser views
-* move settings export/import to toolbar
+* move preferences export/import to toolbar
 * add clear log action to command log toolbar
 * add goto forum action to help toolbar
 * BUG: fix crashes
@@ -11,7 +11,7 @@
 0.9.22
 ======
 * add intro explaining basic usage
-* add export/import of settings
+* add export/import of preferences
 * add setting for immersive mode and disable it by default
 * add setting for disabling the browser cache
 * add setting for loading start page when device is turned on
@@ -28,7 +28,7 @@
 * add setting allowing to choose dark/light theme
 * improve cpu usage
 * fixed crashes
-* restructured settings
+* restructured preferences
 
 0.9.20
 ======
@@ -45,14 +45,14 @@
 * fixed crash on Kindle devices
 * fixed bug where event bus listeners were not properly unregistered
 * made most functionality survive orientation change instead of restarting everything
-* separated camera and motion detection code and settings
+* separated camera and motion detection code and preferences
 * improved logging and camera instantiation
 
 0.9.18
 ======
 - add context menu allowing to toggle kiosk mode when HABPanel is shown
 - add configuration section to in-app help
-- added example URL to openHAB URL settings dialog
+- added example URL to openHAB URL preferences dialog
 
 0.9.17
 ======
@@ -97,9 +97,9 @@
 - motion detection does no longer wake up the screen, but reports events to openHAB
 - remove ignore certificate error from openHAB host preference
 - allow user to store https security exceptions
-- add item name validation to settings
+- add item name validation to preferences
 - buffer sensor values until connection to server has been established
-- reorganize settings
+- reorganize preferences
 - fix problem where screen would not stay on when regexp matches on start of application
 - remove initial toast message for missing application features on unsupported devices
 - add setting allowing to choose whether app shall be shown on lock screen
@@ -154,6 +154,6 @@
 0.9.3
 =====
 - fixes the sometimes missing motion detection preview
-- adds mDNS discovery for the openHAB server (this is triggered on the first start and whenever the URL is made empty in the settings) and removed the URL default value
+- adds mDNS discovery for the openHAB server (this is triggered on the first start and whenever the URL is made empty in the preferences) and removed the URL default value
 - added HTTPS support (this worked before with a valid certificate, but not with the standard openHAB certificate. i have added an option that allows to ignore invalid vertificates coming from the configured URL)
 - improved speed of app startup and wakeup behaviour

@@ -53,8 +53,8 @@
         </activity>
 
         <activity
-            android:name="de.vier_bier.habpanelviewer.settings.SetPreferenceActivity"
-            android:label="@string/action_settings"
+            android:name="de.vier_bier.habpanelviewer.preferences.SetPreferenceActivity"
+            android:label="@string/action_preferences"
             android:parentActivityName="de.vier_bier.habpanelviewer.MainActivity"/>
         <activity
             android:name="de.vier_bier.habpanelviewer.status.StatusInfoActivity"

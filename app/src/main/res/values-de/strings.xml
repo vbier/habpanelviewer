@@ -17,6 +17,8 @@
     <string name="intro_serverConfigured">Dein openHAB server is bereits mit %s konfiguriert.</string>
     <string name="intro_configuration">Konfiguration</string>
     <string name="intro_configuration_text">Du kannst HPV konfigurieren, in dem du das Menü öffnest und Einstellungen auswählst. Um das Menü zu öffnen, streiche mit dem Finger vom rechten Rand zur Mitte.</string>
+    <string name="intro_credentials">Zugangsdaten</string>
+    <string name="intro_credentials_text">HPV kann deine Basic Authentication (BA) Zugangsdaten speichern, so dass du dich an Webseiten mit BA nur ein mal anmelden musst. Die Zugansdaten werden unverschlüsselt in einem privaten Teil des Dateisystems gespeichert, wo sie nur von root gelesen werden können wenn dein Gerät gerootet ist.</string>
     <string name="intro_ready">Fertig</string>
     <string name="intro_ready_text">Es kann losgehen.</string>
     <string name="intro_pleaseComplete">Der Server ist noch nicht konfiguriert. Bitte beende die initiale Konfiguration.</string>
@@ -27,7 +29,7 @@
     <string name="action_help">Hilfe</string>
     <string name="action_exit">Beenden</string>
     <string name="action_restart">Neustart</string>
-    <string name="action_settings">Einstellungen</string>
+    <string name="action_preferences">Einstellungen</string>
     <string name="action_cmdLog">Kommando Log</string>
     <string name="action_intro">Zeige Intro</string>
     <string name="action_goto_forum">Gehe zum openHAB Forum</string>
@@ -38,7 +40,8 @@
     <string name="menu_gotoStartUrl">Gehe zur Startseite</string>
     <string name="menu_gotoUrl">Gehe zu Webseite…</string>
     <string name="menu_setStartUrl">Als Startseite setzen</string>
-    <string name="menu_clearPasswords">Logins vergessen</string>
+    <string name="menu_clearCredentials">Zugangsdaten löschen</string>
+    <string name="menu_clearCache">Cache leeren</string>
     <string name="menu_toggleKiosk">Kiosk Modus umschalten</string>
 
     <string name="pref_connection">Verbindung</string>
@@ -204,13 +207,13 @@
     <string name="storeSecurityException">Willst du fortfahren und eine Ausnahme für dieses Zertifikat speichern?</string>
     <string name="configMissing">Konfiguration unvollständig</string>
     <string name="startPageNotSet">Weder die openHAB URL noch die Startseite ist in den Einstellungen definiert.</string>
-    <string name="specifyUrlInSettings">Bitte gib sie in den Einstellungen ein.</string>
+    <string name="specifyUrlInPrefs">Bitte gib sie in den Einstellungen ein.</string>
     <string name="invalid">ungültig</string>
     <string name="notValidUrl">ist keine gültige URL</string>
     <string name="notValidOpenHabUrl">Konnte die Liste der verfügbaren Services nicht von openHAB laden</string>
     <string name="habPanelNotAvailable">HabPanel nicht verfügbar</string>
     <string name="couldNotConnect">Verbindung fehlgeschlagen zum Server mit der URL</string>
-    <string name="acceptCertWhenOurOfSettings">Du kannst eine Ausnahme für das Zertifikat erstellen, wenn du die Einstellungen verlassen hast.</string>
+    <string name="acceptCertWhenOurOfPrefs">Du kannst eine Ausnahme für das Zertifikat erstellen, wenn du die Einstellungen verlassen hast.</string>
     <string name="notAvailableOnDevice">%s ist auf diesem Gerät nicht verfügbar</string>
     <string name="enabled">aktiviert</string>
     <string name="disabled">deaktiviert</string>
@@ -243,7 +246,7 @@
     <string name="host_realm">Rechner: %1$s\nBereich: %2$s</string>
     <string name="username">Benutzer</string>
     <string name="password">Passwort</string>
-    <string name="login_required">Anmeldung erforderlich</string>
+    <string name="credentials_required">Anmeldung erforderlich</string>
     <string name="cancel">Abbrechen</string>
     <string name="okay">OK</string>
     <string name="connectionStatistics">Verbindungsstatistik</string>
@@ -268,6 +271,7 @@
     <string name="prefsExportFailed">Export fehlgeschlagen!</string>
     <string name="prefsImported">Einstellungen importiert</string>
     <string name="prefsImportFailed">Import fehlgeschlagen!</string>
-    <string name="storeInDb">Speichere Login in Datenbank</string>
-
+    <string name="storeCredentials">Speichere Zugangsdaten</string>
+    <string name="credentialsCleared">Zugangsdaten gelöscht. Bitte starte die App neu, um ein erneutes Anmelden auszulösen.</string>
+    <string name="cacheCleared">Cache geleert</string>
 </resources>

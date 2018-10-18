@@ -2,7 +2,7 @@
     <string name="app_name" translatable="false">HABPanelViewer</string>
     <string name="app_logo" translatable="false">App Logo</string>
 
-    <string name="intro_urlNotFound">correct URL has not been found. I will edit the URL in the settings.</string>
+    <string name="intro_urlNotFound">correct URL has not been found. I will edit the URL in the preferences.</string>
     <string name="intro_openhabServerDetection">openHAB Server Detection</string>
     <string name="intro_discoveryInProgress">Server discovery is in progress…</string>
     <string name="intro_initialConfiguration">Initial Configuration</string>
@@ -18,18 +18,20 @@
     <string name="intro_commanding_text">HPV can control your device on commands sent from openHAB. Turn the screen on or off, toggle bluetooth and more…</string>
     <string name="intro_serverConfigured">Your openHAB server URL is already configured to %s.</string>
     <string name="intro_configuration">Configuration</string>
-    <string name="intro_configuration_text">You can configure HPV by opening the menu and selecting Settings. To open the menu, swipe with your finger from the right side of the screen to the middle.</string>
+    <string name="intro_configuration_text">You can configure HPV by opening the menu and selecting Preferences. To open the menu, swipe with your finger from the right side of the screen to the middle.</string>
+    <string name="intro_credentials">Credentials Storage</string>
+    <string name="intro_credentials_text">HPV can store your basic authentication (BA) credentials so you only need to log in once to websites using BA. The credentials are stored unencrypted in a private part of the file system that can only be read by root when you device is rooted.</string>
     <string name="intro_ready">Ready</string>
     <string name="intro_ready_text">Your are ready to go.</string>
     <string name="intro_pleaseComplete">The server is not yet configured. Please complete the initial configuration.</string>
-    <string name="intro_discoveryNotAvailable">Discovery is not available on your device. Please enter the URL in the settings.</string>
+    <string name="intro_discoveryNotAvailable">Discovery is not available on your device. Please enter the URL in the preferences.</string>
 
     <string name="action_startApp">Start App</string>
     <string name="action_info">Status Information</string>
     <string name="action_help">Help</string>
     <string name="action_exit">Exit</string>
     <string name="action_restart">Restart App</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_preferences">Preferences</string>
     <string name="action_cmdLog">Command Log</string>
     <string name="action_intro">Show Intro</string>
     <string name="action_goto_forum">Goto to openHAB forum</string>
@@ -40,7 +42,8 @@
     <string name="menu_gotoStartUrl">Go to start page</string>
     <string name="menu_gotoUrl">Go to URL…</string>
     <string name="menu_setStartUrl">Set as start page</string>
-    <string name="menu_clearPasswords">Forget Logins</string>
+    <string name="menu_clearCredentials">Clear stored credentials</string>
+    <string name="menu_clearCache">Clear cache</string>
     <string name="menu_toggleKiosk">Toggle Kiosk Mode</string>
 
     <string name="pref_connection">Connection</string>
@@ -168,7 +171,7 @@
 
     <string name="pref_camera">Camera</string>
     <string name="pref_cameraNewApi">Use Lollipop camera API</string>
-    <string name="pref_cameraNewApi_summ">Use Camera API 2 introduced with Lollipop. Only uncheck this if it does not work. On change, a restart will be performed when you exit the settings</string>
+    <string name="pref_cameraNewApi_summ">Use Camera API 2 introduced with Lollipop. Only uncheck this if it does not work. On change, a restart will be performed when you exit the preferences</string>
     <string name="pref_cameraPreview">Camera Preview</string>
     <string name="pref_cameraPreview_summ">Shows a camera preview overlay</string>
     <string name="pref_takePicDelay">CAPTURE_CAMERA delay</string>
@@ -206,14 +209,14 @@
     <string name="sslCert">The SSL Certificate served by</string>
     <string name="storeSecurityException">Do you want to proceed and store a security exception for this certificate ?</string>
     <string name="configMissing">Configuration missing</string>
-    <string name="startPageNotSet">Neither the openHAB server URL nor a start page has been defined in the settings.</string>
-    <string name="specifyUrlInSettings">Please specify them in the application settings.</string>
+    <string name="startPageNotSet">Neither the openHAB server URL nor a start page has been defined in the preferences.</string>
+    <string name="specifyUrlInPrefs">Please specify them in the application preferences.</string>
     <string name="invalid">invalid</string>
     <string name="notValidUrl">is not a valid URL</string>
     <string name="notValidOpenHabUrl">Could not query available services from openHAB</string>
     <string name="habPanelNotAvailable">HabPanel not available</string>
     <string name="couldNotConnect">Could not connect to server at URL</string>
-    <string name="acceptCertWhenOurOfSettings">You can accept the certificate once you have left the settings.</string>
+    <string name="acceptCertWhenOurOfPrefs">You can accept the certificate once you have left the preferences.</string>
     <string name="notAvailableOnDevice">%s is not available on this device</string>
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>
@@ -246,7 +249,7 @@
     <string name="host_realm">Host: %1$s\nRealm: %2$s</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="login_required">Login required</string>
+    <string name="credentials_required">Credentials required</string>
     <string name="cancel">Cancel</string>
     <string name="okay">OK</string>
     <string name="connectionStatistics">Connection Statistics</string>
@@ -271,5 +274,7 @@
     <string name="prefsExportFailed">Failed to export preferences!</string>
     <string name="prefsImported">Preferences imported</string>
     <string name="prefsImportFailed">Failed to import preferences!</string>
-    <string name="storeInDb">Store credentials in database</string>
+    <string name="storeCredentials">Store credentials</string>
+    <string name="credentialsCleared">Credentials cleared. Please restart the app to trigger a new login.</string>
+    <string name="cacheCleared">Cache cleared</string>
 </resources>

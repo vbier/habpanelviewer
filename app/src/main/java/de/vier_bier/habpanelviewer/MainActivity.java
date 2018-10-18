@@ -71,7 +71,7 @@ import de.vier_bier.habpanelviewer.reporting.motion.Camera;
 import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionVisualizer;
-import de.vier_bier.habpanelviewer.settings.SetPreferenceActivity;
+import de.vier_bier.habpanelviewer.preferences.SetPreferenceActivity;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
@@ -356,8 +356,13 @@ public class MainActivity extends ScreenControllingActivity
                 editor1.putString("pref_start_url", mWebView.getUrl());
                 editor1.apply();
                 break;
-            case R.id.menu_clear_passwords:
+            case R.id.menu_clear_credentials:
                 mWebView.clearPasswords();
+                Toast.makeText(this, R.string.credentialsCleared, Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.menu_clear_cache:
+                mWebView.clearCache(true);
+                Toast.makeText(this, R.string.cacheCleared, Toast.LENGTH_SHORT).show();
                 break;
             case R.id.menu_toggle_kiosk:
                 mWebView.toggleKioskMode();
@@ -564,7 +569,7 @@ public class MainActivity extends ScreenControllingActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_preferences) {
             showPreferences();
         } else if (id == R.id.action_start_app) {
             Intent launchIntent = getLaunchIntent();

@@ -22,7 +22,6 @@ import android.webkit.WebHistoryItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.WebViewDatabase;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
@@ -191,30 +190,27 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             @Override
             public void onReceivedHttpAuthRequest(WebView view, final HttpAuthHandler handler, final String host, final String realm) {
                 Log.i(TAG, "realm " + realm);
-                CredentialsHelper.getInstance(getContext()).handleAuthRequest(host, realm, handler, new Runnable() {
-                    @Override
-                    public void run() {
-                        final AlertDialog alert = new AlertDialog.Builder(getContext())
-                                .setCancelable(false)
-                                .setTitle(R.string.login_required)
-                                .setMessage(getContext().getString(R.string.host_realm, host, realm))
-                                .setView(R.layout.dialog_login)
-                                .setPositiveButton(R.string.okay, (dialog12, id) -> {
-                                    EditText userT = ((AlertDialog) dialog12).findViewById(R.id.username);
-                                    EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
-                                    CheckBox storeCB = ((AlertDialog) dialog12).findViewById(R.id.checkBox);
+                CredentialsHelper.getInstance(getContext()).handleAuthRequest(host, realm, handler, () -> {
+                    final AlertDialog alert = new AlertDialog.Builder(getContext())
+                            .setCancelable(false)
+                            .setTitle(R.string.credentials_required)
+                            .setMessage(getContext().getString(R.string.host_realm, host, realm))
+                            .setView(R.layout.dialog_credentials)
+                            .setPositiveButton(R.string.okay, (dialog12, id) -> {
+                                EditText userT = ((AlertDialog) dialog12).findViewById(R.id.username);
+                                EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
+                                CheckBox storeCB = ((AlertDialog) dialog12).findViewById(R.id.checkBox);
 
-                                    if (storeCB.isChecked()) {
-                                        CredentialsHelper.getInstance(getContext()).registerCredentials(host, realm, userT.getText().toString(), passT.getText().toString());
-                                    }
+                                if (storeCB.isChecked()) {
+                                    CredentialsHelper.getInstance(getContext()).registerCredentials(host, realm, userT.getText().toString(), passT.getText().toString());
+                                }
 
-                                    handler.proceed(userT.getText().toString(), passT.getText().toString());
-                                }).setNegativeButton(R.string.cancel, (dialog1, which) -> handler.cancel())
-                                .create();
+                                handler.proceed(userT.getText().toString(), passT.getText().toString());
+                            }).setNegativeButton(R.string.cancel, (dialog1, which) -> handler.cancel())
+                            .create();
 
-                        if (getContext() != null && !((Activity) getContext()).isFinishing()) {
-                            alert.show();
-                        }
+                    if (getContext() != null && !((Activity) getContext()).isFinishing()) {
+                        alert.show();
                     }
                 });
             }
@@ -240,7 +236,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         if (url == null || "".equals(url)) {
             post(() -> showHtml(getContext().getString(R.string.configMissing),
                     getContext().getString(R.string.startPageNotSet) + "."
-                    + getContext().getString(R.string.specifyUrlInSettings)));
+                    + getContext().getString(R.string.specifyUrlInPrefs)));
             return;
         }
 
@@ -402,9 +398,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     }
 
     public void clearPasswords() {
-        WebViewDatabase.getInstance(getContext()).clearHttpAuthUsernamePassword();
         CredentialsHelper.getInstance(getContext()).clearCredentials();
-        clearCache(true);
     }
 
     public boolean isShowingHabPanel() {

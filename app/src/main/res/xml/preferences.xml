@@ -4,7 +4,7 @@
         android:key="pref_connection"
         android:title="@string/pref_connection">
         <PreferenceCategory
-            android:key="pref_openhab_settings"
+            android:key="pref_openhab_preferences"
             android:title="openHAB">
             <EditTextPreference
                 android:key="pref_server_url"
@@ -95,7 +95,7 @@
             android:title="@string/pref_jpegQuality" />
     </PreferenceScreen>
 
-    <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
         android:key="pref_command_item"
         android:summary="@string/pref_commandItem_summ"
         android:inputType="textPhonetic"
@@ -119,7 +119,7 @@
                     android:defaultValue="false"
                     android:summary="@string/pref_proximityEnabled_summ"
                     android:title="@string/pref_proximityEnabled" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_proximity_item"
                     android:dependency="pref_proximity_enabled"
                     android:inputType="textPhonetic"
@@ -135,7 +135,7 @@
                     android:defaultValue="false"
                     android:summary="@string/pref_brightnessEnabled_summ"
                     android:title="@string/pref_brightnessEnabled" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_brightness_item"
                     android:dependency="pref_brightness_enabled"
                     android:inputType="textPhonetic"
@@ -164,7 +164,7 @@
                     android:defaultValue="false"
                     android:summary="@string/pref_pressureEnabled_summ"
                     android:title="@string/pref_pressureEnabled" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_pressure_item"
                     android:dependency="pref_pressure_enabled"
                     android:inputType="textPhonetic"
@@ -180,7 +180,7 @@
                     android:defaultValue="false"
                     android:summary="@string/pref_temperatureEnabled_summ"
                     android:title="@string/pref_temperatureEnabled" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_temperature_item"
                     android:dependency="pref_temperature_enabled"
                     android:inputType="textPhonetic"
@@ -201,7 +201,7 @@
                     android:defaultValue="false"
                     android:summary="@string/pref_motionEnabled_summ"
                     android:title="@string/pref_motionEnabled" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_motion_item"
                     android:dependency="pref_motion_detection_enabled"
                     android:inputType="textPhonetic"
@@ -241,7 +241,7 @@
                     android:defaultValue="false"
                     android:summary="@string/pref_connectedEnabled_summ"
                     android:title="@string/pref_connectedEnabled" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_connected_item"
                     android:dependency="pref_connected_enabled"
                     android:summary="@string/pref_connectedItem_summ"
@@ -264,19 +264,19 @@
                     android:defaultValue="false"
                     android:summary="@string/pref_batteryEnabled_summ"
                     android:title="@string/pref_batteryEnabled" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_battery_item"
                     android:dependency="pref_battery_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_batteryItem_summ"
                     android:title="@string/pref_batteryItem" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_battery_charging_item"
                     android:dependency="pref_battery_enabled"
                     android:inputType="textPhonetic"
                     android:summary="@string/pref_batteryChargingItem_summ"
                     android:title="@string/pref_batteryChargingItem" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_battery_level_item"
                     android:dependency="pref_battery_enabled"
                     android:inputType="textPhonetic"
@@ -292,7 +292,7 @@
                     android:defaultValue="false"
                     android:summary="@string/pref_screenEnabled_summ"
                     android:title="@string/pref_screenEnabled" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_screen_item"
                     android:dependency="pref_screen_enabled"
                     android:inputType="textPhonetic"
@@ -308,7 +308,7 @@
                     android:defaultValue="false"
                     android:summary="@string/pref_usageEnabled_summ"
                     android:title="@string/pref_usageEnabled" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_usage_item"
                     android:dependency="pref_usage_enabled"
                     android:inputType="textPhonetic"
@@ -331,7 +331,7 @@
                     android:defaultValue="false"
                     android:summary="@string/pref_volumeEnabled_summ"
                     android:title="@string/pref_volumeEnabled" />
-                <de.vier_bier.habpanelviewer.settings.AutocompleteTextPreference
+                <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
                     android:key="pref_volume_item"
                     android:dependency="pref_volume_enabled"
                     android:inputType="textPhonetic"

@@ -57,6 +57,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
     private CameraCaptureSession mCaptureSession;
     private volatile boolean mPreviewRunning;
+    @SuppressWarnings("FieldCanBeLocal")
     private ImageReader mImageReader; //do not use a variable as this gets GC'ed
 
     CameraImplV2(Activity context, TextureView prevView, int deviceOrientation) throws CameraException {

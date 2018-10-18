@@ -1,4 +1,4 @@
-package de.vier_bier.habpanelviewer.settings;
+package de.vier_bier.habpanelviewer.preferences;
 
 import android.Manifest;
 import android.content.SharedPreferences;
@@ -23,13 +23,13 @@ import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 public class SetPreferenceActivity extends ScreenControllingActivity {
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 123;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 124;
-    private SettingsFragment mSettingsFragment;
+    private PereferencesFragment mPrefFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.settings_main);
+        setContentView(R.layout.preferences_main);
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -45,14 +45,14 @@ public class SetPreferenceActivity extends ScreenControllingActivity {
             myToolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Light);
         }
 
-        mSettingsFragment = new SettingsFragment();
-        mSettingsFragment.setArguments(getIntent().getExtras());
-        getFragmentManager().beginTransaction().replace(R.id.settings_fragment_container, mSettingsFragment).commit();
+        mPrefFragment = new PereferencesFragment();
+        mPrefFragment.setArguments(getIntent().getExtras());
+        getFragmentManager().beginTransaction().replace(R.id.preferences_fragment_container, mPrefFragment).commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.settings_toolbar_menu, menu);
+        getMenuInflater().inflate(R.menu.preferences_toolbar_menu, menu);
         return true;
     }
 
@@ -110,7 +110,7 @@ public class SetPreferenceActivity extends ScreenControllingActivity {
 
     @Override
     public View getScreenOnView() {
-        return mSettingsFragment.getView();
+        return mPrefFragment.getView();
     }
 }
 

@@ -22,7 +22,11 @@
         android:title="@string/menu_setStartUrl"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menu_clear_passwords"
-        android:title="@string/menu_clearPasswords"
+        android:id="@+id/menu_clear_credentials"
+        android:title="@string/menu_clearCredentials"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_clear_cache"
+        android:title="@string/menu_clearCache"
         app:showAsAction="ifRoom" />
 </menu>

@@ -1,4 +1,4 @@
-package de.vier_bier.habpanelviewer.settings;
+package de.vier_bier.habpanelviewer.preferences;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;

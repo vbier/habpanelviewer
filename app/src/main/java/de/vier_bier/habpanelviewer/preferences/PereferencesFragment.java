@@ -1,4 +1,4 @@
-package de.vier_bier.habpanelviewer.settings;
+package de.vier_bier.habpanelviewer.preferences;
 
 import android.app.Activity;
 import android.app.LoaderManager;
@@ -45,7 +45,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * Fragment for preferences.
  */
-public class SettingsFragment extends PreferenceFragment {
+public class PereferencesFragment extends PreferenceFragment {
     private DevicePolicyManager mDPM;
 
     private static final String[] ITEMS_PREFS = new String[]{
@@ -270,7 +270,7 @@ public class SettingsFragment extends PreferenceFragment {
             } catch (SSLException e) {
                 dialogTitle = getResString(R.string.certInvalid);
                 dialogText = getResString(R.string.couldNotConnect) + " " + urls[0] + ".\n" +
-                        getResString(R.string.acceptCertWhenOurOfSettings);
+                        getResString(R.string.acceptCertWhenOurOfPrefs);
             } catch (IOException | GeneralSecurityException e) {
                 dialogText = getResString(R.string.couldNotConnect) + " " + urls[0];
             }
@@ -307,7 +307,7 @@ public class SettingsFragment extends PreferenceFragment {
                 return true;
             }
             AsyncTask<String, Void, Void> validator =
-                    new ValidateHabPanelTask(SettingsFragment.this.getActivity(), preference.getTitle());
+                    new ValidateHabPanelTask(PereferencesFragment.this.getActivity(), preference.getTitle());
             validator.execute(text);
 
             return true;
@@ -352,7 +352,7 @@ public class SettingsFragment extends PreferenceFragment {
 
             if (invalid && getActivity() != null && !getActivity().isFinishing()) {
                 UiUtil.showDialog(getActivity(), preference.getTitle() + " "
-                                + SettingsFragment.this.getResources().getString(R.string.invalid),
+                                + PereferencesFragment.this.getResources().getString(R.string.invalid),
                         getString(R.string.noValidIntInRange, minVal, maxVal));
                 return false;
             }

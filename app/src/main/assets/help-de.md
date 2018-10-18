@@ -192,10 +192,13 @@ Beim ersten Start (oder wenn in den Einstellungen aufgerufen), sucht die Anwendu
 Es wird zuerst versucht, eine HTTPS Verbindung zu finden, und falls das nicht funktioniert, wird auf HTTP zurück gegriffen.
 
 ### Home Screen / Launcher Funktionalität
-Die Anwendung kann in den Android Settings als Launcher eingestellt werden. Dann startet Sie mit dem System und ersetzt den Standard Launcher.  
+Die Anwendung kann in den Android Einstellungen als Launcher konfiguriert werden. Dann startet Sie mit dem System und ersetzt den Standard Launcher.  
 
 ### Startseite
 Browsen Sie eine beliebige Seite und setzen Sie sie mit dem Kontextmenü als Startseite. 
+
+### Zugangsdaten speichern
+Immer wenn eine Webseite mit basic authentication nach Zugangsdaten fragt, öffnet HPV einen Dialog. Dieser hat eine Checkbox die es erlaubt, die Zugansdaten zu speichern. Die Daten werden unverschlüsselt in einer Datenbank in einem privaten Teil des Dateisystems gespeichert. Dies ist sicher, so lange ihr Gerät nicht gerootet ist, andernfalls könnten Apps mit Root Rechten die Zugangsdaten lesen. 
 
 ### Ziehen verhindern
 Falls Sie aus Versehen Scrollen, wenn Sie einen Knopf drücken wollen, aktivieren Sie die Einstellung **Ziehen verhindern**. Dies deaktiviert Scrolling in der Anwendung komplett, und verhindert so auch das Öffnen des HABPanel Menüs.

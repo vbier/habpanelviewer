@@ -11,12 +11,12 @@ If you want to see which permissions are needed by HPV, check the [permissions d
 
 ## <a name="configuration"/>Configuration
 
-**The following settings need to be configured for the initial operation of HABPanelViewer.**
+**The following preferences need to be configured for the initial operation of HABPanelViewer.**
 
 ### openHAB URL
 This is the base URL of your openHAB instance and is required for the integrations (e.g Command Item, Sensor Reporting, Connected Indicator). If this URL is not configured, these integration options will not function.
 
-This URL can be automatically discovered using mDNS if the device is on the same subnet as your openHAB instance by clicking the "Discover Server" button in the "openHAB URL" settings.  If it cannot be discovered or you wish to manually enter it, an example for this base URL would be:
+This URL can be automatically discovered using mDNS if the device is on the same subnet as your openHAB instance by clicking the "Discover Server" button in the "openHAB URL" preferences.  If it cannot be discovered or you wish to manually enter it, an example for this base URL would be:
 
 <a href="javascript:void(0)">http://{host}:8080/</a>
 
@@ -41,7 +41,7 @@ would start at a specific dashboard.
    
 > The "dashboard" parameters are case sensitive.  In the example above, "view" is always all lower case and "Lights" is how you named it when creating the dashboard.  You can validate what your actual dashboard name and case is by navagating to it from your computer's browser.
 
-Instead of configuring the start page in the settings, it might be more comfortable to set it interactively. Simply leave it blank, then browse to the panel you want to have as start panel and select "Set as start page" from the context menu.
+Instead of configuring the start page in the preferences, it might be more comfortable to set it interactively. Simply leave it blank, then browse to the panel you want to have as start panel and select "Set as start page" from the context menu.
  
 ## <a name="control"/>Device Control
 ### command item
@@ -64,7 +64,7 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 * BLUETOOTH_OFF: turn bluetooth off
 * UPDATE_ITEMS: forces an update of all openHAB reporting items
 * START_APP *\<app\>*: starts the app with the package name *app*
-* ADMIN_LOCK_SCREEN: activates the lock screen (requires the app to be set as device admin in the settings)
+* ADMIN_LOCK_SCREEN: activates the lock screen (requires the app to be set as device admin in the preferences)
 * SHOW_URL *\<url\>*: shows the given URL
 * SHOW_DASHBOARD *\<dashboard\>*: shows the given HABPanel dashboard
 > This only works as long as HABPanel is available under its standard URL. If you have a custom HABPanel installation use SHOW_URL instead.
@@ -74,10 +74,10 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 > This only works with Android Lollipop or newer and a defined openHAB item of type **Image**
 > The jpeg quality is optional and defaults to the app setting.
 * CAPTURE_CAMERA *\<image item\>* *\<jpeg quality\>*: takes a picture, creates a compressed jpeg with the given quality and sends it to the openHAB image item
-> In case the pictures are too dark, try to increase the CAPTURE_CAMERA delay in the settings.
+> In case the pictures are too dark, try to increase the CAPTURE_CAMERA delay in the preferences.
 > The jpeg quality is optional and defaults to the app setting.
-* ENABLE_MOTION_DETECTION: enables the motion detection in the app settings.
-* DISABLE_MOTION_DETECTION: disables the motion detection in the app settings.
+* ENABLE_MOTION_DETECTION: enables the motion detection in the app preferences.
+* DISABLE_MOTION_DETECTION: disables the motion detection in the app preferences.
 
 ### command log
 Shows the last 100 commands that have been processed by HABPanelViewer. Color coding indicates processing status:
@@ -106,7 +106,7 @@ A sample openHAB items file looks like this:
     Contact Tablet_Battery_Charging
     Number Tablet_Battery_Level
 
-Leave item names empty in the settings in order to skip reporting for this specific value. The contact item states will be *CLOSED* whenever the battery is low or the device is charging, *OPEN* otherwise.
+Leave item names empty in the preferences in order to skip reporting for this specific value. The contact item states will be *CLOSED* whenever the battery is low or the device is charging, *OPEN* otherwise.
 The number item state will be set to the battery charging level (in percent).
 
 ### motion detection
@@ -116,7 +116,7 @@ Allows to close or open an openHAB contact item when motion is detected. Wheneve
 
 The detection process works as follows: it divides the picture into smaller areas, calculates a brightness average for every area and checks if this average deviates from the last value. If the deviation is higher than the leniency, motion is detected.
 
-The detection can be enabled or disabled and detection parameters can be changed in the settings:
+The detection can be enabled or disabled and detection parameters can be changed in the preferences:
 - Camera Preview: whether to show a preview of the detection as on overlay. This is useful for fine-tuning the detection.
 - Use Lollipop camera API: Use the new Camera 2 API introduced with Lollipop. You should generally use this when available.
 - Detection granularity: Amount by which is axis is divided. So a granularity of 10 results in the picture being divided into 100 areas. 
@@ -188,17 +188,19 @@ A sample openHAB items file looks like this:
 
 ## <a name="usability"/>Usability 
 ### mDNS server discovery
-On first start (or when invoked from the server URL setting), the app uses mDNS discovery to find the openHAB server on the local network.
-It first to find a HTTPS connection to the server and falls back to HTTP if that does not work.
+On first start (or when the Intro is started after clearing the server URL), the app uses mDNS discovery to find the openHAB server on the local network.
 
 ### launcher functionality
-The application can be set as the device launcher. It then starts with the device on replaces the device home screen. This has to be configured in the android settings. 
+The application can be set as the device launcher. It then starts with the device on replaces the device home screen. This has to be configured in the android preferences. 
 
 ### start page configuration
 Browse to an arbitrary page and set it as start page using the context menu.
 
+### credentials storage
+Whenever a web page asks for credentials using basic authentication, HPV opens a login dialog. This dialog has a checkbox allowing to store the credentials. Credentials are stored unencrypted in a database in a private part of the filesystem. This is safe as long as your device is not rooted, otherwise apps with root privileges may read the stored credentials.
+
 ### scrolling prevention
-In case you always scroll accidentally when trying to press buttons, activate **Prevent Dragging** in the Settings. This completely disables scrolling, and effectively disables the HABPanel menu.  
+In case you always scroll accidentally when trying to press buttons, activate **Prevent Dragging** in the preferences. This completely disables scrolling, and effectively disables the HABPanel menu.  
 
 ### app shortcut
 Start an app installed on your device from the main menu.
@@ -219,8 +221,8 @@ Additional optional permissions allowing to use the full functionality:
 * android.permission.FLASHLIGHT - for controlling the camera flashlight
 * android.permission.CAMERA - for capturing photos and motion detection
 * android.permission.WAKE_LOCK - for waking up the device
-* android.permission.WRITE_EXTERNAL_STORAGE - for exporting settings
+* android.permission.WRITE_EXTERNAL_STORAGE - for exporting preferences
 
-HPV can be set as "Device Admin" in the Settings. This allows to lock the device when the appropriate command is received.
+HPV can be set as "Device Admin" in the preferences. This allows to lock the device when the appropriate command is received.
 
 [go back to top](#top)
