@@ -1,33 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/activity_main_layout"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="de.vier_bier.habpanelviewer.MainActivity">
 
-    <de.vier_bier.habpanelviewer.ClientWebView
-        android:id="@+id/activity_main_webview"
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/myCoordinatorLayout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:id="@+id/activity_main_layout"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="de.vier_bier.habpanelviewer.MainActivity">
 
-    <TextureView
-        android:id="@+id/previewView"
-        android:layout_width="640px"
-        android:layout_height="480px"
-        app:layout_constraintRight_toRightOf="@+id/activity_main_webview"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_main_webview" />
+        <de.vier_bier.habpanelviewer.ClientWebView
+            android:id="@+id/activity_main_webview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <SurfaceView
-        android:id="@+id/motionView"
-        android:layout_width="640px"
-        android:layout_height="480px"
-        app:layout_constraintRight_toRightOf="@+id/activity_main_webview"
-        app:layout_constraintBottom_toBottomOf="@+id/activity_main_webview" />
+        <TextureView
+            android:id="@+id/previewView"
+            android:layout_width="640px"
+            android:layout_height="480px"
+            app:layout_constraintRight_toRightOf="@+id/activity_main_webview"
+            app:layout_constraintBottom_toBottomOf="@+id/activity_main_webview" />
 
-</android.support.constraint.ConstraintLayout>
+        <SurfaceView
+            android:id="@+id/motionView"
+            android:layout_width="640px"
+            android:layout_height="480px"
+            app:layout_constraintRight_toRightOf="@+id/activity_main_webview"
+            app:layout_constraintBottom_toBottomOf="@+id/activity_main_webview" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>

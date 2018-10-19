@@ -17,7 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.paolorotolo.appintro.AppIntro2;
 import com.github.paolorotolo.appintro.AppIntro2Fragment;
@@ -93,7 +92,8 @@ public class IntroActivity extends AppIntro2 {
         boolean serverConfigured = !"".equals(prefs.getString("pref_server_url", ""));
 
         if (mSelectedSlide == 0 && !serverConfigured) {
-            Toast.makeText(getBaseContext(), R.string.intro_pleaseComplete, Toast.LENGTH_LONG).show();
+            UiUtil.showSnackBar(getWindow().getDecorView().findViewById(android.R.id.content),
+                    R.string.intro_pleaseComplete);
         } else {
             super.onBackPressed();
         }
@@ -253,7 +253,7 @@ public class IntroActivity extends AppIntro2 {
 
         @Override
         public void onUserIllegallyRequestedNextPage() {
-            Toast.makeText(getContext(), R.string.intro_pleaseSelectUrl, Toast.LENGTH_LONG).show();
+            UiUtil.showSnackBar(getView(), R.string.intro_pleaseSelectUrl);
         }
     }
 }

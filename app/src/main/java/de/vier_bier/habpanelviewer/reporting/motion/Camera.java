@@ -12,7 +12,6 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.TextureView;
-import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.vier_bier.habpanelviewer.R;
+import de.vier_bier.habpanelviewer.UiUtil;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
@@ -128,7 +128,7 @@ public class Camera {
             }
             mPreviewView.setLayoutParams(mPreviewView.getLayoutParams());
         } catch (CameraException e) {
-            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+            UiUtil.showSnackBar(mPreviewView, e.getMessage());
         }
     }
 

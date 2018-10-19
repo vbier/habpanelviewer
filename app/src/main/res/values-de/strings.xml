@@ -183,7 +183,7 @@
 
     <string name="flashControl">Blitzlichtsteuerung</string>
     <string name="notConnected">nicht verbunden</string>
-    <string name="sslFailed">Konnte SSL nicht initialisieren</string>
+    <string name="sslFailed">SSL-Protokoll konnte nicht initialisiert werden!</string>
     <string name="updated">HABPanelViewer Aktualisierung</string>
     <string name="updatedText">Die Anwendung wurde aktualisiert. Folgende Fehlerbehebungen und Verbesserungen wurden eingearbeitet:</string>
     <string name="appRestarted">App wurde nach Absturz neu gestartet</string>
@@ -272,6 +272,8 @@
     <string name="prefsImported">Einstellungen importiert</string>
     <string name="prefsImportFailed">Import fehlgeschlagen!</string>
     <string name="storeCredentials">Speichere Zugangsdaten</string>
-    <string name="credentialsCleared">Zugangsdaten gelöscht. Bitte starte die App neu, um ein erneutes Anmelden auszulösen.</string>
+    <string name="credentialsCleared">Zugangsdaten gelöscht. Starte neu, um ein erneutes Anmelden auszulösen.</string>
     <string name="cacheCleared">Cache geleert</string>
+    <string name="disableRestart">Neustart abschalten</string>
+    <string name="themeChangedRestartRequired">Das Theme wurde geändert. Neustart benötigt um es anzuwenden.</string>
 </resources>

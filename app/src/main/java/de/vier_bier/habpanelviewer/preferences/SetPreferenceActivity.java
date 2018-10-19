@@ -20,10 +20,13 @@ import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 /**
  * Activity for setting preferences.
  */
-public class SetPreferenceActivity extends ScreenControllingActivity {
+public class SetPreferenceActivity extends ScreenControllingActivity implements PreferenceCallback {
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 123;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 124;
-    private PereferencesFragment mPrefFragment;
+    private static final String TAG_NESTED = "TAG_NESTED";
+
+    private PreferenceFragment mPrefFragment;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +34,8 @@ public class SetPreferenceActivity extends ScreenControllingActivity {
 
         setContentView(R.layout.preferences_main);
 
-        Toolbar myToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
+        mToolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
@@ -40,14 +43,32 @@ public class SetPreferenceActivity extends ScreenControllingActivity {
         String theme = prefs.getString("pref_theme", "dark");
 
         if ("dark".equals(theme)) {
-            myToolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Dark);
+            mToolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Dark);
         } else {
-            myToolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Light);
+            mToolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Light);
         }
 
-        mPrefFragment = new PereferencesFragment();
-        mPrefFragment.setArguments(getIntent().getExtras());
-        getFragmentManager().beginTransaction().replace(R.id.preferences_fragment_container, mPrefFragment).commit();
+        if (savedInstanceState == null) {
+            mPrefFragment = new PreferenceFragment();
+            mPrefFragment.setArguments(getIntent().getExtras());
+            getFragmentManager().beginTransaction().add(R.id.preferences_fragment_container, mPrefFragment).commit();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // this if statement is necessary to navigate through nested and main fragments
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStack();
+        }
+    }
+
+    @Override
+    public void onNestedPreferenceSelected(String id) {
+        getFragmentManager().beginTransaction().replace(R.id.preferences_fragment_container,
+                PreferenceFragment.newInstance(id, getIntent().getExtras()), TAG_NESTED).addToBackStack(TAG_NESTED).commit();
     }
 
     @Override
@@ -67,7 +88,7 @@ public class SetPreferenceActivity extends ScreenControllingActivity {
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
             } else {
-                PreferenceUtil.saveSharedPreferencesToFile(this);
+                PreferenceUtil.saveSharedPreferencesToFile(this, mToolbar);
             }
 
             return true;
@@ -80,7 +101,7 @@ public class SetPreferenceActivity extends ScreenControllingActivity {
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
             } else {
-                PreferenceUtil.loadSharedPreferencesFromFile(this);
+                PreferenceUtil.loadSharedPreferencesFromFile(this, mToolbar);
             }
             return true;
         }
@@ -96,13 +117,13 @@ public class SetPreferenceActivity extends ScreenControllingActivity {
             case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    PreferenceUtil.loadSharedPreferencesFromFile(this);
+                    PreferenceUtil.loadSharedPreferencesFromFile(this, mToolbar);
                 }
             }
             case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    PreferenceUtil.saveSharedPreferencesToFile(this);
+                    PreferenceUtil.saveSharedPreferencesToFile(this, mToolbar);
                 }
             }
         }
@@ -110,7 +131,7 @@ public class SetPreferenceActivity extends ScreenControllingActivity {
 
     @Override
     public View getScreenOnView() {
-        return mPrefFragment.getView();
+        return mToolbar;
     }
 }
 

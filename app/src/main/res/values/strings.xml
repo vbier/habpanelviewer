@@ -186,7 +186,7 @@
 
     <string name="flashControl">Flashlight Control</string>
     <string name="notConnected">not connected</string>
-    <string name="sslFailed">Could not initialize SSL engine!</string>
+    <string name="sslFailed">Failed to initialize SSL protocol!</string>
     <string name="updated">HABPanelViewer Update</string>
     <string name="updatedText">The application has been updated. Find the bug fixes and new features below:</string>
     <string name="appRestarted">App restarted after crash</string>
@@ -277,4 +277,6 @@
     <string name="storeCredentials">Store credentials</string>
     <string name="credentialsCleared">Credentials cleared. Please restart the app to trigger a new login.</string>
     <string name="cacheCleared">Cache cleared</string>
+    <string name="disableRestart">Disable Restart</string>
+    <string name="themeChangedRestartRequired">The theme has changed. Restart required to apply.</string>
 </resources>

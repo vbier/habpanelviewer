@@ -81,4 +81,8 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
 
         mRestartEnabled = prefs.getBoolean("pref_restart_enabled", false);
     }
+
+    void disable() {
+        Thread.setDefaultUncaughtExceptionHandler(mDefaultHandler);
+    }
 }

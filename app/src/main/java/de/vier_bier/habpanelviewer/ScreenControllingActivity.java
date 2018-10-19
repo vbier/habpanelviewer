@@ -58,14 +58,7 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String theme = prefs.getString("pref_theme", "dark");
-
-        if ("dark".equals(theme)) {
-            setTheme(R.style.Theme_AppCompat_NoActionBar);
-        } else {
-            setTheme(R.style.Theme_AppCompat_Light_NoActionBar);
-        }
-
+        setTheme(UiUtil.getThemeId(prefs.getString("pref_theme", "dark")));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 

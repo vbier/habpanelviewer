@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="false"
+    android:title="@string/pref_restart">
+
+    <CheckBoxPreference
+        android:key="pref_restart_enabled"
+        android:defaultValue="false"
+        android:summary="@string/pref_restartEnabled_summ"
+        android:title="@string/pref_restartEnabled" />
+    <EditTextPreference
+        android:key="pref_max_restarts"
+        android:dependency="pref_restart_enabled"
+        android:maxLength="2"
+        android:numeric="integer"
+        android:summary="@string/pref_maxRestarts_summ"
+        android:title="@string/pref_maxRestarts" />
+
+</PreferenceScreen>

@@ -2,20 +2,18 @@ package de.vier_bier.habpanelviewer.preferences;
 
 import android.app.Activity;
 import android.app.LoaderManager;
-import android.app.admin.DevicePolicyManager;
-import android.content.Context;
-import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceFragment;
+import android.preference.PreferenceCategory;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
@@ -31,28 +29,19 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.SSLException;
 
-import de.vier_bier.habpanelviewer.AdminReceiver;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
-import static android.app.Activity.RESULT_OK;
+public class PreferenceFragment extends android.preference.PreferenceFragment implements Preference.OnPreferenceClickListener {
+    private static final String TAG_ID = "NESTED_KEY";
 
-/**
- * Fragment for preferences.
- */
-public class PereferencesFragment extends PreferenceFragment {
-    private DevicePolicyManager mDPM;
-
-    private static final String[] ITEMS_PREFS = new String[]{
-            "pref_motion_item", "pref_proximity_item", "pref_volume_item", "pref_connected_item",
-            "pref_pressure_item", "pref_brightness_item", "pref_temperature_item", "pref_command_item",
-            "pref_battery_item", "pref_battery_charging_item", "pref_battery_level_item",
-            "pref_screen_item", "pref_usage_item"};
+    private PreferenceCallback mCallback;
 
     private ItemsAsyncTaskLoader mLoader;
     private final LoaderManager.LoaderCallbacks<List<String>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<String>>() {
@@ -63,39 +52,118 @@ public class PereferencesFragment extends PreferenceFragment {
 
         @Override
         public void onLoadFinished(Loader<List<String>> loader, List<String> strings) {
-            for (String key : ITEMS_PREFS) {
-                final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
+            List<Preference> list = getPreferenceList(getPreferenceScreen(), new ArrayList<>());
+            for (Preference p : list) {
+                if (p.getKey().endsWith("_item") && p instanceof EditTextPreference) {
+                    final EditText editText = ((EditTextPreference) p).getEditText();
 
-                if (editText instanceof AutoCompleteTextView) {
-                    AutoCompleteTextView t = (AutoCompleteTextView) editText;
-                    t.setAdapter(new ArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, strings));
+                    if (editText instanceof AutoCompleteTextView) {
+                        AutoCompleteTextView t = (AutoCompleteTextView) editText;
+                        t.setAdapter(new ArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, strings));
+                    }
                 }
             }
         }
 
         @Override
         public void onLoaderReset(Loader<List<String>> loader) {
-            for (String key : ITEMS_PREFS) {
-                final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
+            List<Preference> list = getPreferenceList(getPreferenceScreen(), new ArrayList<>());
+            for (Preference p : list) {
+                if (p.getKey().endsWith("_item") && p instanceof EditTextPreference) {
+                    final EditText editText = ((EditTextPreference) p).getEditText();
 
-                if (editText instanceof AutoCompleteTextView) {
-                    AutoCompleteTextView t = (AutoCompleteTextView) editText;
-                    t.setAdapter(null);
+                    if (editText instanceof AutoCompleteTextView) {
+                        AutoCompleteTextView t = (AutoCompleteTextView) editText;
+                        t.setAdapter(null);
+                    }
                 }
             }
         }
     };
 
-    private boolean cameraEnabled = false;
-    private boolean motionEnabled = false;
-    private boolean proximityEnabled = false;
-    private boolean pressureEnabled = false;
-    private boolean brightnessEnabled = false;
-    private boolean temperatureEnabled = false;
+    public static PreferenceFragment newInstance(String id, Bundle addArgs) {
+        if ("nested_pref_other".equals(id)) {
+            return new PreferencesOther();
+        }
+
+        PreferenceFragment fragment = new PreferenceFragment();
+
+        Bundle args = new Bundle();
+        args.putAll(addArgs);
+        args.putString(TAG_ID, id);
+        fragment.setArguments(args);
+
+        return fragment;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        if (activity instanceof PreferenceCallback) {
+            mCallback = (PreferenceCallback) activity;
+        } else {
+            throw new IllegalStateException("Owner must implement Callback interface");
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String id = getArguments().getString(TAG_ID);
+        if (id == null) {
+            addPreferencesFromResource(R.xml.preferences_main);
+        } else if ("nested_pref_browser".equals(id)) {
+            addPreferencesFromResource(R.xml.preferences_browser);
+        } else if ("nested_pref_camera".equals(id)) {
+            addPreferencesFromResource(R.xml.preferences_camera);
+        } else if ("nested_pref_connection".equals(id)) {
+            addPreferencesFromResource(R.xml.preferences_connection);
+            addConnectionValidation();
+        } else if ("nested_pref_reporting".equals(id)) {
+            addPreferencesFromResource(R.xml.preferences_reporting);
+            addReportingValidation();
+        } else if ("nested_pref_restart".equals(id)) {
+            addPreferencesFromResource(R.xml.preferences_restart);
+        } else if ("nested_pref_ui".equals(id)) {
+            addPreferencesFromResource(R.xml.preferences_ui);
+            addUiValidation();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // register as click listener for all nested prefs
+        List<Preference> list = getPreferenceList(getPreferenceScreen(), new ArrayList<>());
+        for (Preference p : list) {
+            if (p.getKey().startsWith("nested_")) {
+                p.setOnPreferenceClickListener(this);
+            } else if (p.getKey().endsWith("_item") && p instanceof EditTextPreference) {
+                addItemValidation((EditTextPreference) p);
+            }
+        }
+
+        if (mLoader != null) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            mLoader.setServerUrl(prefs.getString("pref_server_url", ""));
+            getLoaderManager().initLoader(1234, null, mLoaderCallbacks);
+        }
+    }
+
+    private void addReportingValidation() {
+        EditTextPreference connectedIntervalPreference =
+                (EditTextPreference) findPreference("pref_connected_interval");
+        connectedIntervalPreference.setOnPreferenceChangeListener(new NumberValidatingListener(0, 6000));
+
+        boolean cameraEnabled = false;
+        boolean motionEnabled = false;
+        boolean proximityEnabled = false;
+        boolean pressureEnabled = false;
+        boolean brightnessEnabled = false;
+        boolean temperatureEnabled = false;
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -106,12 +174,6 @@ public class PereferencesFragment extends PreferenceFragment {
             brightnessEnabled = bundle.getBoolean("brightness_enabled");
             temperatureEnabled = bundle.getBoolean("temperature_enabled");
         }
-
-        // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.preferences);
-
-        mDPM = (DevicePolicyManager) getActivity().getSystemService(Context.DEVICE_POLICY_SERVICE);
-        mLoader = new ItemsAsyncTaskLoader(getActivity());
 
         // disable preferences if functionality is not available
         if (!cameraEnabled) {
@@ -138,97 +200,112 @@ public class PereferencesFragment extends PreferenceFragment {
             findPreference("pref_temperature").setEnabled(false);
             findPreference("pref_temperature").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_temperature)));
         }
+    }
 
-        onActivityResult(42, RESULT_OK, null);
+    protected void addItemValidation(EditTextPreference p) {
+        if (mLoader == null) {
+            mLoader = new ItemsAsyncTaskLoader(getActivity());
+        }
 
-        // add validation to the device admin
-        CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
-        adminPreference.setOnPreferenceChangeListener(new AdminValidatingListener());
+        final EditText editText = p.getEditText();
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(final Editable editable) {
+                final String itemName = editable.toString();
 
+                getActivity().runOnUiThread(() -> {
+                    if (mLoader.isValid(itemName)) {
+                        editText.setTextColor(Color.GREEN);
+                    } else {
+                        editText.setTextColor(Color.RED);
+                    }
+                });
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+        });
+
+        // initial color
+        editText.setText(editText.getText());
+    }
+
+    private void addUiValidation() {
         ListPreference themePreference = (ListPreference) findPreference("pref_theme");
         themePreference.setOnPreferenceChangeListener((preference, o) -> {
             if (getActivity() != null && !getActivity().isFinishing()) {
-                PreferenceUtil.askRestart(getActivity(), (dialog, whichButton) -> {
-                    getActivity().finish();
-                    ProcessPhoenix.triggerRebirth(getActivity().getApplication());
-                }, (dialog, whichButton) -> {});
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+                if (UiUtil.themeChanged(prefs, getActivity())) {
+                    UiUtil.showSnackBar(getActivity().findViewById(R.id.myCoordinatorLayout),
+                            R.string.themeChangedRestartRequired, R.string.action_restart,
+                            view -> {
+                                getActivity().finish();
+                                ProcessPhoenix.triggerRebirth(getActivity().getApplication());
+                            });
+                }
             }
 
             return true;
         });
-        adminPreference.setOnPreferenceChangeListener(new AdminValidatingListener());
+    }
+
+    private void addConnectionValidation() {
+        if (mLoader == null) {
+            mLoader = new ItemsAsyncTaskLoader(getActivity());
+        }
 
         // add validation to the openHAB url
         EditTextPreference urlPreference = (EditTextPreference) findPreference("pref_server_url");
         urlPreference.setOnPreferenceChangeListener(new URLValidatingListener());
         mLoader.setServerUrl(urlPreference.getText());
-
-        EditTextPreference connectedIntervalPreference =
-                (EditTextPreference) findPreference("pref_connected_interval");
-        connectedIntervalPreference.setOnPreferenceChangeListener(new NumberValidatingListener(0, 6000));
-
-        // add validation to the items
-        for (String key : ITEMS_PREFS) {
-            final EditText editText = ((EditTextPreference) findPreference(key)).getEditText();
-            editText.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void afterTextChanged(final Editable editable) {
-                    final String itemName = editable.toString();
-
-                    getActivity().runOnUiThread(() -> {
-                        if (mLoader.isValid(itemName)) {
-                            editText.setTextColor(Color.GREEN);
-                        } else {
-                            editText.setTextColor(Color.RED);
-                        }
-                    });
-                }
-
-                @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                }
-
-                @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                }
-            });
-
-            // initial color
-            editText.setText(editText.getText());
-        }
-
-        getLoaderManager().initLoader(1234, null, mLoaderCallbacks);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 42 && resultCode == RESULT_OK) {
-            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            boolean isActive = mDPM.isAdminActive(AdminReceiver.COMP);
-
-            if (prefs.getBoolean("pref_device_admin", false) != isActive) {
-                SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putBoolean("pref_device_admin", isActive);
-                editor1.apply();
-
-                CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
-                adminPreference.setChecked(isActive);
-            }
+    public boolean onPreferenceClick(Preference preference) {
+        // here you should use the same keys as you used in the xml-file
+        if (preference.getKey().startsWith("nested_")) {
+            mCallback.onNestedPreferenceSelected(preference.getKey());
         }
+
+        return false;
     }
 
-    private void removeAsAdmin() {
-        mDPM.removeActiveAdmin(AdminReceiver.COMP);
-
-        CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
-        adminPreference.setChecked(false);
+    protected List<Preference> getPreferenceList(Preference p, ArrayList<Preference> list) {
+        if( p instanceof PreferenceCategory || p instanceof PreferenceScreen) {
+            PreferenceGroup pGroup = (PreferenceGroup) p;
+            int pCount = pGroup.getPreferenceCount();
+            for(int i = 0; i < pCount; i++) {
+                getPreferenceList(pGroup.getPreference(i), list); // recursive call
+            }
+        } else {
+            list.add(p);
+        }
+        return list;
     }
 
-    private void installAsAdmin() {
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, AdminReceiver.COMP);
-        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.deviceAdminDescription));
-        startActivityForResult(intent, 42);
+
+    private class URLValidatingListener implements Preference.OnPreferenceChangeListener {
+        @Override
+        public boolean onPreferenceChange(final Preference preference, Object o) {
+            String text = (String) o;
+            mLoader.setServerUrl(text);
+
+            if (text == null || text.isEmpty()) {
+                return true;
+            }
+            AsyncTask<String, Void, Void> validator =
+                    new ValidateHabPanelTask(PreferenceFragment.this.getActivity(), preference.getTitle());
+            validator.execute(text);
+
+            return true;
+        }
+
     }
 
     private static final class ValidateHabPanelTask extends AsyncTask<String, Void, Void> {
@@ -297,38 +374,6 @@ public class PereferencesFragment extends PreferenceFragment {
         }
     }
 
-    private class URLValidatingListener implements Preference.OnPreferenceChangeListener {
-        @Override
-        public boolean onPreferenceChange(final Preference preference, Object o) {
-            String text = (String) o;
-            mLoader.setServerUrl(text);
-
-            if (text == null || text.isEmpty()) {
-                return true;
-            }
-            AsyncTask<String, Void, Void> validator =
-                    new ValidateHabPanelTask(PereferencesFragment.this.getActivity(), preference.getTitle());
-            validator.execute(text);
-
-            return true;
-        }
-
-    }
-
-    private class AdminValidatingListener implements Preference.OnPreferenceChangeListener {
-        @Override
-        public boolean onPreferenceChange(final Preference preference, Object o) {
-            boolean value = (Boolean) o;
-
-            if (value && !mDPM.isAdminActive(AdminReceiver.COMP)) {
-                installAsAdmin();
-            } else if (!value && mDPM.isAdminActive(AdminReceiver.COMP)) {
-                removeAsAdmin();
-            }
-
-            return false;
-        }
-    }
 
     private class NumberValidatingListener implements Preference.OnPreferenceChangeListener {
         private final int minVal;
@@ -352,7 +397,7 @@ public class PereferencesFragment extends PreferenceFragment {
 
             if (invalid && getActivity() != null && !getActivity().isFinishing()) {
                 UiUtil.showDialog(getActivity(), preference.getTitle() + " "
-                                + PereferencesFragment.this.getResources().getString(R.string.invalid),
+                                + PreferenceFragment.this.getResources().getString(R.string.invalid),
                         getString(R.string.noValidIntInRange, minVal, maxVal));
                 return false;
             }
@@ -360,5 +405,4 @@ public class PereferencesFragment extends PreferenceFragment {
             return true;
         }
     }
-
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="false"
+    android:title="@string/pref_camera">
+
+    <CheckBoxPreference
+        android:key="pref_motion_detection_preview"
+        android:defaultValue="false"
+        android:summary="@string/pref_cameraPreview_summ"
+        android:title="@string/pref_cameraPreview" />
+    <CheckBoxPreference
+        android:key="pref_motion_detection_new_api"
+        android:defaultValue="true"
+        android:enabled="@bool/is_post_api_21"
+        android:summary="@string/pref_cameraNewApi_summ"
+        android:title="@string/pref_cameraNewApi" />
+    <EditTextPreference
+        android:key="pref_take_pic_delay"
+        android:defaultValue="100"
+        android:inputType="number"
+        android:summary="@string/pref_takePicDelay_summ"
+        android:title="@string/pref_takePicDelay" />
+    <ListPreference
+        android:key="pref_jpeg_quality"
+        android:defaultValue="70"
+        android:entries="@array/granularity"
+        android:entryValues="@array/granularity"
+        android:summary="@string/pref_jpegQuality_summ"
+        android:title="@string/pref_jpegQuality" />
+
+</PreferenceScreen>

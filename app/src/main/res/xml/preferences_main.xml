@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="nested_pref_connection"
+        android:persistent="false"
+        android:title="@string/pref_connection" />
+
+    <Preference
+        android:key="nested_pref_ui"
+        android:persistent="false"
+        android:title="@string/pref_ui" />
+
+    <Preference
+        android:key="nested_pref_camera"
+        android:persistent="false"
+        android:title="@string/pref_camera" />
+
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+        android:key="pref_command_item"
+        android:summary="@string/pref_commandItem_summ"
+        android:inputType="textPhonetic"
+        android:title="@string/pref_commandItem" />
+
+    <Preference
+        android:key="nested_pref_reporting"
+        android:summary="@string/pref_reporting_summ"
+        android:persistent="false"
+        android:title="@string/pref_reporting" />
+
+    <Preference
+        android:key="nested_pref_browser"
+        android:persistent="false"
+        android:title="@string/pref_browser" />
+
+    <Preference
+        android:key="nested_pref_other"
+        android:persistent="false"
+        android:title="@string/pref_other" />
+
+</PreferenceScreen>

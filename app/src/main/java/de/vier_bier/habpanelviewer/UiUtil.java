@@ -2,8 +2,13 @@ package de.vier_bier.habpanelviewer;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -40,5 +45,49 @@ public class UiUtil {
         titleView.setText(text);
         TextView textView = dialog.findViewById(R.id.release_notes_text);
         textView.setText(scrollText);
+    }
+
+    public static void showSnackBar(View view, int textId, int actionTextId, View.OnClickListener clickListener) {
+        showSnackBar(view, view.getContext().getString(textId), view.getContext().getString(actionTextId), clickListener);
+    }
+
+    public static void showSnackBar(View view, int textId) {
+        showSnackBar(view, view.getContext().getString(textId), null, null);
+    }
+
+    public static void showSnackBar(View view, String text) {
+        showSnackBar(view, text, null, null);
+    }
+
+    private static void showSnackBar(View view, String text, String actionText, View.OnClickListener clickListener) {
+        Snackbar sb = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
+        View sbV = sb.getView();
+        TextView textView = sbV.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setMaxLines(3);
+        if (actionText != null && clickListener != null) {
+            sb.setAction(actionText, clickListener);
+        }
+
+        sb.show();
+    }
+
+    public static int getThemeId(String theme) {
+        if ("dark".equals(theme)) {
+            return R.style.Theme_AppCompat_NoActionBar;
+        }
+
+        return R.style.Theme_AppCompat_Light_NoActionBar;
+    }
+
+    public static boolean themeChanged(SharedPreferences prefs, Activity ctx) {
+        Resources.Theme dummy = ctx.getResources().newTheme();
+        dummy.applyStyle(getThemeId(prefs.getString("pref_theme", "dark")), true);
+
+        TypedValue a = new TypedValue();
+        ctx.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
+        TypedValue b = new TypedValue();
+        dummy.resolveAttribute(android.R.attr.windowBackground, b, true);
+
+        return a.data == b.data;
     }
 }

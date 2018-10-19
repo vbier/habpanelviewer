@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="pref_other"
+    android:title="@string/pref_other">
+    <CheckBoxPreference
+        android:key="pref_device_admin"
+        android:defaultValue="false"
+        android:summary="@string/pref_deviceAdmin_summ"
+        android:title="@string/pref_deviceAdmin" />
+    <CheckBoxPreference
+        android:key="pref_capture_screen_enabled"
+        android:defaultValue="false"
+        android:enabled="@bool/is_post_api_21"
+        android:summary="@string/pref_captureScreenEnabled_summ"
+        android:title="@string/pref_captureScreenEnabled" />
+
+    <Preference
+        android:key="nested_pref_restart"
+        android:persistent="false"
+        android:title="@string/pref_restart" />
+
+</PreferenceScreen>

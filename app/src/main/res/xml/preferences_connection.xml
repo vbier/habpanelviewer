@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="false"
+    android:title="@string/pref_connection">
+
+    <PreferenceCategory
+        android:key="pref_openhab_preferences"
+        android:title="openHAB">
+        <EditTextPreference
+            android:key="pref_server_url"
+            android:summary="@string/pref_url_summ"
+            android:title="@string/pref_url" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="pref_connection_browser"
+        android:title="@string/pref_browser">
+        <EditTextPreference
+            android:key="pref_start_url"
+            android:summary="@string/pref_startUrl_summ"
+            android:title="@string/pref_startUrl" />
+        <CheckBoxPreference
+            android:key="pref_track_browser_connection"
+            android:defaultValue="false"
+            android:summary="@string/pref_trackBrowserConnection_summ"
+            android:title="@string/pref_trackBrowserConnection" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

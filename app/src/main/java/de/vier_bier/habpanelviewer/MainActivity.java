@@ -33,7 +33,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
@@ -172,7 +171,7 @@ public class MainActivity extends ScreenControllingActivity
 
         super.onCreate(savedInstanceState);
 
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_main, false);
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
         boolean introShown = prefs.getBoolean("pref_intro_shown", false);
@@ -184,19 +183,19 @@ public class MainActivity extends ScreenControllingActivity
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_main);
 
-        try {
-            ConnectionUtil.getInstance().setContext(this);
-            Log.d(TAG, "SSL context initialized");
-        } catch (GeneralSecurityException | IOException e) {
-            Log.e(TAG, "failed to initialize ConnectionUtil", e);
-            Toast.makeText(this, R.string.sslFailed, Toast.LENGTH_LONG).show();
-        }
-
         // inflate navigation header to make sure the textview holding the connection text is created
         NavigationView navigationView = findViewById(R.id.nav_view);
         LinearLayout navHeader = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
         navigationView.addHeaderView(navHeader);
         navigationView.setNavigationItemSelectedListener(this);
+
+        try {
+            ConnectionUtil.getInstance().setContext(this);
+            Log.d(TAG, "SSL protocol initialized");
+        } catch (GeneralSecurityException | IOException e) {
+            Log.e(TAG, "failed to initialize ConnectionUtil", e);
+            UiUtil.showSnackBar(navigationView, R.string.sslFailed);
+        }
 
         int restartCount = getIntent().getIntExtra("restartCount", 0);
 
@@ -293,9 +292,19 @@ public class MainActivity extends ScreenControllingActivity
             }
         }
 
-        showInitialToastMessage(restartCount);
-
         mTextView = navHeader.findViewById(R.id.textView);
+
+        if (restartCount > 0) {
+            UiUtil.showSnackBar(mTextView, R.string.appRestarted, R.string.disableRestart, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mRestartingExceptionHandler.disable();
+                    SharedPreferences.Editor editor1 = prefs.edit();
+                    editor1.putBoolean("pref_restart_enabled", false);
+                    editor1.apply();
+                }
+            });
+        }
 
         mWebView = findViewById(R.id.activity_main_webview);
         mWebView.initialize(new IConnectionListener() {
@@ -358,11 +367,11 @@ public class MainActivity extends ScreenControllingActivity
                 break;
             case R.id.menu_clear_credentials:
                 mWebView.clearPasswords();
-                Toast.makeText(this, R.string.credentialsCleared, Toast.LENGTH_SHORT).show();
+                UiUtil.showSnackBar(mWebView, R.string.credentialsCleared, R.string.action_restart, view -> restartApp());
                 break;
             case R.id.menu_clear_cache:
                 mWebView.clearCache(true);
-                Toast.makeText(this, R.string.cacheCleared, Toast.LENGTH_SHORT).show();
+                UiUtil.showSnackBar(mWebView, R.string.cacheCleared, R.string.menu_reload, view -> mWebView.reload());
                 break;
             case R.id.menu_toggle_kiosk:
                 mWebView.toggleKioskMode();
@@ -586,8 +595,7 @@ public class MainActivity extends ScreenControllingActivity
         } else if (id == R.id.action_intro) {
             showIntro();
         } else if (id == R.id.action_restart) {
-            destroy();
-            ProcessPhoenix.triggerRebirth(this);
+            restartApp();
         } else if (id == R.id.action_exit) {
             destroy();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -601,6 +609,11 @@ public class MainActivity extends ScreenControllingActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawers();
         return true;
+    }
+
+    private void restartApp() {
+        destroy();
+        ProcessPhoenix.triggerRebirth(this);
     }
 
     @Override
@@ -624,17 +637,6 @@ public class MainActivity extends ScreenControllingActivity
         chooser.putExtra(Intent.EXTRA_INTENT, main);
 
         return chooser;
-    }
-
-    private void showInitialToastMessage(int restartCount) {
-        String toastMsg = "";
-        if (restartCount > 0) {
-            toastMsg += getString(R.string.appRestarted);
-        }
-
-        if (!toastMsg.isEmpty()) {
-            Toast.makeText(this, toastMsg.trim(), Toast.LENGTH_LONG).show();
-        }
     }
 
     private void showPreferences() {
