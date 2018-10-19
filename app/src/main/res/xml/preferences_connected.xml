@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="false"
+    android:title="@string/pref_connected">
+
+    <CheckBoxPreference
+        android:key="pref_connected_enabled"
+        android:defaultValue="false"
+        android:summary="@string/pref_connectedEnabled_summ"
+        android:title="@string/pref_connectedEnabled" />
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+        android:key="pref_connected_item"
+        android:dependency="pref_connected_enabled"
+        android:summary="@string/pref_connectedItem_summ"
+        android:inputType="textPhonetic"
+        android:title="@string/pref_connectedItem" />
+    <EditTextPreference
+        android:key="pref_connected_interval"
+        android:dependency="pref_connected_enabled"
+        android:defaultValue="60"
+        android:inputType="number"
+        android:summary="@string/pref_connectedInterval_summ"
+        android:title="@string/pref_connectedInterval" />
+
+</PreferenceScreen>

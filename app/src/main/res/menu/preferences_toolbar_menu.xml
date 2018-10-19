@@ -3,9 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/action_back"
+        android:title="@string/action_back"
+        android:icon="@drawable/ic_arrow_upward_black_24dp"
+        android:enabled="false"
+        app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/action_pref_export"
         android:title="@string/pref_export"
         app:showAsAction="never"/>
+
     <item android:id="@+id/action_pref_import"
         android:title="@string/pref_import"
         app:showAsAction="never"/>

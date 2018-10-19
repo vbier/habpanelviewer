@@ -35,6 +35,7 @@
     <string name="action_goto_forum">Gehe zum openHAB Forum</string>
     <string name="action_show_help">Hilfe anzeigen</string>
     <string name="action_clear_log">Log leeren</string>
+    <string name="action_back">Zurück</string>
 
     <string name="menu_reload">Lade Seite neu</string>
     <string name="menu_gotoStartUrl">Gehe zur Startseite</string>
@@ -134,8 +135,8 @@
 
     <string name="pref_battery">Batterie</string>
     <string name="pref_batteryEnabled_summ">Überwacht den Batteriezustand und meldet Änderungen an openHAB</string>
-    <string name="pref_batteryEnabled">Batterie Meldung aktiviert</string>
-    <string name="pref_batteryItem">Batterie Leer Kontakt</string>
+    <string name="pref_batteryEnabled">Batteriemeldung aktiviert</string>
+    <string name="pref_batteryItem">Batterie leer Kontakt</string>
     <string name="pref_batteryItem_summ">Name des openHAB Kontakts der geschaltet wird wenn die Batterie leer ist</string>
     <string name="pref_batteryChargingItem">Batterie wird geladen Kontakt</string>
     <string name="pref_batteryChargingItem_summ">Name des openHAB Kontakts der geschaltet wird wenn die Batterie geladen wird</string>

@@ -27,6 +27,7 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
 
     private PreferenceFragment mPrefFragment;
     private Toolbar mToolbar;
+    private MenuItem mUpItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +62,14 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
         if (getFragmentManager().getBackStackEntryCount() == 0) {
             super.onBackPressed();
         } else {
+            mUpItem.setEnabled(getFragmentManager().getBackStackEntryCount() > 1);
             getFragmentManager().popBackStack();
         }
     }
 
     @Override
     public void onNestedPreferenceSelected(String id) {
+        mUpItem.setEnabled(true);
         getFragmentManager().beginTransaction().replace(R.id.preferences_fragment_container,
                 PreferenceFragment.newInstance(id, getIntent().getExtras()), TAG_NESTED).addToBackStack(TAG_NESTED).commit();
     }
@@ -74,6 +77,9 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.preferences_toolbar_menu, menu);
+
+        mUpItem = menu.findItem(R.id.action_back);
+
         return true;
     }
 
@@ -103,6 +109,11 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
             } else {
                 PreferenceUtil.loadSharedPreferencesFromFile(this, mToolbar);
             }
+            return true;
+        }
+
+        if (id == R.id.action_back) {
+            onBackPressed();
             return true;
         }
 

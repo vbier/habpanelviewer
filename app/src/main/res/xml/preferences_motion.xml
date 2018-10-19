@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="false"
+    android:title="@string/pref_motion">
+
+    <CheckBoxPreference
+        android:key="pref_motion_detection_enabled"
+        android:defaultValue="false"
+        android:summary="@string/pref_motionEnabled_summ"
+        android:title="@string/pref_motionEnabled" />
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+        android:key="pref_motion_item"
+        android:dependency="pref_motion_detection_enabled"
+        android:inputType="textPhonetic"
+        android:summary="@string/pref_motionItem_summ"
+        android:title="@string/pref_motionItem" />
+    <ListPreference
+        android:key="pref_motion_detection_granularity"
+        android:defaultValue="20"
+        android:entries="@array/granularity"
+        android:entryValues="@array/granularity"
+        android:dependency="pref_motion_detection_enabled"
+        android:summary="@string/pref_motionDetectionGranularity_summ"
+        android:title="@string/pref_motionDetectionGranularity" />
+    <ListPreference
+        android:key="pref_motion_detection_leniency"
+        android:defaultValue="20"
+        android:entries="@array/leniency"
+        android:entryValues="@array/leniency"
+        android:dependency="pref_motion_detection_enabled"
+        android:summary="@string/pref_motionDetectionLeniency_summ"
+        android:title="@string/pref_motionDetectionLeniency" />
+    <ListPreference
+        android:key="pref_motion_detection_sleep"
+        android:defaultValue="500"
+        android:entries="@array/sleep"
+        android:entryValues="@array/sleep"
+        android:dependency="pref_motion_detection_enabled"
+        android:summary="@string/pref_motionDetectionSleep_summ"
+        android:title="@string/pref_motionDetectionSleep" />
+
+</PreferenceScreen>

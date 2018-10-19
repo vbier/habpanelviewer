@@ -111,24 +111,47 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String id = getArguments().getString(TAG_ID);
-        if (id == null) {
-            addPreferencesFromResource(R.xml.preferences_main);
-        } else if ("nested_pref_browser".equals(id)) {
-            addPreferencesFromResource(R.xml.preferences_browser);
-        } else if ("nested_pref_camera".equals(id)) {
-            addPreferencesFromResource(R.xml.preferences_camera);
-        } else if ("nested_pref_connection".equals(id)) {
-            addPreferencesFromResource(R.xml.preferences_connection);
-            addConnectionValidation();
-        } else if ("nested_pref_reporting".equals(id)) {
-            addPreferencesFromResource(R.xml.preferences_reporting);
-            addReportingValidation();
-        } else if ("nested_pref_restart".equals(id)) {
-            addPreferencesFromResource(R.xml.preferences_restart);
-        } else if ("nested_pref_ui".equals(id)) {
-            addPreferencesFromResource(R.xml.preferences_ui);
-            addUiValidation();
+        if (getArguments() != null) {
+            String id = getArguments().getString(TAG_ID);
+            if (id == null) {
+                addPreferencesFromResource(R.xml.preferences_main);
+            } else if ("nested_pref_battery".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_battery);
+            } else if ("nested_pref_brightness".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_brightness);
+            } else if ("nested_pref_browser".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_browser);
+            } else if ("nested_pref_camera".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_camera);
+            } else if ("nested_pref_connected".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_connected);
+                addConnectedValidation();
+            } else if ("nested_pref_connection".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_connection);
+                addConnectionValidation();
+            } else if ("nested_pref_motion".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_motion);
+            } else if ("nested_pref_pressure".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_pressure);
+            } else if ("nested_pref_proximity".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_proximity);
+            } else if ("nested_pref_reporting".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_reporting);
+                addReportingValidation();
+            } else if ("nested_pref_restart".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_restart);
+            } else if ("nested_pref_screen".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_screen);
+            } else if ("nested_pref_temperature".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_temperature);
+            } else if ("nested_pref_ui".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_ui);
+                addUiValidation();
+            } else if ("nested_pref_usage".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_usage);
+            } else if ("nested_pref_volume".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_volume);
+            }
         }
     }
 
@@ -153,11 +176,13 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
         }
     }
 
-    private void addReportingValidation() {
+    private void addConnectedValidation() {
         EditTextPreference connectedIntervalPreference =
                 (EditTextPreference) findPreference("pref_connected_interval");
         connectedIntervalPreference.setOnPreferenceChangeListener(new NumberValidatingListener(0, 6000));
+    }
 
+    private void addReportingValidation() {
         boolean cameraEnabled = false;
         boolean motionEnabled = false;
         boolean proximityEnabled = false;
@@ -177,28 +202,28 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
 
         // disable preferences if functionality is not available
         if (!cameraEnabled) {
-            findPreference("pref_camera").setEnabled(false);
-            findPreference("pref_camera").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_camera)));
+            findPreference("nested_pref_camera").setEnabled(false);
+            findPreference("nested_pref_camera").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_camera)));
         }
         if (!motionEnabled) {
-            findPreference("pref_motion").setEnabled(false);
-            findPreference("pref_motion").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_motion)));
+            findPreference("nested_pref_motion").setEnabled(false);
+            findPreference("nested_pref_motion").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_motion)));
         }
         if (!proximityEnabled) {
-            findPreference("pref_proximity").setEnabled(false);
-            findPreference("pref_proximity").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_proximity)));
+            findPreference("nested_pref_proximity").setEnabled(false);
+            findPreference("nested_pref_proximity").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_proximity)));
         }
         if (!pressureEnabled) {
-            findPreference("pref_pressure").setEnabled(false);
-            findPreference("pref_pressure").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_pressure)));
+            findPreference("nested_pref_pressure").setEnabled(false);
+            findPreference("nested_pref_pressure").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_pressure)));
         }
         if (!brightnessEnabled) {
-            findPreference("pref_brightness").setEnabled(false);
-            findPreference("pref_brightness").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_brightness)));
+            findPreference("nested_pref_brightness").setEnabled(false);
+            findPreference("nested_pref_brightness").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_brightness)));
         }
         if (!temperatureEnabled) {
-            findPreference("pref_temperature").setEnabled(false);
-            findPreference("pref_temperature").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_temperature)));
+            findPreference("nested_pref_temperature").setEnabled(false);
+            findPreference("nested_pref_temperature").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_temperature)));
         }
     }
 
@@ -283,7 +308,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
             for(int i = 0; i < pCount; i++) {
                 getPreferenceList(pGroup.getPreference(i), list); // recursive call
             }
-        } else {
+        } else if (p != null) {
             list.add(p);
         }
         return list;

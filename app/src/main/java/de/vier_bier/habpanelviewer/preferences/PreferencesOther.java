@@ -21,6 +21,8 @@ public class PreferencesOther extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        addPreferencesFromResource(R.xml.preferences_other);
+
         mDPM = (DevicePolicyManager) getActivity().getSystemService(Context.DEVICE_POLICY_SERVICE);
 
         // add validation to the device admin

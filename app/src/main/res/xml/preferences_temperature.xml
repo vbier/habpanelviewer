@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="false"
+    android:title="@string/pref_temperature">
+
+    <CheckBoxPreference
+        android:key="pref_temperature_enabled"
+        android:defaultValue="false"
+        android:summary="@string/pref_temperatureEnabled_summ"
+        android:title="@string/pref_temperatureEnabled" />
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+        android:key="pref_temperature_item"
+        android:dependency="pref_temperature_enabled"
+        android:inputType="textPhonetic"
+        android:summary="@string/pref_temperatureItem_summ"
+        android:title="@string/pref_temperatureItem" />
+
+</PreferenceScreen>

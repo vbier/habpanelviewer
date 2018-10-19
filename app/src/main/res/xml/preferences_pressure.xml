@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="false"
+    android:title="@string/pref_pressure">
+
+    <CheckBoxPreference
+        android:key="pref_pressure_enabled"
+        android:defaultValue="false"
+        android:summary="@string/pref_pressureEnabled_summ"
+        android:title="@string/pref_pressureEnabled" />
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+        android:key="pref_pressure_item"
+        android:dependency="pref_pressure_enabled"
+        android:inputType="textPhonetic"
+        android:summary="@string/pref_pressureItem_summ"
+        android:title="@string/pref_pressureItem" />
+
+</PreferenceScreen>

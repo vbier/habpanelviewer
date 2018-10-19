@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="false"
+    android:title="@string/pref_brightness">
+
+    <CheckBoxPreference
+        android:key="pref_brightness_enabled"
+        android:defaultValue="false"
+        android:summary="@string/pref_brightnessEnabled_summ"
+        android:title="@string/pref_brightnessEnabled" />
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+        android:key="pref_brightness_item"
+        android:dependency="pref_brightness_enabled"
+        android:inputType="textPhonetic"
+        android:summary="@string/pref_brightnessItem_summ"
+        android:title="@string/pref_brightnessItem" />
+    <CheckBoxPreference
+        android:key="pref_brightness_average"
+        android:dependency="pref_brightness_enabled"
+        android:defaultValue="true"
+        android:summary="@string/pref_brightnessAverage_summ"
+        android:title="@string/pref_brightnessAverage" />
+    <EditTextPreference
+        android:key="pref_brightness_intervall"
+        android:dependency="pref_brightness_average"
+        android:defaultValue="60"
+        android:inputType="number"
+        android:summary="@string/pref_brightnessIntervall_summ"
+        android:title="@string/pref_brightnessIntervall" />
+
+</PreferenceScreen>

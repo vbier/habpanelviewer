@@ -6,233 +6,62 @@
     <PreferenceCategory
         android:key="pref_sensors"
         android:title="@string/pref_sensors">
-        <PreferenceScreen
-            android:key="pref_proximity"
+
+        <Preference
+            android:key="nested_pref_proximity"
             android:persistent="false"
-            android:title="@string/pref_proximity">
-            <CheckBoxPreference
-                android:key="pref_proximity_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_proximityEnabled_summ"
-                android:title="@string/pref_proximityEnabled" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_proximity_item"
-                android:dependency="pref_proximity_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_proximityItem_summ"
-                android:title="@string/pref_proximityItem" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_brightness"
+            android:title="@string/pref_proximity" />
+
+        <Preference
+            android:key="nested_pref_brightness"
             android:persistent="false"
-            android:title="@string/pref_brightness">
-            <CheckBoxPreference
-                android:key="pref_brightness_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_brightnessEnabled_summ"
-                android:title="@string/pref_brightnessEnabled" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_brightness_item"
-                android:dependency="pref_brightness_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_brightnessItem_summ"
-                android:title="@string/pref_brightnessItem" />
-            <CheckBoxPreference
-                android:key="pref_brightness_average"
-                android:dependency="pref_brightness_enabled"
-                android:defaultValue="true"
-                android:summary="@string/pref_brightnessAverage_summ"
-                android:title="@string/pref_brightnessAverage" />
-            <EditTextPreference
-                android:key="pref_brightness_intervall"
-                android:dependency="pref_brightness_average"
-                android:defaultValue="60"
-                android:inputType="number"
-                android:summary="@string/pref_brightnessIntervall_summ"
-                android:title="@string/pref_brightnessIntervall" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_pressure"
+            android:title="@string/pref_brightness" />
+
+        <Preference
+            android:key="nested_pref_pressure"
             android:persistent="false"
-            android:title="@string/pref_pressure">
-            <CheckBoxPreference
-                android:key="pref_pressure_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_pressureEnabled_summ"
-                android:title="@string/pref_pressureEnabled" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_pressure_item"
-                android:dependency="pref_pressure_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_pressureItem_summ"
-                android:title="@string/pref_pressureItem" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_temperature"
+            android:title="@string/pref_pressure" />
+
+        <Preference
+            android:key="nested_pref_temperature"
             android:persistent="false"
-            android:title="@string/pref_temperature">
-            <CheckBoxPreference
-                android:key="pref_temperature_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_temperatureEnabled_summ"
-                android:title="@string/pref_temperatureEnabled" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_temperature_item"
-                android:dependency="pref_temperature_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_temperatureItem_summ"
-                android:title="@string/pref_temperatureItem" />
-        </PreferenceScreen>
+            android:title="@string/pref_temperature" />
+
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="pref_reporting_other"
         android:title="@string/pref_other">
-        <PreferenceScreen
-            android:key="pref_motion"
+
+        <Preference
+            android:key="nested_pref_motion"
             android:persistent="false"
-            android:title="@string/pref_motion">
-            <CheckBoxPreference
-                android:key="pref_motion_detection_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_motionEnabled_summ"
-                android:title="@string/pref_motionEnabled" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_motion_item"
-                android:dependency="pref_motion_detection_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_motionItem_summ"
-                android:title="@string/pref_motionItem" />
-            <ListPreference
-                android:key="pref_motion_detection_granularity"
-                android:defaultValue="20"
-                android:entries="@array/granularity"
-                android:entryValues="@array/granularity"
-                android:dependency="pref_motion_detection_enabled"
-                android:summary="@string/pref_motionDetectionGranularity_summ"
-                android:title="@string/pref_motionDetectionGranularity" />
-            <ListPreference
-                android:key="pref_motion_detection_leniency"
-                android:defaultValue="20"
-                android:entries="@array/leniency"
-                android:entryValues="@array/leniency"
-                android:dependency="pref_motion_detection_enabled"
-                android:summary="@string/pref_motionDetectionLeniency_summ"
-                android:title="@string/pref_motionDetectionLeniency" />
-            <ListPreference
-                android:key="pref_motion_detection_sleep"
-                android:defaultValue="500"
-                android:entries="@array/sleep"
-                android:entryValues="@array/sleep"
-                android:dependency="pref_motion_detection_enabled"
-                android:summary="@string/pref_motionDetectionSleep_summ"
-                android:title="@string/pref_motionDetectionSleep" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_connected"
+            android:title="@string/pref_motion" />
+
+        <Preference
+            android:key="nested_pref_connected"
             android:persistent="false"
-            android:title="@string/pref_connected">
-            <CheckBoxPreference
-                android:key="pref_connected_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_connectedEnabled_summ"
-                android:title="@string/pref_connectedEnabled" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_connected_item"
-                android:dependency="pref_connected_enabled"
-                android:summary="@string/pref_connectedItem_summ"
-                android:inputType="textPhonetic"
-                android:title="@string/pref_connectedItem" />
-            <EditTextPreference
-                android:key="pref_connected_interval"
-                android:dependency="pref_connected_enabled"
-                android:defaultValue="60"
-                android:inputType="number"
-                android:summary="@string/pref_connectedInterval_summ"
-                android:title="@string/pref_connectedInterval" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_battery"
+            android:title="@string/pref_connected" />
+
+        <Preference
+            android:key="nested_pref_battery"
             android:persistent="false"
-            android:title="@string/pref_battery">
-            <CheckBoxPreference
-                android:key="pref_battery_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_batteryEnabled_summ"
-                android:title="@string/pref_batteryEnabled" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_battery_item"
-                android:dependency="pref_battery_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_batteryItem_summ"
-                android:title="@string/pref_batteryItem" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_battery_charging_item"
-                android:dependency="pref_battery_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_batteryChargingItem_summ"
-                android:title="@string/pref_batteryChargingItem" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_battery_level_item"
-                android:dependency="pref_battery_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_batteryLevelItem_summ"
-                android:title="@string/pref_batteryLevelItem" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_screen"
+            android:title="@string/pref_battery" />
+
+        <Preference
+            android:key="nested_pref_screen"
             android:persistent="false"
-            android:title="@string/pref_screen">
-            <CheckBoxPreference
-                android:key="pref_screen_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_screenEnabled_summ"
-                android:title="@string/pref_screenEnabled" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_screen_item"
-                android:dependency="pref_screen_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_screenItem_summ"
-                android:title="@string/pref_screenItem" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_usage"
+            android:title="@string/pref_screen" />
+
+        <Preference
+            android:key="nested_pref_usage"
             android:persistent="false"
-            android:title="@string/pref_usage">
-            <CheckBoxPreference
-                android:key="pref_usage_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_usageEnabled_summ"
-                android:title="@string/pref_usageEnabled" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_usage_item"
-                android:dependency="pref_usage_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_usageItem_summ"
-                android:title="@string/pref_usageItem" />
-            <EditTextPreference
-                android:key="pref_usage_timeout"
-                android:dependency="pref_usage_enabled"
-                android:defaultValue="60"
-                android:inputType="number"
-                android:summary="@string/pref_usageTimeout_summ"
-                android:title="@string/pref_usageTimeout" />
-        </PreferenceScreen>
-        <PreferenceScreen
-            android:key="pref_volume"
+            android:title="@string/pref_usage" />
+
+        <Preference
+            android:key="nested_pref_volume"
             android:persistent="false"
-            android:title="@string/pref_volume">
-            <CheckBoxPreference
-                android:key="pref_volume_enabled"
-                android:defaultValue="false"
-                android:summary="@string/pref_volumeEnabled_summ"
-                android:title="@string/pref_volumeEnabled" />
-            <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-                android:key="pref_volume_item"
-                android:dependency="pref_volume_enabled"
-                android:inputType="textPhonetic"
-                android:summary="@string/pref_volumeItem_summ"
-                android:title="@string/pref_volumeItem" />
-        </PreferenceScreen>
+            android:title="@string/pref_volume" />
+
     </PreferenceCategory>
 </PreferenceScreen>

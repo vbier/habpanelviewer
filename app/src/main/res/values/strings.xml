@@ -37,6 +37,7 @@
     <string name="action_goto_forum">Goto to openHAB forum</string>
     <string name="action_show_help">Show Help</string>
     <string name="action_clear_log">Clear Log</string>
+    <string name="action_back">Go back</string>
 
     <string name="menu_reload">Reload page</string>
     <string name="menu_gotoStartUrl">Go to start page</string>

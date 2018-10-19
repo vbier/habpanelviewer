@@ -85,7 +85,6 @@ public class CommandLogActivity extends ScreenControllingActivity {
         EventBus.getDefault().post(logClient);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.command_log_toolbar_menu, menu);
