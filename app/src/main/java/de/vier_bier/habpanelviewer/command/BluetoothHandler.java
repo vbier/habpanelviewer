@@ -4,7 +4,7 @@ import android.Manifest;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 /**
  * Handles BLUETOOTH_ON and BLUETOOTH_OFF commands.

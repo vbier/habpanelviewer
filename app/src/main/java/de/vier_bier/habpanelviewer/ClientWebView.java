@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
-import android.support.v7.app.AlertDialog;
+import androidx.appcompat.app.AlertDialog;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;

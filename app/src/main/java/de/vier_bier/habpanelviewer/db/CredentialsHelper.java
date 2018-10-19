@@ -1,6 +1,6 @@
 package de.vier_bier.habpanelviewer.db;
 
-import android.arch.persistence.room.Room;
+import androidx.room.Room;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.webkit.HttpAuthHandler;

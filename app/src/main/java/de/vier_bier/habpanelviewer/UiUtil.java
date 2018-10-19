@@ -9,10 +9,10 @@ import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.content.res.AppCompatResources;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -73,7 +73,7 @@ public class UiUtil {
     private static void showSnackBar(View view, String text, String actionText, View.OnClickListener clickListener) {
         Snackbar sb = Snackbar.make(view, text, Snackbar.LENGTH_LONG);
         View sbV = sb.getView();
-        TextView textView = sbV.findViewById(android.support.design.R.id.snackbar_text);
+        TextView textView = sbV.findViewById(com.google.android.material.R.id.snackbar_text);
         textView.setMaxLines(3);
         if (actionText != null && clickListener != null) {
             sb.setAction(actionText, clickListener);
