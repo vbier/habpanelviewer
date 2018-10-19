@@ -1,13 +1,22 @@
 package de.vier_bier.habpanelviewer;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.content.res.AppCompatResources;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -19,6 +28,8 @@ import java.util.Locale;
  * UI utility methods.
  */
 public class UiUtil {
+    private static final String TAG = "HPV-UiUtil";
+
     static synchronized String formatDateTime(Date d) {
         return d == null ? "-" : DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault()).format(d);
     }
@@ -89,5 +100,29 @@ public class UiUtil {
         dummy.resolveAttribute(android.R.attr.windowBackground, b, true);
 
         return a.data == b.data;
+    }
+
+    @SuppressLint("ResourceType")
+    public static void tintItemPreV21(MenuItem item, Context ctx, Resources.Theme theme) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            TypedValue typedValue = new TypedValue();
+            theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+
+            try {
+                int color = ContextCompat.getColor(ctx, typedValue.resourceId);
+                ColorStateList csl = AppCompatResources.getColorStateList(ctx, typedValue.resourceId);
+                if (csl != null) {
+                    color = csl.getColorForState(new int[] {item.isEnabled() ? android.R.attr.state_enabled : 0}, color);
+                }
+
+                Drawable icon = item.getIcon();
+                if (icon != null) {
+                    icon.mutate();
+                    icon.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+                }
+            } catch (Resources.NotFoundException e) {
+                Log.e(TAG, "Could not tint action bar icon on pre-lollipop device", e);
+            }
+        }
     }
 }

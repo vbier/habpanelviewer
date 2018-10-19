@@ -265,8 +265,6 @@
     <string name="errorSettingTexture">Fehler beim Setzen der Vorschau Oberfläche</string>
     <string name="couldNotObtainCameraService">Android Camera Service nicht gefunden</string>
     <string name="noValidIntInRange">Wert ist keine Zahl im Bereich %1$d..%2$d</string>
-    <string name="RestartRequired">Neustart erforderlich</string>
-    <string name="WantToRestart">Soll die App neu gestartet werden, damit das Theme angewendet wird?</string>
     <string name="chooseTargetDirectory">Wähle das Zielverzeichnis</string>
     <string name="prefsExported">Einstellungen exportiert</string>
     <string name="prefsExportFailed">Export fehlgeschlagen!</string>

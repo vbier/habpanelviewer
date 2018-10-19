@@ -16,6 +16,7 @@ import android.view.View;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
+import de.vier_bier.habpanelviewer.UiUtil;
 
 /**
  * Activity for setting preferences.
@@ -25,7 +26,6 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 124;
     private static final String TAG_NESTED = "TAG_NESTED";
 
-    private PreferenceFragment mPrefFragment;
     private Toolbar mToolbar;
     private MenuItem mUpItem;
 
@@ -38,7 +38,9 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String theme = prefs.getString("pref_theme", "dark");
@@ -50,7 +52,7 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
         }
 
         if (savedInstanceState == null) {
-            mPrefFragment = new PreferenceFragment();
+            PreferenceFragment mPrefFragment = new PreferenceFragment();
             mPrefFragment.setArguments(getIntent().getExtras());
             getFragmentManager().beginTransaction().add(R.id.preferences_fragment_container, mPrefFragment).commit();
         }
@@ -63,6 +65,7 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
             super.onBackPressed();
         } else {
             mUpItem.setEnabled(getFragmentManager().getBackStackEntryCount() > 1);
+            UiUtil.tintItemPreV21(mUpItem, getApplicationContext(), getTheme());
             getFragmentManager().popBackStack();
         }
     }
@@ -70,6 +73,7 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
     @Override
     public void onNestedPreferenceSelected(String id) {
         mUpItem.setEnabled(true);
+        UiUtil.tintItemPreV21(mUpItem, getApplicationContext(), getTheme());
         getFragmentManager().beginTransaction().replace(R.id.preferences_fragment_container,
                 PreferenceFragment.newInstance(id, getIntent().getExtras()), TAG_NESTED).addToBackStack(TAG_NESTED).commit();
     }
@@ -79,6 +83,7 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
         getMenuInflater().inflate(R.menu.preferences_toolbar_menu, menu);
 
         mUpItem = menu.findItem(R.id.action_back);
+        UiUtil.tintItemPreV21(mUpItem, getApplicationContext(), getTheme());
 
         return true;
     }

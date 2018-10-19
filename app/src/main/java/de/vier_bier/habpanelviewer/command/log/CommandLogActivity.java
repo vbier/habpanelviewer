@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
+import de.vier_bier.habpanelviewer.UiUtil;
 import de.vier_bier.habpanelviewer.command.Command;
 
 /**
@@ -61,8 +62,9 @@ public class CommandLogActivity extends ScreenControllingActivity {
             if (adapter != null) {
                 adapter.notifyDataSetChanged();
             }
-            if (mClearItem != null) {
+            if (mClearItem != null && mClearItem.isEnabled() != adapter.getCount() > 0) {
                 mClearItem.setEnabled(adapter.getCount() > 0);
+                UiUtil.tintItemPreV21(mClearItem, getApplicationContext(), getTheme());
             }
         }), 0, 1, TimeUnit.SECONDS);
 
@@ -90,6 +92,7 @@ public class CommandLogActivity extends ScreenControllingActivity {
         getMenuInflater().inflate(R.menu.command_log_toolbar_menu, menu);
 
         mClearItem = menu.findItem(R.id.action_clear_log);
+        UiUtil.tintItemPreV21(mClearItem, getApplicationContext(), getTheme());
 
         return true;
     }
@@ -101,8 +104,9 @@ public class CommandLogActivity extends ScreenControllingActivity {
         if (id == R.id.action_clear_log) {
             adapter.clear();
 
-            if (mClearItem != null) {
+            if (mClearItem != null && mClearItem.isEnabled()) {
                 mClearItem.setEnabled(false);
+                UiUtil.tintItemPreV21(mClearItem, getApplicationContext(), getTheme());
             }
 
             return true;

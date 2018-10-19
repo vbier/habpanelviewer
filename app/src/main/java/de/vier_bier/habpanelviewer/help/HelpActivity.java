@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
+import de.vier_bier.habpanelviewer.UiUtil;
 
 /**
  * Activity showing the help markdown file.
@@ -59,6 +60,9 @@ public class HelpActivity extends ScreenControllingActivity {
             mForumItem.setEnabled(true);
         }
 
+        UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
+        UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String theme = prefs.getString("pref_theme", "dark");
 
@@ -72,6 +76,9 @@ public class HelpActivity extends ScreenControllingActivity {
         mForumItem = menu.findItem(R.id.action_goto_forum);
         mFileItem = menu.findItem(R.id.action_show_help);
 
+        UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
+        UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
+
         return true;
     }
 
@@ -82,6 +89,8 @@ public class HelpActivity extends ScreenControllingActivity {
         if (id == R.id.action_goto_forum) {
             mFileItem.setEnabled(true);
             mForumItem.setEnabled(false);
+            UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
+            UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
 
             final MarkdownView markdownView = findViewById(R.id.activity_help_webview);
             markdownView.loadUrl("https://community.openhab.org/t/habpanelviewer/34112/");
