@@ -18,7 +18,8 @@
     <string name="intro_configuration">Konfiguration</string>
     <string name="intro_configuration_text">Du kannst HPV konfigurieren, in dem du das Menü öffnest und Einstellungen auswählst. Um das Menü zu öffnen, streiche mit dem Finger vom rechten Rand zur Mitte.</string>
     <string name="intro_credentials">Zugangsdaten</string>
-    <string name="intro_credentials_text">HPV kann deine Basic Authentication (BA) Zugangsdaten speichern, so dass du dich an Webseiten mit BA nur ein mal anmelden musst. Die Zugangsdaten werden unverschlüsselt in einem privaten Teil des Dateisystems gespeichert, wo sie nur von root gelesen werden können wenn dein Gerät gerootet ist.</string>
+    <string name="intro_credentials_text">HPV kann deine Basic Authentication (BA) Zugangsdaten speichern, so dass du dich an Webseiten mit BA nur ein mal anmelden musst.</string>
+    <string name="intro_credentials_text2">Zugangsdaten werden unverschlüsselt in einer Datenbank in einem privaten Teil des Dateisystems gespeichert, wo sie nur von root gelesen werden können wenn dein Gerät gerootet ist.</string>
     <string name="intro_ready">Fertig</string>
     <string name="intro_ready_text">Es kann losgehen.</string>
     <string name="intro_pleaseComplete">Der Server ist noch nicht konfiguriert. Bitte beende die initiale Konfiguration.</string>

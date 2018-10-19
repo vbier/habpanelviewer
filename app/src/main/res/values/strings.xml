@@ -20,7 +20,8 @@
     <string name="intro_configuration">Configuration</string>
     <string name="intro_configuration_text">You can configure HPV by opening the menu and selecting Preferences. To open the menu, swipe with your finger from the right side of the screen to the middle.</string>
     <string name="intro_credentials">Credentials Storage</string>
-    <string name="intro_credentials_text">HPV can store your basic authentication (BA) credentials so you only need to log in once to websites using BA. The credentials are stored unencrypted in a private part of the file system that can only be read by root when you device is rooted.</string>
+    <string name="intro_credentials_text">HPV can store your basic authentication (BA) credentials so you only need to log in once to websites using BA.</string>
+    <string name="intro_credentials_text2">Credentials are stored unencrypted in a database in a private part of the file system that can only be read by root when you device is rooted.</string>
     <string name="intro_ready">Ready</string>
     <string name="intro_ready_text">Your are ready to go.</string>
     <string name="intro_pleaseComplete">The server is not yet configured. Please complete the initial configuration.</string>

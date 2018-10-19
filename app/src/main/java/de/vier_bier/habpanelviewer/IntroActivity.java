@@ -57,6 +57,9 @@ public class IntroActivity extends AppIntro2 {
         addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_credentials),
                 getString(R.string.intro_credentials_text), R.drawable.credentials, bgColor));
 
+        addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_credentials),
+                getString(R.string.intro_credentials_text2), R.drawable.database, bgColor));
+
         if (!serverConfigured) {
             NsdManager nsdm = (NsdManager) getSystemService(Context.NSD_SERVICE);
 
