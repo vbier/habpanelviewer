@@ -2,6 +2,7 @@ package de.vier_bier.habpanelviewer.reporting.motion;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.util.Log;
 
@@ -97,9 +98,11 @@ public class MotionDetector extends Thread implements IMotionDetector, ICamera.I
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
         if (mEnabled) {
+            Resources res = mContext.getResources();
             status.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.enabled) + "\n" + (mContext.getString(R.string.resolution, 640, 480) + "\n"
-                    + mContext.getString(R.string.boxesLeniency, mBoxes, mLeniency) + "\n"
-                    + mContext.getString(R.string.framesProcessed, mFrameCount, mDetectionCount) + "\n"
+                    + res.getQuantityString(R.plurals.boxesLeniency, mBoxes, mBoxes, mLeniency) + "\n"
+                    + res.getQuantityString(R.plurals.frames, mFrameCount, mFrameCount)
+                    + res.getQuantityString(R.plurals.motionDetected, mDetectionCount, mDetectionCount) + "\n"
                     + mContext.getString(R.string.timeBetweenDetections, mSleepTime)));
         } else {
             status.set(mContext.getString(R.string.pref_motion), mContext.getString(R.string.disabled));

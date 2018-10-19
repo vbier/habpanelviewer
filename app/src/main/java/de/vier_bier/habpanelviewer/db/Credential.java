@@ -11,7 +11,7 @@ import java.util.Objects;
         indices = {@Index(value = {"host", "realm"}, unique = true)})
 public class Credential {
     @NonNull
-    private String host;
+    private final String host;
     @NonNull
     private String realm;
 

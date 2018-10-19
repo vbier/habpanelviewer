@@ -2,6 +2,7 @@ package de.vier_bier.habpanelviewer.reporting;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,7 +46,9 @@ public class ConnectedIndicator implements IStateUpdateListener {
     public void onMessageEvent(ApplicationStatus status) {
         if (mEnabled) {
             String state = mCtx.getString(R.string.enabled);
-            state += "\n" + mCtx.getString(R.string.updateInterval, mInterval);
+
+            Resources res = mCtx.getResources();
+            state += "\n" + res.getQuantityString(R.plurals.updateInterval, mInterval, mInterval);
 
             if (!mStatusItem.isEmpty()) {
                 state += "\n" + SimpleDateFormat.getDateTimeInstance().format(new Date(mStatus))

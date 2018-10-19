@@ -295,14 +295,11 @@ public class MainActivity extends ScreenControllingActivity
         mTextView = navHeader.findViewById(R.id.textView);
 
         if (restartCount > 0) {
-            UiUtil.showSnackBar(mTextView, R.string.appRestarted, R.string.disableRestart, new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mRestartingExceptionHandler.disable();
-                    SharedPreferences.Editor editor1 = prefs.edit();
-                    editor1.putBoolean("pref_restart_enabled", false);
-                    editor1.apply();
-                }
+            UiUtil.showSnackBar(mTextView, R.string.appRestarted, R.string.disableRestart, view -> {
+                mRestartingExceptionHandler.disable();
+                SharedPreferences.Editor editor1 = prefs.edit();
+                editor1.putBoolean("pref_restart_enabled", false);
+                editor1.apply();
             });
         }
 

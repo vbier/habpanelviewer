@@ -1,5 +1,5 @@
 package de.vier_bier.habpanelviewer.preferences;
 
-public interface PreferenceCallback {
+interface PreferenceCallback {
     void onNestedPreferenceSelected(String id);
 }

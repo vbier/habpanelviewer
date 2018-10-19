@@ -28,7 +28,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
 
     private PreferenceCallback mCallback;
 
-    protected ItemsAsyncTaskLoader mLoader;
+    ItemsAsyncTaskLoader mLoader;
     private final LoaderManager.LoaderCallbacks<List<String>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<String>>() {
         @Override
         public Loader<List<String>> onCreateLoader(int i, Bundle bundle) {
@@ -156,7 +156,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
         }
     }
 
-    protected void addItemValidation(EditTextPreference p) {
+    private void addItemValidation(EditTextPreference p) {
         if (mLoader == null) {
             mLoader = new ItemsAsyncTaskLoader(getActivity());
         }
@@ -199,7 +199,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
         return false;
     }
 
-    protected List<Preference> getPreferenceList(Preference p, ArrayList<Preference> list) {
+    private List<Preference> getPreferenceList(Preference p, ArrayList<Preference> list) {
         if( p instanceof PreferenceCategory || p instanceof PreferenceScreen) {
             PreferenceGroup pGroup = (PreferenceGroup) p;
             int pCount = pGroup.getPreferenceCount();

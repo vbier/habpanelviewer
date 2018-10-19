@@ -82,7 +82,7 @@ public class UiUtil {
         sb.show();
     }
 
-    public static int getThemeId(String theme) {
+    static int getThemeId(String theme) {
         if ("dark".equals(theme)) {
             return R.style.Theme_AppCompat_NoActionBar;
         }

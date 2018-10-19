@@ -2,6 +2,7 @@ package de.vier_bier.habpanelviewer.reporting;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
@@ -26,7 +27,8 @@ public class BrightnessMonitor extends AbstractDeviceMonitor {
         if (mSensorEnabled) {
             String state = mCtx.getString(R.string.enabled);
             if (mDoAverage) {
-                state += "\n" + mCtx.getString(R.string.updateInterval, mInterval);
+                Resources res = mCtx.getResources();
+                state += "\n" + res.getQuantityString(R.plurals.updateInterval, mInterval, mInterval);
             }
             if (!mSensorItem.isEmpty()) {
                 state += "\n" + mCtx.getString(R.string.brightness, mBrightness, mSensorItem, mSensorState);

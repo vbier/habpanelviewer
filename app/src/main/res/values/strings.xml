@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">HABPanelViewer</string>
     <string name="app_logo" translatable="false">App Logo</string>
 
@@ -193,7 +193,7 @@
     <string name="updatedText">The application has been updated. Find the bug fixes and new features below:</string>
     <string name="appRestarted">App restarted after crash</string>
     <string name="unavailable">unavailable</string>
-    <string name="restartCounter">%1$d/%2$d restarts</string>
+    <string name="restartCounter" tools:ignore="PluralsCandidate">%1$d/%2$d restarts</string>
     <string name="waitingNetwork">Waiting for network connection…</string>
     <string name="notConnectedReloadPending">The device is currently not connected to the network. Once the connection has been established, the configured HABPanel page will automatically be loaded.</string>
     <string name="unknownHost">unknown host</string>
@@ -239,12 +239,25 @@
     <string name="camApi2">Camera API 2 (Lollipop)</string>
     <string name="openCameraFailed">Failed to open camera! Is the camera in use by another app?</string>
     <string name="resolution">resolution %1$dx%2$d</string>
-    <string name="boxesLeniency">%1$d boxes, leniency is %2$d</string>
-    <string name="framesProcessed">%1$d frames, motion detected %2$d times</string>
+    <plurals name="boxesLeniency">
+        <item quantity="one">%1$d box, leniency is %2$d</item>
+        <item quantity="other">%1$d boxes, leniency is %2$d</item>
+    </plurals>
+    <plurals name="frames">
+        <item quantity="one">%1$d frame,</item>
+        <item quantity="other">%1$d frames,</item>
+    </plurals>
+    <plurals name="motionDetected">
+        <item quantity="one">motion detected %1$d time</item>
+        <item quantity="other"> motion detected %1$d times</item>
+    </plurals>
     <string name="timeBetweenDetections">time between detections %d ms</string>
     <string name="couldNotFindBackFlash">Could not find back facing camera with flash!</string>
     <string name="left">left</string>
-    <string name="updateInterval">interval is %d seconds</string>
+    <plurals name="updateInterval">
+        <item quantity="one">interval is %d second</item>
+        <item quantity="other">interval is %d seconds</item>
+    </plurals>
     <string name="deviceAdmin">HABPanelViewer</string>
     <string name="deviceAdminDescription">Is needed for immediate screen locking</string>
     <string name="device_not_muted">Device is not muted!</string>
@@ -255,11 +268,23 @@
     <string name="cancel">Cancel</string>
     <string name="okay">OK</string>
     <string name="connectionStatistics">Connection Statistics</string>
-    <string name="connectionDetails">running for %1$s\nonline %2$s (%3$d times)\nlongest %4$s\naverage %5$s\noffline %6$s (%7$d times)\nlongest %8$s\naverage %9$s</string>
-    <string name="days">%d days,</string>
-    <string name="hours">%d hours,</string>
-    <string name="minutes">%d minutes,</string>
-    <string name="seconds">%d seconds,</string>
+    <string name="connectionDetails" tools:ignore="PluralsCandidate">running for %1$s\nonline %2$s (%3$d times)\nlongest %4$s\naverage %5$s\noffline %6$s (%7$d times)\nlongest %8$s\naverage %9$s</string>
+    <plurals name="days">
+        <item quantity="one">%d day,</item>
+        <item quantity="other">%d days,</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d hour,</item>
+        <item quantity="other">%d hours,</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">%d minute,</item>
+        <item quantity="other">%d minutes,</item>
+    </plurals>
+    <plurals name="seconds">
+        <item quantity="one">%d second,</item>
+        <item quantity="other">%d seconds,</item>
+    </plurals>
     <string name="pictureTaken">picture taken</string>
     <string name="previewStarted">preview started</string>
     <string name="lockingCamera">locking camera…</string>

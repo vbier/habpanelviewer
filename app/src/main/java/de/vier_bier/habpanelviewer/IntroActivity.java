@@ -135,7 +135,7 @@ public class IntroActivity extends AppIntro2 {
         super.onSlideChanged(oldFragment, newFragment);
     }
 
-    public static class DiscoverSlide extends Fragment implements ISlidePolicy {
+    static class DiscoverSlide extends Fragment implements ISlidePolicy {
         private NsdManager mSystemService;
         private ServerDiscovery mDiscovery;
 
@@ -182,7 +182,7 @@ public class IntroActivity extends AppIntro2 {
                 final ProgressBar pbar = getView().findViewById(R.id.intro_discover_progressBar);
                 final TextView tv = getView().findViewById(R.id.intro_discover_text);
 
-                new AsyncTask() {
+                new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected void onPreExecute() {
                         tv.setText(R.string.intro_discoveryInProgress);
@@ -190,7 +190,7 @@ public class IntroActivity extends AppIntro2 {
                     }
 
                     @Override
-                    protected Object doInBackground(Object[] objects) {
+                    protected Void doInBackground(Void... voids) {
                         mDiscovery.discover(serverUrl -> getActivity().runOnUiThread(() -> {
                             RadioButton button = new RadioButton(getActivity());
                             button.setText(serverUrl);
@@ -200,7 +200,7 @@ public class IntroActivity extends AppIntro2 {
                     }
 
                     @Override
-                    protected void onPostExecute(Object o) {
+                    protected void onPostExecute(Void aVoid) {
                         tv.setText(R.string.intro_discoveryFinished);
                         pbar.setVisibility(View.GONE);
 
@@ -208,7 +208,7 @@ public class IntroActivity extends AppIntro2 {
                         button.setText(R.string.intro_urlNotFound);
                         rg.addView(button);
                     }
-                }.execute();
+                }.execute((Void) null);
             }
         }
 

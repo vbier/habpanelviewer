@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="intro_urlNotFound">Die richtige URL wurde nicht gefunden. Ich werde diese in den Einstellungen eintragen.</string>
     <string name="intro_openhabServerDetection">openHAB Server Suche</string>
     <string name="intro_discoveryInProgress">Server Suche läuft…</string>
@@ -190,7 +190,7 @@
     <string name="updatedText">Die Anwendung wurde aktualisiert. Folgende Fehlerbehebungen und Verbesserungen wurden eingearbeitet:</string>
     <string name="appRestarted">App wurde nach Absturz neu gestartet</string>
     <string name="unavailable">nicht verfügbar</string>
-    <string name="restartCounter">%1$d/%2$d Neustarts</string>
+    <string name="restartCounter" tools:ignore="PluralsCandidate">%1$d/%2$d Neustarts</string>
     <string name="waitingNetwork">Warte auf Netzwerk Verbindung…</string>
     <string name="notConnectedReloadPending">Das Gerät ist momentan nicht mit dem Netzwerk verbunden. Sobald die Verbindung hergestellt wurde, wird HABPanel automatisch geladen.</string>
     <string name="unknownHost">unbekannter Rechner</string>
@@ -236,12 +236,25 @@
     <string name="camApi2">Kamera API 2 (Lollipop)</string>
     <string name="openCameraFailed">Konnte Kamera nicht öffnen! Wird sie von einer anderen App benutzt?</string>
     <string name="resolution">Auflösung %1$dx%2$d</string>
-    <string name="boxesLeniency">%1$d Rechtecke, Erkennungsschwelle %2$d</string>
-    <string name="framesProcessed">%1$d Bilder, %2$d mal Bewegung erkannt</string>
+    <plurals name="boxesLeniency">
+        <item quantity="one">%1$d Rechteck, Erkennungsschwelle %2$d</item>
+        <item quantity="other">%1$d Rechtecke, Erkennungsschwelle %2$d</item>
+    </plurals>
+    <plurals name="frames">
+        <item quantity="one">%1$d Bild,</item>
+        <item quantity="other">%1$d Bilder,</item>
+    </plurals>
+    <plurals name="motionDetected">
+        <item quantity="one">%1$d mal Bewegung erkannt</item>
+        <item quantity="other">%1$d mal Bewegung erkannt</item>
+    </plurals>
     <string name="timeBetweenDetections">Zeit zwischen Erkennungen %d ms</string>
     <string name="couldNotFindBackFlash">Konnte keine nach hinten gerichtete Kamera mit Blitz finden!</string>
     <string name="left">links</string>
-    <string name="updateInterval">Meldeintervall ist %d Sekunden</string>
+    <plurals name="updateInterval">
+        <item quantity="one">Meldeintervall ist %d Sekunde</item>
+        <item quantity="other">Meldeintervall ist %d Sekunden</item>
+    </plurals>
     <string name="deviceAdmin">HABPanelViewer</string>
     <string name="deviceAdminDescription">Wird benötigt, damit HABPanelViewer den Bildschirm ausschalten kann</string>
     <string name="device_not_muted">Das Gerät ist nicht lautlos!</string>
@@ -252,11 +265,23 @@
     <string name="cancel">Abbrechen</string>
     <string name="okay">OK</string>
     <string name="connectionStatistics">Verbindungsstatistik</string>
-    <string name="connectionDetails">läuft seit %1$s\nVerbunden %2$s (%3$d mal)\nlängste %4$s\nDurchschnitt %5$s\nGetrennt %6$s (%7$d mal)\nlängste %8$s\nDurchschnitt %9$s</string>
-    <string name="days">%d Tage,</string>
-    <string name="hours">%d Stunden,</string>
-    <string name="minutes">%d Minuten,</string>
-    <string name="seconds">%d Sekunden,</string>
+    <string name="connectionDetails" tools:ignore="PluralsCandidate">läuft seit %1$s\nVerbunden %2$s (%3$d mal)\nlängste %4$s\nDurchschnitt %5$s\nGetrennt %6$s (%7$d mal)\nlängste %8$s\nDurchschnitt %9$s</string>
+    <plurals name="days">
+        <item quantity="one">%d Tag,</item>
+        <item quantity="other">%d Tage,</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d Stunde,</item>
+        <item quantity="other">%d Stunden,</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">%d Minute,</item>
+        <item quantity="other">%d Minuten,</item>
+    </plurals>
+    <plurals name="seconds">
+        <item quantity="one">%d Sekunde,</item>
+        <item quantity="other">%d Sekunden,</item>
+    </plurals>
     <string name="pictureTaken">Bild aufgenommen</string>
     <string name="previewStarted">Vorschau gestartet</string>
     <string name="lockingCamera">Sperre Kamera…</string>

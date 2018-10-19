@@ -10,8 +10,8 @@ import java.util.HashSet;
 public class CredentialsHelper {
     private static CredentialsHelper ourInstance;
 
-    private AppDatabase mDb;
-    private HashSet<Credential> mSendCreds = new HashSet<>();
+    private final AppDatabase mDb;
+    private final HashSet<Credential> mSendCreds = new HashSet<>();
 
     public static synchronized CredentialsHelper getInstance(Context ctx) {
         if (ourInstance == null) {

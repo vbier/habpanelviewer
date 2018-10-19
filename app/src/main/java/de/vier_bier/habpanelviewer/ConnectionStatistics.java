@@ -1,6 +1,7 @@
 package de.vier_bier.habpanelviewer;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -59,13 +60,15 @@ public class ConnectionStatistics {
             return "-";
         }
 
+        Resources res = mCtx.getResources();
+
         String retVal = "";
 
         // days
         if (durationMillis > 86400000) {
             long days = durationMillis / 86400000;
 
-            retVal += mCtx.getString(R.string.days, days);
+            retVal += res.getQuantityString(R.plurals.days, (int) days, days);
             durationMillis %= 86400000;
         }
 
@@ -73,7 +76,7 @@ public class ConnectionStatistics {
         if (durationMillis > 3600000) {
             long hours = durationMillis / 3600000;
 
-            retVal += mCtx.getString(R.string.hours, hours);
+            retVal += res.getQuantityString(R.plurals.hours, (int) hours, hours);
             durationMillis %= 3600000;
         }
 
@@ -81,7 +84,7 @@ public class ConnectionStatistics {
         if (durationMillis > 60000) {
             long minutes = durationMillis / 60000;
 
-            retVal += mCtx.getString(R.string.minutes, minutes);
+            retVal += res.getQuantityString(R.plurals.minutes, (int) minutes, minutes);
             durationMillis %= 60000;
         }
 
@@ -89,7 +92,7 @@ public class ConnectionStatistics {
         if (durationMillis > 1000) {
             long seconds = durationMillis / 1000;
 
-            retVal += mCtx.getString(R.string.seconds, seconds);
+            retVal += res.getQuantityString(R.plurals.seconds, (int) seconds, seconds);
         }
 
         return retVal.substring(0, retVal.length() - 1);
