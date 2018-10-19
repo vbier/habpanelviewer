@@ -21,7 +21,7 @@ import de.vier_bier.habpanelviewer.UiUtil;
 /**
  * Activity for setting preferences.
  */
-public class SetPreferenceActivity extends ScreenControllingActivity implements PreferenceCallback {
+public class PreferenceActivity extends ScreenControllingActivity implements PreferenceCallback {
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 123;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 124;
     private static final String TAG_NESTED = "TAG_NESTED";
@@ -52,8 +52,9 @@ public class SetPreferenceActivity extends ScreenControllingActivity implements 
         }
 
         if (savedInstanceState == null) {
-            PreferenceFragment mPrefFragment = new PreferenceFragment();
+            PreferencesMain mPrefFragment = new PreferencesMain();
             mPrefFragment.setArguments(getIntent().getExtras());
+
             getFragmentManager().beginTransaction().add(R.id.preferences_fragment_container, mPrefFragment).commit();
         }
     }

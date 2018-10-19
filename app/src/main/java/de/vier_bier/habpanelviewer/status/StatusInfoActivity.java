@@ -47,7 +47,9 @@ public class StatusInfoActivity extends ScreenControllingActivity {
         setSupportActionBar(myToolbar);
 
         ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
+        if (ab != null) {
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
         final ListView listview = findViewById(R.id.info_listview);
         listview.setAdapter(adapter);

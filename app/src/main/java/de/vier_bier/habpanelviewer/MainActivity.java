@@ -70,7 +70,7 @@ import de.vier_bier.habpanelviewer.reporting.motion.Camera;
 import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionVisualizer;
-import de.vier_bier.habpanelviewer.preferences.SetPreferenceActivity;
+import de.vier_bier.habpanelviewer.preferences.PreferenceActivity;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
@@ -640,7 +640,7 @@ public class MainActivity extends ScreenControllingActivity
     }
 
     private void showPreferences() {
-        Intent intent = new Intent(MainActivity.this, SetPreferenceActivity.class);
+        Intent intent = new Intent(MainActivity.this, PreferenceActivity.class);
         intent.putExtra("camera_enabled", mCam != null);
         intent.putExtra("flash_enabled", mFlashService != null);
         intent.putExtra("motion_enabled", mMotionDetector != null && mCam != null && mCam.canBeUsed());
