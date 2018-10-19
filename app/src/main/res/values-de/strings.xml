@@ -14,11 +14,11 @@
     <string name="intro_reporting_text">HPV kann Geräte Werte, wie Sensor Werte oder erkannte Bewegung an openHAB melden.</string>
     <string name="intro_commanding">Geräte Steuerung</string>
     <string name="intro_commanding_text">HPV kann dein Gerät steuern, wenn es Kommandos von openHAB bekommt. Schalte den Bildschirm ein und aus, schalte Bluetooth und mehr…</string>
-    <string name="intro_serverConfigured">Dein openHAB server is bereits mit %s konfiguriert.</string>
+    <string name="intro_serverConfigured">Dein openHAB Server ist bereits mit %s konfiguriert.</string>
     <string name="intro_configuration">Konfiguration</string>
     <string name="intro_configuration_text">Du kannst HPV konfigurieren, in dem du das Menü öffnest und Einstellungen auswählst. Um das Menü zu öffnen, streiche mit dem Finger vom rechten Rand zur Mitte.</string>
     <string name="intro_credentials">Zugangsdaten</string>
-    <string name="intro_credentials_text">HPV kann deine Basic Authentication (BA) Zugangsdaten speichern, so dass du dich an Webseiten mit BA nur ein mal anmelden musst. Die Zugansdaten werden unverschlüsselt in einem privaten Teil des Dateisystems gespeichert, wo sie nur von root gelesen werden können wenn dein Gerät gerootet ist.</string>
+    <string name="intro_credentials_text">HPV kann deine Basic Authentication (BA) Zugangsdaten speichern, so dass du dich an Webseiten mit BA nur ein mal anmelden musst. Die Zugangsdaten werden unverschlüsselt in einem privaten Teil des Dateisystems gespeichert, wo sie nur von root gelesen werden können wenn dein Gerät gerootet ist.</string>
     <string name="intro_ready">Fertig</string>
     <string name="intro_ready_text">Es kann losgehen.</string>
     <string name="intro_pleaseComplete">Der Server ist noch nicht konfiguriert. Bitte beende die initiale Konfiguration.</string>
@@ -86,9 +86,9 @@
     <string name="pref_hardwareAccelerated">Hardware Beschleunigung</string>
     <string name="pref_hardwareAccelerated_summ">Hardware Beschleunigung benötigt mehr Ressourcen und kann zu Abstürzen führen.</string>
     <string name="pref_disableCache">Deaktiviere Browser Cache</string>
-    <string name="pref_disableCache_summ">Erzwingt, das jede Resource vom Server geladen wird.</string>
+    <string name="pref_disableCache_summ">Erzwingt, das jede Ressource vom Server geladen wird.</string>
     <string name="pref_loadStartUrlOnScreenOn">Lade Startseite beim Aufwachen</string>
-    <string name="pref_loadStartUrlOnScreenOn_summ">Läft die Startseite jedes Mal, wenn das Gerät angeschaltet wird</string>
+    <string name="pref_loadStartUrlOnScreenOn_summ">Lädt die Startseite jedes Mal, wenn das Gerät angeschaltet wird</string>
 
     <string name="pref_commandItem">Kommando Item</string>
     <string name="pref_commandItem_summ">Name des openHAB Items in dem openHAB Kommandos an HABPanelViewer sendet</string>
@@ -99,14 +99,14 @@
     <string name="pref_motion">Bewegungserkennung</string>
     <string name="pref_motionEnabled">Bewegungserkennung</string>
     <string name="pref_motionEnabled_summ">Schaltet einen openHAB Kontakt wenn Bewegung erkannt wird</string>
-    <string name="pref_motionItem">Bewegungs Kontakt</string>
+    <string name="pref_motionItem">Bewegungskontakt</string>
     <string name="pref_motionItem_summ">Name des openHAB Kontakts der geschaltet wird wenn Bewegung erkannt wird</string>
     <string name="pref_motionDetectionGranularity">Erkennungsgranularität</string>
-    <string name="pref_motionDetectionGranularity_summ">Die Anzahl der Teile pro Achse, in die das Bild eingetilt wird um Bewegung zu erkennen</string>
+    <string name="pref_motionDetectionGranularity_summ">Die Anzahl der Teile pro Achse, in die das Bild eingeteilt wird um Bewegung zu erkennen</string>
     <string name="pref_motionDetectionLeniency">Erkennungsschwelle</string>
-    <string name="pref_motionDetectionLeniency_summ">Helligkeits Differenz, ab der Bewegung erkannt wird</string>
+    <string name="pref_motionDetectionLeniency_summ">Helligkeitsdifferenz, ab der Bewegung erkannt wird</string>
     <string name="pref_motionDetectionSleep">Erkennungsintervall</string>
-    <string name="pref_motionDetectionSleep_summ">Zeit zwischen zwei aufeinanderfolgenden Erkennungsversuchen (in Millsekunden)</string>
+    <string name="pref_motionDetectionSleep_summ">Zeit zwischen zwei aufeinander folgenden Erkennungsversuchen (in Millisekunden)</string>
     <string name="pref_proximity">Annäherungssensor</string>
     <string name="pref_proximityEnabled">Annäherungssensor aktiviert</string>
     <string name="pref_proximityEnabled_summ">Schaltet einen openHAB Kontakt wenn Annäherung erkannt wird</string>
@@ -115,11 +115,11 @@
     <string name="pref_brightness">Helligkeitssensor</string>
     <string name="pref_brightnessEnabled">Helligkeitssensor aktiviert</string>
     <string name="pref_brightnessEnabled_summ">Überwacht den Helligkeitssensor und meldet Änderungen an openHAB</string>
-    <string name="pref_brightnessItem">Helligkeits Sensor Item</string>
+    <string name="pref_brightnessItem">Helligkeitssensor Item</string>
     <string name="pref_brightnessItem_summ">Name des openHAB Items an das die Helligkeit gemeldet wird</string>
     <string name="pref_brightnessAverage">Werte mitteln</string>
     <string name="pref_brightnessAverage_summ">Sendet nicht jeden Wert des Sensors, sondert mittelt die Werte und meldet den Mittelwert in regelmäßigen Abständen</string>
-    <string name="pref_brightnessIntervall">Meldungs Intervall</string>
+    <string name="pref_brightnessIntervall">Meldungsintervall</string>
     <string name="pref_brightnessIntervall_summ">Die Anzahl der Sekunden, nach denen der Wert an openHAB gemeldet wird</string>
     <string name="pref_pressure">Drucksensor</string>
     <string name="pref_pressureEnabled_summ">Überwacht den Drucksensor und meldet Änderungen an openHAB</string>
@@ -146,7 +146,7 @@
     <string name="pref_connectedEnabled_summ">Meldet zyklisch einen Zeitstempel an openHAB</string>
     <string name="pref_connectedItem">Verbindungs Item</string>
     <string name="pref_connectedItem_summ">Name des openHAB Items an das der Zeitstempel gemeldet wird</string>
-    <string name="pref_connectedInterval">Meldungs Intervall</string>
+    <string name="pref_connectedInterval">Meldungsintervall</string>
     <string name="pref_connectedInterval_summ">Die Anzahl der Sekunden, nach denen der Wert an openHAB gemeldet wird</string>
     <string name="pref_volume">Lautstärke</string>
     <string name="pref_volumeEnabled">Lautstärkemeldung aktiviert</string>
@@ -156,9 +156,9 @@
     <string name="pref_usage">Benutzung</string>
     <string name="pref_usageEnabled">Benutzungsmeldung aktiviert</string>
     <string name="pref_usageEnabled_summ">Schaltet einen openHAB Kontakt wenn die App aktiv benutzt wird</string>
-    <string name="pref_usageItem">Benutzungs Kontakt</string>
+    <string name="pref_usageItem">Benutzungskontakt</string>
     <string name="pref_usageItem_summ">Name des openHAB Kontakts der geschaltet wird wenn Benutzung erkannt wird</string>
-    <string name="pref_usageTimeout">Benutzungs Timeout</string>
+    <string name="pref_usageTimeout">Benutzungstimeout</string>
     <string name="pref_usageTimeout_summ">Anzahl der Sekunden, nach deren Inaktivität der Kontakt geöffnet wird</string>
     <string name="pref_screen">Bildschirm</string>
     <string name="pref_screenEnabled">Bildschirmmeldung aktiviert</string>
@@ -218,7 +218,7 @@
     <string name="enabled">aktiviert</string>
     <string name="disabled">deaktiviert</string>
     <string name="temperature">Temperatur: %1$.1f°C [%2$s=%3$s]</string>
-    <string name="maxRangeResolution">Max. Reichweite ist %1$.1f, Ausflösung ist %2$.1f</string>
+    <string name="maxRangeResolution">Max. Reichweite ist %1$.1f, Auflösung ist %2$.1f</string>
     <string name="objectClose">Objekt nah: %1$b [%2$s=%3$s]</string>
     <string name="pressure">Druck: %1$d hPa oder mbar [%2$s=%3$s]</string>
     <string name="brightness">Helligkeit: %1$d lx [%2$s=%3$s]</string>
@@ -234,14 +234,14 @@
     <string name="camApi2">Kamera API 2 (Lollipop)</string>
     <string name="openCameraFailed">Konnte Kamera nicht öffnen! Wird sie von einer anderen App benutzt?</string>
     <string name="resolution">Auflösung %1$dx%2$d</string>
-    <string name="boxesLeniency">%1$d Rechtecke, Erkennungs Schwelle %2$d</string>
+    <string name="boxesLeniency">%1$d Rechtecke, Erkennungsschwelle %2$d</string>
     <string name="framesProcessed">%1$d Bilder, %2$d mal Bewegung erkannt</string>
     <string name="timeBetweenDetections">Zeit zwischen Erkennungen %d ms</string>
     <string name="couldNotFindBackFlash">Konnte keine nach hinten gerichtete Kamera mit Blitz finden!</string>
     <string name="left">links</string>
     <string name="updateInterval">Meldeintervall ist %d Sekunden</string>
     <string name="deviceAdmin">HABPanelViewer</string>
-    <string name="deviceAdminDescription">Wird benötigt, damit HABPanelViewer den Bildschrim ausschalten kann</string>
+    <string name="deviceAdminDescription">Wird benötigt, damit HABPanelViewer den Bildschirm ausschalten kann</string>
     <string name="device_not_muted">Das Gerät ist nicht lautlos!</string>
     <string name="host_realm">Rechner: %1$s\nBereich: %2$s</string>
     <string name="username">Benutzer</string>
@@ -263,7 +263,7 @@
     <string name="surfaceObtained">Oberfläche erhalten</string>
     <string name="errorSettingTexture">Fehler beim Setzen der Vorschau Oberfläche</string>
     <string name="couldNotObtainCameraService">Android Camera Service nicht gefunden</string>
-    <string name="noValidIntInRange">Wert is keine Zahl im Bereich %1$d..%2$d</string>
+    <string name="noValidIntInRange">Wert ist keine Zahl im Bereich %1$d..%2$d</string>
     <string name="RestartRequired">Neustart erforderlich</string>
     <string name="WantToRestart">Soll die App neu gestartet werden, damit das Theme angewendet wird?</string>
     <string name="chooseTargetDirectory">Wähle das Zielverzeichnis</string>
