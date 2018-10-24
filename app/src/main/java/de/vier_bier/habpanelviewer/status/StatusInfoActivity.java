@@ -62,8 +62,10 @@ public class StatusInfoActivity extends ScreenControllingActivity {
 
     @Override
     protected void onDestroy() {
-        executor.shutdown();
-        executor = null;
+        if (executor != null) {
+            executor.shutdown();
+            executor = null;
+        }
         super.onDestroy();
     }
 

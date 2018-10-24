@@ -35,6 +35,7 @@ import de.vier_bier.habpanelviewer.command.Command;
  * Activity showing the command log.
  */
 public class CommandLogActivity extends ScreenControllingActivity {
+    private ScheduledExecutorService executor;
     private CommandInfoAdapter adapter;
 
     private final CommandLogClient logClient = this::installAdapter;
@@ -57,7 +58,7 @@ public class CommandLogActivity extends ScreenControllingActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor = Executors.newSingleThreadScheduledExecutor();
         executor.scheduleWithFixedDelay(() -> runOnUiThread(() -> {
             if (adapter != null) {
                 adapter.notifyDataSetChanged();
@@ -87,6 +88,16 @@ public class CommandLogActivity extends ScreenControllingActivity {
         }
 
         EventBus.getDefault().post(logClient);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (executor != null) {
+            executor.shutdown();
+            executor = null;
+        }
+
+        super.onDestroy();
     }
 
     @Override
