@@ -44,7 +44,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
 
                     if (editText instanceof AutoCompleteTextView) {
                         AutoCompleteTextView t = (AutoCompleteTextView) editText;
-                        t.setAdapter(new ArrayAdapter(getActivity(), android.R.layout.simple_dropdown_item_1line, strings));
+                        t.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, strings));
                     }
                 }
             }
