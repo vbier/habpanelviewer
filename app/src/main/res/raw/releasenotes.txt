@@ -1,4 +1,4 @@
-0.9.23pre
+0.9.23
 ======
 * allow to store web page credentials across app restarts
   (CREDENTIALS ARE STORED UNENCRYPTED IN A PRIVATE PART OF THE FILESYSTEM THAT CAN ONLY BE READ BY ROOT WHEN THE DEVICE IS ROOTED!)

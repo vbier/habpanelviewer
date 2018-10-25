@@ -1,4 +1,4 @@
-0.9.23pre
+0.9.23
 ======
 * Erlaubt das Speichern von Zugangsdaten
   (ZUGANGSDATEN WERDEN UNVERSCHLÜSSELT IN EINEM PRIVATEN TEIL DES DATEISYSTEMS GESPEICHERT DAS NUR VON ROOT GELESEN WERDEN KANN WENN DAS GERÄT GEROOTET WURDE)
@@ -13,7 +13,7 @@
 * Intro, das die grundsätzliche Bedienung erklärt
 * Export/Import von Einstellungen
 * Neue Einstellung: Verstecke Soft Keys (standardmäßig abgeschaltet)
-* Neue Einstellung: Browser Cache kann ausgeschlatet werden
+* Neue Einstellung: Browser Cache kann ausgeschaltet werden
 * Neue Einstellung: Startseite laden wenn das Gerät eingeschaltet wird
 * das gewählte Theme wird jetzt auch für die in-app Hilfe benutzt
 * App Start wurde beschleunigt
@@ -50,7 +50,7 @@
 
 0.9.18
 ======
-- neues Kontext Menü zum Umschalten des Kiosk Modus when HABPanel angezeigt wird
+- neues Kontext Menü zum Umschalten des Kiosk Modus wenn HABPanel angezeigt wird
 - Beschreibung der initialen Konfiguration zur Hilfe hinzugefügt
 - Beispiel URL zum openHAB URL Einstellungsdialog hinzugefügt
 
