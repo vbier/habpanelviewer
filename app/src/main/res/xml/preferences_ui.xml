@@ -14,7 +14,7 @@
         android:key="pref_menu_position"
         android:defaultValue="right"
         android:entries="@array/menupositions"
-        android:entryValues="@array/menupositions"
+        android:entryValues="@array/menupositionIds"
         android:summary="@string/pref_menuPosition_summ"
         android:title="@string/pref_menuPosition" />
     <CheckBoxPreference

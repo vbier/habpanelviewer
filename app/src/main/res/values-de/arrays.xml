@@ -36,6 +36,10 @@
         <item>links</item>
         <item>rechts</item>
     </string-array>
+    <string-array name="menupositionIds">
+        <item>left</item>
+        <item>right</item>
+    </string-array>
     <string-array name="sleep">
         <item>0</item>
         <item>100</item>
