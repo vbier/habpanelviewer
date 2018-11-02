@@ -55,7 +55,7 @@ public class CameraImplNone implements ICamera {
     }
 
     @Override
-    public void setDeviceOrientation(int deviceOrientation) {
+    public void setDeviceRotation(int deviceOrientation) {
     }
 
     public String getMessage() {

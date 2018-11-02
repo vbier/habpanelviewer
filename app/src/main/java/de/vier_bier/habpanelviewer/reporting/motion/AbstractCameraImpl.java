@@ -22,10 +22,10 @@ abstract class AbstractCameraImpl implements ICamera {
 
     final List<ILumaListener> mListeners = new ArrayList<>();
 
-    AbstractCameraImpl(Activity activity, TextureView previewView, int orientation) {
+    AbstractCameraImpl(Activity activity, TextureView previewView) {
         mActivity = activity;
         mPreviewView = previewView;
-        mDeviceOrientation = orientation;
+        mDeviceOrientation = mActivity.getWindowManager().getDefaultDisplay().getRotation();
     }
 
     @Override

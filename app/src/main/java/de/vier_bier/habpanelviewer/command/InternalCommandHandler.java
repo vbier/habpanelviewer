@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import de.vier_bier.habpanelviewer.MainActivity;
 import de.vier_bier.habpanelviewer.ScreenCapturer;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
-import de.vier_bier.habpanelviewer.reporting.motion.CameraException;
 import de.vier_bier.habpanelviewer.reporting.motion.ICamera;
 import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 
@@ -94,30 +93,28 @@ public class InternalCommandHandler implements ICommandHandler {
             }
         } else if ((paras = matchesRegexp(CAPTURE_CAMERA_PATTERN, cmdStr)) != null) {
             cmd.start();
-            try {
-                final String p = paras[0];
-                final int compQuality = getQuality(paras);
 
-                mMotionDetector.getCamera().takePicture(new ICamera.IPictureListener() {
-                    @Override
-                    public void picture(byte[] data) {
-                        mConnection.updateJpeg(p, data);
-                        cmd.finished();
-                    }
+            final String p = paras[0];
+            final int compQuality = getQuality(paras);
 
-                    @Override
-                    public void error(String message) {
-                        cmd.failed(message);
-                    }
+            mMotionDetector.getCamera().takePicture(new ICamera.IPictureListener() {
+                @Override
+                public void picture(byte[] data) {
+                    mConnection.updateJpeg(p, data);
+                    cmd.finished();
+                }
 
-                    @Override
-                    public void progress(String message) {
-                        cmd.progress(message);
-                    }
-                }, takePictureDelay, compQuality);
-            } catch (CameraException e) {
-                cmd.failed(e.getLocalizedMessage());
-            }
+                @Override
+                public void error(String message) {
+                    cmd.failed(message);
+                }
+
+                @Override
+                public void progress(String message) {
+                    cmd.progress(message);
+                }
+            }, takePictureDelay, compQuality);
+
             return true;
         } else if ((paras = matchesRegexp(START_PATTERN, cmdStr)) != null) {
             Intent launchIntent = mActivity.getPackageManager().getLaunchIntentForPackage(paras[0]);

@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.SensorManager;
-import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.media.AudioManager;
 import android.media.projection.MediaProjection;
@@ -18,10 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import com.google.android.material.navigation.NavigationView;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -34,6 +29,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.material.navigation.NavigationView;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import org.greenrobot.eventbus.EventBus;
@@ -45,6 +41,9 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import de.vier_bier.habpanelviewer.command.AdminHandler;
 import de.vier_bier.habpanelviewer.command.BluetoothHandler;
 import de.vier_bier.habpanelviewer.command.CommandQueue;
@@ -57,6 +56,7 @@ import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.IConnectionListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
+import de.vier_bier.habpanelviewer.preferences.PreferenceActivity;
 import de.vier_bier.habpanelviewer.reporting.BatteryMonitor;
 import de.vier_bier.habpanelviewer.reporting.BrightnessMonitor;
 import de.vier_bier.habpanelviewer.reporting.ConnectedIndicator;
@@ -70,7 +70,6 @@ import de.vier_bier.habpanelviewer.reporting.motion.Camera;
 import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionVisualizer;
-import de.vier_bier.habpanelviewer.preferences.PreferenceActivity;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
@@ -94,7 +93,7 @@ public class MainActivity extends ScreenControllingActivity
     private FlashHandler mFlashService;
     private IMotionDetector mMotionDetector;
     private MotionVisualizer mMotionVisualizer;
-    private ConnectedIndicator mConnectedReporter;
+    private ConnectedIndicator mConnectedIndicator;
     private CommandQueue mCommandQueue;
     private ScreenCapturer mCapturer;
     private Camera mCam;
@@ -136,9 +135,9 @@ public class MainActivity extends ScreenControllingActivity
             mServerConnection = null;
         }
 
-        if (mConnectedReporter != null) {
-            mConnectedReporter.terminate();
-            mConnectedReporter = null;
+        if (mConnectedIndicator != null) {
+            mConnectedIndicator.terminate();
+            mConnectedIndicator = null;
         }
 
         for (IDeviceMonitor m : mMonitors) {
@@ -167,8 +166,6 @@ public class MainActivity extends ScreenControllingActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        long start = System.currentTimeMillis();
-
         super.onCreate(savedInstanceState);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences_main, false);
@@ -219,14 +216,9 @@ public class MainActivity extends ScreenControllingActivity
             mConnections = new ConnectionStatistics(this);
         }
 
-        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mFlashService == null) {
-                try {
-                    mFlashService = new FlashHandler(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE));
-                } catch (CameraAccessException | IllegalAccessException e) {
-                    Log.d(TAG, "Could not create flash controller");
-                }
-            }
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)
+                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mFlashService == null) {
+            mFlashService = new FlashHandler(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE));
         }
 
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
@@ -255,8 +247,8 @@ public class MainActivity extends ScreenControllingActivity
                     relText);
         }
 
-        if (mConnectedReporter == null) {
-            mConnectedReporter = new ConnectedIndicator(this, mServerConnection);
+        if (mConnectedIndicator == null) {
+            mConnectedIndicator = new ConnectedIndicator(this, mServerConnection);
         }
 
         mMonitors.add(new BatteryMonitor(this, mServerConnection));
@@ -317,20 +309,18 @@ public class MainActivity extends ScreenControllingActivity
             }
         }, mNetworkTracker);
         mCommandQueue.addHandler(new WebViewHandler(mWebView));
-
-        Log.d(TAG, "onCreate: " + (System.currentTimeMillis() - start));
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
         if (mMotionVisualizer != null) {
-            mMotionVisualizer.setDeviceRotation(getWindowManager().getDefaultDisplay().getRotation());
+            mMotionVisualizer.setDeviceRotation(rotation);
         }
-
         if (mCam != null) {
-            mCam.setDeviceRotation(getWindowManager().getDefaultDisplay().getRotation());
+            mCam.setDeviceRotation(rotation);
         }
     }
 
@@ -426,7 +416,7 @@ public class MainActivity extends ScreenControllingActivity
         }
         status.set(getString(R.string.app_name), "Version: " + version);
 
-        if (mFlashService == null) {
+        if (mFlashService == null || !mFlashService.isAvailable()) {
             status.set(getString(R.string.flashControl), getString(R.string.unavailable));
         }
         if (mMotionDetector == null || mCam == null || !mCam.canBeUsed()) {
@@ -519,7 +509,7 @@ public class MainActivity extends ScreenControllingActivity
             m.updateFromPreferences(prefs);
         }
 
-        mConnectedReporter.updateFromPreferences(prefs);
+        mConnectedIndicator.updateFromPreferences(prefs);
         mWebView.updateFromPreferences(prefs);
         mServerConnection.updateFromPreferences(prefs);
 
@@ -551,7 +541,6 @@ public class MainActivity extends ScreenControllingActivity
         } else {
             motionView.setVisibility(View.INVISIBLE);
         }
-        motionView.setLayoutParams(motionView.getLayoutParams());
     }
 
     @Override
@@ -639,7 +628,7 @@ public class MainActivity extends ScreenControllingActivity
     private void showPreferences() {
         Intent intent = new Intent(MainActivity.this, PreferenceActivity.class);
         intent.putExtra("camera_enabled", mCam != null);
-        intent.putExtra("flash_enabled", mFlashService != null);
+        intent.putExtra("flash_enabled", mFlashService != null && mFlashService.isAvailable());
         intent.putExtra("motion_enabled", mMotionDetector != null && mCam != null && mCam.canBeUsed());
 
         for (IDeviceMonitor m : mMonitors) {

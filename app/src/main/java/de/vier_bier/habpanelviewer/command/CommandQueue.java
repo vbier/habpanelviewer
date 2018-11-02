@@ -2,6 +2,8 @@ package de.vier_bier.habpanelviewer.command;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.HandlerThread;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -17,18 +19,23 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 /**
  * Queue for commands sent from openHAB.
  */
-public class CommandQueue implements IStateUpdateListener {
+public class CommandQueue extends HandlerThread implements IStateUpdateListener {
     private final Activity mCtx;
     private final ServerConnection mServerConnection;
+    private Handler mWorkerHandler;
 
     private final ArrayList<ICommandHandler> mHandlers = new ArrayList<>();
     private final CommandLog mCmdLog = new CommandLog();
 
     public CommandQueue(Activity ctx, ServerConnection serverConnection) {
+        super("CommandQueue");
+
         EventBus.getDefault().register(this);
 
         mCtx = ctx;
         mServerConnection = serverConnection;
+
+        start();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -45,23 +52,38 @@ public class CommandQueue implements IStateUpdateListener {
     }
 
     @Override
+    protected void onLooperPrepared() {
+        super.onLooperPrepared();
+
+        mWorkerHandler = new Handler(getLooper(), msg -> {
+            if (msg.what == 12) {
+                Command cmd = (Command) msg.obj;
+
+                synchronized (mHandlers) {
+                    for (ICommandHandler mHandler : mHandlers) {
+                        try {
+                            if (mHandler.handleCommand(cmd)) {
+                                break;
+                            }
+                        } catch (Throwable t) {
+                            cmd.failed(t.getLocalizedMessage());
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        });
+    }
+
+    @Override
     public void itemUpdated(String name, String value) {
         if (value != null && !value.isEmpty()) {
             Command cmd = new Command(value);
             addToCmdLog(cmd);
 
-            synchronized (mHandlers) {
-                for (ICommandHandler mHandler : mHandlers) {
-                    try {
-                        if (mHandler.handleCommand(cmd)) {
-                            break;
-                        }
-                    } catch (Throwable t) {
-                        cmd.failed(t.getLocalizedMessage());
-                        return;
-                    }
-                }
-            }
+            mWorkerHandler.obtainMessage(12, cmd).sendToTarget();
         }
     }
 
@@ -79,5 +101,6 @@ public class CommandQueue implements IStateUpdateListener {
 
     public void terminate() {
         EventBus.getDefault().unregister(this);
+        quit();
     }
 }

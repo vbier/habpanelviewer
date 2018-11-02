@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
-import androidx.core.app.ActivityCompat;
 import android.util.Log;
 import android.view.TextureView;
 
@@ -20,18 +19,23 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import androidx.core.app.ActivityCompat;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
- * Generic camera implementation.
+ * Generic camera implementation that delegates to the V1 and V2 camera implementations.
  */
 public class Camera {
     public final static int MY_REQUEST_CAMERA = 42;
 
     private static final String TAG = "HPV-Camera";
+
+    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
     private final Activity mContext;
     private final TextureView mPreviewView;
@@ -40,7 +44,6 @@ public class Camera {
     private SurfaceTexture mSurface;
 
     private CameraVersion mVersion;
-    private int mDeviceOrientation;
     private boolean mShowPreview;
 
     private final List<ICamera.ILumaListener> mListeners = new ArrayList<>();
@@ -52,22 +55,91 @@ public class Camera {
         EventBus.getDefault().register(this);
 
         mVersion = getCameraVersion(prefs);
-        mDeviceOrientation = ctx.getWindowManager().getDefaultDisplay().getRotation() * 90;
         mImplementation = createCamera(mVersion);
-
-        for (ICamera.ILumaListener l : mListeners) {
-            mImplementation.addLumaListener(l);
-        }
     }
 
     public void setDeviceRotation(int rotation) {
-        if (rotation != mDeviceOrientation) {
-            mImplementation.setDeviceOrientation(rotation);
-            mDeviceOrientation = rotation;
-        }
+        mExecutor.submit(() -> mImplementation.setDeviceRotation(rotation));
     }
 
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
+        mExecutor.submit(() -> doUpdateFromPreferences(prefs));
+    }
+
+    public void terminate() {
+        mExecutor.submit(this::doTerminate);
+    }
+
+    public int getSensorOrientation() {
+        // this is intentionally not done in the worker thread, as it is only called in
+        // MainActivity.onCreate and in code already running in the wt.
+        return mImplementation.getCameraOrientation();
+    }
+
+    public void takePicture(ICamera.IPictureListener h,
+                            int takeDelay,
+                            int compQuality) {
+        mExecutor.submit(() -> {
+            try {
+                doTakePicture(h, takeDelay, compQuality);
+            } catch (CameraException e) {
+                h.error(e.getLocalizedMessage());
+            }
+        });
+    }
+
+    public boolean canBeUsed() {
+        return mVersion != CameraVersion.NONE;
+    }
+
+    void addLumaListener(ICamera.ILumaListener l) {
+        synchronized (mListeners) {
+            mListeners.add(l);
+            mImplementation.addLumaListener(l);
+        }
+
+        mExecutor.submit(() -> {
+            if (mListeners.size() > 0 && !isPreviewRunning() && !mShowPreview) {
+                try {
+                    startPreview(new ICamera.LoggingPreviewListener());
+                } catch (CameraException e) {
+                    Log.e(TAG, "Could not enable MotionDetector", e);
+                }
+            }
+        });
+    }
+
+    void removeLumaListener(ICamera.ILumaListener l) {
+        synchronized (mListeners) {
+            mListeners.remove(l);
+            mImplementation.removeLumaListener(l);
+        }
+
+        mExecutor.submit(() -> {
+            if (mListeners.isEmpty() && !mShowPreview) {
+                try {
+                    stopPreview();
+                } catch (CameraException e) {
+                    Log.e(TAG, "Could not disable MotionDetector", e);
+                }
+            }
+        });
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ApplicationStatus status) {
+        if (isPreviewRunning()) {
+            status.set(mContext.getString(R.string.pref_camera), mContext.getString(R.string.enabled) + "\n"
+                    + mContext.getString(R.string.resolution, 640, 480) + "\n"
+                    + (mVersion == CameraVersion.V1 ? mContext.getString(R.string.camApiPreLollipop) : mContext.getString(R.string.camApi2)));
+        } else if (mVersion == CameraVersion.NONE) {
+            status.set(mContext.getString(R.string.pref_camera), ((CameraImplNone) mImplementation).getMessage());
+        } else {
+            status.set(mContext.getString(R.string.pref_camera), mContext.getString(R.string.disabled));
+        }
+    }
+
+    private synchronized void doUpdateFromPreferences(SharedPreferences prefs) {
         try {
             CameraVersion v = getCameraVersion(prefs);
 
@@ -88,14 +160,6 @@ public class Camera {
             }
 
             mShowPreview = prefs.getBoolean("pref_motion_detection_preview", false);
-            if (mShowPreview) {
-                int deviceOrientation = mContext.getWindowManager().getDefaultDisplay().getRotation() * 90;
-
-                if (deviceOrientation != mDeviceOrientation) {
-                    mImplementation.setDeviceOrientation(deviceOrientation);
-                    mDeviceOrientation = deviceOrientation;
-                }
-            }
 
             // ensure camera preview state is correct
             // - preview state ON or lumalisteners -> preview running
@@ -132,62 +196,23 @@ public class Camera {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(ApplicationStatus status) {
-        if (isPreviewRunning()) {
-            status.set(mContext.getString(R.string.pref_camera), mContext.getString(R.string.enabled) + "\n"
-                    + mContext.getString(R.string.resolution, 640, 480) + "\n"
-                    + (mVersion == CameraVersion.V1 ? mContext.getString(R.string.camApiPreLollipop) : mContext.getString(R.string.camApi2)));
-        } else if (mVersion == CameraVersion.NONE) {
-            status.set(mContext.getString(R.string.pref_camera), ((CameraImplNone) mImplementation).getMessage());
-        } else {
-            status.set(mContext.getString(R.string.pref_camera), mContext.getString(R.string.disabled));
-        }
-    }
-
-    public synchronized void terminate() {
+    private synchronized void doTerminate() {
         EventBus.getDefault().unregister(this);
 
         if (isPreviewRunning()) {
             try {
                 stopPreview();
             } catch (CameraException e) {
-                Log.e(TAG, "failed to stop preview on termiation", e);
+                Log.e(TAG, "failed to stop preview on termination", e);
             }
         }
 
-        mImplementation = null;
+        mVersion = CameraVersion.NONE;
+        mImplementation = new CameraImplNone("camera terminated");
     }
 
-    public int getSensorOrientation() {
-        return mImplementation.getCameraOrientation();
-    }
 
-    synchronized void addLumaListener(ICamera.ILumaListener l) throws CameraException {
-        mListeners.add(l);
-
-        if (mImplementation != null) {
-            mImplementation.addLumaListener(l);
-
-            if (mListeners.size() == 1 && !mShowPreview) {
-                startPreview(new ICamera.LoggingPreviewListener());
-            }
-        }
-    }
-
-    synchronized void removeLumaListener(ICamera.ILumaListener l) throws CameraException {
-        mListeners.remove(l);
-
-        if (mImplementation != null) {
-            mImplementation.removeLumaListener(l);
-
-            if (mListeners.isEmpty() && !mShowPreview) {
-                stopPreview();
-            }
-        }
-    }
-
-    public synchronized void takePicture(ICamera.IPictureListener h,
+    private synchronized void doTakePicture(ICamera.IPictureListener h,
                                          int takeDelay,
                                          int compQuality) throws CameraException {
         boolean wasPreviewRunning = isPreviewRunning();
@@ -288,11 +313,11 @@ public class Camera {
     }
 
     private synchronized void stopPreview() throws CameraException {
-        if (mImplementation != null && mImplementation.isPreviewRunning()) {
+        if (mImplementation.isPreviewRunning()) {
             mImplementation.stopPreview();
         }
 
-        if (mImplementation != null && mImplementation.isCameraLocked()) {
+        if (mImplementation.isCameraLocked()) {
             mImplementation.unlockCamera();
         }
     }
@@ -304,11 +329,11 @@ public class Camera {
     }
 
     private boolean isCameraLocked() {
-        return mImplementation != null && mImplementation.isCameraLocked();
+        return mImplementation.isCameraLocked();
     }
 
     private boolean isPreviewRunning() {
-        return mImplementation != null && mImplementation.isPreviewRunning();
+        return mImplementation.isPreviewRunning();
     }
 
     private void registerSurfaceListener(ICamera.IPreviewListener previewListener) {
@@ -345,9 +370,7 @@ public class Camera {
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
                 Log.d(TAG, "surface destroyed: " + surfaceTexture);
                 try {
-                    if (mImplementation != null) {
-                        mImplementation.stopPreview();
-                    }
+                    mImplementation.stopPreview();
                 } catch (CameraException e) {
                     Log.e(TAG, "Error stopping preview", e);
                     previewListener.error("Failed to stop preview: " + e.getMessage());
@@ -371,11 +394,11 @@ public class Camera {
 
             if (version == CameraVersion.V2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mVersion = CameraVersion.V2;
-                return new CameraImplV2(mContext, mPreviewView, mDeviceOrientation);
+                return new CameraImplV2(mContext, mPreviewView);
             }
 
             mVersion = CameraVersion.V1;
-            return new CameraImplV1(mContext, mPreviewView, mDeviceOrientation);
+            return new CameraImplV1(mContext, mPreviewView);
         } catch (CameraException e) {
             mVersion = CameraVersion.NONE;
             return new CameraImplNone(e.getMessage());
@@ -387,7 +410,7 @@ public class Camera {
             boolean shouldRun = prefs.getBoolean("pref_motion_detection_preview", false) || !mListeners.isEmpty();
             if (shouldRun) {
                 ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA},
-                        Camera.MY_REQUEST_CAMERA);
+                        MY_REQUEST_CAMERA);
             }
 
             return CameraVersion.PERMISSION_MISSING;
@@ -399,10 +422,6 @@ public class Camera {
         }
 
         return CameraVersion.V1;
-    }
-
-    public boolean canBeUsed() {
-        return mVersion != CameraVersion.NONE && mImplementation != null;
     }
 
     enum CameraVersion {
