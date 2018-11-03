@@ -1,9 +1,9 @@
 package de.vier_bier.habpanelviewer.command;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -20,20 +20,21 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
  * Queue for commands sent from openHAB.
  */
 public class CommandQueue extends HandlerThread implements IStateUpdateListener {
-    private final Activity mCtx;
     private final ServerConnection mServerConnection;
+
+    private Handler mUiHandler;
     private Handler mWorkerHandler;
 
     private final ArrayList<ICommandHandler> mHandlers = new ArrayList<>();
     private final CommandLog mCmdLog = new CommandLog();
 
-    public CommandQueue(Activity ctx, ServerConnection serverConnection) {
+    public CommandQueue(ServerConnection serverConnection) {
         super("CommandQueue");
 
         EventBus.getDefault().register(this);
 
-        mCtx = ctx;
         mServerConnection = serverConnection;
+        mUiHandler = new Handler(Looper.getMainLooper());
 
         start();
     }
@@ -81,20 +82,16 @@ public class CommandQueue extends HandlerThread implements IStateUpdateListener 
     public void itemUpdated(String name, String value) {
         if (value != null && !value.isEmpty()) {
             Command cmd = new Command(value);
-            addToCmdLog(cmd);
 
+            mUiHandler.post(() -> mCmdLog.add(cmd));
             mWorkerHandler.obtainMessage(12, cmd).sendToTarget();
         }
-    }
-
-    private void addToCmdLog(final Command cmd) {
-        mCtx.runOnUiThread(() -> mCmdLog.add(cmd));
     }
 
     public void updateFromPreferences(final SharedPreferences prefs) {
         String mCmdItemName = prefs.getString("pref_command_item", "");
 
-        mCtx.runOnUiThread(() -> mCmdLog.setSize(prefs.getInt("pref_command_log_size", 100)));
+        mUiHandler.post(() -> mCmdLog.setSize(prefs.getInt("pref_command_log_size", 100)));
 
         mServerConnection.subscribeCommandItems(this, mCmdItemName);
     }

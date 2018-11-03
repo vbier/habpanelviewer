@@ -131,7 +131,7 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         if (mServerConnection != null) {
-            mServerConnection.terminate();
+            mServerConnection.terminate(this);
             mServerConnection = null;
         }
 
@@ -150,7 +150,7 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         if (mNetworkTracker != null) {
-            mNetworkTracker.terminate();
+            mNetworkTracker.terminate(this);
             mNetworkTracker = null;
         }
 
@@ -218,7 +218,7 @@ public class MainActivity extends ScreenControllingActivity
 
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && mFlashService == null) {
-            mFlashService = new FlashHandler(this, (CameraManager) getSystemService(Context.CAMERA_SERVICE));
+            mFlashService = new FlashHandler((CameraManager) getSystemService(Context.CAMERA_SERVICE));
         }
 
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
@@ -272,7 +272,7 @@ public class MainActivity extends ScreenControllingActivity
         mMonitors.add(new TemperatureMonitor(this, m, mServerConnection));
 
         if (mCommandQueue == null) {
-            mCommandQueue = new CommandQueue(this, mServerConnection);
+            mCommandQueue = new CommandQueue(mServerConnection);
             mCommandQueue.addHandler(new InternalCommandHandler(this, mMotionDetector, mServerConnection));
             mCommandQueue.addHandler(new AdminHandler(this));
             mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));

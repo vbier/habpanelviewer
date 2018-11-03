@@ -1,7 +1,6 @@
 package de.vier_bier.habpanelviewer.command;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -26,7 +25,7 @@ public class FlashHandler implements ICommandHandler {
     private FlashControlThread controller;
     private String torchId;
 
-    public FlashHandler(Context ctx, CameraManager cameraManager) {
+    public FlashHandler(CameraManager cameraManager) {
         mCameraManager = cameraManager;
 
         try {
