@@ -9,6 +9,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.TextureView;
 
@@ -36,6 +38,7 @@ public class Camera {
     private static final String TAG = "HPV-Camera";
 
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
+    private final Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     private final Activity mContext;
     private final TextureView mPreviewView;
@@ -179,18 +182,20 @@ public class Camera {
                 }
             }
 
-            // make sure preview view has the correct size
-            if (mShowPreview) {
-                mPreviewView.getLayoutParams().height = 480;
-                mPreviewView.getLayoutParams().width = 640;
-            } else {
-                // if we have no preview, we still need a visible
-                // TextureView in order to have a working motion detection.
-                // Resize it to 1x1pxs so it does not get in the way.
-                mPreviewView.getLayoutParams().height = 1;
-                mPreviewView.getLayoutParams().width = 1;
-            }
-            mPreviewView.setLayoutParams(mPreviewView.getLayoutParams());
+            mUiHandler.post(() -> {
+                // make sure preview view has the correct size
+                if (mShowPreview) {
+                    mPreviewView.getLayoutParams().height = 480;
+                    mPreviewView.getLayoutParams().width = 640;
+                } else {
+                    // if we have no preview, we still need a visible
+                    // TextureView in order to have a working motion detection.
+                    // Resize it to 1x1pxs so it does not get in the way.
+                    mPreviewView.getLayoutParams().height = 1;
+                    mPreviewView.getLayoutParams().width = 1;
+                }
+                mPreviewView.setLayoutParams(mPreviewView.getLayoutParams());
+            });
         } catch (CameraException e) {
             UiUtil.showSnackBar(mPreviewView, e.getMessage());
         }
