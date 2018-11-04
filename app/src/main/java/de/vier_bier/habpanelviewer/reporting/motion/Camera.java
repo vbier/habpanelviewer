@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.TextureView;
+import android.view.ViewGroup;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -168,6 +169,26 @@ public class Camera {
             // - preview state ON or lumalisteners -> preview running
             // - preview state OFF and no lumalisteners -> preview not running
             boolean shouldRun = mShowPreview || !mListeners.isEmpty();
+
+            // we have zo resize the previewView before starting the preview
+            mUiHandler.post(() -> {
+                // make sure preview view has the correct size
+                ViewGroup.LayoutParams params =
+                        mPreviewView.getLayoutParams();
+
+                if (mShowPreview) {
+                    params.height = 480;
+                    params.width = 640;
+                } else {
+                    // if we have no preview, we still need a visible
+                    // TextureView in order to have a working motion detection.
+                    // Resize it to 1x1pxs so it does not get in the way.
+                    params.height = 1;
+                    params.width = 1;
+                }
+                mPreviewView.setLayoutParams(params);
+            });
+
             if (shouldRun && !isPreviewRunning()) {
                 if (!isCameraLocked()) {
                     lockCamera();
@@ -182,26 +203,12 @@ public class Camera {
                 }
             }
 
-            mUiHandler.post(() -> {
-                // make sure preview view has the correct size
-                if (mShowPreview) {
-                    mPreviewView.getLayoutParams().height = 480;
-                    mPreviewView.getLayoutParams().width = 640;
-                } else {
-                    // if we have no preview, we still need a visible
-                    // TextureView in order to have a working motion detection.
-                    // Resize it to 1x1pxs so it does not get in the way.
-                    mPreviewView.getLayoutParams().height = 1;
-                    mPreviewView.getLayoutParams().width = 1;
-                }
-                mPreviewView.setLayoutParams(mPreviewView.getLayoutParams());
-            });
         } catch (CameraException e) {
             UiUtil.showSnackBar(mPreviewView, e.getMessage());
         }
     }
 
-    private synchronized void doTerminate() {
+    private void doTerminate() {
         EventBus.getDefault().unregister(this);
 
         if (isPreviewRunning()) {
@@ -217,7 +224,7 @@ public class Camera {
     }
 
 
-    private synchronized void doTakePicture(ICamera.IPictureListener h,
+    private void doTakePicture(ICamera.IPictureListener h,
                                          int takeDelay,
                                          int compQuality) throws CameraException {
         boolean wasPreviewRunning = isPreviewRunning();
@@ -299,7 +306,7 @@ public class Camera {
         startPreview(pl);
     }
 
-    private synchronized void startPreview(ICamera.IPreviewListener previewListener) throws CameraException {
+    private void startPreview(ICamera.IPreviewListener previewListener) throws CameraException {
         if (!isCameraLocked()) {
             previewListener.progress(mContext.getString(R.string.lockingCamera));
             lockCamera();
@@ -317,7 +324,7 @@ public class Camera {
         }
     }
 
-    private synchronized void stopPreview() throws CameraException {
+    private void stopPreview() throws CameraException {
         if (mImplementation.isPreviewRunning()) {
             mImplementation.stopPreview();
         }
