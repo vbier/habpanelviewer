@@ -1,6 +1,7 @@
 package de.vier_bier.habpanelviewer.reporting.motion;
 
 import android.app.Activity;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -61,6 +62,8 @@ class CameraImplV1 extends AbstractCameraImpl {
     @Override
     public void setDeviceRotation(int deviceRotation) {
         if (mCamera != null) {
+            mActivity.runOnUiThread(() -> mPreviewView.setTransform(new Matrix()));
+
             int result = (mCameraOrientation + deviceRotation * 90) % 360;
             result = (360 - result) % 360;
 
