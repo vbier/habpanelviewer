@@ -143,11 +143,7 @@ public class MotionDetector extends Thread implements IMotionDetector, ICamera.I
                 mDetectionCount = 0;
                 mFrameCount = 0;
 
-                try {
-                    mCamera.addLumaListener(this);
-                } catch (CameraException e) {
-                    Log.e(TAG, "Could not enable MotionDetector", e);
-                }
+                mCamera.addLumaListener(this);
                 mEnabled = true;
             }
         } else if (mEnabled) {
@@ -182,11 +178,7 @@ public class MotionDetector extends Thread implements IMotionDetector, ICamera.I
     }
 
     private synchronized void stopDetection() {
-        try {
-            mCamera.removeLumaListener(this);
-        } catch (CameraException e) {
-            Log.e(TAG, "Could not disable MotionDetector", e);
-        }
+        mCamera.removeLumaListener(this);
         mEnabled = false;
         mComparer = null;
         mPreviousState = null;

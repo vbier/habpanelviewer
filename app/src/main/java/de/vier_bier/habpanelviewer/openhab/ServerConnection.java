@@ -43,23 +43,36 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
 
     private static final String TAG = "HPV-ServerConnection";
 
-    private final Context mCtx;
     private String mServerURL;
     private EventSource mEventSource;
+    private final AtomicBoolean mConnected = new AtomicBoolean(false);
+    private RestClient mRestClient = new RestClient();
+
     private final ConnectionUtil.CertChangedListener mCertListener;
+    private final ConnectivityManager mConnManager;
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent i) {
+            final String item = i.getStringExtra(FLAG_ITEM_NAME);
+            final String state = i.getStringExtra(FLAG_ITEM_STATE);
+            final String timeoutState = i.getStringExtra(FLAG_ITEM_TIMEOUT_STATE);
+            final int timeout = i.getIntExtra(FLAG_TIMEOUT, 60);
+
+            updateStateWithTimeout(item, state, timeoutState, timeout);
+        }
+    };
 
     private final HashMap<String, ArrayList<IStateUpdateListener>> mSubscriptions = new HashMap<>();
     private final HashMap<String, ArrayList<IStateUpdateListener>> mCmdSubscriptions = new HashMap<>();
     private final HashMap<String, String> mValues = new HashMap<>();
 
     private SSEHandler client;
-    private FetchItemStateTask task;
     private final ArrayList<IConnectionListener> connectionListeners = new ArrayList<>();
     private final HashMap<String, String> lastUpdates = new HashMap<>();
     private final AveragePropagator averagePropagator = new AveragePropagator(this);
 
     public ServerConnection(Context context) {
-        mCtx = context;
+        mConnManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         mCertListener = () -> {
             Log.d(TAG, "cert added, reconnecting to server...");
@@ -75,24 +88,8 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
 
         IntentFilter f = new IntentFilter();
         f.addAction(ACTION_SET_WITH_TIMEOUT);
-        LocalBroadcastManager.getInstance(mCtx).registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent i) {
-                final String item = i.getStringExtra(FLAG_ITEM_NAME);
-                final String state = i.getStringExtra(FLAG_ITEM_STATE);
-                final String timeoutState = i.getStringExtra(FLAG_ITEM_TIMEOUT_STATE);
-                final int timeout = i.getIntExtra(FLAG_TIMEOUT, 60);
 
-                updateStateWithTimeout(item, state, timeoutState, timeout);
-            }
-        }, f);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        ConnectionUtil.getInstance().removeCertListener(mCertListener);
-
-        super.finalize();
+        LocalBroadcastManager.getInstance(context).registerReceiver(mReceiver, f);
     }
 
     public void addConnectionListener(IConnectionListener l) {
@@ -102,7 +99,6 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
             }
         }
     }
-
 
     public void subscribeCommandItems(IStateUpdateListener l, String... names) {
         Log.d(TAG, "subscribing command items: " + Arrays.toString(names));
@@ -167,8 +163,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
             Log.d(TAG, "new server URL: " + mServerURL);
             close();
 
-            ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
+            NetworkInfo activeNetwork = mConnManager == null ? null : mConnManager.getActiveNetworkInfo();
             if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
                 connect();
             } else {
@@ -178,7 +173,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
     }
 
     private synchronized boolean isConnected() {
-        return mEventSource != null;
+        return mEventSource != null && mConnected.get();
     }
 
     public synchronized void reconnect() {
@@ -254,7 +249,10 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         client = null;
     }
 
-    public void terminate() {
+    public void terminate(Context context) {
+        ConnectionUtil.getInstance().removeCertListener(mCertListener);
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(mReceiver);
+
         averagePropagator.terminate();
         connectionListeners.clear();
         mSubscriptions.clear();
@@ -283,15 +281,15 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
 
     private void updateState(String item, String state, boolean resend) {
         if (item != null && !item.isEmpty() && state != null && (resend || !state.equals(getState(item)))) {
-            synchronized (lastUpdates) {
-                lastUpdates.put(item, state);
-            }
+            if (resend || !state.equals(lastUpdates.get(item))) {
+                synchronized (lastUpdates) {
+                    lastUpdates.put(item, state);
+                }
 
-            if (isConnected()) {
-                Log.v(TAG, "Sending state update for " + item + ": " + state);
-
-                SetItemStateTask t = new SetItemStateTask(mServerURL);
-                t.execute(new ItemState(item, state));
+                if (isConnected()) {
+                    Log.v(TAG, "Sending state update for " + item + ": " + state);
+                    mRestClient.setItemState(mServerURL, new ItemState(item, state));
+                }
             }
         }
     }
@@ -327,9 +325,20 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
     }
 
     private class SSEHandler implements EventSourceHandler {
-        private final AtomicBoolean mConnected = new AtomicBoolean(false);
+        private final ISubscriptionListener mListener = new ISubscriptionListener() {
+            @Override
+            public void itemUpdated(String name, String value) {
+                propagateItem(name, value);
+            }
+
+            @Override
+            public void itemInvalid(String name) {
+                propagateItem(name, "ITEM NOT FOUND");
+            }
+        };
 
         private SSEHandler() {
+            mConnected.set(false);
         }
 
         @Override
@@ -401,10 +410,6 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         }
 
         private synchronized void fetchCurrentItemsState() {
-            if (task != null) {
-                task.cancel(true);
-            }
-
             HashSet<String> missingItems = new HashSet<>();
             synchronized (mSubscriptions) {
                 for (String item : mSubscriptions.keySet()) {
@@ -414,19 +419,10 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
                 }
             }
 
-            task = new FetchItemStateTask(mServerURL, new ISubscriptionListener() {
-                @Override
-                public void itemUpdated(String name, String value) {
-                    propagateItem(name, value);
-                }
-
-                @Override
-                public void itemInvalid(String name) {
-                    propagateItem(name, "ITEM NOT FOUND");
-                }
-            });
             Log.d(TAG, "Actively fetching items state");
-            task.execute(missingItems.toArray(new String[0]));
+            for (String item : missingItems) {
+                mRestClient.getItemState(mServerURL, mListener, item);
+            }
         }
 
         private void propagateItem(String name, String value) {

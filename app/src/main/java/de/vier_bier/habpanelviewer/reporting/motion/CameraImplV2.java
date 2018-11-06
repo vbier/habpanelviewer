@@ -60,8 +60,8 @@ public class CameraImplV2 extends AbstractCameraImpl {
     @SuppressWarnings("FieldCanBeLocal")
     private ImageReader mImageReader; //do not use a variable as this gets GC'ed
 
-    CameraImplV2(Activity context, TextureView prevView, int deviceOrientation) throws CameraException {
-        super(context, prevView, deviceOrientation);
+    CameraImplV2(Activity context, TextureView prevView) throws CameraException {
+        super(context, prevView);
 
         mCamManager = (CameraManager) mActivity.getSystemService(Context.CAMERA_SERVICE);
         if (mCamManager == null) {
@@ -135,7 +135,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                         throw new CameraException("Opening camera timed out");
                     }
                 } catch (InterruptedException e) {
-                    throw new CameraException("Got interrupt while opening camera");
+                    throw new CameraException("Got interrupt while opening camera", e);
                 }
             } catch (CameraAccessException e) {
                 throw new CameraException(e);
@@ -146,7 +146,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
     }
 
     @Override
-    public void setDeviceOrientation(int deviceOrientation) {
+    public void setDeviceRotation(int deviceOrientation) {
         mDeviceOrientation = deviceOrientation;
 
         // configure transform if preview is running only
@@ -160,7 +160,6 @@ public class CameraImplV2 extends AbstractCameraImpl {
                     Log.w(TAG, "Could not find a valid preview size");
                 } else {
                     final Point previewSize = chooseOptimalSize(toPointArray(map.getOutputSizes(ImageFormat.YUV_420_888)));
-                    mDeviceOrientation = deviceOrientation;
                     setDeviceOrientation(previewSize);
                 }
             } catch (CameraAccessException e) {

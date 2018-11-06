@@ -1,6 +1,7 @@
 package de.vier_bier.habpanelviewer.reporting.motion;
 
 import android.app.Activity;
+import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -24,8 +25,8 @@ class CameraImplV1 extends AbstractCameraImpl {
     private int mCameraId = -1;
     private int mCameraOrientation = 0;
 
-    CameraImplV1(Activity context, TextureView previewView, int deviceOrientation) throws CameraException {
-        super(context, previewView, deviceOrientation);
+    CameraImplV1(Activity context, TextureView previewView) throws CameraException {
+        super(context, previewView);
 
         Camera.CameraInfo info = new Camera.CameraInfo();
         for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
@@ -49,9 +50,9 @@ class CameraImplV1 extends AbstractCameraImpl {
         if (mCamera == null && mCameraId != -1) {
             try {
                 mCamera = Camera.open(mCameraId);
-                setDeviceOrientation(mDeviceOrientation);
+                setDeviceRotation(mDeviceOrientation);
             } catch (RuntimeException e) {
-                throw new CameraException(mActivity.getString(R.string.openCameraFailed));
+                throw new CameraException(mActivity.getString(R.string.openCameraFailed), e);
             }
         } else {
             throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
@@ -59,14 +60,16 @@ class CameraImplV1 extends AbstractCameraImpl {
     }
 
     @Override
-    public void setDeviceOrientation(int deviceOrientation) {
+    public void setDeviceRotation(int deviceRotation) {
         if (mCamera != null) {
-            int result = (mCameraOrientation + deviceOrientation) % 360;
+            mActivity.runOnUiThread(() -> mPreviewView.setTransform(new Matrix()));
+
+            int result = (mCameraOrientation + deviceRotation * 90) % 360;
             result = (360 - result) % 360;
 
             Log.v(TAG, "setting camera display orientation " + result);
             mCamera.setDisplayOrientation(result);
-            mDeviceOrientation = deviceOrientation;
+            mDeviceOrientation = deviceRotation;
         }
     }
 

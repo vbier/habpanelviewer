@@ -13,18 +13,18 @@ import java.util.ArrayList;
 public class NetworkTracker extends BroadcastReceiver {
     private static final String TAG = "HPV-NetworkTracker";
 
-    private final Context mCtx;
+    private final ConnectivityManager cm;
     private final ArrayList<INetworkListener> mListeners = new ArrayList<>();
     private boolean mConnected;
 
     public NetworkTracker(Context context) {
-        mCtx = context;
+        cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 
         Log.d(TAG, "registering network receiver...");
-        mCtx.registerReceiver(this, intentFilter);
+        context.registerReceiver(this, intentFilter);
 
         updateStatus();
     }
@@ -52,7 +52,6 @@ public class NetworkTracker extends BroadcastReceiver {
     }
 
     private void updateStatus() {
-        ConnectivityManager cm = (ConnectivityManager) mCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm == null ? null : cm.getActiveNetworkInfo();
 
         if (activeNetwork != null && activeNetwork.isConnected()) {
@@ -82,10 +81,10 @@ public class NetworkTracker extends BroadcastReceiver {
         }
     }
 
-    public void terminate() {
+    public void terminate(Context context) {
         Log.d(TAG, "unregistering network receiver...");
         try {
-            mCtx.unregisterReceiver(this);
+            context.unregisterReceiver(this);
         } catch (IllegalArgumentException e) {
             Log.e(TAG, "unregistering network receiver failed", e);
         }

@@ -27,7 +27,7 @@ public interface ICamera {
 
     void takePicture(IPictureListener iPictureHandler);
 
-    void setDeviceOrientation(int deviceOrientation);
+    void setDeviceRotation(int deviceOrientation);
 
     interface ILumaListener {
         void preview(LumaData previewBytes);

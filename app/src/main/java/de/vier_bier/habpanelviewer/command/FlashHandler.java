@@ -1,7 +1,6 @@
 package de.vier_bier.habpanelviewer.command;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -12,8 +11,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import de.vier_bier.habpanelviewer.R;
 
 /**
  * Handler for FLASH_ON, FLASH_OFF, FLASH_BLINK commands.
@@ -28,24 +25,33 @@ public class FlashHandler implements ICommandHandler {
     private FlashControlThread controller;
     private String torchId;
 
-    public FlashHandler(Context ctx, CameraManager cameraManager) throws CameraAccessException, IllegalAccessException {
+    public FlashHandler(CameraManager cameraManager) {
         mCameraManager = cameraManager;
 
-        for (String camId : mCameraManager.getCameraIdList()) {
-            CameraCharacteristics characteristics = mCameraManager.getCameraCharacteristics(camId);
-            Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-            Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+        try {
+            for (String camId : mCameraManager.getCameraIdList()) {
+                CameraCharacteristics characteristics = mCameraManager.getCameraCharacteristics(camId);
+                Boolean hasFlash = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+                Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
 
-            if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK
-                    && Boolean.TRUE.equals(hasFlash)) {
-                torchId = camId;
-                break;
+                if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK
+                        && Boolean.TRUE.equals(hasFlash)) {
+                    torchId = camId;
+                    break;
+                }
             }
-        }
 
-        if (torchId == null) {
-            throw new IllegalAccessException(ctx.getString(R.string.couldNotFindBackFlash));
+            if (torchId != null) {
+                controller = new FlashControlThread();
+                controller.start();
+            }
+        } catch (CameraAccessException e) {
+            Log.d(TAG, "Could not create flash controller");
         }
+    }
+
+    public boolean isAvailable() {
+        return torchId != null;
     }
 
     @Override
@@ -54,24 +60,24 @@ public class FlashHandler implements ICommandHandler {
 
         Matcher m = BLINK_PATTERN.matcher(cmdStr);
 
-        if ("FLASH_ON".equals(cmdStr)) {
+        if (controller == null || torchId == null) {
+            cmd.failed("Flash control not available on this device");
+        } else if ("FLASH_ON".equals(cmdStr)) {
             cmd.start();
-            createController().enableFlash();
+            controller.enableFlash();
         } else if ("FLASH_OFF".equals(cmdStr)) {
             cmd.start();
-            if (controller != null) {
-                controller.disableFlash();
-            }
+            controller.disableFlash();
         } else if ("FLASH_BLINK".equals(cmdStr)) {
             cmd.start();
-            createController().pulseFlash(1000);
+            controller.pulseFlash(1000);
         } else if (m.matches()) {
             String value = m.group(1);
 
             try {
                 int length = Integer.parseInt(value);
                 cmd.start();
-                createController().pulseFlash(length);
+                controller.pulseFlash(length);
             } catch (NumberFormatException e) {
                 cmd.failed("failed to parse length from command");
             }
@@ -83,18 +89,10 @@ public class FlashHandler implements ICommandHandler {
         return true;
     }
 
-    private FlashControlThread createController() {
-        if (controller == null) {
-            controller = new FlashControlThread();
-            controller.start();
-        }
-
-        return controller;
-    }
-
     public void terminate() {
         if (controller != null) {
             controller.terminate();
+            controller = null;
         }
     }
 
