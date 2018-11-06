@@ -1,5 +1,10 @@
 0.9.24pre
 ======
+* Kamera Code vereinfacht und in separaten Thread ausgelagert, um ANRs zu beheben
+* Reconnect der SSE Verbindung verbessert
+* Sensorwerte werden nur gepuffert, wenn keine SSE Verbindung besteht
+* BUG: fehlender default for Einstellung Menü Position hinzugefügt
+* BUG: falsche Preview Ausrichtung behoben, wenn API V1 nach API V2 benutzt wird
 
 0.9.23
 ======

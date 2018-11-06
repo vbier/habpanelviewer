@@ -10,9 +10,9 @@
     <string name="intro_welcome_text">Willkommen zu HABPanelViewer, einem Kiosk Browser mit ein paar zusätzlichen openHAB bezogenen Funktionen.</string>
     <string name="intro_browser">Browser</string>
     <string name="intro_browser_text">HPV kann dir HABPanel im Vollbildmodus zeigen. Öffne das Kontext Menü durch langes Drücken um den Kiosk Modus ein- order auszuschalten.</string>
-    <string name="intro_reporting">Werte Meldung</string>
+    <string name="intro_reporting">Wertemeldung</string>
     <string name="intro_reporting_text">HPV kann Geräte Werte, wie Sensor Werte oder erkannte Bewegung an openHAB melden.</string>
-    <string name="intro_commanding">Geräte Steuerung</string>
+    <string name="intro_commanding">Gerätesteuerung</string>
     <string name="intro_commanding_text">HPV kann dein Gerät steuern, wenn es Kommandos von openHAB bekommt. Schalte den Bildschirm ein und aus, schalte Bluetooth und mehr…</string>
     <string name="intro_serverConfigured">Dein openHAB Server ist bereits mit %s konfiguriert.</string>
     <string name="intro_configuration">Konfiguration</string>
