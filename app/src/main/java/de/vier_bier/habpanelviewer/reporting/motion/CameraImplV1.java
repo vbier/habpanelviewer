@@ -52,7 +52,7 @@ class CameraImplV1 extends AbstractCameraImpl {
                 mCamera = Camera.open(mCameraId);
                 setDeviceRotation(mDeviceOrientation);
             } catch (RuntimeException e) {
-                throw new CameraException(mActivity.getString(R.string.openCameraFailed));
+                throw new CameraException(mActivity.getString(R.string.openCameraFailed), e);
             }
         } else {
             throw new CameraException(mActivity.getString(R.string.frontCameraMissing));

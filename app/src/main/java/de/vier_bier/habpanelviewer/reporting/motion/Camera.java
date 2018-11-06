@@ -204,6 +204,7 @@ public class Camera {
             }
 
         } catch (CameraException e) {
+            Log.e(TAG, "failed to update preview state", e);
             UiUtil.showSnackBar(mPreviewView, e.getMessage());
         }
     }

@@ -135,7 +135,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                         throw new CameraException("Opening camera timed out");
                     }
                 } catch (InterruptedException e) {
-                    throw new CameraException("Got interrupt while opening camera");
+                    throw new CameraException("Got interrupt while opening camera", e);
                 }
             } catch (CameraAccessException e) {
                 throw new CameraException(e);
