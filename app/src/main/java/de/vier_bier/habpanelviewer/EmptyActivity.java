@@ -15,7 +15,7 @@ public class EmptyActivity extends ScreenControllingActivity {
             setContentView(R.layout.activity_empty);
 
             final WindowManager.LayoutParams layout = getWindow().getAttributes();
-            layout.screenBrightness = 0F;
+            layout.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF;
             getWindow().setAttributes(layout);
 
             View view = findViewById(R.id.blankView);
