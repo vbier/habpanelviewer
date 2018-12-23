@@ -41,7 +41,7 @@
         <Preference
             android:key="nested_pref_connected"
             android:persistent="false"
-            android:title="@string/pref_connected" />
+            android:title="@string/pref_connectionIndicators" />
 
         <Preference
             android:key="nested_pref_battery"

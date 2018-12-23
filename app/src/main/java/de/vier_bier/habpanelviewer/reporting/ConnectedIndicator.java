@@ -24,7 +24,10 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 public class ConnectedIndicator implements IStateUpdateListener {
     private static final String TAG = "HPV-ConnectedIndicator";
 
+    private boolean mStartEnabled;
     private boolean mEnabled;
+
+    private String mStartStatusItem;
     private String mStatusItem;
     private int mInterval;
 
@@ -33,7 +36,9 @@ public class ConnectedIndicator implements IStateUpdateListener {
     private ConnectedReportingThread mReportConnection;
 
     private long mStatus;
+    private long mStartStatus = -1;
     private String mStatusState;
+    private String mStartStatusState;
 
     public ConnectedIndicator(Context ctx, ServerConnection serverConnection) {
         mCtx = ctx;
@@ -55,9 +60,22 @@ public class ConnectedIndicator implements IStateUpdateListener {
                         + " [" + mStatusItem + "=" + mStatusState + "]";
             }
 
-            status.set(mCtx.getString(R.string.pref_connected), state);
+            status.set(mCtx.getString(R.string.connectedIndicator), state);
         } else {
-            status.set(mCtx.getString(R.string.pref_connected), mCtx.getString(R.string.disabled));
+            status.set(mCtx.getString(R.string.connectedIndicator), mCtx.getString(R.string.disabled));
+        }
+
+        if (mStartEnabled) {
+            String state = mCtx.getString(R.string.enabled);
+
+            if (!mStartStatusItem.isEmpty()) {
+                state += "\n" + SimpleDateFormat.getDateTimeInstance().format(new Date(mStartStatus))
+                        + " [" + mStartStatusItem + "=" + mStartStatusState + "]";
+            }
+
+            status.set(mCtx.getString(R.string.startupIndicator), state);
+        } else {
+            status.set(mCtx.getString(R.string.startupIndicator), mCtx.getString(R.string.disabled));
         }
     }
 
@@ -90,18 +108,29 @@ public class ConnectedIndicator implements IStateUpdateListener {
             }
         }
 
+        mStartEnabled = prefs.getBoolean("pref_startup_enabled", false);
+        mStartStatusItem = prefs.getString("pref_startup_item", "");
         mStatusItem = prefs.getString("pref_connected_item", "");
+
+        if (mStartEnabled && mStartStatus == -1) {
+            mStartStatus = System.currentTimeMillis();
+            mServerConnection.updateState(mStartStatusItem, String.valueOf(mStartStatus));
+        }
 
         if (intervalChanged && !started && mReportConnection != null) {
             mReportConnection.reportNow();
         }
 
-        mServerConnection.subscribeItems(this, mStatusItem);
+        mServerConnection.subscribeItems(this, mStatusItem, mStartStatusItem);
     }
 
     @Override
     public void itemUpdated(String name, String value) {
-        mStatusState = value;
+        if (name.equals(mStatusItem)) {
+            mStatusState = value;
+        } else if (name.equals(mStartStatusItem)) {
+            mStartStatusState = value;
+        }
     }
 
     public synchronized void terminate() {

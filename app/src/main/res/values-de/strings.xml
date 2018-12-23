@@ -143,7 +143,11 @@
     <string name="pref_batteryChargingItem_summ">Name des openHAB Kontakts der geschaltet wird wenn die Batterie geladen wird</string>
     <string name="pref_batteryLevelItem">Batterieladung Item</string>
     <string name="pref_batteryLevelItem_summ">Name des openHAB Items das den Batterie Ladezustand in Prozent anzeigen soll</string>
-    <string name="pref_connected">Verbindungsindikator</string>
+    <string name="pref_connectionIndicators">Verbindungsindikatoren</string>
+    <string name="pref_startupEnabled">Startindikator aktiviert</string>
+    <string name="pref_startupEnabled_summ">Meldet bei App Start einen Zeitstempel an openHAB</string>
+    <string name="pref_startupItem">Start Item</string>
+    <string name="pref_startupItem_summ">Name des openHAB Items an das beim App Start der Zeitstempel gemeldet wird</string>
     <string name="pref_connectedEnabled">Verbindungsindikator aktiviert</string>
     <string name="pref_connectedEnabled_summ">Meldet zyklisch einen Zeitstempel an openHAB</string>
     <string name="pref_connectedItem">Verbindungs Item</string>
@@ -183,6 +187,8 @@
 
     <string name="helpFile">help-de.md</string>
 
+    <string name="startupIndicator">Startindikator</string>
+    <string name="connectedIndicator">Verbindungsindikator</string>
     <string name="flashControl">Blitzlichtsteuerung</string>
     <string name="notConnected">nicht verbunden</string>
     <string name="sslFailed">SSL-Protokoll konnte nicht initialisiert werden!</string>

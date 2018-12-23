@@ -55,7 +55,7 @@ Monitors an openHAB **String Item** for supported commands. Supported commands a
 * MUTE: mutes the device
 * UNMUTE: restores the volume to the level the device had when it was muted
 * SET_VOLUME *\<n\>*: sets the device volume to n (being an integer between 0 and device max volume).
-* SET_BRIGHTNESS *\<n|AUTO\>*: sets the device beightness to n (being an integer between 0 and 100), or to the standard brightness if AUTO is specified. 
+* SET_BRIGHTNESS *\<n|AUTO\>*: sets the device brightness to n (being an integer between 0 and 100), or to the standard brightness if AUTO is specified. 
 * FLASH_ON: turns on the flashlight of the back-facing camera
 * FLASH_OFF: turns off the flashlight of the back-facing camera
 * FLASH_BLINK: blinks the flashlight of the back-facing camera with an interval of one second
@@ -183,6 +183,25 @@ The contact state will be *CLOSED* whenever someone is actively using the app. A
 A sample openHAB items file looks like this:
 
     Contact Tablet_Usage
+
+### volume
+Allows to set the value of an openHAB number item depending on the device volume.
+
+The item state will be set to the current volume of the device.
+
+A sample openHAB items file looks like this:
+
+    Number Tablet_Volume
+
+### connected indicators
+Allows to set the value of an openHAB number item to the app startup time and/or to cyclicly send a time stamp to openHAB.
+
+A sample openHAB items file looks like this:
+
+    Number Tablet_StartupTime
+    Number Tablet_ConnectedTime
+    
+You can use the startup time to trigger rules that can send initializing commands to HPV.
 
 [go back to top](#top)
 

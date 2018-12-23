@@ -1,8 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:persistent="false"
-    android:title="@string/pref_connected">
+    android:title="@string/pref_connectionIndicators">
 
+    <CheckBoxPreference
+        android:key="pref_startup_enabled"
+        android:defaultValue="false"
+        android:summary="@string/pref_startupEnabled_summ"
+        android:title="@string/pref_startupEnabled" />
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+        android:key="pref_startup_item"
+        android:dependency="pref_startup_enabled"
+        android:summary="@string/pref_startupItem_summ"
+        android:inputType="textPhonetic"
+        android:title="@string/pref_startupItem" />
     <CheckBoxPreference
         android:key="pref_connected_enabled"
         android:defaultValue="false"

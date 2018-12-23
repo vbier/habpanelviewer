@@ -184,6 +184,24 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Contact Tablet_Usage
 
+### Lautstärke
+Setzt den Wert eines openHAB Items auf die momentane Lautstärke des Gerätes.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Number Tablet_Volume
+
+
+### Verbindungsindikatoren
+Meldet die App Startzeit und/oder meldet zyklisch einen Zeitstempel an openHAB.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Number Tablet_StartupTime
+    Number Tablet_ConnectedTime
+    
+Die Startzeit kann z.B. genutzt werden, um nach dem App Start Initialisierungskommandos an HPV zu schicken.
+
 [zurück nach oben](#top)
 
 ## <a name="usability"/>Benutzerfreundlichkeit 

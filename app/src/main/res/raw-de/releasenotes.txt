@@ -1,6 +1,7 @@
 0.9.24pre
 ======
 * Kamera Code vereinfacht und in separaten Thread ausgelagert, um ANRs zu beheben
+* neuer Startindikator meldet die App Startzeit an openHAB
 * Reconnect der SSE Verbindung verbessert
 * Sensorwerte werden nun gepuffert, wenn keine SSE Verbindung besteht
 * BUG: fehlender default für Einstellung "Menü Position" hinzugefügt
