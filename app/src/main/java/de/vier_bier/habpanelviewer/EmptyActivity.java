@@ -1,11 +1,15 @@
 package de.vier_bier.habpanelviewer;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.WindowManager;
 
 public class EmptyActivity extends ScreenControllingActivity {
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -13,10 +17,6 @@ public class EmptyActivity extends ScreenControllingActivity {
         boolean dim = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("dim");
         if (dim) {
             setContentView(R.layout.activity_empty);
-
-            final WindowManager.LayoutParams layout = getWindow().getAttributes();
-            layout.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_OFF;
-            getWindow().setAttributes(layout);
 
             View view = findViewById(R.id.blankView);
             view.setSystemUiVisibility(
@@ -30,6 +30,12 @@ public class EmptyActivity extends ScreenControllingActivity {
                 finish();
                 return true;
             });
+
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                final WindowManager.LayoutParams layout = getWindow().getAttributes();
+                layout.screenBrightness = 0f;
+                getWindow().setAttributes(layout);
+            }, 500);
         } else {
             finish();
         }
