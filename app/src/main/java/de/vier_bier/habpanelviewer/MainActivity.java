@@ -169,6 +169,26 @@ public class MainActivity extends ScreenControllingActivity
         super.onCreate(savedInstanceState);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences_main, false);
+        for (int id : new int[] {R.xml.preferences_battery,
+                R.xml.preferences_brightness,
+                R.xml.preferences_browser,
+                R.xml.preferences_camera,
+                R.xml.preferences_connected,
+                R.xml.preferences_connection,
+                R.xml.preferences_motion,
+                R.xml.preferences_other,
+                R.xml.preferences_pressure,
+                R.xml.preferences_proximity,
+                R.xml.preferences_reporting,
+                R.xml.preferences_restart,
+                R.xml.preferences_screen,
+                R.xml.preferences_temperature,
+                R.xml.preferences_ui,
+                R.xml.preferences_usage,
+                R.xml.preferences_volume}) {
+            PreferenceManager.setDefaultValues(this, id, true);
+        }
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
         boolean introShown = prefs.getBoolean("pref_intro_shown", false);
