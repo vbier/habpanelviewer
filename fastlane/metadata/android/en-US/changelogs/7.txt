@@ -1,0 +1,7 @@
+* simplify camera code, move it to separate thread to get rid of ANRs
+* add startup indicator
+* improve reconnect behaviour
+* don't try to set values using rest API when not connected with SSE
+* BUG: fix missing default for menu position preference with german locale
+* BUG: fix wrong preview orientation if v1 api is used after having used v2 api with rotated device
+* BUG: fixed crash in intro

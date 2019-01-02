@@ -6,6 +6,7 @@
 * Sensorwerte werden nun gepuffert, wenn keine SSE Verbindung besteht
 * BUG: fehlender default für Einstellung "Menü Position" hinzugefügt
 * BUG: falsche Preview Ausrichtung behoben, wenn API V1 nach API V2 benutzt wird (bei gedrehtem Gerät)
+* BUG: Absturz während des Intros behoben
 
 0.9.23
 ======
