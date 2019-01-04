@@ -198,7 +198,6 @@
     <string name="unavailable">nicht verfügbar</string>
     <string name="restartCounter" tools:ignore="PluralsCandidate">%1$d/%2$d Neustarts</string>
     <string name="waitingNetwork">Warte auf Netzwerk Verbindung…</string>
-    <string name="notConnectedReloadPending">Das Gerät ist momentan nicht mit dem Netzwerk verbunden. Sobald die Verbindung hergestellt wurde, wird HABPanel automatisch geladen.</string>
     <string name="unknownHost">unbekannter Rechner</string>
     <string name="notValid">ist nicht gültig</string>
     <string name="invalidDate">hat ein ungültiges Datum</string>
@@ -214,8 +213,8 @@
     <string name="sslCert">Das SSL Zertifikat von</string>
     <string name="storeSecurityException">Willst du fortfahren und eine Ausnahme für dieses Zertifikat speichern?</string>
     <string name="configMissing">Konfiguration unvollständig</string>
-    <string name="startPageNotSet">Weder die openHAB URL noch die Startseite ist in den Einstellungen definiert.</string>
-    <string name="specifyUrlInPrefs">Bitte gib sie in den Einstellungen ein.</string>
+    <string name="notConnectedReloadPendingHTML"><![CDATA[Das Ger&auml;t ist momentan nicht mit dem Netzwerk verbunden.<br/><br/>Sobald die Verbindung hergestellt wurde, wird HABPanel automatisch geladen.]]></string>
+    <string name="startPageNotSetHTML"><![CDATA[Weder die openHAB URL noch die Startseite ist in den Einstellungen definiert, bitte gib sie ein.<br/><br/>Um das zu tun, streiche mit dem Finger vom rechten Rand zur Mitte und w&auml;hle Einstellungen im Men&uuml;.]]></string>
     <string name="invalid">ungültig</string>
     <string name="notValidUrl">ist keine gültige URL</string>
     <string name="notValidOpenHabUrl">Konnte die Liste der verfügbaren Services nicht von openHAB laden</string>

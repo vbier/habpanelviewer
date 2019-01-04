@@ -235,8 +235,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
         if (url == null || "".equals(url)) {
             post(() -> showHtml(getContext().getString(R.string.configMissing),
-                    getContext().getString(R.string.startPageNotSet) + "."
-                    + getContext().getString(R.string.specifyUrlInPrefs)));
+                    getContext().getString(R.string.startPageNotSetHTML)));
             return;
         }
 
@@ -317,7 +316,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         } else {
             Log.d(TAG, "updateFromPreferences: NOT connected");
             showHtml(getContext().getString(R.string.waitingNetwork),
-                    getContext().getString(R.string.notConnectedReloadPending));
+                    getContext().getString(R.string.notConnectedReloadPendingHTML));
         }
     }
 
@@ -501,7 +500,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     public void disconnected() {
         Log.d(TAG, "disconnected: showing error message...");
         showHtml(getContext().getString(R.string.waitingNetwork),
-                getContext().getString(R.string.notConnectedReloadPending));
+                getContext().getString(R.string.notConnectedReloadPendingHTML));
     }
 
     @Override

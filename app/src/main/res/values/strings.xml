@@ -201,7 +201,6 @@
     <string name="unavailable">unavailable</string>
     <string name="restartCounter" tools:ignore="PluralsCandidate">%1$d/%2$d restarts</string>
     <string name="waitingNetwork">Waiting for network connection…</string>
-    <string name="notConnectedReloadPending">The device is currently not connected to the network. Once the connection has been established, the configured HABPanel page will automatically be loaded.</string>
     <string name="unknownHost">unknown host</string>
     <string name="notValid">is not valid</string>
     <string name="invalidDate">has an invalid date</string>
@@ -217,8 +216,8 @@
     <string name="sslCert">The SSL Certificate served by</string>
     <string name="storeSecurityException">Do you want to proceed and store a security exception for this certificate ?</string>
     <string name="configMissing">Configuration missing</string>
-    <string name="startPageNotSet">Neither the openHAB server URL nor a start page has been defined in the preferences.</string>
-    <string name="specifyUrlInPrefs">Please specify them in the application preferences.</string>
+    <string name="notConnectedReloadPendingHTML"><![CDATA[The device is currently not connected to the network.<br/><br/>Once the connection has been established, the configured HABPanel page will automatically be loaded.]]></string>
+    <string name="startPageNotSetHTML"><![CDATA[Neither the openHAB server URL nor a start page has been defined in the preferences, please specify them.<br/><br/>To do this, swipe with your finger from the right side of the screen to the middle and select Preferences from the menu.]]></string>
     <string name="invalid">invalid</string>
     <string name="notValidUrl">is not a valid URL</string>
     <string name="notValidOpenHabUrl">Could not query available services from openHAB</string>
