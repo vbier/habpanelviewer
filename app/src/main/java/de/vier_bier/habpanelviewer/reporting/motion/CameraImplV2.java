@@ -50,6 +50,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
     private Handler mPreviewHandler;
     private HandlerThread mPictureThread;
     private Handler mPictureHandler;
+    private boolean mTakingPicture;
 
     private CameraDevice mCamera;
     private String mCameraId;
@@ -163,7 +164,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                     setDeviceOrientation(previewSize);
                 }
             } catch (CameraAccessException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Failed to set device orientation", e);
             }
         }
     }
@@ -218,17 +219,19 @@ public class CameraImplV2 extends AbstractCameraImpl {
                         previewListener.started();
                     }
 
-                    try (Image i = imageReader.acquireLatestImage()) {
-                        LumaData ld = null;
-                        for (ILumaListener l : mListeners) {
-                            if (l.needsPreview()) {
-                                if (ld == null && i != null) {
-                                    Log.v(TAG, "preview image available and needed: size " + i.getWidth() + "x" + i.getHeight());
+                    if (!mTakingPicture) {
+                        try (Image i = imageReader.acquireLatestImage()) {
+                            LumaData ld = null;
+                            for (ILumaListener l : mListeners) {
+                                if (l.needsPreview()) {
+                                    if (ld == null && i != null) {
+                                        Log.v(TAG, "preview image available and needed: size " + i.getWidth() + "x" + i.getHeight());
 
-                                    ByteBuffer buffer = i.getPlanes()[0].getBuffer();
-                                    ld = new LumaData(buffer, i.getWidth(), i.getHeight());
+                                        ByteBuffer buffer = i.getPlanes()[0].getBuffer();
+                                        ld = new LumaData(buffer, i.getWidth(), i.getHeight());
+                                    }
+                                    l.preview(ld);
                                 }
-                                l.preview(ld);
                             }
                         }
                     }
@@ -244,6 +247,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 surfaces.add(mImageReader.getSurface());
                 surfaces.add(previewSurface);
 
+                final CountDownLatch initLatch = new CountDownLatch(1);
                 mCamera.createCaptureSession(surfaces,
                         new CameraCaptureSession.StateCallback() {
                             @Override
@@ -253,6 +257,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                                 // The mCamera is already closed
                                 if (null == mCamera) {
                                     previewListener.error("Capture session has no camera");
+                                    initLatch.countDown();
                                     return;
                                 }
 
@@ -268,6 +273,8 @@ public class CameraImplV2 extends AbstractCameraImpl {
                                 } catch (CameraAccessException | IllegalStateException e) {
                                     previewListener.exception(e);
                                     previewListener.error("Could not create preview request");
+                                } finally {
+                                    initLatch.countDown();
                                 }
                             }
 
@@ -275,16 +282,19 @@ public class CameraImplV2 extends AbstractCameraImpl {
                             public void onClosed(@NonNull CameraCaptureSession session) {
                                 super.onClosed(session);
                                 mPreviewRunning = false;
+                                initLatch.countDown();
                             }
 
                             @Override
                             public void onConfigureFailed(
                                     @NonNull CameraCaptureSession cameraCaptureSession) {
                                 previewListener.error("Could not create capture session");
+                                initLatch.countDown();
                             }
                         }, mPreviewHandler
                 );
-            } catch (CameraAccessException e) {
+                initLatch.await();
+            } catch (CameraAccessException | InterruptedException e) {
                 previewListener.exception(e);
                 previewListener.error("Could not create preview");
             }
@@ -312,7 +322,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 mCaptureSession.close();
 
                 try {
-                    for (int i = 0; i < 10 && isPreviewRunning(); i++) {
+                    for (int i = 0; i < 50 && isPreviewRunning(); i++) {
                         Thread.sleep(100);
                     }
                 } catch (InterruptedException e) {
@@ -324,6 +334,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 }
                 mCaptureSession = null;
             } catch (IllegalStateException e) {
+                Log.e(TAG,"Got IllegalStateException when closing capture session", e);
                 // camera session has been closed, no problem
             }
         }
@@ -335,6 +346,9 @@ public class CameraImplV2 extends AbstractCameraImpl {
     }
 
     @Override
+    /**
+     * This is asynchroneous!
+     */
     public void takePicture(IPictureListener iPictureHandler) {
         if (mCamera != null) {
             if (mPictureThread == null) {
@@ -344,6 +358,8 @@ public class CameraImplV2 extends AbstractCameraImpl {
             }
 
             try {
+                mTakingPicture = true;
+
                 int width = 640;
                 int height = 480;
 
@@ -379,7 +395,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                         try {
                             session.capture(captureBuilder.build(), captureListener, mPictureHandler);
                         } catch (CameraAccessException e) {
-                            e.printStackTrace();
+                            Log.e(TAG, "Failed to capture picture", e);
                         }
                     }
 
@@ -388,13 +404,14 @@ public class CameraImplV2 extends AbstractCameraImpl {
                     }
                 }, mPictureHandler);
             } catch (CameraAccessException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Failed to take picture", e);
+            } finally {
+                mTakingPicture = false;
             }
         } else {
             throw new IllegalStateException("Motion detection not running");
         }
     }
-
 
     @Override
     public int getCameraOrientation() {

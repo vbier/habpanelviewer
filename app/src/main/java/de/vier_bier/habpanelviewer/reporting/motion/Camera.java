@@ -10,6 +10,7 @@ import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 import android.view.TextureView;
@@ -22,8 +23,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.core.app.ActivityCompat;
 import de.vier_bier.habpanelviewer.R;
@@ -38,8 +39,8 @@ public class Camera {
 
     private static final String TAG = "HPV-Camera";
 
-    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
     private final Handler mUiHandler = new Handler(Looper.getMainLooper());
+    private final Handler mWorkHandler;
 
     private final Activity mContext;
     private final TextureView mPreviewView;
@@ -56,22 +57,45 @@ public class Camera {
         mContext = ctx;
         mPreviewView = tv;
 
+        HandlerThread mWorker = new HandlerThread("CameraWorker");
+        mWorker.start();
+        mWorkHandler = new Handler(mWorker.getLooper());
+
         EventBus.getDefault().register(this);
 
         mVersion = getCameraVersion(prefs);
         mImplementation = createCamera(mVersion);
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        stopPreview();
+
+        super.finalize();
+    }
+
     public void setDeviceRotation(int rotation) {
-        mExecutor.submit(() -> mImplementation.setDeviceRotation(rotation));
+        mWorkHandler.post(() -> {
+            Log.d(TAG, "setting orientation...");
+            mImplementation.setDeviceRotation(rotation);
+            Log.d(TAG, "setting orientation finished");
+        });
     }
 
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        mExecutor.submit(() -> doUpdateFromPreferences(prefs));
+        mWorkHandler.post(() -> {
+            Log.d(TAG, "updating from preferences...");
+            doUpdateFromPreferences(prefs);
+            Log.d(TAG, "updating from preferences finished");
+        });
     }
 
     public void terminate() {
-        mExecutor.submit(this::doTerminate);
+        mWorkHandler.post(() -> {
+            Log.d(TAG, "terminating...");
+            doTerminate();
+            Log.d(TAG, "terminating finished");
+        });
     }
 
     public int getSensorOrientation() {
@@ -83,11 +107,14 @@ public class Camera {
     public void takePicture(ICamera.IPictureListener h,
                             int takeDelay,
                             int compQuality) {
-        mExecutor.submit(() -> {
+        mWorkHandler.post(() -> {
+            Log.d(TAG, "taking picture...");
             try {
                 doTakePicture(h, takeDelay, compQuality);
             } catch (CameraException e) {
                 h.error(e.getLocalizedMessage());
+            } finally {
+                Log.d(TAG, "taking picture finished");
             }
         });
     }
@@ -102,15 +129,15 @@ public class Camera {
             mImplementation.addLumaListener(l);
         }
 
-        mExecutor.submit(() -> {
-            if (mListeners.size() > 0 && !isPreviewRunning() && !mShowPreview) {
+        if (mListeners.size() > 0 && !isPreviewRunning() && !mShowPreview) {
+            mWorkHandler.post(() -> {
                 try {
                     startPreview(new ICamera.LoggingPreviewListener());
                 } catch (CameraException e) {
                     Log.e(TAG, "Could not enable MotionDetector", e);
                 }
-            }
-        });
+            });
+        }
     }
 
     void removeLumaListener(ICamera.ILumaListener l) {
@@ -119,15 +146,15 @@ public class Camera {
             mImplementation.removeLumaListener(l);
         }
 
-        mExecutor.submit(() -> {
-            if (mListeners.isEmpty() && !mShowPreview) {
+        if (mListeners.isEmpty() && !mShowPreview) {
+            mWorkHandler.post(() -> {
                 try {
                     stopPreview();
                 } catch (CameraException e) {
                     Log.e(TAG, "Could not disable MotionDetector", e);
                 }
-            }
-        });
+            });
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -150,10 +177,14 @@ public class Camera {
             // if camera api changed, close old camera, create new one
             if (v != mVersion) {
                 if (isPreviewRunning()) {
+                    Log.d(TAG, "stopping preview...");
                     mImplementation.stopPreview();
+                    Log.d(TAG, "stopping preview finished.");
                 }
                 if (isCameraLocked()) {
+                    Log.d(TAG, "unlocking camera...");
                     mImplementation.unlockCamera();
+                    Log.d(TAG, "unlocking camera finished.");
                 }
 
                 mImplementation = createCamera(v);
@@ -190,16 +221,20 @@ public class Camera {
             });
 
             if (shouldRun && !isPreviewRunning()) {
-                if (!isCameraLocked()) {
-                    lockCamera();
-                }
+                Log.d(TAG, "locking camera...");
+                mImplementation.lockCamera();
+                Log.d(TAG, "locking camera finished");
 
                 registerSurfaceListener(new ICamera.LoggingPreviewListener());
             } else if (isPreviewRunning() && !shouldRun) {
+                Log.d(TAG, "stopping preview ...");
                 mImplementation.stopPreview();
+                Log.d(TAG, "stopping preview finished.");
 
                 if (isCameraLocked()) {
+                    Log.d(TAG, "unlocking camera ...");
                     mImplementation.unlockCamera();
+                    Log.d(TAG, "unlocking camera finished.");
                 }
             }
 
@@ -230,69 +265,83 @@ public class Camera {
                                          int compQuality) throws CameraException {
         boolean wasPreviewRunning = isPreviewRunning();
 
+        final CountDownLatch latch = new CountDownLatch(1);
         final ICamera.IPreviewListener pl = new ICamera.IPreviewListener() {
+            AtomicBoolean pictureTaken = new AtomicBoolean();
+
             @Override
             public void started() {
-                h.progress(mContext.getString(R.string.previewStarted));
+                if (!pictureTaken.getAndSet(true)) {
 
-                if (!wasPreviewRunning) {
-                    try {
-                        Thread.sleep(takeDelay);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "interrupted while waiting for take picture delay");
-                    }
-                }
+                    h.progress(mContext.getString(R.string.previewStarted));
 
-                mImplementation.takePicture(new ICamera.IPictureListener() {
-                    @Override
-                    public void picture(byte[] data) {
-                        h.progress(mContext.getString(R.string.pictureTaken));
-                        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
-
-                        int mDeviceRotation = mContext.getWindowManager().getDefaultDisplay().getRotation();
-                        Matrix matrix = new Matrix();
-                        int rotation = getSensorOrientation() + 90 * mDeviceRotation;
-                        matrix.postRotate(rotation);
-
-                        Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
-
-                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                        rotated.compress(Bitmap.CompressFormat.JPEG, compQuality, stream);
-                        h.picture(stream.toByteArray());
-
+                    if (!wasPreviewRunning) {
                         try {
-                            stopPreview();
-
-                            if (wasPreviewRunning) {
-                                startPreview(new ICamera.LoggingPreviewListener());
-                            }
-                        } catch (CameraException e) {
-                            h.error(e.getMessage());
+                            Thread.sleep(takeDelay);
+                        } catch (InterruptedException e) {
+                            Log.e(TAG, "interrupted while waiting for take picture delay");
                         }
                     }
 
-                    @Override
-                    public void error(String message) {
-                        h.error(message);
-                        Log.e(TAG, message);
-                    }
+                    Log.d(TAG, "mImplementation.takePicture...");
+                    mImplementation.takePicture(new ICamera.IPictureListener() {
 
-                    @Override
-                    public void progress(String message) {
-                        Log.d(TAG, message);
-                        h.progress(message);
-                    }
-                });
+                        @Override
+                        public void picture(byte[] data) {
+                            h.progress(mContext.getString(R.string.pictureTaken));
+                            Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+
+                            int mDeviceRotation = mContext.getWindowManager().getDefaultDisplay().getRotation();
+                            Matrix matrix = new Matrix();
+                            int rotation = getSensorOrientation() + 90 * mDeviceRotation;
+                            matrix.postRotate(rotation);
+
+                            Bitmap rotated = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            rotated.compress(Bitmap.CompressFormat.JPEG, compQuality, stream);
+                            h.picture(stream.toByteArray());
+
+                            try {
+                                stopPreview();
+
+                                if (wasPreviewRunning) {
+                                    startPreview(new ICamera.LoggingPreviewListener());
+                                }
+                            } catch (CameraException e) {
+                                Log.e(TAG, "Error restarting preview", e);
+                                h.error(e.getMessage());
+                            }
+                            latch.countDown();
+                        }
+
+                        @Override
+                        public void error(String message) {
+                            Log.e(TAG, message);
+                            h.error(message);
+                            latch.countDown();
+                        }
+
+                        @Override
+                        public void progress(String message) {
+                            Log.d(TAG, message);
+                            h.progress(message);
+                        }
+                    });
+                    Log.d(TAG, "mImplementation.takePicture finished");
+                }
             }
 
             @Override
             public void error(String message) {
+                latch.countDown();
                 h.error(message);
                 Log.e(TAG, message);
             }
 
             @Override
             public void exception(Exception e) {
+                latch.countDown();
                 h.error(e.getMessage());
                 Log.e(TAG, "", e);
             }
@@ -305,12 +354,20 @@ public class Camera {
         };
 
         startPreview(pl);
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            throw new CameraException("Failed to take picture", e);
+        }
+        Log.d(TAG, "mImplementation.takePicture latch counted down");
     }
 
     private void startPreview(ICamera.IPreviewListener previewListener) throws CameraException {
         if (!isCameraLocked()) {
             previewListener.progress(mContext.getString(R.string.lockingCamera));
-            lockCamera();
+            Log.d(TAG, "locking camera...");
+            mImplementation.lockCamera();
+            Log.d(TAG, "locking camera finished");
         }
 
         if (!mImplementation.isPreviewRunning()) {
@@ -318,7 +375,9 @@ public class Camera {
                 registerSurfaceListener(previewListener);
             } else {
                 previewListener.progress(mContext.getString(R.string.startingPreview));
+                Log.d(TAG, "starting preview...");
                 mImplementation.startPreview(mSurface, previewListener);
+                Log.d(TAG, "starting preview finished");
             }
         } else {
             previewListener.started();
@@ -327,17 +386,15 @@ public class Camera {
 
     private void stopPreview() throws CameraException {
         if (mImplementation.isPreviewRunning()) {
+            Log.d(TAG, "stopping preview...");
             mImplementation.stopPreview();
+            Log.d(TAG, "stopping preview finished");
         }
 
         if (mImplementation.isCameraLocked()) {
+            Log.d(TAG, "unlocking camera...");
             mImplementation.unlockCamera();
-        }
-    }
-
-    private void lockCamera() throws CameraException {
-        if (!mImplementation.isCameraLocked()) {
-            mImplementation.lockCamera();
+            Log.d(TAG, "unlocking camera finished");
         }
     }
 
@@ -355,7 +412,9 @@ public class Camera {
         }
 
         if (mSurface != null) {
+            Log.d(TAG, "starting preview...");
             mImplementation.startPreview(mSurface, previewListener);
+            Log.d(TAG, "starting preview finished");
             return;
         }
 
@@ -366,7 +425,9 @@ public class Camera {
                 if (surfaceTexture != mSurface) {
                     previewListener.progress(mContext.getString(R.string.surfaceObtained));
                     mSurface = surfaceTexture;
+                    Log.d(TAG, "starting preview...");
                     mImplementation.startPreview(mSurface, previewListener);
+                    Log.d(TAG, "starting preview finished");
                 }
             }
 
@@ -375,7 +436,9 @@ public class Camera {
                 if (surfaceTexture != mSurface) {
                     previewListener.progress(mContext.getString(R.string.surfaceObtained));
                     mSurface = surfaceTexture;
+                    Log.d(TAG, "starting preview...");
                     mImplementation.startPreview(mSurface, previewListener);
+                    Log.d(TAG, "starting preview finished");
                 }
             }
 
@@ -383,7 +446,9 @@ public class Camera {
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
                 Log.d(TAG, "surface destroyed: " + surfaceTexture);
                 try {
+                    Log.d(TAG, "stopping preview...");
                     mImplementation.stopPreview();
+                    Log.d(TAG, "stopping preview finished");
                 } catch (CameraException e) {
                     Log.e(TAG, "Error stopping preview", e);
                     previewListener.error("Failed to stop preview: " + e.getMessage());

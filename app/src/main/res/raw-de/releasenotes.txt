@@ -4,6 +4,7 @@
 * neuer Startindikator meldet die App Startzeit an openHAB
 * Reconnect der SSE Verbindung verbessert
 * Sensorwerte werden nun gepuffert, wenn keine SSE Verbindung besteht
+* Neue Einstellung um das automatische Abspielen von Videos in Webseiten zu erlauben
 * BUG: fehlender default für Einstellung "Menü Position" hinzugefügt
 * BUG: falsche Preview Ausrichtung behoben, wenn API V1 nach API V2 benutzt wird (bei gedrehtem Gerät)
 * BUG: Absturz während des Intros behoben
