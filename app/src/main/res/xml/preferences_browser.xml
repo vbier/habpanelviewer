@@ -34,5 +34,10 @@
         android:defaultValue="false"
         android:summary="@string/pref_hardwareAccelerated_summ"
         android:title="@string/pref_hardwareAccelerated" />
+    <CheckBoxPreference
+        android:key="pref_autoplay_video"
+        android:defaultValue="false"
+        android:summary="@string/pref_autoplayVideo_summ"
+        android:title="@string/pref_autoplayVideo" />
 
 </PreferenceScreen>

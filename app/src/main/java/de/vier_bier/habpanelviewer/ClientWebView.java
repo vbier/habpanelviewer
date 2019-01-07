@@ -260,6 +260,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
         Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
         Boolean isJavascript = prefs.getBoolean("pref_javascript", false);
+        Boolean isAutoplay = prefs.getBoolean("pref_autoplay_video", false);
         Boolean cacheDeactivated = prefs.getBoolean("pref_disable_cache", false);
 
         mDraggingPrevented = prefs.getBoolean("pref_prevent_dragging", false);
@@ -269,6 +270,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         webSettings.setLoadWithOverviewMode(isDesktop);
         webSettings.setJavaScriptEnabled(isJavascript);
         webSettings.setCacheMode(cacheDeactivated ? WebSettings.LOAD_NO_CACHE : WebSettings.LOAD_DEFAULT);
+        webSettings.setMediaPlaybackRequiresUserGesture(!isAutoplay);
 
         boolean loadStartUrl = false;
         boolean reloadUrl = false;
