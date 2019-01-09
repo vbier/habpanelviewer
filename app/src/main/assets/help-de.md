@@ -13,21 +13,21 @@ Eine Übersicht der Berechtigungen die HPV benötigt findet sich im Abschnitt [B
 
 **Die folgenden Einstellungen sollten beim ersten Start der Applikation eingestellt werden.**
 
-###openHAB URL
+### openHAB URL
 Die ist die URL des openHAB servers. Sie wird für die openHAB integration (d.h. Kommando Item, Sensortwerte Meldung, Verbindungsindikator) benötigt. Wenn die URL nicht richtig konfiguriert ist, wird die genannte Funktionalität nicht zur Verfügung stehen.
 
-Die URL kann automatisch per mDNS discovery gesucht werden, wenn sich das Gerät im selben Subnetz wie der openHAB server befindet. Drücken Sie dafür auf den "" Knopf im openHAB URL Einstellungsdialog. Wenn die Suche nicht funktioniert, oder Sie die URL selbst eingeben möchten, wäre ein Beispiel für die URL:
+Die URL kann automatisch per mDNS discovery gesucht werden, wenn sich das Gerät im selben Subnetz wie der openHAB server befindet. Dies kann während des Intros gemacht werden. Wenn die Suche nicht funktioniert, oder du die URL selbst eingeben möchtest, wäre ein Beispiel für die URL:
 
 <a href="javascript:void(0)">http://{host}:8080/</a>
 
 Es sollte kein weiterer Pfad an die URL angehängt werden.
 
-> Wenn Sie https (ssl) benutzen möchten, sollten Sie 8443 als Port verwenden.
+> Wenn du https (ssl) benutzen möchtest, solltest du 8443 als Port verwenden.
 
-###Startseite
+### Startseite
 Dies ist die Seite, die beim Starten der Applikation angezeigt werden soll. Dies kann eine beliebige URL sein, die vorgesehene Verwendung ist eine URL einer HABPanel Seite.    
 
-Wenn Sie diese Einstellung leer lassen, wird die openHAB URL beim Starten der Applikation angezeigt.
+Wenn du diese Einstellung leer lässt, wird die openHAB URL beim Starten der Applikation angezeigt.
 
 Beispiele für HABPanel URLs:
 
@@ -39,9 +39,9 @@ startet im HABPanel Menü.
 
 startet mit der speziellen HABPanel Seite Info<br>
    
-> Achten Sie auf die richtige Groß- und Kleinschreibung der HABPanel URL.
+> Achte auf die richtige Groß- und Kleinschreibung der HABPanel URL.
 
-Anstatt die Startseite in den Einstellungen zu Konfigurieren, können Sie sie auch interaktiv setzen. Lassen Sie die Einstellung leer, navigieren Sie im Browser zur gewünschen Seite und wählen Sie "Als Startseite setzen" im Kontextmenü.
+Anstatt die Startseite in den Einstellungen zu konfigurieren, kannst du sie auch interaktiv setzen. Lasse die Einstellung leer, navigiere im Browser zur gewünschen Seite und wähle "Als Startseite setzen" im Kontextmenü.
  
 ## <a name="control"/>Geräte Steuerung
 
@@ -218,12 +218,12 @@ Zeigt die letzten 100 von HABPanelViewer prozessierten Kommandos. Der Status wir
 * grau: Das Kommando wird zur Zeit ausgeführt.
 * rot: Die Ausführung wurde aufgrund eines Fehlers abgebrochen.
 
-Klicken Sie auf ein Kommando um die Details anuzeigen, falls es welche gibt.
+Klicke auf ein Kommando um die Details anuzeigen, falls es welche gibt.
 
 [zurück nach oben](#top)
 
 ## <a name="reporting"/>Werte Meldung
-Ermöglicht es, Werte der Geräte Sensoren oder andere Dinge an openHAB zu melden. Die gemeldeten Werte können dann z.B. in Regeln verwendet werden, um Sie zu benachrichtigen, bevor die Batterie des Tablets leer ist. 
+Ermöglicht es, Werte der Geräte Sensoren oder andere Dinge an openHAB zu melden. Die gemeldeten Werte können dann z.B. in Regeln verwendet werden, um dich zu benachrichtigen, bevor die Batterie des Tablets leer ist.
 
 ### Batteriesensor
 Wenn aktiviert, ändert die Anwendung die Werte von bis zu drei openHAB Items in Abhängigkeit des Batteriezustands:
@@ -237,7 +237,7 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
     Contact Tablet_Battery_Charging
     Number Tablet_Battery_Level
 
-Lassen sie Item Namen leer, um das Melden bestimmter Werte zu unterdrücken. Die Kontakte werden geschlossen, sobald die Batterie leer ist, bzw. das Gerät geladen wird.
+Lasse Item Namen leer, um das Melden bestimmter Werte zu unterdrücken. Die Kontakte werden geschlossen, sobald die Batterie leer ist, bzw. das Gerät geladen wird.
 Das Number Item reflektiert den Akku Ladezustand in Prozent.
 
 ### Bewegungserkennung
@@ -250,7 +250,7 @@ wird Bewegung erkannt.
 
 Die Erkennung kann aktiviert und deaktiviert werden, und es können einige Parameter in den Einstellungen verändert werden:
 - Zeige Kamera Vorschau: Blendet eine Kamera Vorschau über dem Browser ein. Diese ist Nützlich, um die Erkennung richtig einzustellen.
-- Benutze Lollipop Camera API 2: Benutze das Camera API 2 das mit Lollipop eingeführt wurde. Verändern Sie dies nur, falls die Erkennung nicht funktioniert. Die Anwendung startet automatisch neu, wenn der Wert verändert wird.
+- Benutze Lollipop Camera API 2: Benutze das Camera API 2 das mit Lollipop eingeführt wurde. Verändere dies nur, falls die Erkennung nicht funktioniert.
 - Erkennungsgranularität: Die Anzahl der Teile pro Achse, in die das Bild eingeteilt wird um Bewegung zu erkennen. Eine Granularität von 10 unterteilt das Bild also in 100 Unterbereiche. 
 - Erkennungsschwelle: Helligkeitsdifferenz, ab der Bewegung erkannt wird. 0 bedeutet jede Änderung resultiert in Bewegungserkennung, 255 bedeutet, es wird nie Bewegung erkannt.
 - Erkennungsintervall: Zeit zwischen zwei aufeinanderfolgenden Erkennungsversuchen (in Millsekunden). Dies hat direkten Einfluss auf den CPU Verbrauch. 
@@ -337,26 +337,26 @@ Die Startzeit kann z.B. genutzt werden, um nach dem App Start Initialisierungsko
 
 ## <a name="usability"/>Benutzerfreundlichkeit 
 ### Server Suchen
-Beim ersten Start (oder wenn in den Einstellungen aufgerufen), sucht die Anwendung den openHAB Server per mDNS discovery im lokalen Netz.
+Beim ersten Start (oder wenn das Intro im Menü gestartet wird), sucht die Anwendung den openHAB Server per mDNS discovery im lokalen Netz.
 Es wird zuerst versucht, eine HTTPS Verbindung zu finden, und falls das nicht funktioniert, wird auf HTTP zurück gegriffen.
 
 ### Home Screen / Launcher Funktionalität
 Die Anwendung kann in den Android Einstellungen als Launcher konfiguriert werden. Dann startet Sie mit dem System und ersetzt den Standard Launcher.  
 
 ### Startseite
-Browsen Sie eine beliebige Seite und setzen Sie sie mit dem Kontextmenü als Startseite. 
+Browse eine beliebige Seite und setze sie mit dem Kontextmenü als Startseite.
 
 ### Zugangsdaten speichern
-Immer wenn eine Webseite mit basic authentication nach Zugangsdaten fragt, öffnet HPV einen Dialog. Dieser hat eine Checkbox die es erlaubt, die Zugansdaten zu speichern. Die Daten werden unverschlüsselt in einer Datenbank in einem privaten Teil des Dateisystems gespeichert. Dies ist sicher, so lange ihr Gerät nicht gerootet ist, andernfalls könnten Apps mit Root Rechten die Zugangsdaten lesen. 
+Immer wenn eine Webseite mit basic authentication nach Zugangsdaten fragt, öffnet HPV einen Dialog. Dieser hat eine Checkbox die es erlaubt, die Zugansdaten zu speichern. Die Daten werden unverschlüsselt in einer Datenbank in einem privaten Teil des Dateisystems gespeichert. Dies ist sicher, so lange dein Gerät nicht gerootet ist, andernfalls könnten Apps mit Root Rechten die Zugangsdaten lesen.
 
 ### Ziehen verhindern
-Falls Sie aus Versehen Scrollen, wenn Sie einen Knopf drücken wollen, aktivieren Sie die Einstellung **Ziehen verhindern**. Dies deaktiviert Scrolling in der Anwendung komplett, und verhindert so auch das Öffnen des HABPanel Menüs.
+Falls du aus Versehen Scrollst, wenn du einen Knopf drücken willst, aktiviere die Einstellung **Ziehen verhindern**. Dies deaktiviert Scrolling in der Anwendung komplett, und verhindert so auch das Öffnen des HABPanel Menüs.
 
 ### Starte App
-Starten Sie eine auf dem Gerät installierte App über das Menü.
+Starte eine auf dem Gerät installierte App über das Menü.
 
 ### Kiosk Modus
-Sie können den Kiosk Modus über das Kontextmenü an- und auschalten. Wenn Sie den Kiosk Modus für die Startseite verwenden wollen, aktivieren Sie ihn mit dem Kontextmenü und wählen Sie danach "Als Startseite setzen" aus dem Kontextmenü.
+Du kannst den Kiosk Modus über das Kontextmenü an- und auschalten. Wenn du den Kiosk Modus für die Startseite verwenden willst, aktiviere ihn mit dem Kontextmenü und wähle danach "Als Startseite setzen" aus dem Kontextmenü.
 
 Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Parameter `?kiosk=on` anzuhängen.
 
@@ -374,5 +374,6 @@ Weitere Berechtigungen um die volle Funktionalität verfügbar zu machen:
 * android.permission.WRITE_EXTERNAL_STORAGE - für den Export der Einstellungen
 
 HPV kann zusätzlich in den Einstellungen als "Geräte Admin" eingetragen werden. Dies erlaubt es, bei entsprechendem Kommando die Bildschirmsperre zu aktivieren.
+Wenn HPV Screenshots per Kommando an openHAB schicken soll, muss das Aufnehmen des Bildschirms erlaubt werden.
 
 [zurück nach oben](#top)
