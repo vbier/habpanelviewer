@@ -1,4 +1,4 @@
-# <a name="top">HABPanelViewer</a>
+# <a name="top">HABPanelViewer (HPV)</a>
 
 HABPanelViewer is an Android home screen application visualizing HABPanel, a dedicated UI of openHAB.
 
@@ -11,7 +11,7 @@ If you want to see which permissions are needed by HPV, check the [permissions d
 
 ## <a name="configuration"/>Configuration
 
-**The following preferences need to be configured for the initial operation of HABPanelViewer.**
+**The following preferences need to be configured for the initial operation of HPV.**
 
 ### openHAB URL
 This is the base URL of your openHAB instance and is required for the integrations (e.g Command Item, Sensor Reporting, Connected Indicator). If this URL is not configured, these integration options will not function.
@@ -44,45 +44,178 @@ would start at a specific dashboard.
 Instead of configuring the start page in the preferences, it might be more comfortable to set it interactively. Simply leave it blank, then browse to the panel you want to have as start panel and select "Set as start page" from the context menu.
  
 ## <a name="control"/>Device Control
-### command item
-Monitors an openHAB **String Item** for supported commands. Supported commands are:
-* RESTART: makes HabPanelViewer restart
-* SCREEN_ON: turns on the devices screen.
-* SCREEN_ON *\<n\>*: turns on the devices screen and forces it to stay on for the given number of seconds.
-* KEEP_SCREEN_ON: turns on the devices screen and prevents the system from turning off the screen
-* ALLOW_SCREEN_OFF: allows the system to turn of the screen
-* SCREEN_DIM: dims the screen as much as possible and restores the brightness on touch event
-* MUTE: mutes the device
-* UNMUTE: restores the volume to the level the device had when it was muted
-* SET_VOLUME *\<n\>*: sets the device volume to n (being an integer between 0 and device max volume).
-* SET_BRIGHTNESS *\<n|AUTO\>*: sets the device brightness to n (being an integer between 0 and 100), or to the standard brightness if AUTO is specified. 
-* FLASH_ON: turns on the flashlight of the back-facing camera
-* FLASH_OFF: turns off the flashlight of the back-facing camera
-* FLASH_BLINK: blinks the flashlight of the back-facing camera with an interval of one second
-* FLASH_BLINK *\<n\>*: blinks the flashlight of the back-facing camera with an interval of *n* milliseconds
-* BLUETOOTH_ON: turn bluetooth on
-* BLUETOOTH_OFF: turn bluetooth off
-* UPDATE_ITEMS: forces an update of all openHAB reporting items
-* START_APP *\<app\>*: starts the app with the package name *app*
-* ADMIN_LOCK_SCREEN: activates the lock screen (requires the app to be set as device admin in the preferences)
-* SHOW_URL *\<url\>*: shows the given URL
-* SHOW_DASHBOARD *\<dashboard\>*: shows the given HABPanel dashboard
+
+HPV allows to configure a command item. This has to be an openHAB **String Item** that will then be monitored by HABPanelViewer. Sending commands to this item from openHAB allows to control HABPanelViewer and/or the device itself.
+
+Make sure you use *sendCommand* from openHAB rules and not *postUpdate*, as otherwise HPV will ignore the command.
+
+The following commands are supported by HPV:
+
+> Parameter values are shown in brackets and have to be replaced with actual values.
+> Optional parameters are followed by a question mark.
+
+#### RESTART
+
+makes HPV restart.
+
+#### SCREEN_ON
+
+turns on the screen of the device.
+
+Syntax: SCREEN_ON *\[seconds\]?*
+
+The optional integer parameter allows to force the display to stay on for the given number of seconds.
+
+#### KEEP_SCREEN_ON
+
+turns on the devices screen and prevents the system from turning off the screen. This works as long is HPV is running in the foreground of the device.
+
+Send ALLOW_SCREEN_OFF to allow the system to turn of the screen.
+
+> It has been reported that the screen does not stay on on some devices when the command has been received while the screen is off. In this case send SCREEN_ON and KEEP_SCREEN_ON after a short delay.
+
+#### ALLOW_SCREEN_OFF
+
+allows the system to turn of the screen. Is only needed after having sent KEEP_SCREEN_ON.
+
+#### SCREEN_DIM
+
+dims the screen as much as possible. Show a blank screen and restores brightness when the screen is touched.
+
+This can be used together with KEEP_SCREEN_ON to have a wake on touch feature.
+
+#### SET_BRIGHTNESS
+
+Syntax: SET_BRIGHTNESS *\[percentage|AUTO\]*: sets the device brightness
+
+Allows to set the device screen brightness.
+
+The parameter either has to be the fixed string AUTO (which activates adaptive screen brightness) or an integer value between 0 and 100 (which sets the brightness to the given percentage).
+
+#### MUTE
+
+mutes the device.
+
+#### UNMUTE
+
+restores the volume to the level the device had when it was muted with the MUTE command.
+
+#### SET_VOLUME
+
+Syntax: SET_VOLUME *\[volume\]*
+
+sets the device volume.
+
+The integer parameter specifies the desired volume level. The range for the parameter starts at 0 (device is muted) to a device dependent maximum value.
+
+> When the device is muted using SET_VOLUME, UNMUTE does not restore the previous volume.
+
+#### FLASH_ON
+
+turns on the flashlight of the back-facing camera.
+
+#### FLASH_OFF
+
+turns off the flashlight of the back-facing camera.
+
+#### FLASH_BLINK
+
+blinks the flashlight of the back-facing camera with an interval of one second.
+
+Syntax: FLASH_BLINK *\[milliseconds\]?*
+
+The optional integer parameter allows to specify the blink interval in milliseconds.
+
+#### BLUETOOTH_ON
+
+turns on bluetooth.
+
+#### BLUETOOTH_OFF
+
+turn off bluetooth.
+
+#### UPDATE_ITEMS
+
+forces an update of all openHAB reporting items.
+
+This means that the values of all reporting items defined in the preferences will be send to openHAB once regardless if they have changed.
+
+#### START_APP
+
+starts an app on the device.
+
+Syntax: START_APP *\[app package name\]*
+
+The package name can be found in the android settings for the given app. E.g. it is com.google.android.calendar for the google calendar app.
+
+#### ADMIN_LOCK_SCREEN
+
+activates the lock screen.
+
+This command requires the app to be set as device admin in the preferences.
+
+#### SHOW_URL
+
+shows an arbitrary web page.
+
+Syntax: SHOW_URL *\[url\]*
+
+#### SHOW_DASHBOARD
+
+shows the given HABPanel dashboard.
+
+Syntax: SHOW_DASHBOARD *\<dashboard\>*
+
+The dashboard parameter is a string parameter in which the name of the dashboard has to be specified.
+
 > This only works as long as HABPanel is available under its standard URL. If you have a custom HABPanel installation use SHOW_URL instead.
-* SHOW_START_URL: shows the configured start URL
-* RELOAD: reloads the current page
-* CAPTURE_SCREEN *\<image item\>* *\<jpeg quality\>*: captures a screenshot, creates a compressed jpeg with the given quality and sends it to the openHAB image item
-> This only works with Android Lollipop or newer and a defined openHAB item of type **Image**
-> The jpeg quality is optional and defaults to the app setting.
-* CAPTURE_CAMERA *\<image item\>* *\<jpeg quality\>*: takes a picture, creates a compressed jpeg with the given quality and sends it to the openHAB image item
+
+#### SHOW_START_URL
+
+shows the configured start URL.
+
+#### RELOAD
+
+reloads the current page.
+
+#### CAPTURE_CAMERA
+
+captures a photo with the front camera of the device and sends it to an openHAB *Image item*.
+
+Syntax: CAPTURE_CAMERA *\[image item\]* *\[jpeg quality\]?*
+
+The mandatory parameter *image item* specifies the name of an openHAB image item to which the screenshot will be sent.
+The optional integer parameter *jpeg quality* has to be in range 0-100 and defaults to the value defined in the preferences.
+
 > In case the pictures are too dark, try to increase the CAPTURE_CAMERA delay in the preferences.
-> The jpeg quality is optional and defaults to the app setting.
-* ENABLE_MOTION_DETECTION: enables the motion detection in the app preferences.
-* DISABLE_MOTION_DETECTION: disables the motion detection in the app preferences.
+
+#### CAPTURE_SCREEN
+
+captures a screenshot of the device and sends it to an openHAB *Image item*.
+
+Syntax: CAPTURE_SCREEN *\[image item\]* *\[jpeg quality\]?*
+
+The mandatory parameter *image item* specifies the name of an openHAB image item to which the screenshot will be sent.
+The optional integer parameter *jpeg quality* has to be in range 0-100 and defaults to the value defined in the preferences.
+
+You need to allow HPV to record the screen in order for this to work.
+
+> This only works with Android Lollipop or newer.
+
+#### ENABLE_MOTION_DETECTION
+
+enables the motion detection in the app preferences and starts motion detection.
+
+Motion detection has to be configured in the preferences in order for this to work.
+
+#### DISABLE_MOTION_DETECTION
+
+disables the motion detection in the app preferences and stops motion detection.
 
 ### command log
-Shows the last 100 commands that have been processed by HABPanelViewer. Color coding indicates processing status:
+Shows the last 100 commands that have been processed by HPV. Color coding indicates processing status:
 * green: command has been processed successfully
-* yellow: command is not known to HABPanelViewer
+* yellow: command is not known to HPV
 * grey: command is currently executing
 * red: command processing resulted in an exception.
 
@@ -231,7 +364,7 @@ Another way of activating kiosk mode is to add the URL parameter `?kiosk=on` at 
 
 ## <a name="configuration"/>Permissions
 
-Habpanelviewer needs the following permissions:  
+HPV needs the following permissions:
 * android.permission.INTERNET - for displaying openHAB in a webview
 * android.permission.ACCESS_NETWORK_STATE - for tracking state of connection to openHAB
 

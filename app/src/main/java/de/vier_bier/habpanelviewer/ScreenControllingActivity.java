@@ -85,7 +85,7 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
         Log.d(TAG, "registered receiver");
 
         Log.d(TAG, "onStart: set keep on: " + mKeepScreenOn);
-        getScreenOnView().setKeepScreenOn(mKeepScreenOn);
+        setKeepScreenOn(mKeepScreenOn);
 
         Log.d(TAG, "onStart: set brightness: " + mBrightness);
         setBrightness(mBrightness);
@@ -126,7 +126,7 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
 
                 runOnUiThread(() -> {
                     Log.d(TAG, "onReceive: set keep on: " + keepOn);
-                    getScreenOnView().setKeepScreenOn(keepOn);
+                    setKeepScreenOn(keepOn);
                 });
             } else if (ACTION_SET_BRIGHTNESS.equals(i.getAction())) {
                 final float brightness = i.getFloatExtra(FLAG_BRIGHTNESS, 1.0f);
@@ -139,6 +139,15 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
             }
         }
     };
+
+    private void setKeepScreenOn(boolean keepOn) {
+        getScreenOnView().setKeepScreenOn(keepOn);
+        if (keepOn) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+    }
 
     private void setBrightness(float brightness) {
         final WindowManager.LayoutParams layout = getWindow().getAttributes();

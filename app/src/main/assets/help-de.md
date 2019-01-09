@@ -44,41 +44,172 @@ startet mit der speziellen HABPanel Seite Info<br>
 Anstatt die Startseite in den Einstellungen zu Konfigurieren, können Sie sie auch interaktiv setzen. Lassen Sie die Einstellung leer, navigieren Sie im Browser zur gewünschen Seite und wählen Sie "Als Startseite setzen" im Kontextmenü.
  
 ## <a name="control"/>Geräte Steuerung
-### Kommando Item
-Überwacht das openHAB **String Item** und wartet auf Kommandos. Erlaubte Kommandos sind:
-* RESTART: startet HABPanelViewer neu
-* SCREEN_ON: schaltet den Bildschirm des Geräts ein
-* SCREEN_ON *\<n\>*: schaltet den Bildschirm des Geräts ein und hindert das System für n Sekunden daran, ihn auszuschalten
-* KEEP_SCREEN_ON: schaltet den Bildschirm des Geräts ein und hindert das System daran, ihn auszuschalten
-* ALLOW_SCREEN_OFF: erlaubt dem System, den Bildschirm auszuschalten
-* SCREEN_DIM: regelt die Helligkeit so weit runter wie möglich und stellt sie zurück, wenn der Bildschirm berührt wird
-* MUTE: stellt das Gerät stumm
-* UNMUTE: stellt die Lautstärke auf den Wert, den das Gerät zum Zeitpunkt des MUTE Kommandos hatte
-* SET_VOLUME *\<n\>*: stellt die Lautstärke auf den Wert n (Ganzzahl im Bereich 0.._Maximallautstärke des Geräts_).
-* SET_BRIGHTNESS *\<n|AUTO\>*: stellt die Helligkeit auf den Wert n (Ganzzahl im Bereich 0..100), oder auf die Standardhelligkeit wenn AUTO angegeben wird.  
-* FLASH_ON: schaltet das Blitzlicht der hinteren Kamera ein
-* FLASH_OFF: schaltet das Blitzlicht der hinteren Kamera aus
-* FLASH_BLINK: lässt das Blitzlicht der hinteren Kamera im 1 Sekunden Intervall blinken
-* FLASH_BLINK *\<n\>*: lässt das Blitzlicht der hinteren Kamera im *n* Millisekunden Intervall blinken
-* BLUETOOTH_ON: schaltet bluetooth ein
-* BLUETOOTH_OFF: schaltet bluetooth aus
-* UPDATE_ITEMS: sendet alle aktuellen Item Werte an openHAB
-* START_APP *\<app\>*: started die app mit dem Paket Namen *app*
-* ADMIN_LOCK_SCREEN: aktiviert die Bildschirmsperre (beötigt, das die App in den Einstellungen als Device Admin aktiviert ist)
-* SHOW_URL *\<url\>*: zeigt die angegebene Webseite
-* SHOW_DASHBOARD *\<dashboard\>*: zeigt die angegebene Habpanel Seite
-> Dies funktioniert nur wenn HABPanel unter der Standard URL verfügbar ist. Wenn Sie eine angepasste HABPanel installation haben, benutzen Sie statt dessen SHOW_URL
-* SHOW_START_URL: zeigt die konfigurierte Startseite
-* RELOAD: lädt die angezeigte Seite neu
-* CAPTURE_SCREEN *\<image item\>* *\<JPEG Qualität\>*: macht einen Screenshot und sendet diesen an das openHAB image item 
-> Dies funktioniert nur mit Android Lollipop oder neuer und mit einem in openHAB definierten item des Typs **Image**
-> Die JPEG Qualität ist optional. Es wird standardmäßig die in den App Einstellungen gesetzte Qualität genutzt.
-* CAPTURE_CAMERA *\<image item\>* *\<JPEG Qualität\>*: macht ein Foto und sendet dieses an das openHAB image item
-> Falls die Bilder zu dunkel sein sollten, erhöhen Sie die CAPTURE_CAMERA Verzögerung in den Einstellungen.
-> Die JPEG Qualität ist optional. Es wird standardmäßig die in den App Einstellungen gesetzte Qualität genutzt.
-* ENABLE_MOTION_DETECTION: aktiviert die Bewegungserkennung in den App Einstellungen
-* DISABLE_MOTION_DETECTION: deaktiviert die Bewegungserkennung in den App Einstellungen
 
+HPV erlaubt die Konfiguration eines Kommando Items. Dies ist ein openHAB **String Item** das fortan von HPV überwacht wird. Das Schicken von Kommandos an dieses Item von openHAB erlaubt es HPV und/oder das Gerät zu steuern.
+
+Stelle sicher, in den openHAB Regeln *sendCommand* zu verwenden, und nicht *postUpdate*, sonst ignoriert HPV die Kommandos.
+
+Die folgenden Kommandos werden von HPV unterstützt:
+
+> Parameter Werte stehen in Klammern und müssen durch tatsächliche Werte ersetzt werden.
+> Optionale Parameter werden durch ein folgendes Fragezeichen gekennzeichnet.
+
+#### RESTART
+
+startet HABPanelViewer neu.
+
+#### SCREEN_ON
+
+schaltet den Bildschirm des Geräts ein.
+
+Syntax: SCREEN_ON *\[Sekunden\]?*
+
+Der optionale Ganzzahlparameter hindert das System für die angegeben Anzahl von Sekunden daran, den Bildschirm auszuschalten.
+
+#### KEEP_SCREEN_ON
+
+schaltet den Bildschirm des Geräts ein und hindert das System daran, ihn auszuschalten. Dies funktioniert solange HPV de aktive App auf dem Gerät ist.
+
+Sende ALLOW_SCREEN_OFF um es dem System zu erlauben den Bildschirm auszuschalten.
+
+> Es wurde berichtet das der Bildschirm auf manchen Geräten trotzdem ausgeht, wenn das Kommando empfangen wurde während der Bildschirm aus war.
+In diesem falle sende SCREEN_ON und KEEP_SCREEN_ON nach einer kurzen Pause.
+
+#### ALLOW_SCREEN_OFF
+
+erlaubt dem System, den Bildschirm auszuschalten. Wird nur nach Senden von KEEP_SCREEN_ON benötigt.
+
+#### SCREEN_DIM
+
+regelt die Helligkeit so weit runter wie möglich und stellt sie zurück, wenn der Bildschirm berührt wird.
+
+Kann zusammen mit KEEP_SCREEN_ON benutzt werden um zu realisieren, dass das Gerät aufwacht, wenn der Bildschirm berührt wird.
+
+#### SET_BRIGHTNESS
+
+Syntax: SET_BRIGHTNESS *\[Prozent|AUTO\]*: sets the device brightness
+
+Setzt die Helligkeit des Bildschirms.
+
+Als Parameterwert muss entweder AUTO (aktiviert die adaptive Helligkeit) oder eine Zahl zwischen 0 und 100 (setzt die Helligkeit auf den angegebenen Prozentwert) übergeben werden..
+
+#### MUTE
+
+stellt das Gerät stumm.
+
+#### UNMUTE
+
+stellt die Lautstärke auf den Wert, den das Gerät zum Zeitpunkt des MUTE Kommandos hatte
+
+#### SET_VOLUME
+
+Syntax: SET_VOLUME *\[Lautstärke\]*
+
+stellt die Lautstärke auf den angegebenen Wert.
+
+Der Ganzzahlparameter gibt die gewünschte Lautstärke an. Diese muss im Bereich 0 (lautlos) bis zum geräteabhängigen Maximalwert liegen.
+
+> Wenn das Gerät mit SET_VOLUME lautlos gestellt wurde, stellt UNMUTE nicht die vorherige Lautstärke zurück.
+
+#### FLASH_ON
+
+schaltet das Blitzlicht der hinteren Kamera ein.
+
+#### FLASH_OFF
+
+schaltet das Blitzlicht der hinteren Kamera aus.
+
+#### FLASH_BLINK
+
+lässt das Blitzlicht der hinteren Kamera im 1 Sekunden Intervall blinken.
+
+Syntax: FLASH_BLINK *\[Millisekunden\]?*
+
+Der optionale Ganzzahlparameter gibt das gewünschte Blinkintervall in Millisekunden an.
+
+#### BLUETOOTH_ON
+
+schaltet bluetooth ein.
+
+#### BLUETOOTH_OFF
+
+schaltet bluetooth aus.
+
+#### UPDATE_ITEMS
+
+sendet alle aktuellen Item Werte an openHAB.
+
+Dies bedeutet, dass alle in den Einstellungen Konfigurierten Werte einmalig an die entsprechenden openHAB Items gemeldet werden.
+
+#### START_APP
+
+Startet eine App auf dem Gerät.
+
+Syntax: START_APP *\[App Paket Name\]*
+
+Der Paket Name kann in den Android Einstellungen der App nachgesehen werden. Z.B. ist es com.google.android.calendar für den Google Kalendar.
+
+#### ADMIN_LOCK_SCREEN
+
+aktiviert die Bildschirmsperre.
+
+Benötigt, das die App in den Einstellungen als Device Admin aktiviert ist.
+
+#### SHOW_URL
+
+lädt eine beliebige Webseite.
+
+Syntax: SHOW_URL *\[url\]*
+
+#### SHOW_DASHBOARD
+
+lädt die angegebene HABPanel Seite.
+
+Syntax: SHOW_DASHBOARD *\<Dashboard\>*
+
+Der Dashboard Parameter ist ein String Parameter in welchem der Name des Dashboards übergeben werden muss.
+
+> Dies funktioniert nur wenn HABPanel unter der Standard URL verfügbar ist. Wenn Sie eine angepasste HABPanel installation haben, benutzen Sie statt dessen SHOW_URL.
+
+#### SHOW_START_URL
+
+lädt die konfigurierte Startseite.
+
+#### RELOAD
+
+lädt die angezeigte Seite neu.
+
+#### CAPTURE_CAMERA
+
+macht ein Foto mit der Frontkamera und sendet dieses an ein openHAB Image Item.
+
+Syntax: CAPTURE_CAMERA *\[Image Item\]* *\[jpeg Qualität\]?*
+
+Der erforderliche Parameter *Image Item* gibt das openHAB Image Item an, an das das Bild geschickt wird.
+Der optionale Ganzzahlparameter *jpeg Qualität* muss im Bereich 0-100 liegen, sein Standardwert kann in den Einstellungen festgelegt werden.
+
+> Falls die Bilder zu dunkel sein sollten, erhöhen Sie die CAPTURE_CAMERA Verzögerung in den Einstellungen.
+
+#### CAPTURE_SCREEN
+
+macht einen Screenshot und sendet diesen an ein openHAB Image Item.
+
+Syntax: CAPTURE_SCREEN *\[Image Item\]* *\[jpeg Qualität\]?*
+
+Der erforderliche Parameter *Image Item* gibt das openHAB Image Item an, an das das Bild geschickt wird.
+Der optionale Ganzzahlparameter *jpeg Qualität* muss im Bereich 0-100 liegen, sein Standardwert kann in den Einstellungen festgelegt werden.
+
+Du musst HPV erlauben, den Bildschirm aufzunehmen um dieses Kommando zu benutzen.
+
+> Dies funktioniert nur mit Android Lollipop oder neuer.
+
+#### ENABLE_MOTION_DETECTION
+
+aktiviert die Bewegungserkennung in den App Einstellungen und startet sie.
+
+#### DISABLE_MOTION_DETECTION
+
+deaktiviert die Bewegungserkennung in den App Einstellungen und stoppt sie.
 
 ### Kommando Log
 Zeigt die letzten 100 von HABPanelViewer prozessierten Kommandos. Der Status wird durch die Textfarbe angezeigt:
