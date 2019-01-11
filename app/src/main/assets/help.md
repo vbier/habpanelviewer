@@ -22,7 +22,7 @@ This URL can be automatically discovered using mDNS if the device is on the same
 
 No additional URL paths should be configured here.
 
-> If you are using https (ssl), your port would normally be 8443_
+> If you are using https (ssl), your port would normally be 8443.
 
 ### Start page
 This is the initial page loaded when the application is started or restarted.  While this can be any accessible URL, the intended use is for the HABPanel dashboard that you want as your starting page when the application is launched or restarted.
