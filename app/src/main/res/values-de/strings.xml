@@ -20,6 +20,8 @@
     <string name="intro_credentials">Zugangsdaten</string>
     <string name="intro_credentials_text">HPV kann deine Basic Authentication (BA) Zugangsdaten speichern, so dass du dich an Webseiten mit BA nur ein mal anmelden musst.</string>
     <string name="intro_credentials_text2">Zugangsdaten werden unverschlüsselt in einer Datenbank in einem privaten Teil des Dateisystems gespeichert, wo sie nur von root gelesen werden können wenn dein Gerät gerootet ist.</string>
+    <string name="intro_help">Hilfe</string>
+    <string name="intro_help_text">Öffne die Hilfe im Menü und das Handbuch zu lesen oder das Wiki oder Forum zu besuchen.</string>
     <string name="intro_ready">Fertig</string>
     <string name="intro_ready_text">Es kann losgehen.</string>
     <string name="intro_pleaseComplete">Der Server ist noch nicht konfiguriert. Bitte beende die initiale Konfiguration.</string>
@@ -33,8 +35,9 @@
     <string name="action_preferences">Einstellungen</string>
     <string name="action_cmdLog">Kommando Log</string>
     <string name="action_intro">Zeige Intro</string>
-    <string name="action_goto_forum">Gehe zum openHAB Forum</string>
-    <string name="action_show_help">Hilfe anzeigen</string>
+    <string name="action_goto_forum">HPV Support Thread</string>
+    <string name="action_goto_wiki">HPV Wiki</string>
+    <string name="action_show_help">Handbuch</string>
     <string name="action_clear_log">Log leeren</string>
     <string name="action_back">Zurück</string>
 

@@ -22,6 +22,8 @@
     <string name="intro_credentials">Credentials Storage</string>
     <string name="intro_credentials_text">HPV can store your basic authentication (BA) credentials so you only need to log in once to websites using BA.</string>
     <string name="intro_credentials_text2">Credentials are stored unencrypted in a database in a private part of the file system that can only be read by root when you device is rooted.</string>
+    <string name="intro_help">Help</string>
+    <string name="intro_help_text">Open help from the menu to access the manual or visit the wiki or support forum.</string>
     <string name="intro_ready">Ready</string>
     <string name="intro_ready_text">You are ready to go.</string>
     <string name="intro_pleaseComplete">The server is not yet configured. Please complete the initial configuration.</string>
@@ -35,8 +37,9 @@
     <string name="action_preferences">Preferences</string>
     <string name="action_cmdLog">Command Log</string>
     <string name="action_intro">Show Intro</string>
-    <string name="action_goto_forum">Goto to openHAB forum</string>
-    <string name="action_show_help">Show Help</string>
+    <string name="action_goto_forum">HPV support thread</string>
+    <string name="action_goto_wiki">HPV wiki</string>
+    <string name="action_show_help">Manual</string>
     <string name="action_clear_log">Clear Log</string>
     <string name="action_back">Go back</string>
 

@@ -8,6 +8,11 @@
         android:icon="@drawable/ic_forum_black_24dp"
         app:showAsAction="ifRoom"/>
 
+    <item android:id="@+id/action_goto_wiki"
+        android:title="@string/action_goto_wiki"
+        android:icon="@drawable/ic_wiki_black_24dp"
+        app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/action_show_help"
         android:title="@string/action_show_help"
         android:icon="@drawable/ic_help_outline_black_24dp"

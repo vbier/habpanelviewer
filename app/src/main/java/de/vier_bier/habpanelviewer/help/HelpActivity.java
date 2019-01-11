@@ -25,6 +25,7 @@ import de.vier_bier.habpanelviewer.UiUtil;
  */
 public class HelpActivity extends ScreenControllingActivity {
     private MenuItem mForumItem;
+    private MenuItem mWikiItem;
     private MenuItem mFileItem;
 
     @Override
@@ -62,8 +63,13 @@ public class HelpActivity extends ScreenControllingActivity {
             mForumItem.setEnabled(true);
         }
 
+        if (mWikiItem != null) {
+            mWikiItem.setEnabled(true);
+        }
+
         UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
         UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
+        UiUtil.tintItemPreV21(mWikiItem, getApplicationContext(), getTheme());
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String theme = prefs.getString("pref_theme", "dark");
@@ -76,9 +82,11 @@ public class HelpActivity extends ScreenControllingActivity {
         getMenuInflater().inflate(R.menu.help_toolbar_menu, menu);
 
         mForumItem = menu.findItem(R.id.action_goto_forum);
+        mWikiItem = menu.findItem(R.id.action_goto_wiki);
         mFileItem = menu.findItem(R.id.action_show_help);
 
         UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
+        UiUtil.tintItemPreV21(mWikiItem, getApplicationContext(), getTheme());
         UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
 
         return true;
@@ -90,12 +98,29 @@ public class HelpActivity extends ScreenControllingActivity {
 
         if (id == R.id.action_goto_forum) {
             mFileItem.setEnabled(true);
+            mWikiItem.setEnabled(true);
             mForumItem.setEnabled(false);
+
             UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
+            UiUtil.tintItemPreV21(mWikiItem, getApplicationContext(), getTheme());
             UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
 
             final MarkdownView markdownView = findViewById(R.id.activity_help_webview);
             markdownView.loadUrl("https://community.openhab.org/t/habpanelviewer/34112/");
+            return true;
+        }
+
+        if (id == R.id.action_goto_wiki) {
+            mFileItem.setEnabled(true);
+            mWikiItem.setEnabled(false);
+            mForumItem.setEnabled(true);
+
+            UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
+            UiUtil.tintItemPreV21(mWikiItem, getApplicationContext(), getTheme());
+            UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
+
+            final MarkdownView markdownView = findViewById(R.id.activity_help_webview);
+            markdownView.loadUrl("https://github.com/vbier/habpanelviewer/wiki");
             return true;
         }
 
