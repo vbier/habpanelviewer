@@ -319,6 +319,17 @@ public class Camera {
                         public void error(String message) {
                             Log.e(TAG, message);
                             h.error(message);
+
+                            try {
+                                stopPreview();
+
+                                if (wasPreviewRunning) {
+                                    startPreview(new ICamera.LoggingPreviewListener());
+                                }
+                            } catch (CameraException e) {
+                                Log.e(TAG, "Error restarting preview", e);
+                                h.error(e.getMessage());
+                            }
                             latch.countDown();
                         }
 

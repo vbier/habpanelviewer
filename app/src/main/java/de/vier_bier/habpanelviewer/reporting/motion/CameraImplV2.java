@@ -15,7 +15,9 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
+import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
@@ -347,7 +349,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
     @Override
     /**
-     * This is asynchroneous!
+     * This is asynchronous!
      */
     public void takePicture(IPictureListener iPictureHandler) {
         if (mCamera != null) {
@@ -383,30 +385,57 @@ public class CameraImplV2 extends AbstractCameraImpl {
                             buffer.get(mBuffer);
 
                             iPictureHandler.picture(mBuffer);
+                            mTakingPicture = false;
                         }
                     }
                 };
                 reader.setOnImageAvailableListener(readerListener, mPictureHandler);
-                final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {};
+                final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
+                    @Override
+                    public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+                        Log.v(TAG, "onCaptureCompleted");
+                        mTakingPicture = false;
+                    }
+
+                    @Override
+                    public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureFailure failure) {
+                        Log.v(TAG, "onCaptureFailed");
+                        mTakingPicture = false;
+                    }
+
+                    @Override
+                    public void onCaptureSequenceCompleted(@NonNull CameraCaptureSession session, int sequenceId, long frameNumber) {
+                        Log.v(TAG, "onCaptureSequenceCompleted");
+                        mTakingPicture = false;
+                    }
+
+                    @Override
+                    public void onCaptureSequenceAborted(@NonNull CameraCaptureSession session, int sequenceId) {
+                        Log.v(TAG, "onCaptureSequenceAborted");
+                        mTakingPicture = false;
+                    }
+                };
 
                 mCamera.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                     @Override
                     public void onConfigured(@NonNull CameraCaptureSession session) {
                         try {
                             session.capture(captureBuilder.build(), captureListener, mPictureHandler);
-                        } catch (CameraAccessException e) {
-                            Log.e(TAG, "Failed to capture picture", e);
+                        } catch (Throwable t) {
+                            Log.e(TAG, "Failed to capture picture", t);
+                            iPictureHandler.error("Failed to capture picture");
+                            mTakingPicture = false;
                         }
                     }
 
                     @Override
                     public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+                        iPictureHandler.error("Failed to set up capture session!");
+                        mTakingPicture = false;
                     }
                 }, mPictureHandler);
             } catch (CameraAccessException e) {
                 Log.e(TAG, "Failed to take picture", e);
-            } finally {
-                mTakingPicture = false;
             }
         } else {
             throw new IllegalStateException("Motion detection not running");
