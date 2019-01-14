@@ -82,8 +82,6 @@ public class MotionDetector extends Thread implements IMotionDetector, ICamera.I
                             mMotionReporter.noMotion();
                         }
                     }
-
-                    Log.v(TAG, "processing done");
                 }
             }
         } finally {
