@@ -105,7 +105,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
         if (mCameraId != null && mCamera == null) {
             try {
                 if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    throw new CameraException("Required permission missing: " + Manifest.permission.CAMERA);
+                    throw new CameraException(mActivity.getString(R.string.permissionMissing, Manifest.permission.CAMERA));
                 }
 
                 final CountDownLatch latch = new CountDownLatch(1);
@@ -135,10 +135,10 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 try {
                     latch.await(2, TimeUnit.SECONDS);
                     if (latch.getCount() == 1) {
-                        throw new CameraException("Opening camera timed out");
+                        throw new CameraException(mActivity.getString(R.string.openingCamTimedOut));
                     }
                 } catch (InterruptedException e) {
-                    throw new CameraException("Got interrupt while opening camera", e);
+                    throw new CameraException(mActivity.getString(R.string.openingCamInterrupted), e);
                 }
             } catch (CameraAccessException e) {
                 throw new CameraException(e);
@@ -258,7 +258,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
                                 // The mCamera is already closed
                                 if (null == mCamera) {
-                                    previewListener.error("Capture session has no camera");
+                                    previewListener.error(mActivity.getString(R.string.camAlreadyClosed));
                                     initLatch.countDown();
                                     return;
                                 }
@@ -274,7 +274,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                                             null, null);
                                 } catch (CameraAccessException | IllegalStateException e) {
                                     previewListener.exception(e);
-                                    previewListener.error("Could not create preview request");
+                                    previewListener.error(mActivity.getString(R.string.couldNotCreatePreview));
                                 } finally {
                                     initLatch.countDown();
                                 }
@@ -290,7 +290,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                             @Override
                             public void onConfigureFailed(
                                     @NonNull CameraCaptureSession cameraCaptureSession) {
-                                previewListener.error("Could not create capture session");
+                                previewListener.error(mActivity.getString(R.string.couldNotCreateCapture));
                                 initLatch.countDown();
                             }
                         }, mPreviewHandler
@@ -298,10 +298,10 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 initLatch.await();
             } catch (CameraAccessException | InterruptedException e) {
                 previewListener.exception(e);
-                previewListener.error("Could not create preview");
+                previewListener.error(mActivity.getString(R.string.couldNotCreatePreview));
             }
         } else {
-            previewListener.error("Camera not found");
+            previewListener.error(mActivity.getString(R.string.frontCameraMissing));
         }
     }
 
@@ -332,7 +332,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 }
 
                 if (isPreviewRunning()) {
-                    throw new CameraException("could not stop preview");
+                    throw new CameraException(mActivity.getString(R.string.couldNotStopPreview));
                 }
                 mCaptureSession = null;
             } catch (IllegalStateException e) {
@@ -423,14 +423,14 @@ public class CameraImplV2 extends AbstractCameraImpl {
                             session.capture(captureBuilder.build(), captureListener, mPictureHandler);
                         } catch (Throwable t) {
                             Log.e(TAG, "Failed to capture picture", t);
-                            iPictureHandler.error("Failed to capture picture");
+                            iPictureHandler.error(mActivity.getString(R.string.camFailedToTakePic));
                             mTakingPicture = false;
                         }
                     }
 
                     @Override
                     public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-                        iPictureHandler.error("Failed to set up capture session!");
+                        iPictureHandler.error(mActivity.getString(R.string.couldNotCreateCapture));
                         mTakingPicture = false;
                     }
                 }, mPictureHandler);
@@ -438,7 +438,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 Log.e(TAG, "Failed to take picture", e);
             }
         } else {
-            throw new IllegalStateException("Motion detection not running");
+            throw new IllegalStateException(mActivity.getString(R.string.camNotInitialized));
         }
     }
 

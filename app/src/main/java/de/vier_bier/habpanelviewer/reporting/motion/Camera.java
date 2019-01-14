@@ -256,7 +256,7 @@ public class Camera {
         }
 
         mVersion = CameraVersion.NONE;
-        mImplementation = new CameraImplNone("camera terminated");
+        mImplementation = new CameraImplNone(mContext.getString(R.string.camAlreadyClosed));
     }
 
 
@@ -368,7 +368,7 @@ public class Camera {
         try {
             latch.await();
         } catch (InterruptedException e) {
-            throw new CameraException("Failed to take picture", e);
+            throw new CameraException(mContext.getString(R.string.camFailedToTakePic), e);
         }
         Log.d(TAG, "mImplementation.takePicture latch counted down");
     }
@@ -462,7 +462,8 @@ public class Camera {
                     Log.d(TAG, "stopping preview finished");
                 } catch (CameraException e) {
                     Log.e(TAG, "Error stopping preview", e);
-                    previewListener.error("Failed to stop preview: " + e.getMessage());
+                    previewListener.error(mContext.getString(R.string.couldNotStopPreview)
+                            + ": " + e.getMessage());
                 }
 
                 mSurface = null;
@@ -478,7 +479,7 @@ public class Camera {
     private ICamera createCamera(CameraVersion version) {
         try {
             if (version == CameraVersion.PERMISSION_MISSING) {
-                return new CameraImplNone("Required permission missing: " + Manifest.permission.CAMERA);
+                return new CameraImplNone(mContext.getString(R.string.permissionMissing, Manifest.permission.CAMERA));
             }
 
             if (version == CameraVersion.V2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

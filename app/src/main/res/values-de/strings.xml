@@ -311,4 +311,13 @@
     <string name="cacheCleared">Cache geleert</string>
     <string name="disableRestart">Neustart abschalten</string>
     <string name="themeChangedRestartRequired">Das Theme wurde geändert. Neustart benötigt um es anzuwenden.</string>
+    <string name="permissionMissing">Berechtigung fehlt: %s</string>
+    <string name="openingCamTimedOut">Zeitüberschreitung beim Öffnen der Kamera</string>
+    <string name="openingCamInterrupted">Öffnen der Kamera unterbrochen</string>
+    <string name="camAlreadyClosed">Kamera bereits geschlossen</string>
+    <string name="couldNotCreatePreview">Konnte Vorschau nicht erstellen</string>
+    <string name="couldNotCreateCapture">Konnte Aufnahme nicht starten</string>
+    <string name="couldNotStopPreview">Konnte Vorschau nicht stoppen</string>
+    <string name="camFailedToTakePic">Konnte Bild nicht aufnehmen</string>
+    <string name="camNotInitialized">Kamera nicht initialisiert</string>
 </resources>

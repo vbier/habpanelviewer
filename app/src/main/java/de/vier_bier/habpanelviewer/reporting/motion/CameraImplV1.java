@@ -154,7 +154,7 @@ class CameraImplV1 extends AbstractCameraImpl {
                 iPictureHandler.picture(data);
             });
         } else {
-            throw new IllegalStateException("Preview not running");
+            throw new IllegalStateException(mActivity.getString(R.string.camNotInitialized));
         }
     }
 
