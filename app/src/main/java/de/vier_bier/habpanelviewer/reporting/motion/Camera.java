@@ -451,15 +451,6 @@ public class Camera {
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
                 Log.d(TAG, "surface destroyed: " + surfaceTexture);
-                try {
-                    Log.d(TAG, "stopping preview...");
-                    mImplementation.stopPreview();
-                    Log.d(TAG, "stopping preview finished");
-                } catch (CameraException e) {
-                    Log.e(TAG, "Error stopping preview", e);
-                    previewListener.error("Failed to stop preview: " + e.getMessage());
-                }
-
                 return mSurface == null;
             }
 
