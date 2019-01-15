@@ -367,7 +367,8 @@ Habpanelviewer benötigt zwingend die folgenden Berechtigungen:
 * android.permission.ACCESS_NETWORK_STATE - um den Verbindungsstatus zu openHAB zu überwachen
 
 Weitere Berechtigungen um die volle Funktionalität verfügbar zu machen:
-* android.permission.BLUETOOTH_ADMIN - um Bluetooth an- und auszuschalten
+* android.permission.BLUETOOTH
+& android.permission.BLUETOOTH_ADMIN - um Bluetooth an- und auszuschalten
 * android.permission.FLASHLIGHT - um den Kamera Blitz zu kontrollieren
 * android.permission.CAMERA - um Fotos aufzunehmen und für die Bewegungserkennung
 * android.permission.WAKE_LOCK - um das Gerät aufzuwecken

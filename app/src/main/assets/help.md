@@ -369,7 +369,8 @@ HPV needs the following permissions:
 * android.permission.ACCESS_NETWORK_STATE - for tracking state of connection to openHAB
 
 Additional optional permissions allowing to use the full functionality:
-* android.permission.BLUETOOTH_ADMIN - for turning bluetooth on and off
+* android.permission.BLUETOOTH
+& android.permission.BLUETOOTH_ADMIN - for turning bluetooth on and off
 * android.permission.FLASHLIGHT - for controlling the camera flashlight
 * android.permission.CAMERA - for capturing photos and motion detection
 * android.permission.WAKE_LOCK - for waking up the device
