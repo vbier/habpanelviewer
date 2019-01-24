@@ -1,11 +1,16 @@
-0.9.24pre
+0.9.24
 ======
 * Kamera Code vereinfacht und in separaten Thread ausgelagert, um ANRs zu beheben
 * neuer Startindikator meldet die App Startzeit an openHAB
 * Reconnect der SSE Verbindung verbessert
 * Sensorwerte werden nun gepuffert, wenn keine SSE Verbindung besteht
 * Neue Einstellung um das automatische Abspielen von Videos in Webseiten zu erlauben
+* Zugang zur Wiki Seite zur Hilfe Aktivität hinzugefügt
+* Beschreibung der Kommandos in der Hilfe verbessert
+* BUG: schalte Hintergrundbeleuchtung richtig aus, wenn SCREEN_DIM empfangen wird
+* BUG: Kamera Probleme bei bestimmten Geräten (z.B. Fire Tab) behoben
 * BUG: fehlender default für Einstellung "Menü Position" hinzugefügt
+* BUG: fehlende Bluetooth Berechtigung hinzugefügt (wird von manchen Geräten zum Bluetooth Umschalten benötigt)
 * BUG: falsche Preview Ausrichtung behoben, wenn API V1 nach API V2 benutzt wird (bei gedrehtem Gerät)
 * BUG: Absturz während des Intros behoben
 

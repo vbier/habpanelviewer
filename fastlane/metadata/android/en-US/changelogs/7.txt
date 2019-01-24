@@ -2,6 +2,12 @@
 * add startup indicator
 * improve reconnect behaviour
 * don't try to set values using rest API when not connected with SSE
+* add setting for allowing video auto-play in browser
+* add wiki access to help activity, add help intro page
+* improve command documentation in help file
+* BUG: correctly disable backlight when SCREEN_DIM is received
+* BUG: fix camera problems on specific devices (e.g. Fire Tab)
 * BUG: fix missing default for menu position preference with german locale
+* BUG: add missing bluetooth permission that is needed on some devices for toggling bluetooth
 * BUG: fix wrong preview orientation if v1 api is used after having used v2 api with rotated device
 * BUG: fixed crash in intro
