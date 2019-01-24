@@ -120,14 +120,14 @@ public class CameraImplV2 extends AbstractCameraImpl {
                     @Override
                     public void onDisconnected(@NonNull CameraDevice cameraDevice) {
                         Log.d(TAG, "mCamera disconnected: " + cameraDevice);
-                        mCamera = null;
+                        unlockCamera();
                         latch.countDown();
                     }
 
                     @Override
                     public void onError(@NonNull CameraDevice cameraDevice, int i) {
                         Log.e(TAG, "mCamera error: " + cameraDevice + ", error code: " + i);
-                        mCamera = null;
+                        unlockCamera();
                         latch.countDown();
                     }
                 }, mPreviewHandler);
@@ -216,7 +216,9 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 mImageReader = ImageReader.newInstance(previewSize.x, previewSize.y,
                         ImageFormat.YUV_420_888, 2);
                 mImageReader.setOnImageAvailableListener(imageReader -> {
-                    if (!mPreviewRunning) {
+                    // check if we have a camera as we might get an image after closing and we
+                    // do not want to set mPreviewRunning to true in this case
+                    if (!mPreviewRunning && mCamera != null) {
                         mPreviewRunning = true;
                         previewListener.started();
                     }
@@ -227,8 +229,6 @@ public class CameraImplV2 extends AbstractCameraImpl {
                             for (ILumaListener l : mListeners) {
                                 if (l.needsPreview()) {
                                     if (ld == null && i != null) {
-                                        Log.v(TAG, "preview image available and needed: size " + i.getWidth() + "x" + i.getHeight());
-
                                         ByteBuffer buffer = i.getPlanes()[0].getBuffer();
                                         ld = new LumaData(buffer, i.getWidth(), i.getHeight());
                                     }

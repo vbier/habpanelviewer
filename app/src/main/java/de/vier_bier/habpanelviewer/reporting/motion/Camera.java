@@ -433,41 +433,25 @@ public class Camera {
         mPreviewView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-                if (surfaceTexture != mSurface) {
+                if (mSurface == null) {
                     previewListener.progress(mContext.getString(R.string.surfaceObtained));
                     mSurface = surfaceTexture;
                     Log.d(TAG, "starting preview...");
                     mImplementation.startPreview(mSurface, previewListener);
                     Log.d(TAG, "starting preview finished");
+                } else {
+                    mPreviewView.setSurfaceTexture(mSurface);
                 }
             }
 
             @Override
             public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
-                if (surfaceTexture != mSurface) {
-                    previewListener.progress(mContext.getString(R.string.surfaceObtained));
-                    mSurface = surfaceTexture;
-                    Log.d(TAG, "starting preview...");
-                    mImplementation.startPreview(mSurface, previewListener);
-                    Log.d(TAG, "starting preview finished");
-                }
             }
 
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
                 Log.d(TAG, "surface destroyed: " + surfaceTexture);
-                try {
-                    Log.d(TAG, "stopping preview...");
-                    mImplementation.stopPreview();
-                    Log.d(TAG, "stopping preview finished");
-                } catch (CameraException e) {
-                    Log.e(TAG, "Error stopping preview", e);
-                    previewListener.error(mContext.getString(R.string.couldNotStopPreview)
-                            + ": " + e.getMessage());
-                }
-
-                mSurface = null;
-                return false;
+                return mSurface == null;
             }
 
             @Override
