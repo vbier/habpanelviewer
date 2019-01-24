@@ -327,12 +327,12 @@ A sample openHAB items file looks like this:
     Number Tablet_Volume
 
 ### connected indicators
-Allows to set the value of an openHAB number item to the app startup time and/or to cyclicly send a time stamp to openHAB.
+Allows to set the value of an openHAB datetime item to the app startup time and/or to cyclicly send a time stamp to openHAB.
 
 A sample openHAB items file looks like this:
 
-    Number Tablet_StartupTime
-    Number Tablet_ConnectedTime
+    DateTime Tablet_StartupTime
+    DateTime Tablet_ConnectedTime
     
 You can use the startup time to trigger rules that can send initializing commands to HPV.
 

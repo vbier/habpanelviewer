@@ -1,5 +1,6 @@
 package de.vier_bier.habpanelviewer.reporting;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -24,6 +25,9 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 public class ConnectedIndicator implements IStateUpdateListener {
     private static final String TAG = "HPV-ConnectedIndicator";
 
+    @SuppressLint("SimpleDateFormat")
+    private SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
     private boolean mStartEnabled;
     private boolean mEnabled;
 
@@ -35,8 +39,8 @@ public class ConnectedIndicator implements IStateUpdateListener {
     private final ServerConnection mServerConnection;
     private ConnectedReportingThread mReportConnection;
 
-    private long mStatus;
-    private long mStartStatus = -1;
+    private String mStatus;
+    private String mStartStatus = null;
     private String mStatusState;
     private String mStartStatusState;
 
@@ -112,9 +116,9 @@ public class ConnectedIndicator implements IStateUpdateListener {
         mStartStatusItem = prefs.getString("pref_startup_item", "");
         mStatusItem = prefs.getString("pref_connected_item", "");
 
-        if (mStartEnabled && mStartStatus == -1) {
-            mStartStatus = System.currentTimeMillis();
-            mServerConnection.updateState(mStartStatusItem, String.valueOf(mStartStatus));
+        if (mStartEnabled && mStartStatus == null) {
+            mStartStatus = mFormat.format(new Date());
+            mServerConnection.updateState(mStartStatusItem, mStartStatus);
         }
 
         if (intervalChanged && !started && mReportConnection != null) {
@@ -167,8 +171,8 @@ public class ConnectedIndicator implements IStateUpdateListener {
         @Override
         public void run() {
             while (fRunning.get()) {
-                mStatus = System.currentTimeMillis();
-                mServerConnection.updateState(mStatusItem, String.valueOf(mStatus));
+                mStatus = mFormat.format(new Date());
+                mServerConnection.updateState(mStatusItem, mStatus);
 
                 synchronized (fRunning) {
                     try {

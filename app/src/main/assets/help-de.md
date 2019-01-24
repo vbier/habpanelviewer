@@ -328,8 +328,8 @@ Meldet die App Startzeit und/oder meldet zyklisch einen Zeitstempel an openHAB.
 
 Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
-    Number Tablet_StartupTime
-    Number Tablet_ConnectedTime
+    DateTime Tablet_StartupTime
+    DateTime Tablet_ConnectedTime
     
 Die Startzeit kann z.B. genutzt werden, um nach dem App Start Initialisierungskommandos an HPV zu schicken.
 
