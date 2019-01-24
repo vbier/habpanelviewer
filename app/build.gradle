@@ -39,12 +39,12 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    annotationProcessor "androidx.room:room-compiler:2.1.0-alpha02"
-    implementation "androidx.room:room-runtime:2.1.0-alpha02"
-    implementation 'androidx.room:room-rxjava2:2.1.0-alpha02'
+    annotationProcessor "androidx.room:room-compiler:2.1.0-alpha03"
+    implementation "androidx.room:room-runtime:2.1.0-alpha03"
+    implementation 'androidx.room:room-rxjava2:2.1.0-alpha03'
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
-    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.android.material:material:1.0.0'
 
     implementation 'com.github.vbier:eventsource-netty5:0.9.3'
