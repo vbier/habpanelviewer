@@ -256,7 +256,7 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         String lastVersion = prefs.getString("pref_app_version", "");
-        if (!lastVersion.equals("") && !BuildConfig.VERSION_NAME.equals(lastVersion)) {
+        if (!"".equals(lastVersion) && !BuildConfig.VERSION_NAME.equals(lastVersion)) {
             SharedPreferences.Editor editor1 = prefs.edit();
             editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
             editor1.apply();
@@ -502,7 +502,7 @@ public class MainActivity extends ScreenControllingActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
         final String menuPos = prefs.getString("pref_menu_position", "");
-        if (menuPos.equalsIgnoreCase(getString(R.string.left))) {
+        if (getString(R.string.left).equalsIgnoreCase(menuPos)) {
             params.gravity = Gravity.START;
         } else {
             params.gravity = Gravity.END;
@@ -593,11 +593,11 @@ public class MainActivity extends ScreenControllingActivity
                 startActivityForResult(launchIntent, REQUEST_PICK_APPLICATION);
             }
         } else if (id == R.id.action_info) {
-            showInfoScreen();
+            startActivity(StatusInfoActivity.class);
         } else if (id == R.id.action_cmd_log) {
-            showCmdLogScreen();
+            startActivity(CommandLogActivity.class);
         } else if (id == R.id.action_help) {
-            showHelpScreen();
+            startActivity(HelpActivity.class);
         } else if (id == R.id.action_intro) {
             showIntro();
         } else if (id == R.id.action_restart) {
@@ -658,23 +658,10 @@ public class MainActivity extends ScreenControllingActivity
         startActivityForResult(intent, 0);
     }
 
-    private void showInfoScreen() {
+    private void startActivity(Class activityClass) {
         Intent intent = new Intent();
-        intent.setClass(MainActivity.this, StatusInfoActivity.class);
+        intent.setClass(MainActivity.this, activityClass);
 
-        startActivityForResult(intent, 0);
-    }
-
-    private void showCmdLogScreen() {
-        Intent intent = new Intent();
-        intent.setClass(MainActivity.this, CommandLogActivity.class);
-
-        startActivityForResult(intent, 0);
-    }
-
-    private void showHelpScreen() {
-        Intent intent = new Intent();
-        intent.setClass(MainActivity.this, HelpActivity.class);
         startActivityForResult(intent, 0);
     }
 

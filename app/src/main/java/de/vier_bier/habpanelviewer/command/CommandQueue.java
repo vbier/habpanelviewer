@@ -93,7 +93,7 @@ public class CommandQueue extends HandlerThread implements IStateUpdateListener 
 
         mUiHandler.post(() -> mCmdLog.setSize(prefs.getInt("pref_command_log_size", 100)));
 
-        mServerConnection.subscribeCommandItems(this, mCmdItemName);
+        mServerConnection.subscribeCommandItem(this, mCmdItemName);
     }
 
     public void terminate() {

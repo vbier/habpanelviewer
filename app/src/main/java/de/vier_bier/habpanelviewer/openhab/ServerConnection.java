@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Base64;
 import android.util.Log;
 
@@ -20,9 +19,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import de.vier_bier.habpanelviewer.NetworkTracker;
 import de.vier_bier.habpanelviewer.openhab.average.AveragePropagator;
 import de.vier_bier.habpanelviewer.openhab.average.IStatePropagator;
@@ -100,14 +102,32 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         }
     }
 
-    public void subscribeCommandItems(IStateUpdateListener l, String... names) {
-        Log.d(TAG, "subscribing command items: " + Arrays.toString(names));
-        subscribeItems(mCmdSubscriptions, l, false, names);
+    public void subscribeCommandItem(IStateUpdateListener l, String name) {
+        if (name != null && !"".equals(name)) {
+            Log.d(TAG, "subscribing command item: " + name);
+            subscribeItems(mCmdSubscriptions, l, false, name);
+        }
     }
 
     public void subscribeItems(IStateUpdateListener l, String... names) {
-        Log.d(TAG, "subscribing items: " + Arrays.toString(names));
-        subscribeItems(mSubscriptions, l, true, names);
+        String[] namesArr = removeEmpty(names);
+
+        if (namesArr.length > 0) {
+            Log.d(TAG, "subscribing items: " + Arrays.toString(namesArr));
+            subscribeItems(mSubscriptions, l, true, namesArr);
+        }
+    }
+
+    private String[] removeEmpty(String[] names) {
+        List<String> list = new ArrayList<>(Arrays.asList(names));
+        Iterator<String> i = list.iterator();
+        while (i.hasNext()) {
+            String s = i.next();
+            if (s == null || s.trim().isEmpty()) {
+                i.remove();
+            }
+        }
+        return list.toArray(new String[0]);
     }
 
     private void subscribeItems(HashMap<String, ArrayList<IStateUpdateListener>> subscriptions,
