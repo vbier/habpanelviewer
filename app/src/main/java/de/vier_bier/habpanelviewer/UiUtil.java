@@ -3,6 +3,7 @@ package de.vier_bier.habpanelviewer;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -40,6 +41,18 @@ public class UiUtil {
             builder.setTitle(title);
             builder.setMessage(text);
             builder.setPositiveButton(android.R.string.ok, null);
+            builder.show();
+        });
+    }
+
+    public static void showCancelDialog(final Activity activity, final String title, final String text,
+                                        final DialogInterface.OnClickListener okayListener) {
+        activity.runOnUiThread(() -> {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle(title);
+            builder.setMessage(text);
+            builder.setPositiveButton(android.R.string.yes, okayListener);
+            builder.setNegativeButton(android.R.string.no, null);
             builder.show();
         });
     }

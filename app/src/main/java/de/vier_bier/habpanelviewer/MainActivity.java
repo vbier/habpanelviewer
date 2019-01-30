@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -499,6 +500,22 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        final boolean psWarnShown = prefs.getBoolean("pref_powerSavingWarningShown", false);
+        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(getPackageName())
+            && !psWarnShown) {
+            SharedPreferences.Editor editor1 = prefs.edit();
+            editor1.putBoolean("pref_powerSavingWarningShown", true);
+            editor1.apply();
+
+            UiUtil.showCancelDialog(this, getString(R.string.powerSavingEnabled), getString(R.string.diablePowerSaving), (dialogInterface, i) -> {
+                Intent intent = new Intent();
+                String packageName = getPackageName();
+                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                startActivity(intent);
+            });
+        }
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
         final String menuPos = prefs.getString("pref_menu_position", "");

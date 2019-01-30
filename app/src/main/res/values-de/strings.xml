@@ -320,4 +320,6 @@
     <string name="couldNotStopPreview">Konnte Vorschau nicht stoppen</string>
     <string name="camFailedToTakePic">Konnte Bild nicht aufnehmen</string>
     <string name="camNotInitialized">Kamera nicht initialisiert</string>
+    <string name="powerSavingEnabled">Stromsparmodes</string>
+    <string name="diablePowerSaving">Momentan ist die Akku-Optimierung für HPV aktiviert. Dies hindert die App am Empfangen von Kommandos und Senden von Sensorwerten während das Gerät im Stand-by ist. Möchtest du die Akku-Optimierung für HPV ausschalten?</string>
 </resources>
