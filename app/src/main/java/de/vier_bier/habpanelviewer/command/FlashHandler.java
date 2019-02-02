@@ -60,7 +60,7 @@ public class FlashHandler implements ICommandHandler {
 
         Matcher m = BLINK_PATTERN.matcher(cmdStr);
 
-        if (controller == null || torchId == null) {
+        if (cmdStr.startsWith("FLASH_") && controller == null || torchId == null) {
             cmd.failed("Flash control not available on this device");
         } else if ("FLASH_ON".equals(cmdStr)) {
             cmd.start();
