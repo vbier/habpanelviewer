@@ -46,13 +46,14 @@ public class UiUtil {
     }
 
     public static void showCancelDialog(final Activity activity, final String title, final String text,
-                                        final DialogInterface.OnClickListener okayListener) {
+                                        final DialogInterface.OnClickListener yesListener,
+                                        final DialogInterface.OnClickListener noListener) {
         activity.runOnUiThread(() -> {
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
             builder.setTitle(title);
             builder.setMessage(text);
-            builder.setPositiveButton(android.R.string.yes, okayListener);
-            builder.setNegativeButton(android.R.string.no, null);
+            builder.setPositiveButton(android.R.string.yes, yesListener);
+            builder.setNegativeButton(android.R.string.no, noListener);
             builder.show();
         });
     }

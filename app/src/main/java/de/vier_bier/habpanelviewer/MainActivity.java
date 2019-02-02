@@ -504,15 +504,15 @@ public class MainActivity extends ScreenControllingActivity
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(getPackageName())
             && !psWarnShown) {
-            SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putBoolean("pref_powerSavingWarningShown", true);
-            editor1.apply();
 
             UiUtil.showCancelDialog(this, getString(R.string.powerSavingEnabled), getString(R.string.diablePowerSaving), (dialogInterface, i) -> {
                 Intent intent = new Intent();
-                String packageName = getPackageName();
                 intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
                 startActivity(intent);
+            }, (dialogInterface, i) -> {
+                SharedPreferences.Editor editor1 = prefs.edit();
+                editor1.putBoolean("pref_powerSavingWarningShown", true);
+                editor1.apply();
             });
         }
 
