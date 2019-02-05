@@ -107,10 +107,14 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                 super.onPageFinished(view, url);
 
                 if (isHabPanelUrl(url)) {
-                    evaluateJavascript("angular.element(document.body).scope().$root.kioskMode", s -> {
-                        mKioskMode = Boolean.parseBoolean(s);
-                        Log.d(TAG, "habpanel page loaded. kioskMode=" + mKioskMode);
-                    });
+                    mKioskMode = url.toLowerCase().contains("kiosk=on");
+
+                    if (!mKioskMode) {
+                        evaluateJavascript("angular.element(document.body).scope().$root.kioskMode", s -> {
+                            mKioskMode = Boolean.parseBoolean(s);
+                        });
+                    }
+                    Log.d(TAG, "habpanel page loaded. url=" + url + ", kioskMode=" + mKioskMode);
                 }
             }
 

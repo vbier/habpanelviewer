@@ -90,13 +90,13 @@
     <string name="pref_javascript">Enable Javascript</string>
     <string name="pref_javascript_summ">Enables Javascript in the WebView</string>
     <string name="pref_allowMixedContent">Allow mixed content</string>
-    <string name="pref_allowMixedContent_summ">Allows http content in https pages.</string>
+    <string name="pref_allowMixedContent_summ">Allows http content in https pages</string>
     <string name="pref_hardwareAccelerated">Use hardware acceleration</string>
     <string name="pref_hardwareAccelerated_summ">HW acceleration uses more resources and might make the app unstable. Please disable in case of crashes</string>
     <string name="pref_disableCache">Disable browser cache</string>
-    <string name="pref_disableCache_summ">Forces loading of every resource from the server.</string>
+    <string name="pref_disableCache_summ">Forces loading of every resource from the server</string>
     <string name="pref_loadStartUrlOnScreenOn">Show Start page on wakeup</string>
-    <string name="pref_loadStartUrlOnScreenOn_summ">Loads the start page every time the device is turned on</string>
+    <string name="pref_loadStartUrlOnScreenOn_summ">Shows the start page when the device is turned on</string>
     <string name="pref_autoplayVideo">Allow video autoplay</string>
     <string name="pref_autoplayVideo_summ">Allows the browser to start videos without user interaction</string>
 

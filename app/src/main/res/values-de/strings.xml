@@ -89,11 +89,11 @@
     <string name="pref_allowMixedContent">Erlaube gemischte Inhalte</string>
     <string name="pref_allowMixedContent_summ">Erlaubt http Inhalte in https Seiten.</string>
     <string name="pref_hardwareAccelerated">Hardware Beschleunigung</string>
-    <string name="pref_hardwareAccelerated_summ">Hardware Beschleunigung benötigt mehr Ressourcen und kann zu Abstürzen führen.</string>
+    <string name="pref_hardwareAccelerated_summ">Hardware Beschleunigung benötigt mehr Ressourcen und kann zu Abstürzen führen</string>
     <string name="pref_disableCache">Deaktiviere Browser Cache</string>
     <string name="pref_disableCache_summ">Erzwingt, das jede Ressource vom Server geladen wird.</string>
-    <string name="pref_loadStartUrlOnScreenOn">Lade Startseite beim Aufwachen</string>
-    <string name="pref_loadStartUrlOnScreenOn_summ">Lädt die Startseite jedes Mal, wenn das Gerät angeschaltet wird</string>
+    <string name="pref_loadStartUrlOnScreenOn">Zeige Startseite beim Aufwachen</string>
+    <string name="pref_loadStartUrlOnScreenOn_summ">Zeigt die Startseite, wenn das Gerät angeschaltet wird</string>
     <string name="pref_autoplayVideo">Erlaube Starten von Videos</string>
     <string name="pref_autoplayVideo_summ">Erlaubt es dem Browser Videos in Webseiten ohne Benutzerinteraktion zu starten</string>
 
