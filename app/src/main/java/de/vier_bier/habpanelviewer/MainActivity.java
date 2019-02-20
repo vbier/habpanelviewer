@@ -165,6 +165,10 @@ public class MainActivity extends ScreenControllingActivity
         EventBus.getDefault().unregister(this);
     }
 
+    public Camera getCamera() {
+        return mCam;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

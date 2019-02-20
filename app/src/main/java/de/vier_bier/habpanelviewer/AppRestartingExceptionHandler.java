@@ -50,6 +50,9 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
     public void uncaughtException(Thread thread, Throwable exception) {
         Log.e(TAG, "Uncaught exception", exception);
 
+        // make sure to close the camera
+        mCtx.getCamera().terminate();
+
         if (mCount < mMaxRestarts && mRestartEnabled) {
             restartApp(mCtx, mCount);
         } else {
