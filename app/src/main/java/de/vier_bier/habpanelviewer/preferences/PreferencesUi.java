@@ -1,9 +1,7 @@
 package de.vier_bier.habpanelviewer.preferences;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
-import android.preference.PreferenceManager;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
@@ -20,9 +18,7 @@ public class PreferencesUi extends PreferenceFragment {
         ListPreference themePreference = (ListPreference) findPreference("pref_theme");
         themePreference.setOnPreferenceChangeListener((preference, o) -> {
             if (getActivity() != null && !getActivity().isFinishing()) {
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-                if (UiUtil.themeChanged(prefs, getActivity())) {
+                if (UiUtil.themeChanged((String) o, getActivity())) {
                     UiUtil.showSnackBar(getActivity().findViewById(R.id.myCoordinatorLayout),
                             R.string.themeChangedRestartRequired, R.string.action_restart,
                             view -> {

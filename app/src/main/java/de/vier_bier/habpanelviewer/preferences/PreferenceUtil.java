@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
@@ -22,6 +23,8 @@ import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 
 class PreferenceUtil {
+    private static final String TAG = "HPV-PreferenceUtil";
+
     static void saveSharedPreferencesToFile(Context ctx, View v) {
         ChooserDialog d = new ChooserDialog().with(ctx)
                 .withFilter(true, false)
@@ -94,6 +97,9 @@ class PreferenceUtil {
                     prefEdit.putLong(key, (Long) v);
                 else if (v instanceof String)
                     prefEdit.putString(key, ((String) v));
+                else {
+                    Log.d(TAG, "could not restore preference of class " + v.getClass());
+                }
             }
             prefEdit.apply();
         }

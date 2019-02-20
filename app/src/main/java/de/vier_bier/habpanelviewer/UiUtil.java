@@ -10,10 +10,6 @@ import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -21,9 +17,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 
 /**
  * UI utility methods.
@@ -104,16 +106,21 @@ public class UiUtil {
         return R.style.Theme_AppCompat_Light_NoActionBar;
     }
 
-    public static boolean themeChanged(SharedPreferences prefs, Activity ctx) {
+    public static boolean themeChanged(String theme, Activity ctx) {
         Resources.Theme dummy = ctx.getResources().newTheme();
-        dummy.applyStyle(getThemeId(prefs.getString("pref_theme", "dark")), true);
+        dummy.applyStyle(getThemeId(theme), true);
 
         TypedValue a = new TypedValue();
         ctx.getTheme().resolveAttribute(android.R.attr.windowBackground, a, true);
         TypedValue b = new TypedValue();
         dummy.resolveAttribute(android.R.attr.windowBackground, b, true);
 
-        return a.data == b.data;
+        return a.data != b.data;
+    }
+
+    public static boolean themeChanged(SharedPreferences prefs, Activity ctx) {
+        String theme = prefs.getString("pref_theme", "dark");
+        return themeChanged(theme, ctx);
     }
 
     @SuppressLint("ResourceType")
