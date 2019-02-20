@@ -17,6 +17,7 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
@@ -354,6 +355,8 @@ public class CameraImplV2 extends AbstractCameraImpl {
     public void takePicture(IPictureListener iPictureHandler) {
         if (mCamera != null) {
             if (mPictureThread == null) {
+                Log.d(TAG, "creating picture thread...");
+
                 mPictureThread = new HandlerThread("takePictureThread");
                 mPictureThread.start();
                 mPictureHandler = new Handler(mPictureThread.getLooper());
@@ -365,12 +368,19 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 int width = 640;
                 int height = 480;
 
+                Log.d(TAG, "creating ImageReader...");
                 ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
+                Log.d(TAG, "adding surfaces...");
                 List<Surface> outputSurfaces = new ArrayList<>(2);
                 outputSurfaces.add(reader.getSurface());
+                Log.d(TAG, "creating builder...");
                 final CaptureRequest.Builder captureBuilder = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+                Log.d(TAG, "adding target...");
                 captureBuilder.addTarget(reader.getSurface());
+                Log.d(TAG, "setting control mode...");
                 captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+
+                Log.d(TAG, "creating readerListener...");
                 ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                     byte[] mBuffer;
 
@@ -390,6 +400,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                     }
                 };
                 reader.setOnImageAvailableListener(readerListener, mPictureHandler);
+                Log.d(TAG, "creating captureListener...");
                 final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
                     @Override
                     public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
@@ -414,8 +425,27 @@ public class CameraImplV2 extends AbstractCameraImpl {
                         Log.v(TAG, "onCaptureSequenceAborted");
                         mTakingPicture = false;
                     }
+
+                    @Override
+                    public void onCaptureStarted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, long timestamp, long frameNumber) {
+                        Log.v(TAG, "onCaptureStarted");
+                        super.onCaptureStarted(session, request, timestamp, frameNumber);
+                    }
+
+                    @Override
+                    public void onCaptureProgressed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureResult partialResult) {
+                        Log.v(TAG, "onCaptureProgressed");
+                        super.onCaptureProgressed(session, request, partialResult);
+                    }
+
+                    @Override
+                    public void onCaptureBufferLost(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull Surface target, long frameNumber) {
+                        Log.v(TAG, "onCaptureBufferLost");
+                        super.onCaptureBufferLost(session, request, target, frameNumber);
+                    }
                 };
 
+                Log.d(TAG, "creating capture session...");
                 mCamera.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                     @Override
                     public void onConfigured(@NonNull CameraCaptureSession session) {
@@ -432,6 +462,36 @@ public class CameraImplV2 extends AbstractCameraImpl {
                     public void onConfigureFailed(@NonNull CameraCaptureSession session) {
                         iPictureHandler.error(mActivity.getString(R.string.couldNotCreateCapture));
                         mTakingPicture = false;
+                    }
+
+                    @Override
+                    public void onReady(@NonNull CameraCaptureSession session) {
+                        Log.v(TAG, "onReady");
+                        super.onReady(session);
+                    }
+
+                    @Override
+                    public void onActive(@NonNull CameraCaptureSession session) {
+                        Log.v(TAG, "onActive");
+                        super.onActive(session);
+                    }
+
+                    @Override
+                    public void onCaptureQueueEmpty(@NonNull CameraCaptureSession session) {
+                        Log.v(TAG, "onCaptureQueueEmpty");
+                        super.onCaptureQueueEmpty(session);
+                    }
+
+                    @Override
+                    public void onClosed(@NonNull CameraCaptureSession session) {
+                        Log.v(TAG, "onClosed");
+                        super.onClosed(session);
+                    }
+
+                    @Override
+                    public void onSurfacePrepared(@NonNull CameraCaptureSession session, @NonNull Surface surface) {
+                        Log.v(TAG, "onSurfacePrepared");
+                        super.onSurfacePrepared(session, surface);
                     }
                 }, mPictureHandler);
             } catch (CameraAccessException e) {
