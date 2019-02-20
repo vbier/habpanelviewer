@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -97,7 +98,7 @@ public class PreferenceActivity extends ScreenControllingActivity implements Pre
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
             } else {
                 PreferenceUtil.saveSharedPreferencesToFile(this, mToolbar);
