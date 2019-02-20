@@ -147,13 +147,7 @@ public class Camera {
         }
 
         if (mListeners.isEmpty() && !mShowPreview) {
-            mWorkHandler.post(() -> {
-                try {
-                    stopPreview();
-                } catch (CameraException e) {
-                    Log.e(TAG, "Could not disable MotionDetector", e);
-                }
-            });
+            mWorkHandler.post(this::stopPreview);
         }
     }
 
@@ -248,11 +242,7 @@ public class Camera {
         EventBus.getDefault().unregister(this);
 
         if (isPreviewRunning()) {
-            try {
-                stopPreview();
-            } catch (CameraException e) {
-                Log.e(TAG, "failed to stop preview on termination", e);
-            }
+            stopPreview();
         }
 
         mVersion = CameraVersion.NONE;
@@ -395,11 +385,15 @@ public class Camera {
         }
     }
 
-    private void stopPreview() throws CameraException {
+    private void stopPreview() {
         if (mImplementation.isPreviewRunning()) {
-            Log.d(TAG, "stopping preview...");
-            mImplementation.stopPreview();
-            Log.d(TAG, "stopping preview finished");
+            try {
+                Log.d(TAG, "stopping preview...");
+                mImplementation.stopPreview();
+                Log.d(TAG, "stopping preview finished");
+            } catch (CameraException e) {
+                Log.e(TAG, "stopping preview failed", e);
+            }
         }
 
         if (mImplementation.isCameraLocked()) {
