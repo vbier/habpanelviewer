@@ -173,6 +173,8 @@ public class MainActivity extends ScreenControllingActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        startService(new Intent(getBaseContext(), TrackShutdownService.class));
+
         PreferenceManager.setDefaultValues(this, R.xml.preferences_main, false);
         for (int id : new int[] {R.xml.preferences_battery,
                 R.xml.preferences_brightness,
