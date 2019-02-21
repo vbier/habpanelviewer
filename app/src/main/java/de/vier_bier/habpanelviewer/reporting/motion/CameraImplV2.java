@@ -386,6 +386,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
                     @Override
                     public void onImageAvailable(ImageReader imageReader) {
+                        Log.d(TAG, "onImageAvailable");
                         try (Image image = imageReader.acquireLatestImage()) {
                             ByteBuffer buffer = image.getPlanes()[0].getBuffer();
 
@@ -449,6 +450,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 mCamera.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                     @Override
                     public void onConfigured(@NonNull CameraCaptureSession session) {
+                        Log.v(TAG, "onConfigured");
                         try {
                             session.capture(captureBuilder.build(), captureListener, mPictureHandler);
                         } catch (Throwable t) {
@@ -460,6 +462,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
                     @Override
                     public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+                        Log.e(TAG, "onConfigureFailed");
                         iPictureHandler.error(mActivity.getString(R.string.couldNotCreateCapture));
                         mTakingPicture = false;
                     }
