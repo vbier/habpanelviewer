@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,8 +19,6 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
  * Activity that support controlling screen state.
  */
 public abstract class ScreenControllingActivity extends AppCompatActivity {
-    private static final String TAG = "HPV-ScreenControllingAc";
-
     private static final String ACTION_KEEP_SCREEN_ON = "ACTION_KEEP_SCREEN_ON";
     private static final String FLAG_KEEP_SCREEN_ON = "keepScreenOn";
     private static boolean mKeepScreenOn = false;
@@ -36,7 +33,6 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
     private static int mTouchTimeout;
 
     public static void setBrightness(Context ctx, float brightness) {
-        Log.d(TAG, "sending brightness intent: " + brightness);
         mBrightness = brightness;
 
         Intent i = new Intent(ACTION_SET_BRIGHTNESS);
@@ -45,7 +41,6 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
     }
 
     public static void setKeepScreenOn(Context ctx, boolean keepOn) {
-        Log.d(TAG, "sending keepOn intent: " + keepOn);
         mKeepScreenOn = keepOn;
 
         Intent i = new Intent(ACTION_KEEP_SCREEN_ON);
@@ -82,12 +77,8 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
         f.addAction(ACTION_KEEP_SCREEN_ON);
         f.addAction(ACTION_SET_BRIGHTNESS);
         LocalBroadcastManager.getInstance(this).registerReceiver(onEvent, f);
-        Log.d(TAG, "registered receiver");
 
-        Log.d(TAG, "onStart: set keep on: " + mKeepScreenOn);
         setKeepScreenOn(mKeepScreenOn);
-
-        Log.d(TAG, "onStart: set brightness: " + mBrightness);
         setBrightness(mBrightness);
     }
 
@@ -112,7 +103,6 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(onEvent);
-        Log.d(TAG, "receiver unregistered");
 
         super.onStop();
     }
@@ -124,18 +114,11 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
             if (ACTION_KEEP_SCREEN_ON.equals(i.getAction())) {
                 final boolean keepOn = i.getBooleanExtra(FLAG_KEEP_SCREEN_ON, false);
 
-                runOnUiThread(() -> {
-                    Log.d(TAG, "onReceive: set keep on: " + keepOn);
-                    setKeepScreenOn(keepOn);
-                });
+                runOnUiThread(() -> setKeepScreenOn(keepOn));
             } else if (ACTION_SET_BRIGHTNESS.equals(i.getAction())) {
                 final float brightness = i.getFloatExtra(FLAG_BRIGHTNESS, 1.0f);
 
-                runOnUiThread(() -> {
-                    Log.d(TAG, "onReceive: set brightness: " + brightness);
-                    setBrightness(brightness);
-                });
-
+                runOnUiThread(() -> setBrightness(brightness));
             }
         }
     };

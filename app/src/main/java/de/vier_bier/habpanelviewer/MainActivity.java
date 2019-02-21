@@ -263,6 +263,7 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         String lastVersion = prefs.getString("pref_app_version", "");
+        Log.d(TAG, "Version: " + getAppVersion());
         if (!"".equals(lastVersion) && !BuildConfig.VERSION_NAME.equals(lastVersion)) {
             SharedPreferences.Editor editor1 = prefs.edit();
             editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
@@ -436,12 +437,7 @@ public class MainActivity extends ScreenControllingActivity
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
-        String version = BuildConfig.VERSION_NAME;
-        if (version.endsWith("pre")) {
-            Date buildDate = new Date(BuildConfig.TIMESTAMP);
-            version += " (" + UiUtil.formatDateTime(buildDate) + ")";
-        }
-        status.set(getString(R.string.app_name), "Version: " + version);
+        status.set(getString(R.string.app_name), "Version: " + getAppVersion());
 
         if (mFlashService == null || !mFlashService.isAvailable()) {
             status.set(getString(R.string.flashControl), getString(R.string.unavailable));
@@ -470,6 +466,16 @@ public class MainActivity extends ScreenControllingActivity
 
         webview += "user agent " + userAgentString;
         status.set("Webview", webview.trim());
+    }
+
+    private String getAppVersion() {
+        String version = BuildConfig.VERSION_NAME;
+        if (version.endsWith("pre")) {
+            Date buildDate = new Date(BuildConfig.TIMESTAMP);
+            version += " (" + UiUtil.formatDateTime(buildDate) + ")";
+        }
+
+        return version;
     }
 
     @Override
