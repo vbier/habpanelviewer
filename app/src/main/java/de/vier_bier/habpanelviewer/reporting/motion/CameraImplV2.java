@@ -357,7 +357,17 @@ public class CameraImplV2 extends AbstractCameraImpl {
             if (mPictureThread == null) {
                 Log.d(TAG, "creating picture thread...");
 
-                mPictureThread = new HandlerThread("takePictureThread");
+                mPictureThread = new HandlerThread("takePictureThread") {
+                    @Override
+                    public void run() {
+                        Log.d(TAG, "takePictureThread running...");
+                        try {
+                            super.run();
+                        } finally {
+                            Log.d(TAG, "takePictureThread exiting...");
+                       }
+                    }
+                };
                 mPictureThread.start();
                 mPictureHandler = new Handler(mPictureThread.getLooper());
             }
@@ -497,8 +507,13 @@ public class CameraImplV2 extends AbstractCameraImpl {
                         super.onSurfacePrepared(session, surface);
                     }
                 }, mPictureHandler);
+
+                Log.d(TAG, "capture session created");
             } catch (CameraAccessException e) {
                 Log.e(TAG, "Failed to take picture", e);
+                iPictureHandler.error(mActivity.getString(R.string.camFailedToTakePic));
+            } finally {
+                Log.d(TAG, "leaving takePicture");
             }
         } else {
             throw new IllegalStateException(mActivity.getString(R.string.camNotInitialized));
