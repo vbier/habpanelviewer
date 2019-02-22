@@ -41,6 +41,8 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
@@ -111,6 +113,8 @@ public class MainActivity extends ScreenControllingActivity
     }
 
     public void destroy() {
+        Log.v(TAG, "in destroy");
+
         if (mCapturer != null) {
             mCapturer.terminate();
             mCapturer = null;
@@ -126,9 +130,13 @@ public class MainActivity extends ScreenControllingActivity
             mMotionDetector = null;
         }
 
+        final CountDownLatch l = new CountDownLatch(1);
         if (mCam != null) {
-            mCam.terminate();
+            Log.v(TAG, "terminating camera...");
+            mCam.terminate(l);
             mCam = null;
+        } else {
+            l.countDown();
         }
 
         if (mServerConnection != null) {
@@ -163,6 +171,12 @@ public class MainActivity extends ScreenControllingActivity
             mWebView.unregister();
         }
         EventBus.getDefault().unregister(this);
+
+        try {
+            l.await(2, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Log.e(TAG, "failed to terminate camera");
+        }
     }
 
     public Camera getCamera() {
