@@ -10,6 +10,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
@@ -51,7 +54,13 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
         Log.e(TAG, "Uncaught exception", exception);
 
         // make sure to close the camera
-        mCtx.getCamera().terminate();
+        final CountDownLatch l = new CountDownLatch(1);
+        mCtx.getCamera().terminate(l);
+        try {
+            l.await(2, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Log.e(TAG, "failed to terminate camera");
+        }
 
         if (mCount < mMaxRestarts && mRestartEnabled) {
             restartApp(mCtx, mCount);

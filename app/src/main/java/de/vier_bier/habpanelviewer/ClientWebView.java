@@ -110,9 +110,8 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                     mKioskMode = url.toLowerCase().contains("kiosk=on");
 
                     if (!mKioskMode) {
-                        evaluateJavascript("angular.element(document.body).scope().$root.kioskMode", s -> {
-                            mKioskMode = Boolean.parseBoolean(s);
-                        });
+                        evaluateJavascript("angular.element(document.body).scope().$root.kioskMode",
+                                s -> mKioskMode = Boolean.parseBoolean(s));
                     }
                     Log.d(TAG, "habpanel page loaded. url=" + url + ", kioskMode=" + mKioskMode);
                 }
@@ -255,16 +254,14 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     }
 
     void updateFromPreferences(SharedPreferences prefs) {
-        Log.d(TAG, "updateFromPreferences");
-
         String theme = prefs.getString("pref_theme", "dark");
         mDarkTheme = "dark".equals(theme);
         mImmersive = prefs.getBoolean("pref_immersive", false);
 
-        Boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
-        Boolean isJavascript = prefs.getBoolean("pref_javascript", false);
-        Boolean isAutoplay = prefs.getBoolean("pref_autoplay_video", false);
-        Boolean cacheDeactivated = prefs.getBoolean("pref_disable_cache", false);
+        boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
+        boolean isJavascript = prefs.getBoolean("pref_javascript", false);
+        boolean isAutoplay = prefs.getBoolean("pref_autoplay_video", false);
+        boolean cacheDeactivated = prefs.getBoolean("pref_disable_cache", false);
 
         mDraggingPrevented = prefs.getBoolean("pref_prevent_dragging", false);
 
@@ -280,24 +277,20 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         if (mStartPage == null || !mStartPage.equalsIgnoreCase(prefs.getString("pref_start_url", ""))) {
             mStartPage = prefs.getString("pref_start_url", "");
             loadStartUrl = true;
-            Log.d(TAG, "updateFromPreferences: mStartPage=" + mStartPage);
         }
         loadStartUrl = loadStartUrl || isShowingErrorPage();
 
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", "!$%"))) {
             mServerURL = prefs.getString("pref_server_url", "");
             loadStartUrl = loadStartUrl || mStartPage == null || mStartPage.isEmpty();
-            Log.d(TAG, "updateFromPreferences: mServerURL=" + mServerURL);
         }
         if (mAllowMixedContent != prefs.getBoolean("pref_allow_mixed_content", false)) {
             mAllowMixedContent = prefs.getBoolean("pref_allow_mixed_content", false);
-            Log.d(TAG, "updateFromPreferences: mAllowMixedContent=" + mAllowMixedContent);
             reloadUrl = true;
         }
 
         if (mHwAccelerated != prefs.getBoolean("pref_hardware_accelerated", false)) {
             mHwAccelerated = prefs.getBoolean("pref_hardware_accelerated", false);
-            Log.d(TAG, "updateFromPreferences: mHwAccelerated=" + mHwAccelerated);
 
             if (mHwAccelerated) {
                 setLayerType(LAYER_TYPE_HARDWARE, null);
@@ -312,15 +305,12 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         }
 
         if (mNetworkTracker.isConnected()) {
-            Log.d(TAG, "updateFromPreferences: connected");
-
             if (loadStartUrl) {
                 loadStartUrl();
             } else if (reloadUrl) {
                 reload();
             }
         } else {
-            Log.d(TAG, "updateFromPreferences: NOT connected");
             showHtml(getContext().getString(R.string.waitingNetwork),
                     getContext().getString(R.string.notConnectedReloadPendingHTML));
         }
@@ -453,7 +443,6 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
     @Override
     public boolean canGoBackOrForward(int steps) {
-        Log.d(TAG, "canGoBackOrForward: steps=" + steps);
         int increment = steps < 0 ? -1 : 1;
 
         WebBackForwardList list = copyBackForwardList();
@@ -462,12 +451,11 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         int startIdx = list.getCurrentIndex();
         for (int i = startIdx + increment; i < list.getSize() && i >= 0; i += increment) {
             WebHistoryItem item = list.getItemAtIndex(i);
-            Log.d(TAG, "canGoBackOrForward: item=" + item.getOriginalUrl());
+
             if (!item.getOriginalUrl().startsWith("data:")) {
                 count += increment;
 
                 if (count == steps) {
-                    Log.d(TAG, "canGoBackOrForward: true");
                     return true;
                 }
             }
@@ -478,7 +466,6 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
     @Override
     public void goBackOrForward(int steps) {
-        Log.d(TAG, "goBackOrForward: steps=" + steps);
         int increment = steps < 0 ? -1 : 1;
 
         WebBackForwardList list = copyBackForwardList();
@@ -489,12 +476,11 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         for (int i = startIdx + increment; i < list.getSize() && i >= 0; i += increment) {
             intCount += increment;
             WebHistoryItem item = list.getItemAtIndex(i);
-            Log.d(TAG, "goBackOrForward: item=" + item.getOriginalUrl());
+
             if (!item.getOriginalUrl().startsWith("data:")) {
                 count += increment;
 
                 if (count == steps) {
-                    Log.d(TAG, "goBackOrForward: intCount=" + intCount + ", item=" + item.getOriginalUrl());
                     super.goBackOrForward(intCount);
                     return;
                 }

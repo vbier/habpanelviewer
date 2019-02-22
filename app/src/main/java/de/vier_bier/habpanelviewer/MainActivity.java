@@ -41,6 +41,8 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.GravityCompat;
@@ -111,6 +113,8 @@ public class MainActivity extends ScreenControllingActivity
     }
 
     public void destroy() {
+        Log.v(TAG, "in destroy");
+
         if (mCapturer != null) {
             mCapturer.terminate();
             mCapturer = null;
@@ -126,9 +130,13 @@ public class MainActivity extends ScreenControllingActivity
             mMotionDetector = null;
         }
 
+        final CountDownLatch l = new CountDownLatch(1);
         if (mCam != null) {
-            mCam.terminate();
+            Log.v(TAG, "terminating camera...");
+            mCam.terminate(l);
             mCam = null;
+        } else {
+            l.countDown();
         }
 
         if (mServerConnection != null) {
@@ -163,6 +171,12 @@ public class MainActivity extends ScreenControllingActivity
             mWebView.unregister();
         }
         EventBus.getDefault().unregister(this);
+
+        try {
+            l.await(2, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Log.e(TAG, "failed to terminate camera");
+        }
     }
 
     public Camera getCamera() {
@@ -263,6 +277,7 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         String lastVersion = prefs.getString("pref_app_version", "");
+        Log.d(TAG, "Version: " + getAppVersion());
         if (!"".equals(lastVersion) && !BuildConfig.VERSION_NAME.equals(lastVersion)) {
             SharedPreferences.Editor editor1 = prefs.edit();
             editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
@@ -436,12 +451,7 @@ public class MainActivity extends ScreenControllingActivity
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
-        String version = BuildConfig.VERSION_NAME;
-        if (version.endsWith("pre")) {
-            Date buildDate = new Date(BuildConfig.TIMESTAMP);
-            version += " (" + UiUtil.formatDateTime(buildDate) + ")";
-        }
-        status.set(getString(R.string.app_name), "Version: " + version);
+        status.set(getString(R.string.app_name), "Version: " + getAppVersion());
 
         if (mFlashService == null || !mFlashService.isAvailable()) {
             status.set(getString(R.string.flashControl), getString(R.string.unavailable));
@@ -470,6 +480,16 @@ public class MainActivity extends ScreenControllingActivity
 
         webview += "user agent " + userAgentString;
         status.set("Webview", webview.trim());
+    }
+
+    private String getAppVersion() {
+        String version = BuildConfig.VERSION_NAME;
+        if (version.endsWith("pre")) {
+            Date buildDate = new Date(BuildConfig.TIMESTAMP);
+            version += " (" + UiUtil.formatDateTime(buildDate) + ")";
+        }
+
+        return version;
     }
 
     @Override

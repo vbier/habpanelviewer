@@ -90,10 +90,11 @@ public class Camera {
         });
     }
 
-    public void terminate() {
+    public void terminate(CountDownLatch l) {
         mWorkHandler.post(() -> {
             Log.d(TAG, "terminating...");
             doTerminate();
+            l.countDown();
             Log.d(TAG, "terminating finished");
         });
     }

@@ -222,7 +222,6 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
                     return;
                 }
 
-                Log.d(TAG, "creating SSE handler and EventSource...");
                 client = new SSEHandler();
                 mEventSource = new EventSource(client);
 
@@ -379,6 +378,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         @Override
         public void onMessage(String event, MessageEvent message) {
             Log.v(TAG, "onMessage: message=" + message);
+
             if (message != null) {
                 try {
                     JSONObject jObject = new JSONObject(message.data);
@@ -425,9 +425,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         }
 
         @Override
-        public void onLogMessage(String s) {
-            Log.v(TAG, "SSE onLogMessage: " + s);
-        }
+        public void onLogMessage(String s) { }
 
         private synchronized void fetchCurrentItemsState() {
             HashSet<String> missingItems = new HashSet<>();
