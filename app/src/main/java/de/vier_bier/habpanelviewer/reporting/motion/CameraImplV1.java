@@ -94,7 +94,7 @@ class CameraImplV1 extends AbstractCameraImpl {
         }
 
         if (mCamera != null) {
-            Log.v(TAG, "trying to start preview...");
+            Log.v(TAG, "trying to start preview for surface " + surface + "...");
 
             try {
                 mCamera.setPreviewTexture(surface);
@@ -108,6 +108,8 @@ class CameraImplV1 extends AbstractCameraImpl {
                 mCamera.setParameters(parameters);
                 mCamera.setPreviewCallback((bytes, camera) -> {
                     if (!mPreviewRunning) {
+                        Log.d(TAG, "preview callback invoked for first time");
+
                         mPreviewRunning = true;
                         previewListener.started();
                     }
@@ -120,6 +122,7 @@ class CameraImplV1 extends AbstractCameraImpl {
                     }
                 });
 
+                Log.d(TAG, "calling mCamera.startPreview()");
                 mCamera.startPreview();
             } catch (IOException e) {
                 previewListener.exception(e);
@@ -147,10 +150,13 @@ class CameraImplV1 extends AbstractCameraImpl {
     @Override
     public void takePicture(IPictureListener iPictureHandler) {
         if (isPreviewRunning()) {
+            Log.d(TAG, "calling mCamera.takePicture...");
             mCamera.takePicture(null, null, (bytes, camera) -> {
+                Log.d(TAG, "in mCamera.takePicture...");
                 byte[] data = new byte[bytes.length];
                 System.arraycopy(bytes, 0, data, 0, bytes.length);
 
+                Log.d(TAG, "calling iPictureHandler.picture...");
                 iPictureHandler.picture(data);
             });
         } else {

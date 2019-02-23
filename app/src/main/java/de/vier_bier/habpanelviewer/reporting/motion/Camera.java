@@ -293,16 +293,18 @@ public class Camera {
                             rotated.compress(Bitmap.CompressFormat.JPEG, compQuality, stream);
                             h.picture(stream.toByteArray());
 
-                            try {
+                            if (!wasPreviewRunning) {
                                 stopPreview();
-
-                                if (wasPreviewRunning) {
+                            } else if (mVersion == CameraVersion.V1) {
+                                try {
+                                    stopPreview();
                                     startPreview(new ICamera.LoggingPreviewListener());
+                                } catch (CameraException e) {
+                                    Log.e(TAG, "Error restarting preview", e);
+                                    h.error(e.getMessage());
                                 }
-                            } catch (CameraException e) {
-                                Log.e(TAG, "Error restarting preview", e);
-                                h.error(e.getMessage());
                             }
+
                             latch.countDown();
                         }
 
