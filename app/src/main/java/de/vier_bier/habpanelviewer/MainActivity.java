@@ -26,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -212,6 +213,9 @@ public class MainActivity extends ScreenControllingActivity
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
+        String lastVersion = prefs.getString("pref_app_version", "");
+        Log.d(TAG, "Version: " + getAppVersion());
+
         boolean introShown = prefs.getBoolean("pref_intro_shown", false);
         if (!introShown) {
             mIntroShowing = true;
@@ -262,22 +266,25 @@ public class MainActivity extends ScreenControllingActivity
             mFlashService = new FlashHandler((CameraManager) getSystemService(Context.CAMERA_SERVICE));
         }
 
+        final SurfaceView motionView = findViewById(R.id.motionView);
+        final TextureView previewView = findViewById(R.id.previewView);
         if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
             if (mCam == null) {
-                mCam = new Camera(this, findViewById(R.id.previewView), prefs);
+                mCam = new Camera(this, previewView, prefs);
             }
 
             if (mMotionVisualizer == null) {
                 int scaledSize = getResources().getDimensionPixelSize(R.dimen.motionFontSize);
-                final SurfaceView motionView = findViewById(R.id.motionView);
                 mMotionVisualizer = new MotionVisualizer(motionView, navigationView, prefs, mCam.getSensorOrientation(), scaledSize);
 
                 mMotionDetector = new MotionDetector(this, mCam, mMotionVisualizer, mServerConnection);
             }
+        } else {
+            Log.d(TAG, "no camera feature_front, hiding preview");
+            motionView.setVisibility(View.INVISIBLE);
+            previewView.setVisibility(View.INVISIBLE);
         }
 
-        String lastVersion = prefs.getString("pref_app_version", "");
-        Log.d(TAG, "Version: " + getAppVersion());
         if (!"".equals(lastVersion) && !BuildConfig.VERSION_NAME.equals(lastVersion)) {
             SharedPreferences.Editor editor1 = prefs.edit();
             editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
@@ -599,7 +606,7 @@ public class MainActivity extends ScreenControllingActivity
         SurfaceView motionView = findViewById(R.id.motionView);
         boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
 
-        if (showPreview) {
+        if (showPreview && mCam != null) {
             motionView.setVisibility(View.VISIBLE);
         } else {
             motionView.setVisibility(View.INVISIBLE);
