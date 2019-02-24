@@ -352,9 +352,7 @@ public class MainActivity extends ScreenControllingActivity
 
             @Override
             public void disconnected() {
-                if (prefs.getBoolean("pref_track_browser_connection", false)) {
-                    mServerConnection.reconnect();
-                }
+                mServerConnection.reconnect();
             }
         }, mNetworkTracker);
         mCommandQueue.addHandler(new WebViewHandler(mWebView));

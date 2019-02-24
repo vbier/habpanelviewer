@@ -39,5 +39,10 @@
         android:defaultValue="false"
         android:summary="@string/pref_autoplayVideo_summ"
         android:title="@string/pref_autoplayVideo" />
+    <CheckBoxPreference
+        android:key="pref_log_browser_messages"
+        android:defaultValue="false"
+        android:summary="@string/pref_logBrowserMsgs_summ"
+        android:title="@string/pref_logBrowserMsgs" />
 
 </PreferenceScreen>

@@ -96,6 +96,8 @@
     <string name="pref_loadStartUrlOnScreenOn_summ">Zeigt die Startseite, wenn das Gerät angeschaltet wird</string>
     <string name="pref_autoplayVideo">Erlaube Starten von Videos</string>
     <string name="pref_autoplayVideo_summ">Erlaubt es dem Browser Videos in Webseiten ohne Benutzerinteraktion zu starten</string>
+    <string name="pref_logBrowserMsgs">Logge Browser Meldungen</string>
+    <string name="pref_logBrowserMsgs_summ">Schreibt Browser Konsole Meldungen ins System Log</string>
 
     <string name="pref_commandItem">Kommando Item</string>
     <string name="pref_commandItem_summ">Name des openHAB Items in dem openHAB Kommandos an HABPanelViewer sendet</string>

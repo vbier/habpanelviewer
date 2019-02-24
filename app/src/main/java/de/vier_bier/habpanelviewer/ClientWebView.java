@@ -50,6 +50,8 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     private NetworkTracker mNetworkTracker;
     private boolean mDarkTheme;
     private boolean mImmersive;
+    private boolean mTrackBrowserConnection;
+    private boolean mLogBrowserMsg;
 
     public ClientWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -92,11 +94,10 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                if (consoleMessage.message().contains("SSE error, closing EventSource")) {
+                if (mTrackBrowserConnection && consoleMessage.message().contains("SSE error, closing EventSource")) {
                     cl.disconnected();
                 }
-
-                return super.onConsoleMessage(consoleMessage);
+                return !mLogBrowserMsg || super.onConsoleMessage(consoleMessage);
             }
         });
 
@@ -257,6 +258,8 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         String theme = prefs.getString("pref_theme", "dark");
         mDarkTheme = "dark".equals(theme);
         mImmersive = prefs.getBoolean("pref_immersive", false);
+        mTrackBrowserConnection = prefs.getBoolean("pref_track_browser_connection", false);
+        mLogBrowserMsg = prefs.getBoolean("pref_log_browser_messages", false);
 
         boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
         boolean isJavascript = prefs.getBoolean("pref_javascript", false);

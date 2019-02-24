@@ -99,6 +99,8 @@
     <string name="pref_loadStartUrlOnScreenOn_summ">Shows the start page when the device is turned on</string>
     <string name="pref_autoplayVideo">Allow video autoplay</string>
     <string name="pref_autoplayVideo_summ">Allows the browser to start videos without user interaction</string>
+    <string name="pref_logBrowserMsgs">Log browser messages</string>
+    <string name="pref_logBrowserMsgs_summ">Writes browser console messages to the system log</string>
 
     <string name="pref_commandItem">Command Item</string>
     <string name="pref_commandItem_summ">Name of the Item that is used by openHAB to send commands to HABPanelViewer</string>
