@@ -47,14 +47,26 @@ class CameraImplV1 extends AbstractCameraImpl {
 
     @Override
     public void lockCamera() throws CameraException {
-        if (mCamera == null && mCameraId != -1) {
+        if (mCameraId != -1) {
+            Thread t = new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        mCamera = Camera.open(mCameraId);
+                        setDeviceRotation(mDeviceOrientation);
+                    } catch (RuntimeException e) {
+                        //TODO. throw new CameraException(mActivity.getString(R.string.openCameraFailed), e);
+                    }
+                }
+            };
+
+            t.start();
             try {
-                mCamera = Camera.open(mCameraId);
-                setDeviceRotation(mDeviceOrientation);
-            } catch (RuntimeException e) {
+                t.join();
+            } catch (InterruptedException e) {
                 throw new CameraException(mActivity.getString(R.string.openCameraFailed), e);
             }
-        } else {
+        } else if (mCamera == null) {
             throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
         }
     }
