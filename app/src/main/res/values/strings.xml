@@ -73,7 +73,7 @@
     <string name="pref_immersive">Hide Soft Keys</string>
     <string name="pref_immersive_summ">Hides the soft keys when the browser is visible</string>
 
-    <string name="pref_other">Sonstiges</string>
+    <string name="pref_other">Miscellaneous</string>
     <string name="pref_restart">Auto Restart</string>
     <string name="pref_maxRestarts">Number of allowed restarts</string>
     <string name="pref_maxRestarts_summ">The number of restarts until auto restart is turned off</string>
@@ -157,11 +157,11 @@
     <string name="pref_startupEnabled">Enabled</string>
     <string name="pref_startupEnabled_summ">Allows to update an openHAB item with the app start time</string>
     <string name="pref_startupItem">Startup Item</string>
-    <string name="pref_startupItem_summ">Name of the number item whose state shall be set on app start</string>
+    <string name="pref_startupItem_summ">Name of the datetime item whose state shall be set on app start</string>
     <string name="pref_connectedEnabled">Enabled</string>
     <string name="pref_connectedEnabled_summ">Allows to periodically update an openHAB item with the current time as a connector indicator</string>
     <string name="pref_connectedItem">Connected Item</string>
-    <string name="pref_connectedItem_summ">Name of the number item whose state shall be set</string>
+    <string name="pref_connectedItem_summ">Name of the datetime item whose state shall be set</string>
     <string name="pref_connectedInterval">Update interval</string>
     <string name="pref_connectedInterval_summ">The number of seconds between subsequent state updates</string>
     <string name="pref_volume">Volume</string>
