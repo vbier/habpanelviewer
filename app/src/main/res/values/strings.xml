@@ -116,10 +116,6 @@
     <string name="pref_brightnessEnabled_summ">Allows to set the state of an openHAB item depending on the device brightness sensor</string>
     <string name="pref_brightnessItem">Brightness Item</string>
     <string name="pref_brightnessItem_summ">Name of the number item whose state shall be set when the brightness changes</string>
-    <string name="pref_brightnessAverage">Average brightness values</string>
-    <string name="pref_brightnessAverage_summ">Do not send every brightness reading, but only an average at a regular interval</string>
-    <string name="pref_brightnessIntervall">Update intervall</string>
-    <string name="pref_brightnessIntervall_summ">The number of seconds to collect sensor readings until an averaged update is sent to openHAB</string>
     <string name="pref_pressure">Pressure Sensor</string>
     <string name="pref_pressureEnabled">Monitor device pressure sensor and report changes to openHAB</string>
     <string name="pref_pressureEnabled_summ">Allows to set the state of an openHAB item depending on the device pressure sensor</string>
@@ -130,6 +126,10 @@
     <string name="pref_temperatureEnabled_summ">Allows to set the state of an openHAB item depending on the device temperature sensor</string>
     <string name="pref_temperatureItem">Temperature Item</string>
     <string name="pref_temperatureItem_summ">Name of the number item whose state shall be set when the temperature changes</string>
+    <string name="pref_sensorAverage">Average sensor values</string>
+    <string name="pref_sensorAverage_summ">Do not send every sensor reading, but only an average at a regular interval</string>
+    <string name="pref_sensorIntervall">Update intervall</string>
+    <string name="pref_sensorIntervall_summ">The number of seconds to collect sensor readings until an averaged update is sent to openHAB</string>
 
     <string name="pref_battery">Battery</string>
     <string name="pref_batteryEnabled">Monitor device battery state and report changes to openHAB</string>

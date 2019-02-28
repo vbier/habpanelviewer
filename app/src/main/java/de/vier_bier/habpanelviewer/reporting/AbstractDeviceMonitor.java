@@ -28,8 +28,8 @@ public abstract class AbstractDeviceMonitor implements IDeviceMonitor, SensorEve
     final ServerConnection mServerConnection;
     final Sensor mSensor;
 
-    private final String mPreferenceKey;
-    private final String mSensorName;
+    protected final String mPreferenceKey;
+    protected final String mSensorName;
     boolean mSensorEnabled;
 
     String mSensorItem;
