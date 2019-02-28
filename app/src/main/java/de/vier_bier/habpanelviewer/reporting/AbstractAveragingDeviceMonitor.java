@@ -13,7 +13,7 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 public abstract class AbstractAveragingDeviceMonitor extends AbstractDeviceMonitor {
     private boolean mDoAverage;
     private int mInterval;
-    Integer mValue;
+    Float mValue;
 
     AbstractAveragingDeviceMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection,
                           String sensorName, String prefkey, int sensorType) {
@@ -37,7 +37,7 @@ public abstract class AbstractAveragingDeviceMonitor extends AbstractDeviceMonit
         }
     }
 
-    abstract String getInfoString(Integer value, String item, String state);
+    abstract String getInfoString(Float value, String item, String state);
 
     @Override
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
@@ -55,7 +55,7 @@ public abstract class AbstractAveragingDeviceMonitor extends AbstractDeviceMonit
     public void onSensorChanged(SensorEvent event) {
         boolean sendUpdate = mValue == null || !mDoAverage;
 
-        mValue = (int) event.values[0];
+        mValue = event.values[0];
         if (mDoAverage) {
             mServerConnection.addStateToAverage(mSensorItem, mValue, mInterval);
         }

@@ -16,7 +16,7 @@ public class PressureMonitor extends AbstractAveragingDeviceMonitor {
     }
 
     @Override
-    String getInfoString(Integer value, String item, String state) {
+    String getInfoString(Float value, String item, String state) {
         return mCtx.getString(R.string.pressure, mValue, mSensorItem, mSensorState);
     }
 }

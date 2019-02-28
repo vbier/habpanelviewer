@@ -281,7 +281,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         return mValues.get(item);
     }
 
-    public void addStateToAverage(String item, Integer state, int updateInterval) {
+    public void addStateToAverage(String item, Float state, int updateInterval) {
         if (averagePropagator.addStateToAverage(item, state, updateInterval)) {
             // in case this is the first value for the item propagate it
             updateState(item, state.toString());
