@@ -246,6 +246,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 surfaces.add(mPreviewReader.getSurface());
                 surfaces.add(previewSurface);
                 surfaces.add(mPictureReader.getSurface());
+                Log.d(TAG, "surface=" + surface);
 
                 final CountDownLatch initLatch = new CountDownLatch(1);
                 mCamera.createCaptureSession(surfaces,

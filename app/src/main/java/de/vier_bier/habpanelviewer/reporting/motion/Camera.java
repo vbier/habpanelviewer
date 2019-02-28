@@ -416,11 +416,12 @@ public class Camera {
 
     private void registerSurfaceListener(ICamera.IPreviewListener previewListener) {
         if (mSurface == null && mPreviewView.getSurfaceTexture() != null) {
+            Log.d(TAG, "getting surface from preview view");
             mSurface = mPreviewView.getSurfaceTexture();
         }
 
         if (mSurface != null) {
-            Log.d(TAG, "starting preview...");
+            Log.d(TAG, "starting preview for surface " + mSurface + "...");
             mImplementation.startPreview(mSurface, previewListener);
             Log.d(TAG, "starting preview finished");
             return;
@@ -430,6 +431,8 @@ public class Camera {
         mPreviewView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
+                Log.d(TAG, "surface available: " + surfaceTexture + ", mSurface=" + mSurface);
+
                 if (mSurface == null) {
                     previewListener.progress(mContext.getString(R.string.surfaceObtained));
                     mSurface = surfaceTexture;
