@@ -1,69 +1,22 @@
 package de.vier_bier.habpanelviewer.reporting;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
-import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
 /**
  * Monitors brightness sensor state and reports to openHAB.
  */
-public class BrightnessMonitor extends AbstractDeviceMonitor {
-    private boolean mDoAverage;
-    private int mInterval;
-    private Integer mBrightness;
-
+public class BrightnessMonitor extends AbstractAveragingDeviceMonitor {
     public BrightnessMonitor(Context ctx, SensorManager sensorManager, ServerConnection serverConnection) {
         super(ctx, sensorManager, serverConnection, ctx.getString(R.string.pref_brightness), "brightness", Sensor.TYPE_LIGHT);
     }
 
-    protected synchronized void addStatusItems(ApplicationStatus status) {
-        if (mSensorEnabled) {
-            String state = mCtx.getString(R.string.enabled);
-            if (mDoAverage) {
-                Resources res = mCtx.getResources();
-                state += "\n" + res.getQuantityString(R.plurals.updateInterval, mInterval, mInterval);
-            }
-            if (!mSensorItem.isEmpty()) {
-                state += "\n" + mCtx.getString(R.string.brightness, mBrightness, mSensorItem, mSensorState);
-            }
-
-            status.set(mCtx.getString(R.string.pref_brightness), state);
-        } else {
-            status.set(mCtx.getString(R.string.pref_brightness), mCtx.getString(R.string.disabled));
-        }
-    }
-
     @Override
-    public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        if (mDoAverage != prefs.getBoolean("pref_brightness_average", true)) {
-            mDoAverage = prefs.getBoolean("pref_brightness_average", true);
-        }
-
-        if (mInterval != Integer.parseInt(prefs.getString("pref_brightness_intervall", "60"))) {
-            mInterval = Integer.parseInt(prefs.getString("pref_brightness_intervall", "60"));
-        }
-
-        super.updateFromPreferences(prefs);
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        boolean sendUpdate = mBrightness == null || !mDoAverage;
-
-        mBrightness = (int) event.values[0];
-        if (mDoAverage) {
-            mServerConnection.addStateToAverage(mSensorItem, mBrightness, mInterval);
-        }
-
-        if (sendUpdate) {
-            mServerConnection.updateState(mSensorItem, String.valueOf(mBrightness));
-        }
+    String getInfoString(Float value, String item, String state) {
+        return mCtx.getString(R.string.brightness, mValue, mSensorItem, mSensorState);
     }
 }

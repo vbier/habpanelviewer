@@ -14,5 +14,18 @@
         android:inputType="textPhonetic"
         android:summary="@string/pref_pressureItem_summ"
         android:title="@string/pref_pressureItem" />
+    <CheckBoxPreference
+        android:key="pref_pressure_average"
+        android:dependency="pref_pressure_enabled"
+        android:defaultValue="true"
+        android:summary="@string/pref_sensorAverage_summ"
+        android:title="@string/pref_sensorAverage" />
+    <EditTextPreference
+        android:key="pref_pressure_intervall"
+        android:dependency="pref_pressure_average"
+        android:defaultValue="60"
+        android:inputType="number"
+        android:summary="@string/pref_sensorIntervall_summ"
+        android:title="@string/pref_sensorIntervall" />
 
 </PreferenceScreen>
