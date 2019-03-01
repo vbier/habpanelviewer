@@ -1,7 +1,7 @@
 package de.vier_bier.habpanelviewer.openhab.average;
 
 /**
- * A name value pair.
+ * A value with its acquisition time.
  */
 class Sample<N extends Number> {
     private final N fValue;

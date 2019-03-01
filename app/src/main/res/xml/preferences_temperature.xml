@@ -14,5 +14,18 @@
         android:inputType="textPhonetic"
         android:summary="@string/pref_temperatureItem_summ"
         android:title="@string/pref_temperatureItem" />
+    <CheckBoxPreference
+        android:key="pref_temperature_average"
+        android:dependency="pref_temperature_enabled"
+        android:defaultValue="true"
+        android:summary="@string/pref_sensorAverage_summ"
+        android:title="@string/pref_sensorAverage" />
+    <EditTextPreference
+        android:key="pref_temperature_intervall"
+        android:dependency="pref_temperature_average"
+        android:defaultValue="60"
+        android:inputType="number"
+        android:summary="@string/pref_sensorIntervall_summ"
+        android:title="@string/pref_sensorIntervall" />
 
 </PreferenceScreen>

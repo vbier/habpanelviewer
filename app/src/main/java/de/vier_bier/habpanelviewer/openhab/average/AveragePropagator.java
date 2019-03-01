@@ -52,15 +52,23 @@ public class AveragePropagator extends Thread {
         }
     }
 
-    public boolean addStateToAverage(String item, Integer state, int updateInterval) {
+    public void removeFromAverage(String item) {
+        FloatAverage avg = (FloatAverage) mAverages.remove(item);
+
+        if (avg != null) {
+            mAvgQueue.remove(avg);
+        }
+    }
+
+    public boolean addStateToAverage(String item, Float state, int updateInterval) {
         boolean isFirstValue = false;
 
         if (item != null && !item.isEmpty() && state != null) {
-            IntAverage avg = (IntAverage) mAverages.get(item);
+            FloatAverage avg = (FloatAverage) mAverages.get(item);
 
             if (avg == null) {
                 isFirstValue = true;
-                avg = new IntAverage(item, updateInterval);
+                avg = new FloatAverage(item, updateInterval);
                 mAverages.put(item, avg);
                 mAvgQueue.add(avg);
             } else if (avg.setInterval(updateInterval)) {
@@ -99,7 +107,6 @@ public class AveragePropagator extends Thread {
                         mFutureStates.remove(futureState.getItemName());
                     }
                 }
-
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

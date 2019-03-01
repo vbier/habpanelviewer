@@ -28,8 +28,8 @@ public abstract class AbstractDeviceMonitor implements IDeviceMonitor, SensorEve
     final ServerConnection mServerConnection;
     final Sensor mSensor;
 
-    private final String mPreferenceKey;
-    private final String mSensorName;
+    final String mPreferenceKey;
+    final String mSensorName;
     boolean mSensorEnabled;
 
     String mSensorItem;
@@ -91,7 +91,7 @@ public abstract class AbstractDeviceMonitor implements IDeviceMonitor, SensorEve
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
-        Log.v(TAG, "onAccuracyChanged" + i);
+        Log.v(TAG, "onAccuracyChanged: " + i);
     }
 }
 

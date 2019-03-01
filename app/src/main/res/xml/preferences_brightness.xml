@@ -18,14 +18,14 @@
         android:key="pref_brightness_average"
         android:dependency="pref_brightness_enabled"
         android:defaultValue="true"
-        android:summary="@string/pref_brightnessAverage_summ"
-        android:title="@string/pref_brightnessAverage" />
+        android:summary="@string/pref_sensorAverage_summ"
+        android:title="@string/pref_sensorAverage" />
     <EditTextPreference
         android:key="pref_brightness_intervall"
         android:dependency="pref_brightness_average"
         android:defaultValue="60"
         android:inputType="number"
-        android:summary="@string/pref_brightnessIntervall_summ"
-        android:title="@string/pref_brightnessIntervall" />
+        android:summary="@string/pref_sensorIntervall_summ"
+        android:title="@string/pref_sensorIntervall" />
 
 </PreferenceScreen>
