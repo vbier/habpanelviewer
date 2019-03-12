@@ -40,7 +40,7 @@ public class ConnectedIndicator implements IStateUpdateListener {
     private ConnectedReportingThread mReportConnection;
 
     private String mStatus;
-    private String mStartStatus = null;
+    private long mStartTime = -1;
     private String mStatusState;
     private String mStartStatusState;
 
@@ -73,7 +73,7 @@ public class ConnectedIndicator implements IStateUpdateListener {
             String state = mCtx.getString(R.string.enabled);
 
             if (!mStartStatusItem.isEmpty()) {
-                state += "\n" + SimpleDateFormat.getDateTimeInstance().format(new Date(mStartStatus))
+                state += "\n" + (mStartTime == -1 ? "-" : SimpleDateFormat.getDateTimeInstance().format(new Date(mStartTime)))
                         + " [" + mStartStatusItem + "=" + mStartStatusState + "]";
             }
 
@@ -116,9 +116,9 @@ public class ConnectedIndicator implements IStateUpdateListener {
         mStartStatusItem = prefs.getString("pref_startup_item", "");
         mStatusItem = prefs.getString("pref_connected_item", "");
 
-        if (mStartEnabled && mStartStatus == null) {
-            mStartStatus = mFormat.format(new Date());
-            mServerConnection.updateState(mStartStatusItem, mStartStatus);
+        if (mStartEnabled && mStartTime == -1) {
+            mStartTime = System.currentTimeMillis();
+            mServerConnection.updateState(mStartStatusItem, mFormat.format(new Date(mStartTime)));
         }
 
         if (intervalChanged && !started && mReportConnection != null) {
