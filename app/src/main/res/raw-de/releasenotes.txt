@@ -1,5 +1,17 @@
 0.9.25pre
 ======
+* neue Einstellungen, um Durchschnittswerte für Temperatur und Luftdruck zu melden
+* neue Einstellung "Logge Browser Meldungen"
+* CPU Verbrauch bei Installationen mit vielen Werte Änderungen verringert
+* Startindikator und Verbindungsindikator auf DateTime umgestellt
+* prüfe beim Start ob Energiesparmodus für die App aktiviert ist
+* schließe Kamera bei Absturz und beim Beenden der App durch Android
+* fehlende Übersetzungen hinzugefügt
+* BUG: Ausblenden der Vorschau bei Geräten ohne FEATURE_CAMERA_FRONT korrigiert
+* BUG: CAPTURE_CAMERA mit API V1 korrigiert
+* BUG: Änderung des Kiosk Modus nach RELOAD behoben
+* BUG: Berechtigungsanfrage für Externen Speicher beim Exportieren der Einstellungen korrigiert
+* BUG: Neustart nach Theme Änderung korrigiert
 
 0.9.24
 ======

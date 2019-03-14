@@ -1,0 +1,12 @@
+* add averaging to temperature and pressure sensors
+* add preference for logging browser console messages
+* reduce cpu usage for installations with lots of value updates.
+* change connected and startup indicator to work with DateTime items instead of Number items
+* check for battery optimization during start-up on devices running android m+
+* make sure camera is released on app crash and when app is stopped by android
+* add missing translations
+* BUG: hide motion and preview views if device has no FEATURE_CAMERA_FRONT
+* BUG: fix CAPTURE_CAMERA with API V1
+* BUG: fix bug where kiosk mode changes on RELOAD
+* BUG: fix request for write permission to external storage when exporting preferences
+* BUG: fix restart on theme change
