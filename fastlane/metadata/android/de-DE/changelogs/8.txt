@@ -1,3 +1,4 @@
+* neues Kommandos: TTS_SPEAK, TTS_SET_LANG
 * neue Einstellungen, um Durchschnittswerte für Temperatur und Luftdruck zu melden
 * neue Einstellung "Logge Browser Meldungen"
 * CPU Verbrauch bei Installationen mit vielen Werte Änderungen verringert

@@ -110,6 +110,21 @@ The integer parameter specifies the desired volume level. The range for the para
 
 > When the device is muted using SET_VOLUME, UNMUTE does not restore the previous volume.
 
+#### TTS_SPEAK
+
+Syntax: TTS_SPEAK *\[text\]*
+
+uses the devices tts engine to speak the given text.
+
+#### TTS_SET_LANG
+
+Syntax: TTS_SET_LANG *\[language code\]*
+
+sets the language to use for the TTS service. This has to be an ISO 639 alpha-2 or alpha-3 language code, or a language subtag up to 8 characters in length.
+Valid examples are: de, en, fr, ... 
+
+> A valid language code might not result in a working TTS. The given language also has to be supported by the TTS service on your device. 
+
 #### FLASH_ON
 
 turns on the flashlight of the back-facing camera.

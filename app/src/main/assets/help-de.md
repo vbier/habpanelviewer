@@ -111,6 +111,21 @@ Der Ganzzahlparameter gibt die gewünschte Lautstärke an. Diese muss im Bereich
 
 > Wenn das Gerät mit SET_VOLUME lautlos gestellt wurde, stellt UNMUTE nicht die vorherige Lautstärke zurück.
 
+#### TTS_SPEAK
+
+Syntax: TTS_SPEAK *\[Text\]*
+
+Benutzt den TTS Service des Gerätes um den angegebenen Text zu sprechen.
+
+#### TTS_SET_LANG
+
+Syntax: TTS_SET_LANG *\[Sprachcode\]*
+
+Setzt die Sprache des TTS Services. Dies muss ein ISO 639 alpha-2 oder alpha-3 Sprachcode sein, oder ein Sprach Subtag von bis zu 8 Buchstaben Länge.
+Gültige Beispiele sind: de, en, fr, ... 
+
+> Ein gültiger Sprachcode führt nicht zwingenderweise zu einer funktionieren Sprachsynthese. Die angegebene Sprache muss dazu vom TTS Service des Gerätes unterstützt werden. 
+
 #### FLASH_ON
 
 schaltet das Blitzlicht der hinteren Kamera ein.
@@ -139,7 +154,7 @@ schaltet bluetooth aus.
 
 sendet alle aktuellen Item Werte an openHAB.
 
-Dies bedeutet, dass alle in den Einstellungen Konfigurierten Werte einmalig an die entsprechenden openHAB Items gemeldet werden.
+Dies bedeutet, dass alle in den Einstellungen konfigurierten Werte einmalig an die entsprechenden openHAB Items gemeldet werden.
 
 #### START_APP
 

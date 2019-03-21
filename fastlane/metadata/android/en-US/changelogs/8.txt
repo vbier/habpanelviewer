@@ -1,3 +1,4 @@
+* added commands: TTS_SPEAK, TTS_SET_LANG
 * add averaging to temperature and pressure sensors
 * add preference for logging browser console messages
 * reduce cpu usage for installations with lots of value updates.
