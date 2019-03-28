@@ -15,18 +15,13 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
@@ -34,10 +29,12 @@ import android.view.TextureView;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import de.vier_bier.habpanelviewer.R;
 
 /**
@@ -52,7 +49,6 @@ public class CameraImplV2 extends AbstractCameraImpl {
     private Handler mPreviewHandler;
     private HandlerThread mPictureThread;
     private Handler mPictureHandler;
-    private boolean mTakingPicture;
 
     private CameraDevice mCamera;
     private String mCameraId;
@@ -61,7 +57,10 @@ public class CameraImplV2 extends AbstractCameraImpl {
     private CameraCaptureSession mCaptureSession;
     private volatile boolean mPreviewRunning;
     @SuppressWarnings("FieldCanBeLocal")
-    private ImageReader mImageReader; //do not use a variable as this gets GC'ed
+    private ImageReader mMotionReader; //do not use a variable as this gets GC'ed
+    @SuppressWarnings("FieldCanBeLocal")
+    private ImageReader mPictureReader; //do not use a variable as this gets GC'ed
+
 
     CameraImplV2(Activity context, TextureView prevView) throws CameraException {
         super(context, prevView);
@@ -102,7 +101,11 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
     @Override
     public void lockCamera() throws CameraException {
-        if (mCameraId != null && mCamera == null) {
+        if (mCameraId == null) {
+            throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
+        }
+
+        if (mCamera == null) {
             try {
                 if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     throw new CameraException(mActivity.getString(R.string.permissionMissing, Manifest.permission.CAMERA));
@@ -143,8 +146,6 @@ public class CameraImplV2 extends AbstractCameraImpl {
             } catch (CameraAccessException e) {
                 throw new CameraException(e);
             }
-        } else {
-            throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
         }
     }
 
@@ -205,7 +206,8 @@ public class CameraImplV2 extends AbstractCameraImpl {
                 StreamConfigurationMap map = characteristics.get(
                         CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
                 if (map == null) {
-                    Log.w(TAG, "Could not find a valid preview size");
+                    previewListener.error(mActivity.getString(R.string.couldNotFindPreviewSize));
+                    return;
                 }
 
                 final Point previewSize = chooseOptimalSize(toPointArray(map.getOutputSizes(ImageFormat.YUV_420_888)));
@@ -213,9 +215,9 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
                 mActivity.runOnUiThread(() -> configureTransform(previewSize, mActivity.getWindowManager().getDefaultDisplay().getRotation()));
 
-                mImageReader = ImageReader.newInstance(previewSize.x, previewSize.y,
+                mMotionReader = ImageReader.newInstance(previewSize.x, previewSize.y,
                         ImageFormat.YUV_420_888, 2);
-                mImageReader.setOnImageAvailableListener(imageReader -> {
+                mMotionReader.setOnImageAvailableListener(imageReader -> {
                     // check if we have a camera as we might get an image after closing and we
                     // do not want to set mPreviewRunning to true in this case
                     if (!mPreviewRunning && mCamera != null) {
@@ -223,17 +225,15 @@ public class CameraImplV2 extends AbstractCameraImpl {
                         previewListener.started();
                     }
 
-                    if (!mTakingPicture) {
-                        try (Image i = imageReader.acquireLatestImage()) {
-                            LumaData ld = null;
-                            for (ILumaListener l : mListeners) {
-                                if (l.needsPreview()) {
-                                    if (ld == null && i != null) {
-                                        ByteBuffer buffer = i.getPlanes()[0].getBuffer();
-                                        ld = new LumaData(buffer, i.getWidth(), i.getHeight());
-                                    }
-                                    l.preview(ld);
+                    try (Image i = imageReader.acquireLatestImage()) {
+                        LumaData ld = null;
+                        for (ILumaListener l : mListeners) {
+                            if (l.needsPreview()) {
+                                if (ld == null && i != null) {
+                                    ByteBuffer buffer = i.getPlanes()[0].getBuffer();
+                                    ld = new LumaData(buffer, i.getWidth(), i.getHeight());
                                 }
+                                l.preview(ld);
                             }
                         }
                     }
@@ -241,13 +241,16 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
                 CaptureRequest.Builder mPreviewRequestBuilder
                         = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
-                mPreviewRequestBuilder.addTarget(mImageReader.getSurface());
+                mPreviewRequestBuilder.addTarget(mMotionReader.getSurface());
                 Surface previewSurface = new Surface(surface);
                 mPreviewRequestBuilder.addTarget(previewSurface);
 
+                mPictureReader = ImageReader.newInstance(640, 480, ImageFormat.JPEG, 1);
+
                 ArrayList<Surface> surfaces = new ArrayList<>();
-                surfaces.add(mImageReader.getSurface());
+                surfaces.add(mMotionReader.getSurface());
                 surfaces.add(previewSurface);
+                surfaces.add(mPictureReader.getSurface());
 
                 final CountDownLatch initLatch = new CountDownLatch(1);
                 mCamera.createCaptureSession(surfaces,
@@ -256,7 +259,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
                             public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                                 Log.d(TAG, "Capture session configured");
 
-                                // The mCamera is already closed
+                                // the camera is already closed
                                 if (null == mCamera) {
                                     previewListener.error(mActivity.getString(R.string.camAlreadyClosed));
                                     initLatch.countDown();
@@ -307,11 +310,8 @@ public class CameraImplV2 extends AbstractCameraImpl {
 
     @Override
     protected void finalize() throws Throwable {
-        if (mPictureThread != null) {
+        if (mPreviewThread != null) {
             mPreviewThread.quitSafely();
-        }
-        if (mPictureThread != null) {
-            mPictureThread.quitSafely();
         }
 
         super.finalize();
@@ -347,10 +347,10 @@ public class CameraImplV2 extends AbstractCameraImpl {
         return mPreviewRunning && mCamera != null && mCaptureSession != null;
     }
 
-    @Override
     /**
      * This is asynchronous!
      */
+    @Override
     public void takePicture(IPictureListener iPictureHandler) {
         if (mCamera != null) {
             if (mPictureThread == null) {
@@ -360,16 +360,8 @@ public class CameraImplV2 extends AbstractCameraImpl {
             }
 
             try {
-                mTakingPicture = true;
-
-                int width = 640;
-                int height = 480;
-
-                ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
-                List<Surface> outputSurfaces = new ArrayList<>(2);
-                outputSurfaces.add(reader.getSurface());
                 final CaptureRequest.Builder captureBuilder = mCamera.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
-                captureBuilder.addTarget(reader.getSurface());
+                captureBuilder.addTarget(mPictureReader.getSurface());
                 captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
                 ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                     byte[] mBuffer;
@@ -385,57 +377,14 @@ public class CameraImplV2 extends AbstractCameraImpl {
                             buffer.get(mBuffer);
 
                             iPictureHandler.picture(mBuffer);
-                            mTakingPicture = false;
                         }
                     }
                 };
-                reader.setOnImageAvailableListener(readerListener, mPictureHandler);
-                final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
-                    @Override
-                    public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
-                        Log.v(TAG, "onCaptureCompleted");
-                        mTakingPicture = false;
-                    }
-
-                    @Override
-                    public void onCaptureFailed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureFailure failure) {
-                        Log.v(TAG, "onCaptureFailed");
-                        mTakingPicture = false;
-                    }
-
-                    @Override
-                    public void onCaptureSequenceCompleted(@NonNull CameraCaptureSession session, int sequenceId, long frameNumber) {
-                        Log.v(TAG, "onCaptureSequenceCompleted");
-                        mTakingPicture = false;
-                    }
-
-                    @Override
-                    public void onCaptureSequenceAborted(@NonNull CameraCaptureSession session, int sequenceId) {
-                        Log.v(TAG, "onCaptureSequenceAborted");
-                        mTakingPicture = false;
-                    }
-                };
-
-                mCamera.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
-                    @Override
-                    public void onConfigured(@NonNull CameraCaptureSession session) {
-                        try {
-                            session.capture(captureBuilder.build(), captureListener, mPictureHandler);
-                        } catch (Throwable t) {
-                            Log.e(TAG, "Failed to capture picture", t);
-                            iPictureHandler.error(mActivity.getString(R.string.camFailedToTakePic));
-                            mTakingPicture = false;
-                        }
-                    }
-
-                    @Override
-                    public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-                        iPictureHandler.error(mActivity.getString(R.string.couldNotCreateCapture));
-                        mTakingPicture = false;
-                    }
-                }, mPictureHandler);
+                mPictureReader.setOnImageAvailableListener(readerListener, mPictureHandler);
+                mCaptureSession.capture(captureBuilder.build(), null, mPreviewHandler);
             } catch (CameraAccessException e) {
                 Log.e(TAG, "Failed to take picture", e);
+                iPictureHandler.error(mActivity.getString(R.string.camFailedToTakePic));
             }
         } else {
             throw new IllegalStateException(mActivity.getString(R.string.camNotInitialized));

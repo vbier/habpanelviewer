@@ -293,16 +293,18 @@ public class Camera {
                             rotated.compress(Bitmap.CompressFormat.JPEG, compQuality, stream);
                             h.picture(stream.toByteArray());
 
-                            try {
+                            if (!wasPreviewRunning) {
                                 stopPreview();
-
-                                if (wasPreviewRunning) {
+                            } else if (mVersion == CameraVersion.V1) {
+                                try {
+                                    stopPreview();
                                     startPreview(new ICamera.LoggingPreviewListener());
+                                } catch (CameraException e) {
+                                    Log.e(TAG, "Error restarting preview", e);
+                                    h.error(e.getMessage());
                                 }
-                            } catch (CameraException e) {
-                                Log.e(TAG, "Error restarting preview", e);
-                                h.error(e.getMessage());
                             }
+
                             latch.countDown();
                         }
 
@@ -418,6 +420,27 @@ public class Camera {
         }
 
         if (mSurface != null) {
+            Log.d(TAG, "we already have a surface. adding listener...");
+
+            mPreviewView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
+                @Override
+                public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
+                }
+
+                @Override
+                public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
+                }
+
+                @Override
+                public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+                    Log.d(TAG, "surface texture destroyed: " + surfaceTexture);
+                    return mSurface == null;
+                }
+
+                @Override
+                public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+                }
+            });
             Log.d(TAG, "starting preview...");
             mImplementation.startPreview(mSurface, previewListener);
             Log.d(TAG, "starting preview finished");
@@ -445,7 +468,7 @@ public class Camera {
 
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-                Log.d(TAG, "surface destroyed: " + surfaceTexture);
+                Log.d(TAG, "surface texture destroyed: " + surfaceTexture);
                 return mSurface == null;
             }
 
