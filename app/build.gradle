@@ -8,7 +8,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 28
         versionCode 8
-        versionName "0.9.25pre"
+        versionName "0.9.25"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"

@@ -1,4 +1,4 @@
-0.9.25pre
+0.9.25
 ======
 * added commands: TTS_SPEAK, TTS_SET_LANG
 * add averaging to temperature and pressure sensors
