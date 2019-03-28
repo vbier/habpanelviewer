@@ -1,3 +1,6 @@
+0.9.26pre
+======
+
 0.9.25
 ======
 * neue Kommandos: TTS_SPEAK, TTS_SET_LANG
