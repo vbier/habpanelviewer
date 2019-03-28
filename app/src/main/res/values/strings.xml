@@ -322,6 +322,7 @@
     <string name="camAlreadyClosed">Camera has already been closed</string>
     <string name="couldNotCreatePreview">Could not create preview request</string>
     <string name="couldNotCreateCapture">Could not create capture session</string>
+    <string name="couldNotFindPreviewSize">Could not find a valid preview size</string>
     <string name="couldNotStopPreview">Could not stop preview</string>
     <string name="camFailedToTakePic">Failed to capture picture</string>
     <string name="camNotInitialized">Camera not initialized</string>
