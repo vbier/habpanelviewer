@@ -65,6 +65,7 @@ import de.vier_bier.habpanelviewer.preferences.PreferenceActivity;
 import de.vier_bier.habpanelviewer.reporting.BatteryMonitor;
 import de.vier_bier.habpanelviewer.reporting.BrightnessMonitor;
 import de.vier_bier.habpanelviewer.reporting.ConnectedIndicator;
+import de.vier_bier.habpanelviewer.reporting.DockingStateMonitor;
 import de.vier_bier.habpanelviewer.reporting.IDeviceMonitor;
 import de.vier_bier.habpanelviewer.reporting.PressureMonitor;
 import de.vier_bier.habpanelviewer.reporting.ProximityMonitor;
@@ -302,6 +303,7 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         mMonitors.add(new BatteryMonitor(this, mServerConnection));
+        mMonitors.add(new DockingStateMonitor(this, mServerConnection));
         mMonitors.add(new ScreenMonitor(this, mServerConnection, new ScreenMonitor.ScreenListener() {
             @Override
             public void screenOn() {

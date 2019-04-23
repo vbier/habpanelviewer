@@ -1,5 +1,6 @@
 0.9.26pre
 ======
+* der Docking Status kann jetzt an openHAB gemeldet werden
 
 0.9.25
 ======

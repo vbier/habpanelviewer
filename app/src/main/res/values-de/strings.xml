@@ -178,6 +178,11 @@
     <string name="pref_screenEnabled_summ">Überwacht den Bildschirm und meldet Änderungen an openHAB</string>
     <string name="pref_screenItem">Bildschirm Item</string>
     <string name="pref_screenItem_summ">Name des openHAB Items an das der Zustand des Bildschirms gemeldet wird</string>
+    <string name="pref_dockingState">Docking Status</string>
+    <string name="pref_dockingStateEnabled">Docking Statusmeldung aktiviert</string>
+    <string name="pref_dockingStateEnabled_summ">Überwacht den Docking Status und meldet Änderungen an openHAB</string>
+    <string name="pref_dockingStateItem">Docking Status Item</string>
+    <string name="pref_dockingStateItem_summ">Name des openHAB Items an das der Docking Status gemeldet wird</string>
 
     <string name="pref_camera">Kamera</string>
     <string name="pref_cameraNewApi">Benutze Lollipop Camera API 2</string>
@@ -237,6 +242,7 @@
     <string name="pressure">Druck: %1$d hPa oder mbar [%2$s=%3$s]</string>
     <string name="brightness">Helligkeit: %1$d lx [%2$s=%3$s]</string>
     <string name="battLow">Batterie leer: %1$b [%2$s=%3$s]</string>
+    <string name="docked">Gerät in Dockingstation: %1$b [%2$s=%3$s]</string>
     <string name="battCharging">Batterie wird geladen: %1$b [%2$s=%3$s]</string>
     <string name="battLevel">Batterie Ladung: %1$d%% [%2$s=%3$s]</string>
     <string name="volumeIsOf">Lautstärke: %1$d von %2$d [%3$s=%4$s]</string>

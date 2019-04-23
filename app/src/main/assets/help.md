@@ -351,6 +351,15 @@ A sample openHAB items file looks like this:
     
 You can use the startup time to trigger rules that can send initializing commands to HPV.
 
+### docking state
+Allows to set the value of an openHAB contact item depending on whether the device is currently in a docking station.
+
+The contact state will be *CLOSED* whenever the device is docked, *OPEN* otherwise.
+
+A sample openHAB items file looks like this:
+
+    Contact Tablet_Docked
+
 [go back to top](#top)
 
 ## <a name="usability"/>Usability 

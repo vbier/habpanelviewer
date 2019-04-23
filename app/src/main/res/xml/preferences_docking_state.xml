@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="false"
+    android:title="@string/pref_dockingState">
+
+    <CheckBoxPreference
+        android:key="pref_docking_state_enabled"
+        android:defaultValue="false"
+        android:summary="@string/pref_dockingStateEnabled_summ"
+        android:title="@string/pref_dockingStateEnabled" />
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+        android:key="pref_docking_state_item"
+        android:dependency="pref_docking_state_enabled"
+        android:inputType="textPhonetic"
+        android:summary="@string/pref_dockingStateItem_summ"
+        android:title="@string/pref_dockingStateItem" />
+
+</PreferenceScreen>

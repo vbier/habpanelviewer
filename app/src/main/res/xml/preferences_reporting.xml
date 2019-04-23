@@ -63,5 +63,9 @@
             android:persistent="false"
             android:title="@string/pref_volume" />
 
+        <Preference
+            android:key="nested_pref_docking_state"
+            android:persistent="false"
+            android:title="@string/pref_dockingState" />
     </PreferenceCategory>
 </PreferenceScreen>

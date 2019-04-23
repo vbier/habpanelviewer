@@ -1,5 +1,6 @@
 0.9.26pre
 ======
+* add reporting of docking state
 
 0.9.25
 ======

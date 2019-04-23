@@ -168,7 +168,7 @@
     <string name="pref_volumeEnabled">Monitor device volume and report changes to openHAB</string>
     <string name="pref_volumeEnabled_summ">Allows to set the state of an openHAB item depending on the device volume</string>
     <string name="pref_volumeItem">Volume Item</string>
-    <string name="pref_volumeItem_summ">>Name of the number item whose state shall be set</string>
+    <string name="pref_volumeItem_summ">Name of the number item whose state shall be set</string>
     <string name="pref_usage">Usage</string>
     <string name="pref_usageEnabled">Toggle openHAB contact item when the app is actively used</string>
     <string name="pref_usageEnabled_summ">Allows to set the state of an openHAB items depending on the app usage</string>
@@ -181,6 +181,11 @@
     <string name="pref_screenEnabled_summ">Allows to set the state of an openHAB items depending on the device screen state</string>
     <string name="pref_screenItem">Screen State Contact</string>
     <string name="pref_screenItem_summ">Name of the contact item whose state shall be set depending on the device screen state</string>
+    <string name="pref_dockingState">Docking State</string>
+    <string name="pref_dockingStateEnabled">Monitor docking state and report changes to openHAB</string>
+    <string name="pref_dockingStateEnabled_summ">Allows to set the state of an openHAB item depending on the device docking state</string>
+    <string name="pref_dockingStateItem">Docking State Item</string>
+    <string name="pref_dockingStateItem_summ">Name of the contact item whose state shall be set</string>
 
     <string name="pref_camera">Camera</string>
     <string name="pref_cameraNewApi">Use Lollipop camera API</string>
@@ -240,6 +245,7 @@
     <string name="pressure">Pressure: %1$.1f hPa or mbar [%2$s=%3$s]</string>
     <string name="brightness">Brightness: %1$.1f lx [%2$s=%3$s]</string>
     <string name="battLow">Battery low: %1$b [%2$s=%3$s]</string>
+    <string name="docked">Device in docking station: %1$b [%2$s=%3$s]</string>
     <string name="battCharging">Battery charging: %1$b [%2$s=%3$s]</string>
     <string name="battLevel">Battery level: %1$d%% [%2$s=%3$s]</string>
     <string name="volumeIsOf">Volume: %1$d of %2$d [%3$s=%4$s]</string>

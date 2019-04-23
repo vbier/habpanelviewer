@@ -348,6 +348,15 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
     
 Die Startzeit kann z.B. genutzt werden, um nach dem App Start Initialisierungskommandos an HPV zu schicken.
 
+### Docking Status
+Ermöglicht das Schalten eines openHAB Kontakts wenn das Gerät in einer Docking Station ist.
+
+Der Kontakt wird geschlossen, wenn das Gerät in der Docking Station ist.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Contact Tablet_Docked
+
 [zurück nach oben](#top)
 
 ## <a name="usability"/>Benutzerfreundlichkeit 
