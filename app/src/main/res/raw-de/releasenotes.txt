@@ -1,6 +1,7 @@
 0.9.26pre
 ======
 * der Docking Status kann jetzt an openHAB gemeldet werden
+* erlaube Zugriff auf http Seiten in Android 9
 
 0.9.25
 ======
