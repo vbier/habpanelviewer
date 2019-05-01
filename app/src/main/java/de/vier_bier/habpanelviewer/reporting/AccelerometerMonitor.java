@@ -5,7 +5,8 @@ import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import android.util.Log;
+
+import java.util.Arrays;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
@@ -17,7 +18,8 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 public class AccelerometerMonitor extends AbstractDeviceMonitor {
     private static final String TAG = "HPV-AccelerometerMon";
 
-    private float mSensitivity = 3;
+    private float mSensitivity = 1f;
+    private String mSensitivityStr = "1.0";
     private long mLastMotionTime;
     private Boolean mMotion = Boolean.FALSE;
 
@@ -56,7 +58,7 @@ public class AccelerometerMonitor extends AbstractDeviceMonitor {
             if (!mSensorItem.isEmpty()) {
                 state += "\n" + mCtx.getString(R.string.deviceMoving, mMotion, mSensorItem, mSensorState);
             }
-            state += "\n" + mCtx.getString(R.string.pref_accelerometerSensitivity) + ": " + mSensitivity;
+            state += "\n" + mCtx.getString(R.string.pref_accelerometerSensitivity) + ": " + sensText();
 
             status.set(mCtx.getString(R.string.pref_accelerometer), state);
         } else {
@@ -64,9 +66,18 @@ public class AccelerometerMonitor extends AbstractDeviceMonitor {
         }
     }
 
+    private String sensText() {
+        String[] sensVals = mCtx.getResources().getStringArray(R.array.sensitivityValues);
+        String[] sensitivities = mCtx.getResources().getStringArray(R.array.sensitivityNames);
+
+        int idx = Arrays.asList(sensVals).indexOf(mSensitivityStr);
+        return idx == -1 ? "??" : sensitivities[idx];
+    }
+
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         super.updateFromPreferences(prefs);
 
-        mSensitivity = Float.valueOf(prefs.getString("pref_" + mPreferenceKey + "_sensitivity", "3.0"));
+        mSensitivityStr = prefs.getString("pref_" + mPreferenceKey + "_sensitivity", "3.0");
+        mSensitivity = Float.valueOf(mSensitivityStr);
     }
 }
