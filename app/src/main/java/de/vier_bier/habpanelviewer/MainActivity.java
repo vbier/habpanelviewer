@@ -62,6 +62,7 @@ import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.IConnectionListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.preferences.PreferenceActivity;
+import de.vier_bier.habpanelviewer.reporting.AccelerometerMonitor;
 import de.vier_bier.habpanelviewer.reporting.BatteryMonitor;
 import de.vier_bier.habpanelviewer.reporting.BrightnessMonitor;
 import de.vier_bier.habpanelviewer.reporting.ConnectedIndicator;
@@ -318,6 +319,7 @@ public class MainActivity extends ScreenControllingActivity
         mMonitors.add(new VolumeMonitor(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection));
 
         SensorManager m = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mMonitors.add(new AccelerometerMonitor(this, m, mServerConnection));
         mMonitors.add(new ProximityMonitor(this, m, mServerConnection));
         mMonitors.add(new BrightnessMonitor(this, m, mServerConnection));
         mMonitors.add(new PressureMonitor(this, m, mServerConnection));

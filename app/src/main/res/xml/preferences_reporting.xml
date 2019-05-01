@@ -27,6 +27,11 @@
             android:persistent="false"
             android:title="@string/pref_temperature" />
 
+        <Preference
+            android:key="nested_pref_accelerometer"
+            android:persistent="false"
+            android:title="@string/pref_accelerometer" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

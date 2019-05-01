@@ -183,6 +183,13 @@
     <string name="pref_dockingStateEnabled_summ">Überwacht den Docking Status und meldet Änderungen an openHAB</string>
     <string name="pref_dockingStateItem">Docking Status Item</string>
     <string name="pref_dockingStateItem_summ">Name des openHAB Items an das der Docking Status gemeldet wird</string>
+    <string name="pref_accelerometer">Beschleunigungssensor</string>
+    <string name="pref_accelerometerEnabled">Bewegungsmeldung aktiviert</string>
+    <string name="pref_accelerometerEnabled_summ">Überwacht den Beschleunigungssensor und meldet Gerätebewegung an openHAB</string>
+    <string name="pref_accelerometerItem">Beschleunigungssensor Item</string>
+    <string name="pref_accelerometerItem_summ">Name des openHAB Items an das Gerätebewegung gemeldet wird</string>
+    <string name="pref_accelerometerSensitivity">Beschleunigungssensor Empfindlichkeit</string>
+    <string name="pref_accelerometerSensitivity_summ">Empfindlichkeit der Geräte Bewegungserkennung</string>
 
     <string name="pref_camera">Kamera</string>
     <string name="pref_cameraNewApi">Benutze Lollipop Camera API 2</string>
@@ -239,6 +246,7 @@
     <string name="temperature">Temperatur: %1$.1f°C [%2$s=%3$s]</string>
     <string name="maxRangeResolution">Max. Reichweite ist %1$.1f, Auflösung ist %2$.1f</string>
     <string name="objectClose">Objekt nah: %1$b [%2$s=%3$s]</string>
+    <string name="deviceMoving">Gerät in Bewegung: %1$b [%2$s=%3$s]</string>
     <string name="pressure">Druck: %1$d hPa oder mbar [%2$s=%3$s]</string>
     <string name="brightness">Helligkeit: %1$d lx [%2$s=%3$s]</string>
     <string name="battLow">Batterie leer: %1$b [%2$s=%3$s]</string>

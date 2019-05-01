@@ -133,6 +133,8 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
                 addPreferencesFromResource(R.xml.preferences_volume);
             } else if ("nested_pref_docking_state".equals(id)) {
                 addPreferencesFromResource(R.xml.preferences_docking_state);
+            } else if ("nested_pref_accelerometer".equals(id)) {
+                addPreferencesFromResource(R.xml.preferences_accelerometer);
             }
         }
     }

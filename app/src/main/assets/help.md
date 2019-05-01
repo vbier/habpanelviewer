@@ -64,6 +64,8 @@ turns on the screen of the device.
 
 Syntax: SCREEN_ON *\[seconds\]?*
 
+Example: SCREEN_ON 30
+
 The optional integer parameter allows to force the display to stay on for the given number of seconds.
 
 #### KEEP_SCREEN_ON
@@ -88,6 +90,9 @@ This can be used together with KEEP_SCREEN_ON to have a wake on touch feature.
 
 Syntax: SET_BRIGHTNESS *\[percentage|AUTO\]*: sets the device brightness
 
+Example: SET_BRIGHTNESS 30
+Example: SET_BRIGHTNESS AUTO
+
 Allows to set the device screen brightness.
 
 The parameter either has to be the fixed string AUTO (which activates adaptive screen brightness) or an integer value between 0 and 100 (which sets the brightness to the given percentage).
@@ -104,6 +109,8 @@ restores the volume to the level the device had when it was muted with the MUTE 
 
 Syntax: SET_VOLUME *\[volume\]*
 
+Example: SET_VOLUME 5
+
 sets the device volume.
 
 The integer parameter specifies the desired volume level. The range for the parameter starts at 0 (device is muted) to a device dependent maximum value.
@@ -114,11 +121,15 @@ The integer parameter specifies the desired volume level. The range for the para
 
 Syntax: TTS_SPEAK *\[text\]*
 
+Example: TTS_SPEAK Say something
+
 uses the devices tts engine to speak the given text.
 
 #### TTS_SET_LANG
 
 Syntax: TTS_SET_LANG *\[language code\]*
+
+Example: TTS_SET_LANG en
 
 sets the language to use for the TTS service. This has to be an ISO 639 alpha-2 or alpha-3 language code, or a language subtag up to 8 characters in length.
 Valid examples are: de, en, fr, ... 
@@ -138,6 +149,8 @@ turns off the flashlight of the back-facing camera.
 blinks the flashlight of the back-facing camera with an interval of one second.
 
 Syntax: FLASH_BLINK *\[milliseconds\]?*
+
+Example: FLASH_BLINK 100
 
 The optional integer parameter allows to specify the blink interval in milliseconds.
 
@@ -161,6 +174,8 @@ starts an app on the device.
 
 Syntax: START_APP *\[app package name\]*
 
+Example: START_APP com.google.android.calendar
+
 The package name can be found in the android settings for the given app. E.g. it is com.google.android.calendar for the google calendar app.
 
 #### ADMIN_LOCK_SCREEN
@@ -175,11 +190,15 @@ shows an arbitrary web page.
 
 Syntax: SHOW_URL *\[url\]*
 
+Example: SHOW_URL www.google.de
+
 #### SHOW_DASHBOARD
 
 shows the given HABPanel dashboard.
 
 Syntax: SHOW_DASHBOARD *\<dashboard\>*
+
+Example: SHOW_DASHBOARD Overview
 
 The dashboard parameter is a string parameter in which the name of the dashboard has to be specified.
 
@@ -199,6 +218,8 @@ captures a photo with the front camera of the device and sends it to an openHAB 
 
 Syntax: CAPTURE_CAMERA *\[image item\]* *\[jpeg quality\]?*
 
+Example: CAPTURE_CAMERA PictureItem 90
+
 The mandatory parameter *image item* specifies the name of an openHAB image item to which the screenshot will be sent.
 The optional integer parameter *jpeg quality* has to be in range 0-100 and defaults to the value defined in the preferences.
 
@@ -209,6 +230,8 @@ The optional integer parameter *jpeg quality* has to be in range 0-100 and defau
 captures a screenshot of the device and sends it to an openHAB *Image item*.
 
 Syntax: CAPTURE_SCREEN *\[image item\]* *\[jpeg quality\]?*
+
+Example: CAPTURE_SCREEN PictureItem 90
 
 The mandatory parameter *image item* specifies the name of an openHAB image item to which the screenshot will be sent.
 The optional integer parameter *jpeg quality* has to be in range 0-100 and defaults to the value defined in the preferences.
@@ -241,7 +264,20 @@ Click on a command to expand its details, if any.
 ## <a name="reporting"/>Value Reporting
 Allows to set the values of openHAB items depending on the device sensors or other things. You can then use the items in rules, e.g. for sending a notification when the battery is low.
 
-### battery reporting
+- [battery](#batteryReporting) (battery charging status, battery level, batter low)
+- [proximity sensor](#proximitySensor)
+- [brightness sensor](#brightnessSensor)
+- [pressure sensor](#pressureSensor)
+- [temperature sensor](#temperatureSensor)
+- [accelerometer](#accelerometer) (device movement)
+- [motion detection](#motionDetection) (camera based motion detection)
+- [screen](#screen) (screen on or off)
+- [volume](#volume) 
+- [usage](#usage) (current app usage)
+- [connected indicators](#connectedIndicators) (app startup time, cyclic time stamp)
+- [docking state](#dockingState)
+
+### <a name="batteryReporting"/>battery reporting
 When enabled, the app updates the state of up to three openHAB items depending on the battery state:
 - Battery Low Contact: the name of a **Contact** Item that shall be set whenever the battery is low.
 - Battery Charging Contact: the name of a **Contact** Item that shall be set whenever the battery is charging.
@@ -257,7 +293,52 @@ A sample openHAB items file looks like this:
 Leave item names empty in the preferences in order to skip reporting for this specific value. The contact item states will be *CLOSED* whenever the battery is low or the device is charging, *OPEN* otherwise.
 The number item state will be set to the battery charging level (in percent).
 
-### motion detection
+### <a name="proximitySensor"/>proximity sensor
+Allows to set the value of an openHAB contact item depending on the device proximity sensor.
+
+The contact state will be *CLOSED* whenever an object has been detected close to the device, *OPEN* otherwise.
+
+A sample openHAB items file looks like this:
+
+    Contact Tablet_Proximity
+
+### <a name="brightnessSensor"/>brightness sensor
+Allows to set the value of an openHAB number item depending on the device brightness sensor. As some devices report values in quick succession, brightness reporting additionally allows to collect values for a defined time and to only send the average to openHAB. 
+
+The item state will be set to the measured brightness in lux.
+
+A sample openHAB items file looks like this:
+
+    Number Tablet_Brightness
+
+### <a name="pressureSensor"/>pressure sensor
+Allows to set the value of an openHAB number item depending on the device pressure sensor.
+
+The item state will be set to the measured pressure in mBar or hPa (depending on the sensor hardware).
+
+A sample openHAB items file looks like this:
+
+    Number Tablet_Pressure
+
+### <a name="temperatureSensor"/>temperature sensor
+Allows to set the value of an openHAB number item depending on the device temperature sensor.
+
+The item state will be set to the measured temperature in degrees celsius.
+
+A sample openHAB items file looks like this:
+
+    Number Tablet_Temperature
+
+### <a name="accelerometer"/>accelerometer
+Allows to set the value of an openHAB contact item depending on whether the device is currently moved.
+
+The contact state will be *CLOSED* whenever the device is moved. It will be opened again after one minute without movement.
+
+A sample openHAB items file looks like this:
+
+    Contact Tablet_Movement
+
+### <a name="motionDetection"/>motion detection
 Allows to close or open an openHAB contact item when motion is detected. Whenever motion is detected, the contact will be closed. It will be opened again after one minute without motion.
 
 > Does not work at the same time as flashlight control.
@@ -277,43 +358,7 @@ A sample openHAB items file looks like this:
 
 The contact state will be *CLOSED* whenever motion has been detected by the camera, and will be *OPEN* again after one minute without motion.
 
-### proximity sensor
-Allows to set the value of an openHAB contact item depending on the device proximity sensor.
-
-The contact state will be *CLOSED* whenever an object has been detected close to the device, *OPEN* otherwise.
-
-A sample openHAB items file looks like this:
-
-    Contact Tablet_Proximity
-
-### brightness sensor
-Allows to set the value of an openHAB number item depending on the device brightness sensor. As some devices report values in quick succession, brightness reporting additionally allows to collect values for a defined time and to only send the average to openHAB. 
-
-The item state will be set to the measured brightness in lux.
-
-A sample openHAB items file looks like this:
-
-    Number Tablet_Brightness
-
-### pressure sensor
-Allows to set the value of an openHAB number item depending on the device pressure sensor.
-
-The item state will be set to the measured pressure in mBar or hPa (depending on the sensor hardware).
-
-A sample openHAB items file looks like this:
-
-    Number Tablet_Pressure
-
-### temperature sensor
-Allows to set the value of an openHAB number item depending on the device temperature sensor.
-
-The item state will be set to the measured temperature in degrees celsius.
-
-A sample openHAB items file looks like this:
-
-    Number Tablet_Temperature
-
-### screen
+### <a name="screen"/>screen
 Allows to set the value of an openHAB contact item depending on the device screen state (ON/OFF).
 
 The contact state will be *CLOSED* whenever when the screen is on, *OPEN* otherwise.
@@ -322,17 +367,7 @@ A sample openHAB items file looks like this:
 
     Contact Tablet_Screen
 
-
-### usage
-Allows to set the value of an openHAB contact item depending on whether the app is currently in active use.
-
-The contact state will be *CLOSED* whenever someone is actively using the app. After a configurable time of inactivity, the state will be set to *OPEN*.
-
-A sample openHAB items file looks like this:
-
-    Contact Tablet_Usage
-
-### volume
+### <a name="volume"/>volume
 Allows to set the value of an openHAB number item depending on the device volume.
 
 The item state will be set to the current volume of the device.
@@ -341,7 +376,16 @@ A sample openHAB items file looks like this:
 
     Number Tablet_Volume
 
-### connected indicators
+### <a name="usage"/>usage
+Allows to set the value of an openHAB contact item depending on whether the app is currently in active use.
+
+The contact state will be *CLOSED* whenever someone is actively using the app. After a configurable time of inactivity, the state will be set to *OPEN*.
+
+A sample openHAB items file looks like this:
+
+    Contact Tablet_Usage
+
+### <a name="connectedIndicators"/>connected indicators
 Allows to set the value of an openHAB datetime item to the app startup time and/or to cyclicly send a time stamp to openHAB.
 
 A sample openHAB items file looks like this:
@@ -351,7 +395,7 @@ A sample openHAB items file looks like this:
     
 You can use the startup time to trigger rules that can send initializing commands to HPV.
 
-### docking state
+### <a name="dockingState"/>docking state
 Allows to set the value of an openHAB contact item depending on whether the device is currently in a docking station.
 
 The contact state will be *CLOSED* whenever the device is docked, *OPEN* otherwise.

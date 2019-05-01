@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:persistent="false"
+    android:title="@string/pref_accelerometer">
+
+    <CheckBoxPreference
+        android:key="pref_accelerometer_enabled"
+        android:defaultValue="false"
+        android:summary="@string/pref_accelerometerEnabled_summ"
+        android:title="@string/pref_accelerometerEnabled" />
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+        android:key="pref_accelerometer_item"
+        android:dependency="pref_accelerometer_enabled"
+        android:inputType="textPhonetic"
+        android:summary="@string/pref_proximityItem_summ"
+        android:title="@string/pref_accelerometerItem" />
+    <ListPreference
+        android:key="pref_accelerometer_sensitivity"
+        android:defaultValue="1.0"
+        android:entries="@array/sensitivityNames"
+        android:entryValues="@array/sensitivityValues"
+        android:dependency="pref_accelerometer_enabled"
+        android:summary="@string/pref_accelerometerSensitivity_summ"
+        android:title="@string/pref_accelerometerSensitivity" />
+</PreferenceScreen>

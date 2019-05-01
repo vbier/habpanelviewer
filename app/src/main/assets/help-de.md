@@ -64,6 +64,8 @@ schaltet den Bildschirm des Geräts ein.
 
 Syntax: SCREEN_ON *\[Sekunden\]?*
 
+Beispiel: SCREEN_ON 30
+
 Der optionale Ganzzahlparameter hindert das System für die angegeben Anzahl von Sekunden daran, den Bildschirm auszuschalten.
 
 #### KEEP_SCREEN_ON
@@ -89,6 +91,9 @@ Kann zusammen mit KEEP_SCREEN_ON benutzt werden um zu realisieren, dass das Ger�
 
 Syntax: SET_BRIGHTNESS *\[Prozent|AUTO\]*: sets the device brightness
 
+Beispiel: SET_BRIGHTNESS 50
+Beispiel: SET_BRIGHTNESS AUTO
+
 Setzt die Helligkeit des Bildschirms.
 
 Als Parameterwert muss entweder AUTO (aktiviert die adaptive Helligkeit) oder eine Zahl zwischen 0 und 100 (setzt die Helligkeit auf den angegebenen Prozentwert) übergeben werden..
@@ -105,6 +110,8 @@ stellt die Lautstärke auf den Wert, den das Gerät zum Zeitpunkt des MUTE Komma
 
 Syntax: SET_VOLUME *\[Lautstärke\]*
 
+Beispiel: SET_VOLUME 5
+
 stellt die Lautstärke auf den angegebenen Wert.
 
 Der Ganzzahlparameter gibt die gewünschte Lautstärke an. Diese muss im Bereich 0 (lautlos) bis zum geräteabhängigen Maximalwert liegen.
@@ -115,11 +122,15 @@ Der Ganzzahlparameter gibt die gewünschte Lautstärke an. Diese muss im Bereich
 
 Syntax: TTS_SPEAK *\[Text\]*
 
+Beispiel: TTS_SPEAK Ich sage etwas
+
 Benutzt den TTS Service des Gerätes um den angegebenen Text zu sprechen.
 
 #### TTS_SET_LANG
 
 Syntax: TTS_SET_LANG *\[Sprachcode\]*
+
+Beispiel: TTS_SET_LANG de
 
 Setzt die Sprache des TTS Services. Dies muss ein ISO 639 alpha-2 oder alpha-3 Sprachcode sein, oder ein Sprach Subtag von bis zu 8 Buchstaben Länge.
 Gültige Beispiele sind: de, en, fr, ... 
@@ -139,6 +150,8 @@ schaltet das Blitzlicht der hinteren Kamera aus.
 lässt das Blitzlicht der hinteren Kamera im 1 Sekunden Intervall blinken.
 
 Syntax: FLASH_BLINK *\[Millisekunden\]?*
+
+Beispiel: FLASH_BLINK 100
 
 Der optionale Ganzzahlparameter gibt das gewünschte Blinkintervall in Millisekunden an.
 
@@ -162,6 +175,8 @@ Startet eine App auf dem Gerät.
 
 Syntax: START_APP *\[App Paket Name\]*
 
+Beispiel: START_APP com.google.android.calendar
+
 Der Paket Name kann in den Android Einstellungen der App nachgesehen werden. Z.B. ist es com.google.android.calendar für den Google Kalendar.
 
 #### ADMIN_LOCK_SCREEN
@@ -176,11 +191,15 @@ lädt eine beliebige Webseite.
 
 Syntax: SHOW_URL *\[url\]*
 
+Beispiel: SHOW_URL www.google.de
+
 #### SHOW_DASHBOARD
 
 lädt die angegebene HABPanel Seite.
 
 Syntax: SHOW_DASHBOARD *\<Dashboard\>*
+
+Beispiel: SHOW_DASHBOARD Overview
 
 Der Dashboard Parameter ist ein String Parameter in welchem der Name des Dashboards übergeben werden muss.
 
@@ -200,6 +219,8 @@ macht ein Foto mit der Frontkamera und sendet dieses an ein openHAB Image Item.
 
 Syntax: CAPTURE_CAMERA *\[Image Item\]* *\[jpeg Qualität\]?*
 
+Beispiel: CAPTURE_CAMERA PictureItem 90
+
 Der erforderliche Parameter *Image Item* gibt das openHAB Image Item an, an das das Bild geschickt wird.
 Der optionale Ganzzahlparameter *jpeg Qualität* muss im Bereich 0-100 liegen, sein Standardwert kann in den Einstellungen festgelegt werden.
 
@@ -210,6 +231,8 @@ Der optionale Ganzzahlparameter *jpeg Qualität* muss im Bereich 0-100 liegen, s
 macht einen Screenshot und sendet diesen an ein openHAB Image Item.
 
 Syntax: CAPTURE_SCREEN *\[Image Item\]* *\[jpeg Qualität\]?*
+
+Beispiel: CAPTURE_SCREEN PictureItem 90
 
 Der erforderliche Parameter *Image Item* gibt das openHAB Image Item an, an das das Bild geschickt wird.
 Der optionale Ganzzahlparameter *jpeg Qualität* muss im Bereich 0-100 liegen, sein Standardwert kann in den Einstellungen festgelegt werden.
@@ -240,7 +263,20 @@ Klicke auf ein Kommando um die Details anuzeigen, falls es welche gibt.
 ## <a name="reporting"/>Werte Meldung
 Ermöglicht es, Werte der Geräte Sensoren oder andere Dinge an openHAB zu melden. Die gemeldeten Werte können dann z.B. in Regeln verwendet werden, um dich zu benachrichtigen, bevor die Batterie des Tablets leer ist.
 
-### Batteriesensor
+- [Batteriesensor](#batteryReporting) (Ladestatus, Ladezustand, Batterie leer)
+- [Annäherungssensor](#proximitySensor)
+- [Helligkeitssensor](#brightnessSensor)
+- [Drucksensor](#pressureSensor)
+- [Temperatursensor](#temperatureSensor)
+- [Beschleunigungssensor](#accelerometer) (Gerätebewegung)
+- [Bewegungserkennung](#motionDetection) (kamerabasierte Bewegungserkennung)
+- [Bildschirm](#screen) (Bildschirm an oder aus)
+- [Lautstärke](#volume) 
+- [Benutzung](#usage) (momentane App Benutzung)
+- [Verbindungsindikatoren](#connectedIndicators) (App Startzeit, zyklischer Zeitstempel)
+- [Docking Status](#dockingState)
+
+### <a name="batteryReporting"/>Batteriesensor
 Wenn aktiviert, ändert die Anwendung die Werte von bis zu drei openHAB Items in Abhängigkeit des Batteriezustands:
 - Batterie Leer Kontakt: Name des openHAB Kontakts (Item vom Typ **Contact**) der geschaltet wird wenn die Batterie leer ist
 - Batterie wird geladen Kontakt: Name des openHAB Kontakts der geschaltet wird wenn die Batterie geladen wird.
@@ -255,7 +291,50 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
 Lasse Item Namen leer, um das Melden bestimmter Werte zu unterdrücken. Die Kontakte werden geschlossen, sobald die Batterie leer ist, bzw. das Gerät geladen wird.
 Das Number Item reflektiert den Akku Ladezustand in Prozent.
 
-### Bewegungserkennung
+### <a name="proximitySensor"/>Annäherungssensor
+Ermöglicht das Schalten eines openHAB Kontakts bei erkannter Annäherung.
+
+Der Kontakt wird geschlossen, wenn Annäherung erkannt wird.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Contact Tablet_Proximity
+
+### <a name="brightnessSensor"/>Helligkeitssensor
+Setzt den Wert eines openHAB Items auf den vom Helligkeitssensor gemessenen Wert. Weil manche Geräte Sensor Werte in sehr schneller Aufeinanderfolge melden, erlaubt es die App, zyklisch Durchschnittswerte zu melden.
+
+Die Einheit des gemeldeten Wertes ist lx.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Number Tablet_Brightness
+
+### <a name="pressureSensor"/>Drucksensor
+Setzt den Wert eines openHAB Items auf den vom Drucksensor gemessenen Wert.
+
+Die Einheit des gemeldeten Wertes ist Geräte abhängig.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Number Tablet_Pressure
+
+### <a name="temperatureSensor"/>Temperatursensor
+Setzt den Wert eines openHAB Items auf den vom Temperatursensor gemessenen Wert.
+
+Die Einheit des gemeldeten Wertes ist Grad Celsius.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Number Tablet_Temperature
+
+### <a name="accelerometer"/>Beschleunigungssensor
+Ermöglicht das Schalten eines openHAB Kontakts bei erkannter Gerätebewegung. Bei erkannter Bewegung wird der Kontakt geschlossen, und nach einer Minute ohne Bewegung wieder geöffnet.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Contact Tablet_Movement
+
+### <a name="motionDetection"/>Bewegungserkennung
 Ermöglicht das Schalten eines openHAB Kontakts bei erkannter Bewegung. Bei erkannter Bewegung wird der Kontakt geschlossen, und nach einer Minute ohne Bewegung wieder geöffnet.
  
 > Funktioniert nicht gleichzeitig mit der Blitzlicht Steuerung.
@@ -276,43 +355,7 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
 Der Kontakt wird geschlossen, wenn Bewegung erkannt wird, und nach einer Minute ohne Bewegung wieder geöffnet.
 
-### Annäherungssensor
-Ermöglicht das Schalten eines openHAB Kontakts bei erkannter Annäherung.
-
-Der Kontakt wird geschlossen, wenn Annäherung erkannt wird.
-
-Eine beispielhafte openHAB Items Datei könnte so aussehen:
-
-    Contact Tablet_Proximity
-
-### Helligkeitssensor
-Setzt den Wert eines openHAB Items auf den vom Helligkeitssensor gemessenen Wert. Weil manche Geräte Sensor Werte in sehr schneller Aufeinanderfolge melden, erlaubt es die App, zyklisch Durchschnittswerte zu melden.
-
-Die Einheit des gemeldeten Wertes ist lx.
-
-Eine beispielhafte openHAB Items Datei könnte so aussehen:
-
-    Number Tablet_Brightness
-
-### Drucksensor
-Setzt den Wert eines openHAB Items auf den vom Drucksensor gemessenen Wert.
-
-Die Einheit des gemeldeten Wertes ist Geräte abhängig.
-
-Eine beispielhafte openHAB Items Datei könnte so aussehen:
-
-    Number Tablet_Pressure
-
-### Temperatursensor
-Setzt den Wert eines openHAB Items auf den vom Temperatursensor gemessenen Wert.
-
-Die Einheit des gemeldeten Wertes ist Grad Celsius.
-
-Eine beispielhafte openHAB Items Datei könnte so aussehen:
-
-    Number Tablet_Temperature
-
-### Bildschirm
+### <a name="screen"/>Bildschirm
 Setzt den Wert eines openHAB Items auf den Bildschirm Schaltzustand (an/aus).
 
 Der Kontakt wird geschlossen, wenn der Bildschirm an ist.
@@ -321,7 +364,14 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Contact Tablet_Screen
 
-### Benutzung
+### <a name="volume"/>Lautstärke
+Setzt den Wert eines openHAB Items auf die momentane Lautstärke des Gerätes.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Number Tablet_Volume
+
+### <a name="usage"/>Benutzung
 Ermöglicht das Schalten eines openHAB Kontakts bei erkannter aktive App Benutzung.
 
 Der Kontakt wird geschlossen, wenn die App aktive benutzt wird. Nach einer konfigurierbaren Zeit der Inaktivität wird der Kontakt wieder geöffnet.
@@ -330,15 +380,7 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Contact Tablet_Usage
 
-### Lautstärke
-Setzt den Wert eines openHAB Items auf die momentane Lautstärke des Gerätes.
-
-Eine beispielhafte openHAB Items Datei könnte so aussehen:
-
-    Number Tablet_Volume
-
-
-### Verbindungsindikatoren
+### <a name="connectedIndicators"/>Verbindungsindikatoren
 Meldet die App Startzeit und/oder meldet zyklisch einen Zeitstempel an openHAB.
 
 Eine beispielhafte openHAB Items Datei könnte so aussehen:
@@ -348,7 +390,7 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
     
 Die Startzeit kann z.B. genutzt werden, um nach dem App Start Initialisierungskommandos an HPV zu schicken.
 
-### Docking Status
+### <a name="dockingState"/>Docking Status
 Ermöglicht das Schalten eines openHAB Kontakts wenn das Gerät in einer Docking Station ist.
 
 Der Kontakt wird geschlossen, wenn das Gerät in der Docking Station ist.

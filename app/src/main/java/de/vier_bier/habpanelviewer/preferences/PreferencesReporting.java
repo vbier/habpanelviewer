@@ -16,6 +16,7 @@ public class PreferencesReporting extends PreferenceFragment {
         boolean pressureEnabled = false;
         boolean brightnessEnabled = false;
         boolean temperatureEnabled = false;
+        boolean acceleroMeterEnabled = false;
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
@@ -24,6 +25,7 @@ public class PreferencesReporting extends PreferenceFragment {
             pressureEnabled = bundle.getBoolean("pressure_enabled");
             brightnessEnabled = bundle.getBoolean("brightness_enabled");
             temperatureEnabled = bundle.getBoolean("temperature_enabled");
+            acceleroMeterEnabled = bundle.getBoolean("accelerometer_enabled");
         }
 
         // disable preferences if functionality is not available
@@ -46,6 +48,10 @@ public class PreferencesReporting extends PreferenceFragment {
         if (!temperatureEnabled) {
             findPreference("nested_pref_temperature").setEnabled(false);
             findPreference("nested_pref_temperature").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_temperature)));
+        }
+        if (!acceleroMeterEnabled) {
+            findPreference("nested_pref_accelerometer").setEnabled(false);
+            findPreference("nested_pref_accelerometer").setSummary(getString(R.string.notAvailableOnDevice, getString(R.string.pref_accelerometer)));
         }
     }
 }

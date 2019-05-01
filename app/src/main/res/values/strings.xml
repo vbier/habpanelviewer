@@ -186,6 +186,13 @@
     <string name="pref_dockingStateEnabled_summ">Allows to set the state of an openHAB item depending on the device docking state</string>
     <string name="pref_dockingStateItem">Docking State Item</string>
     <string name="pref_dockingStateItem_summ">Name of the contact item whose state shall be set</string>
+    <string name="pref_accelerometer">Accelerometer</string>
+    <string name="pref_accelerometerEnabled">Enabled</string>
+    <string name="pref_accelerometerEnabled_summ">Monitor device movement and report changes to openHAB</string>
+    <string name="pref_accelerometerItem">Accelerometer Item</string>
+    <string name="pref_accelerometerItem_summ">Name of the contact item whose state shall be set depending on the device movement</string>
+    <string name="pref_accelerometerSensitivity">Accelerometer Sensitivity</string>
+    <string name="pref_accelerometerSensitivity_summ">Sensitivity of the movement detection</string>
 
     <string name="pref_camera">Camera</string>
     <string name="pref_cameraNewApi">Use Lollipop camera API</string>
@@ -242,6 +249,7 @@
     <string name="temperature">Temperature: %1$.1f°C [%2$s=%3$s]</string>
     <string name="maxRangeResolution">Sensor max. range is %1$.1f, resolution is %2$.1f</string>
     <string name="objectClose">Object close: %1$b [%2$s=%3$s]</string>
+    <string name="deviceMoving">Device moving: %1$b [%2$s=%3$s]</string>
     <string name="pressure">Pressure: %1$.1f hPa or mbar [%2$s=%3$s]</string>
     <string name="brightness">Brightness: %1$.1f lx [%2$s=%3$s]</string>
     <string name="battLow">Battery low: %1$b [%2$s=%3$s]</string>
