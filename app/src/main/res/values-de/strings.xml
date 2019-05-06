@@ -343,4 +343,5 @@
     <string name="diablePowerSaving">Momentan ist die Akku-Optimierung für HPV aktiviert. Dies hindert die App am Empfangen von Kommandos und Senden von Sensorwerten während das Gerät im Stand-by ist. Möchtest du die Akku-Optimierung für HPV ausschalten?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
+    <string name="httpWithBasicAuth">Sie sind im Begriff ihre Zugangsdaten für eine unverschlüsselte HTTP Verbindung einzugeben. Sie sollten dies nur in einem privaten Netzwerk tun, da das Passwort für alle lesbar übertragen wird.</string>
 </resources>

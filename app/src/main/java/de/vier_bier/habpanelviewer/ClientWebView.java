@@ -206,23 +206,22 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             @Override
             public void onReceivedHttpAuthRequest(WebView view, final HttpAuthHandler handler, final String host, final String realm) {
                 Log.i(TAG, "realm " + realm);
-                CredentialsHelper.getInstance(getContext()).handleAuthRequest(host, realm, handler, () -> {
-                    UiUtil.showPasswordDialog(getContext(), mServerURL, "Rest API", new UiUtil.CredentialsListener() {
-                        @Override
-                        public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
-                            if (store) {
-                                CredentialsHelper.getInstance(getContext()).registerCredentials(host, realm, user, password);
-                            }
-
-                            handler.proceed(user, password);
+                CredentialsHelper.getInstance(getContext()).handleAuthRequest(host, realm, handler,
+                        () -> UiUtil.showPasswordDialog(getContext(), host, realm, new UiUtil.CredentialsListener() {
+                    @Override
+                    public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
+                        if (store) {
+                            CredentialsHelper.getInstance(getContext()).registerCredentials(host, realm, user, password);
                         }
 
-                        @Override
-                        public void credentialsCancelled() {
-                            handler.cancel();
-                        }
-                    });
-                });
+                        handler.proceed(user, password);
+                    }
+
+                    @Override
+                    public void credentialsCancelled() {
+                        handler.cancel();
+                    }
+                }));
             }
         });
 

@@ -10,6 +10,8 @@ import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -39,23 +41,24 @@ public class UiUtil {
         return d == null ? "-" : DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault()).format(d);
     }
 
-    public static void showDialog(final Activity activity, final String title, final String text) {
-        showButtonDialog(activity, title, text, android.R.string.ok, null, -1, null);
+    public static void showDialog(final Context context, final String title, final String text) {
+        showButtonDialog(context, title, text, android.R.string.ok, null, -1, null);
     }
 
-    public static void showCancelDialog(final Activity activity, final String title, final String text,
+    public static void showCancelDialog(final Context context, final String title, final String text,
                                         final DialogInterface.OnClickListener yesListener,
                                         final DialogInterface.OnClickListener noListener) {
-        showButtonDialog(activity, title, text, android.R.string.yes, yesListener, android.R.string.no, noListener);
+        showButtonDialog(context, title, text, android.R.string.yes, yesListener, android.R.string.no, noListener);
     }
 
-    public static void showButtonDialog(final Activity activity, final String title, final String text,
+    public static void showButtonDialog(final Context context, final String title, final String text,
                                         final int button1TextId,
                                         final DialogInterface.OnClickListener button1Listener,
                                         final int button2TextId,
                                         final DialogInterface.OnClickListener button2Listener) {
-        activity.runOnUiThread(() -> {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
             if (title != null) {
                 builder.setTitle(title);
             }
@@ -160,6 +163,21 @@ public class UiUtil {
 
     public static void showPasswordDialog(final Context ctx, final String host, final String realm,
                                           final CredentialsListener l) {
+        showPasswordDialog(ctx, host, realm, l, true);
+    }
+
+    public static void showPasswordDialog(final Context ctx, final String host, final String realm,
+                                          final CredentialsListener l, boolean showWarning) {
+        // host only contains the complete URL for the SSE and REST connections using basic auth
+        if (showWarning && host.toLowerCase().startsWith("http:")) {
+            showCancelDialog(ctx, ctx.getString(R.string.credentials_required),
+                    ctx.getString(R.string.httpWithBasicAuth),
+                    (dialogInterface, i) -> {
+                        showPasswordDialog(ctx, host, realm, l, false);
+                    }, null);
+            return;
+        }
+
         final AlertDialog alert = new AlertDialog.Builder(ctx)
                 .setCancelable(false)
                 .setTitle(R.string.credentials_required)

@@ -346,4 +346,5 @@
     <string name="diablePowerSaving">You currently have battery optimization enabled for HPV. This prevents the app from receiving commands as well as from reporting sensor values while the device is in stand-by. Do you want to disable battery optimization?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="httpWithBasicAuth">You are about to enter you credentials for an unencrypted HTTP connection. You should only do this in a private network, as your password will be sent in plain text.</string>
 </resources>
