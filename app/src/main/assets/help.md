@@ -440,9 +440,11 @@ Additional optional permissions allowing to use the full functionality:
 * android.permission.BLUETOOTH
 & android.permission.BLUETOOTH_ADMIN - for turning bluetooth on and off
 * android.permission.FLASHLIGHT - for controlling the camera flashlight
-* android.permission.CAMERA - for capturing photos and motion detection
+* android.permission.CAMERA - for capturing photos, motion detection and WebRTC
 * android.permission.WAKE_LOCK - for waking up the device
 * android.permission.WRITE_EXTERNAL_STORAGE - for exporting preferences
+* android.permission.RECORD_AUDIO
+& android.permission.MODIFY_AUDIO_SETTINGS - for WebRTC
 
 HPV can be set as "Device Admin" in the preferences. This allows to lock the device when the appropriate command is received.
 

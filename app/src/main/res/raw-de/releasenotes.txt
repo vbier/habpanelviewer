@@ -3,6 +3,8 @@
 * der Docking Status kann jetzt an openHAB gemeldet werden
 * Gerätebewegung kann jetzt an openHAB gemeldet werden
 * erlaube Zugriff auf http Seiten in Android 9
+* deaktiviere Kamera und Mikrophone bezogene Einstellungen beim Start wenn die Berechtigungen fehlen
+* Unterstützung für Passwort geschützte openHAB Server (nur basic auth)
 
 0.9.25
 ======

@@ -12,6 +12,7 @@ public class CredentialsHelper {
 
     private final AppDatabase mDb;
     private final HashSet<Credential> mSendCreds = new HashSet<>();
+    private Credential mRestCred = null;
 
     public static synchronized CredentialsHelper getInstance(Context ctx) {
         if (ourInstance == null) {
@@ -73,5 +74,33 @@ public class CredentialsHelper {
                 askPwdRunnable.run();
             }
         }.execute();
+    }
+
+    public String getRestAuth(String serverURL) {
+        if (mRestCred != null && mRestCred.getHost().equals(serverURL)) {
+            return mRestCred.getUser() + ":" + mRestCred.getPasswd();
+        }
+
+        Credential c = mDb.credentialDao().get(serverURL, "Rest API");
+
+        if (c != null) {
+            return c.getUser() + ":" + c.getPasswd();
+        }
+
+        return null;
+    }
+
+    public void setRestAuth(String host, String user, String passwd, boolean store) {
+        mRestCred = new Credential(host, "Rest API", user, passwd);
+
+        if (store) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    mDb.credentialDao().insert(mRestCred);
+                    return null;
+                }
+            }.execute();
+        }
     }
 }

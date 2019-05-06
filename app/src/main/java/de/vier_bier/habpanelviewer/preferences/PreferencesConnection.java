@@ -18,6 +18,7 @@ import javax.net.ssl.SSLException;
 
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
+import de.vier_bier.habpanelviewer.db.CredentialsHelper;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
 public class PreferencesConnection extends PreferenceFragment {
@@ -69,10 +70,30 @@ public class PreferencesConnection extends PreferenceFragment {
             String dialogText = null;
             try {
                 String serverURL = urls[0] + "/rest/services";
-                HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(serverURL);
+                HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(serverURL,
+                        CredentialsHelper.getInstance(activity.get()).getRestAuth(urls[0]));
                 urlConnection.connect();
 
-                if (urlConnection.getResponseCode() != 200) {
+                if (urlConnection.getResponseCode() == 401 || urlConnection.getResponseCode() == 407) {
+                    activity.get().runOnUiThread(() -> UiUtil.showPasswordDialog(activity.get(), urls[0], "Rest API",
+                            new UiUtil.CredentialsListener() {
+                                @Override
+                                public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
+                                    CredentialsHelper.getInstance(activity.get()).setRestAuth(host, user, password, store);
+
+                                    if (activity.get() != null && !activity.get().isFinishing()) {
+                                        AsyncTask<String, Void, Void> validator =
+                                                new ValidateHabPanelTask(activity.get(), preferenceName);
+                                        validator.execute(urls);
+                                    }
+                                }
+
+                                @Override
+                                public void credentialsCancelled() {
+                                }
+                            }));
+                    return null;
+                } else if (urlConnection.getResponseCode() != 200) {
                     dialogText = getResString(R.string.notValidOpenHabUrl);
                 } else {
                     try (BufferedReader br = new BufferedReader(new InputStreamReader((urlConnection.getInputStream())))) {

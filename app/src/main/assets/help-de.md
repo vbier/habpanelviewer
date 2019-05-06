@@ -436,9 +436,11 @@ Weitere Berechtigungen um die volle Funktionalität verfügbar zu machen:
 * android.permission.BLUETOOTH
 & android.permission.BLUETOOTH_ADMIN - um Bluetooth an- und auszuschalten
 * android.permission.FLASHLIGHT - um den Kamera Blitz zu kontrollieren
-* android.permission.CAMERA - um Fotos aufzunehmen und für die Bewegungserkennung
+* android.permission.CAMERA - um Fotos aufzunehmen, für die Bewegungserkennung und WebRTC
 * android.permission.WAKE_LOCK - um das Gerät aufzuwecken
 * android.permission.WRITE_EXTERNAL_STORAGE - für den Export der Einstellungen
+* android.permission.RECORD_AUDIO
+& android.permission.MODIFY_AUDIO_SETTINGS - Für WebRTC
 
 HPV kann zusätzlich in den Einstellungen als "Geräte Admin" eingetragen werden. Dies erlaubt es, bei entsprechendem Kommando die Bildschirmsperre zu aktivieren.
 Wenn HPV Screenshots per Kommando an openHAB schicken soll, muss das Aufnehmen des Bildschirms erlaubt werden.

@@ -20,6 +20,7 @@ public class RestClient extends HandlerThread {
     private static final int GET_ID = 214;
 
     private Handler mWorkerHandler;
+    private String mAuthString;
 
     RestClient() {
         super("RestClient");
@@ -52,7 +53,7 @@ public class RestClient extends HandlerThread {
 
     private void putRequest(ItemModification item) {
         try {
-            HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(item.mServerURL + "/rest/items/" + item.mItemName + "/state");
+            HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(item.mServerURL + "/rest/items/" + item.mItemName + "/state", mAuthString);
             try {
                 urlConnection.setRequestMethod("PUT");
                 urlConnection.setDoOutput(true);
@@ -79,7 +80,7 @@ public class RestClient extends HandlerThread {
 
         StringBuilder response = new StringBuilder();
         try {
-            HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(item.mServerURL + "/rest/items/" + itemName + "/state");
+            HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(item.mServerURL + "/rest/items/" + itemName + "/state", mAuthString);
             try {
                 BufferedInputStream in = new BufferedInputStream(urlConnection.getInputStream());
 
@@ -101,6 +102,10 @@ public class RestClient extends HandlerThread {
             listener.itemInvalid(itemName);
             Log.e(TAG, "Failed to obtain state for item " + itemName, e);
         }
+    }
+
+    void setAuth(String restAuth) {
+        mAuthString = restAuth;
     }
 
     private class ItemSubscription {

@@ -1,5 +1,6 @@
 package de.vier_bier.habpanelviewer;
 
+import android.Manifest;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.Intent;
@@ -46,6 +47,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import de.vier_bier.habpanelviewer.command.AdminHandler;
@@ -553,6 +555,8 @@ public class MainActivity extends ScreenControllingActivity
             });
         }
 
+        updatePrefsDueToMissingPermissions(prefs);
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
         final String menuPos = prefs.getString("pref_menu_position", "");
@@ -585,7 +589,7 @@ public class MainActivity extends ScreenControllingActivity
 
         mConnectedIndicator.updateFromPreferences(prefs);
         mWebView.updateFromPreferences(prefs);
-        mServerConnection.updateFromPreferences(prefs);
+        mServerConnection.updateFromPreferences(prefs, this);
 
         updateMotionPreferences();
 
@@ -593,6 +597,20 @@ public class MainActivity extends ScreenControllingActivity
             registerForContextMenu(mWebView);
         } else {
             unregisterForContextMenu(mWebView);
+        }
+    }
+
+    private void updatePrefsDueToMissingPermissions(SharedPreferences prefs) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            SharedPreferences.Editor editor1 = prefs.edit();
+            editor1.putBoolean("pref_allow_webrtc", false);
+            editor1.putBoolean("pref_motion_detection_enabled", false);
+            editor1.putBoolean("pref_motion_detection_preview", false);
+            editor1.apply();
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            SharedPreferences.Editor editor1 = prefs.edit();
+            editor1.putBoolean("pref_allow_webrtc", false);
+            editor1.apply();
         }
     }
 

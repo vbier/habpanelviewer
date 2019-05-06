@@ -15,6 +15,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.vier_bier.habpanelviewer.db.CredentialsHelper;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
 
 /**
@@ -61,7 +62,10 @@ class ItemsAsyncTaskLoader extends AsyncTaskLoader<List<String>> {
         }
 
         try {
-            HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(mServerUrl + "/rest/items/");
+            HttpURLConnection urlConnection =
+                    ConnectionUtil.getInstance().createUrlConnection(mServerUrl + "/rest/items/",
+                            CredentialsHelper.getInstance(getContext()).getRestAuth(mServerUrl));
+
             StringBuilder response = new StringBuilder();
             try {
                 BufferedInputStream in = new BufferedInputStream(urlConnection.getInputStream());

@@ -44,5 +44,11 @@
         android:defaultValue="false"
         android:summary="@string/pref_logBrowserMsgs_summ"
         android:title="@string/pref_logBrowserMsgs" />
+    <CheckBoxPreference
+        android:key="pref_allow_webrtc"
+        android:defaultValue="false"
+        android:enabled="@bool/is_post_api_21"
+        android:summary="@string/pref_allowWebrtc_summ"
+        android:title="@string/pref_allowWebrtc" />
 
 </PreferenceScreen>

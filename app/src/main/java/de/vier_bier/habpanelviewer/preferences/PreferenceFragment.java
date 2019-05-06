@@ -71,8 +71,14 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
             return new PreferencesOther();
         } else if ("nested_pref_connected".equals(id)) {
             return new PreferencesConnected();
+        } else if ("nested_pref_browser".equals(id)) {
+            return new PreferencesBrowser();
         } else if ("nested_pref_connection".equals(id)) {
             return new PreferencesConnection();
+        } else if ("nested_pref_camera".equals(id)) {
+            return new PreferencesCamera();
+        } else if ("nested_pref_motion".equals(id)) {
+            return new PreferencesMotion();
         } else if ("nested_pref_reporting".equals(id)) {
             PreferenceFragment fragment =  new PreferencesReporting();
             fragment.setArguments(addArgs);

@@ -3,6 +3,7 @@ package de.vier_bier.habpanelviewer.ssl;
 import android.content.Context;
 import android.net.http.SslCertificate;
 import android.os.Bundle;
+import android.util.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -115,7 +116,7 @@ public class ConnectionUtil {
         }
     }
 
-    public synchronized HttpURLConnection createUrlConnection(final String urlStr) throws IOException, GeneralSecurityException {
+    public synchronized HttpURLConnection createUrlConnection(final String urlStr, final String authStr) throws IOException, GeneralSecurityException {
         if (!mInitialized.get() && urlStr.toLowerCase().startsWith("https://")) {
             throw new GeneralSecurityException("Certificate Store not yet initialized!");
         }
@@ -130,6 +131,11 @@ public class ConnectionUtil {
             ((HttpsURLConnection) urlConnection).setHostnameVerifier(hostnameVerifier);
         }
         urlConnection.setConnectTimeout(200);
+
+        if (authStr != null) {
+            String basicAuth = "Basic " + new String(Base64.encode(authStr.getBytes(), Base64.NO_WRAP));
+            urlConnection.setRequestProperty ("Authorization", basicAuth);
+        }
 
         return urlConnection;
     }
@@ -258,6 +264,21 @@ public class ConnectionUtil {
 
     public interface CertChangedListener {
         void certAdded();
+    }
+
+    public int testConnection(String url, String authStr) {
+        int code = -1;
+        try {
+            HttpURLConnection urlConnection = createUrlConnection(url, authStr);
+            urlConnection.connect();
+
+            code = urlConnection.getResponseCode();
+            urlConnection.disconnect();
+        } catch (IOException | GeneralSecurityException e) {
+            // return -1
+        }
+
+        return code;
     }
 }
 

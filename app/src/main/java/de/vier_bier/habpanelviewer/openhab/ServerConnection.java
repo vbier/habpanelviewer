@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
@@ -26,6 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import de.vier_bier.habpanelviewer.NetworkTracker;
+import de.vier_bier.habpanelviewer.UiUtil;
+import de.vier_bier.habpanelviewer.db.CredentialsHelper;
 import de.vier_bier.habpanelviewer.openhab.average.AveragePropagator;
 import de.vier_bier.habpanelviewer.openhab.average.IStatePropagator;
 import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
@@ -46,6 +48,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
     private static final String TAG = "HPV-ServerConnection";
 
     private String mServerURL;
+    private String mAuthStr;
     private EventSource mEventSource;
     private final AtomicBoolean mConnected = new AtomicBoolean(false);
     private RestClient mRestClient = new RestClient();
@@ -176,20 +179,63 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         }
     }
 
-    public void updateFromPreferences(SharedPreferences prefs) {
-        // in case server url has changed reconnect
-        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", ""))) {
+    public void updateFromPreferences(SharedPreferences prefs, Context ctx) {
+        final boolean serverChanged = mServerURL == null
+                || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", ""));
+
+        if (serverChanged) {
             mServerURL = prefs.getString("pref_server_url", "");
             Log.d(TAG, "new server URL: " + mServerURL);
-            close();
-
-            NetworkInfo activeNetwork = mConnManager == null ? null : mConnManager.getActiveNetworkInfo();
-            if (activeNetwork != null && activeNetwork.isConnectedOrConnecting()) {
-                connect();
-            } else {
-                Log.d(TAG, "skipping connect due to missing network");
-            }
         }
+
+        if (mServerURL != null) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    String newAuth = CredentialsHelper.getInstance(ctx).getRestAuth(mServerURL);
+                    boolean authChanged = newAuth == null && mAuthStr != null
+                            || newAuth != null && !newAuth.equals(mAuthStr);
+
+                    if (authChanged || serverChanged) {
+                        close();
+                        setAuthStr(ctx, newAuth);
+                    }
+
+                    return null;
+                }
+            }.execute();
+        }
+    }
+
+    private void setAuthStr(Context ctx, final String authStr) {
+        mAuthStr = authStr;
+        mRestClient.setAuth(mAuthStr);
+
+        new AsyncTask<Void, Void, Integer>() {
+            @Override
+            protected Integer doInBackground(Void... voids) {
+                return ConnectionUtil.getInstance().testConnection(mServerURL, authStr);
+            }
+
+            @Override
+            protected void onPostExecute(Integer httpCode) {
+                if (httpCode == 401 || httpCode == 407) {
+                    UiUtil.showPasswordDialog(ctx, mServerURL, "Rest API", new UiUtil.CredentialsListener() {
+                        @Override
+                        public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
+                            CredentialsHelper.getInstance(ctx).setRestAuth(mServerURL, user, password, store);
+                            setAuthStr(ctx, user + ":" + password);
+                        }
+
+                        @Override
+                        public void credentialsCancelled() {
+                        }
+                    });
+                } else if (!isConnected()) {
+                    connect();
+                }
+            }
+        }.execute();
     }
 
     private synchronized boolean isConnected() {
@@ -225,7 +271,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
                 client = new SSEHandler();
                 mEventSource = new EventSource(client);
 
-                new AsyncConnectTask(uri).execute(mEventSource);
+                new AsyncConnectTask(uri, mAuthStr).execute(mEventSource);
                 Log.d(TAG, "EventSource connection initiated");
             } else {
                 Log.d(TAG, "EventSource connection skipped: no subscriptions");
@@ -425,6 +471,9 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
                         l.disconnected();
                     }
                 }
+            } else {
+                // in case we get an error before the connect, try to close
+                close();
             }
         }
 

@@ -15,6 +15,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -38,27 +40,36 @@ public class UiUtil {
     }
 
     public static void showDialog(final Activity activity, final String title, final String text) {
-        activity.runOnUiThread(() -> {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setTitle(title);
-            builder.setMessage(text);
-            builder.setPositiveButton(android.R.string.ok, null);
-            builder.show();
-        });
+        showButtonDialog(activity, title, text, android.R.string.ok, null, -1, null);
     }
 
     public static void showCancelDialog(final Activity activity, final String title, final String text,
                                         final DialogInterface.OnClickListener yesListener,
                                         final DialogInterface.OnClickListener noListener) {
+        showButtonDialog(activity, title, text, android.R.string.yes, yesListener, android.R.string.no, noListener);
+    }
+
+    public static void showButtonDialog(final Activity activity, final String title, final String text,
+                                        final int button1TextId,
+                                        final DialogInterface.OnClickListener button1Listener,
+                                        final int button2TextId,
+                                        final DialogInterface.OnClickListener button2Listener) {
         activity.runOnUiThread(() -> {
             final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-            builder.setTitle(title);
+            if (title != null) {
+                builder.setTitle(title);
+            }
             builder.setMessage(text);
-            builder.setPositiveButton(android.R.string.yes, yesListener);
-            builder.setNegativeButton(android.R.string.no, noListener);
+            if (button1TextId != -1) {
+                builder.setPositiveButton(button1TextId, button1Listener);
+            }
+            if (button2TextId != -1) {
+                builder.setNegativeButton(button2TextId, button2Listener);
+            }
             builder.show();
         });
     }
+
 
     static void showScrollDialog(Context ctx, String title, String text, String scrollText) {
         android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(ctx)
@@ -145,5 +156,34 @@ public class UiUtil {
                 Log.e(TAG, "Could not tint action bar icon on pre-lollipop device", e);
             }
         }
+    }
+
+    public static void showPasswordDialog(final Context ctx, final String host, final String realm,
+                                          final CredentialsListener l) {
+        final AlertDialog alert = new AlertDialog.Builder(ctx)
+                .setCancelable(false)
+                .setTitle(R.string.credentials_required)
+                .setMessage(ctx.getString(R.string.host_realm, host, realm))
+                .setView(R.layout.dialog_credentials)
+                .setPositiveButton(R.string.okay, (dialog12, id) -> {
+                    EditText userT = ((AlertDialog) dialog12).findViewById(R.id.username);
+                    EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
+                    CheckBox storeCB = ((AlertDialog) dialog12).findViewById(R.id.checkBox);
+
+                    l.credentialsEntered(host, realm, userT.getText().toString(), passT.getText().toString(), storeCB.isChecked());
+                })
+                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
+                    l.credentialsCancelled();
+                }).create();
+
+        if (!(ctx instanceof Activity) || !((Activity) ctx).isFinishing()) {
+            alert.show();
+        }
+    }
+
+    public interface CredentialsListener {
+        void credentialsEntered(String host, String realm, String user, String password, boolean store);
+
+        void credentialsCancelled();
     }
 }

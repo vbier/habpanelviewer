@@ -1,5 +1,6 @@
 package de.vier_bier.habpanelviewer;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.CookieManager;
 import android.webkit.HttpAuthHandler;
+import android.webkit.PermissionRequest;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
@@ -22,7 +24,6 @@ import android.webkit.WebHistoryItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.CheckBox;
 import android.widget.EditText;
 
 import java.net.MalformedURLException;
@@ -52,6 +53,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     private boolean mImmersive;
     private boolean mTrackBrowserConnection;
     private boolean mLogBrowserMsg;
+    private boolean mAllowWebRTC;
 
     public ClientWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -98,6 +100,16 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                     cl.disconnected();
                 }
                 return !mLogBrowserMsg || super.onConsoleMessage(consoleMessage);
+            }
+
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onPermissionRequest(PermissionRequest request) {
+                if (mAllowWebRTC) {
+                    request.grant(request.getResources());
+                } else {
+                    super.onPermissionRequest(request);
+                }
             }
         });
 
@@ -195,27 +207,21 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             public void onReceivedHttpAuthRequest(WebView view, final HttpAuthHandler handler, final String host, final String realm) {
                 Log.i(TAG, "realm " + realm);
                 CredentialsHelper.getInstance(getContext()).handleAuthRequest(host, realm, handler, () -> {
-                    final AlertDialog alert = new AlertDialog.Builder(getContext())
-                            .setCancelable(false)
-                            .setTitle(R.string.credentials_required)
-                            .setMessage(getContext().getString(R.string.host_realm, host, realm))
-                            .setView(R.layout.dialog_credentials)
-                            .setPositiveButton(R.string.okay, (dialog12, id) -> {
-                                EditText userT = ((AlertDialog) dialog12).findViewById(R.id.username);
-                                EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
-                                CheckBox storeCB = ((AlertDialog) dialog12).findViewById(R.id.checkBox);
+                    UiUtil.showPasswordDialog(getContext(), mServerURL, "Rest API", new UiUtil.CredentialsListener() {
+                        @Override
+                        public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
+                            if (store) {
+                                CredentialsHelper.getInstance(getContext()).registerCredentials(host, realm, user, password);
+                            }
 
-                                if (storeCB.isChecked()) {
-                                    CredentialsHelper.getInstance(getContext()).registerCredentials(host, realm, userT.getText().toString(), passT.getText().toString());
-                                }
+                            handler.proceed(user, password);
+                        }
 
-                                handler.proceed(userT.getText().toString(), passT.getText().toString());
-                            }).setNegativeButton(R.string.cancel, (dialog1, which) -> handler.cancel())
-                            .create();
-
-                    if (getContext() != null && !((Activity) getContext()).isFinishing()) {
-                        alert.show();
-                    }
+                        @Override
+                        public void credentialsCancelled() {
+                            handler.cancel();
+                        }
+                    });
                 });
             }
         });
@@ -260,6 +266,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         mImmersive = prefs.getBoolean("pref_immersive", false);
         mTrackBrowserConnection = prefs.getBoolean("pref_track_browser_connection", false);
         mLogBrowserMsg = prefs.getBoolean("pref_log_browser_messages", false);
+        mAllowWebRTC = prefs.getBoolean("pref_allow_webrtc", false);
 
         boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
         boolean isJavascript = prefs.getBoolean("pref_javascript", false);

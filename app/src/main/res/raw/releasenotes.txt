@@ -3,6 +3,8 @@
 * add reporting of docking state
 * add reporting of device movement
 * allow access to http pages for android 9 devices
+* disable camera and microphone related preferences on start if permissions are missing
+* add support for password protected openHAB servers (basic auth only)
 
 0.9.25
 ======

@@ -101,6 +101,8 @@
     <string name="pref_autoplayVideo_summ">Allows the browser to start videos without user interaction</string>
     <string name="pref_logBrowserMsgs">Log browser messages</string>
     <string name="pref_logBrowserMsgs_summ">Writes browser console messages to the system log</string>
+    <string name="pref_allowWebrtc">Allow WebRTC</string>
+    <string name="pref_allowWebrtc_summ">Allow video and audio recording for WebRTC</string>
 
     <string name="pref_commandItem">Command Item</string>
     <string name="pref_commandItem_summ">Name of the Item that is used by openHAB to send commands to HABPanelViewer</string>
@@ -342,4 +344,6 @@
     <string name="camNotInitialized">Camera not initialized</string>
     <string name="powerSavingEnabled">Power saving</string>
     <string name="diablePowerSaving">You currently have battery optimization enabled for HPV. This prevents the app from receiving commands as well as from reporting sensor values while the device is in stand-by. Do you want to disable battery optimization?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
