@@ -163,6 +163,10 @@
     <string name="pref_connectedItem_summ">Name des openHAB Items an das der Zeitstempel gemeldet wird</string>
     <string name="pref_connectedInterval">Meldungsintervall</string>
     <string name="pref_connectedInterval_summ">Die Anzahl der Sekunden, nach denen der Wert an openHAB gemeldet wird</string>
+    <string name="pref_currentUrlEnabled">Aktuelle URL aktiviert</string>
+    <string name="pref_currentUrlEnabled_summ">Meldet der URL an openHAB</string>
+    <string name="pref_currentUrlItem">URL Item</string>
+    <string name="pref_currentUrlItem_summ">Name des openHAB Items an das die URL gemeldet wird</string>
     <string name="pref_volume">Lautstärke</string>
     <string name="pref_volumeEnabled">Lautstärkemeldung aktiviert</string>
     <string name="pref_volumeEnabled_summ">Überwacht die Lautstärke und meldet Änderungen an openHAB</string>

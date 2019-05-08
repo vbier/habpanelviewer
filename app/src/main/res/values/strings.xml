@@ -166,6 +166,10 @@
     <string name="pref_connectedItem_summ">Name of the datetime item whose state shall be set</string>
     <string name="pref_connectedInterval">Update interval</string>
     <string name="pref_connectedInterval_summ">The number of seconds between subsequent state updates</string>
+    <string name="pref_currentUrlEnabled">Enabled</string>
+    <string name="pref_currentUrlEnabled_summ">Allows to update an openHAB string item with the current browser URL</string>
+    <string name="pref_currentUrlItem">URL Item</string>
+    <string name="pref_currentUrlItem_summ">Name of the string item whose state shall be set when the browser URL changes</string>
     <string name="pref_volume">Volume</string>
     <string name="pref_volumeEnabled">Monitor device volume and report changes to openHAB</string>
     <string name="pref_volumeEnabled_summ">Allows to set the state of an openHAB item depending on the device volume</string>
