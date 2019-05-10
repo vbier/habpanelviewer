@@ -9,7 +9,8 @@
         <EditTextPreference
             android:key="pref_server_url"
             android:summary="@string/pref_url_summ"
-            android:title="@string/pref_url" />
+            android:title="@string/pref_url"
+            android:inputType="textWebEmailAddress"/>
     </PreferenceCategory>
 
     <PreferenceCategory

@@ -4,14 +4,14 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.security.GeneralSecurityException;
 
-import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
+import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class RestClient extends HandlerThread {
     private static final String TAG = "HPV-RestClient";
@@ -20,7 +20,6 @@ public class RestClient extends HandlerThread {
     private static final int GET_ID = 214;
 
     private Handler mWorkerHandler;
-    private String mAuthString;
 
     RestClient() {
         super("RestClient");
@@ -53,23 +52,21 @@ public class RestClient extends HandlerThread {
 
     private void putRequest(ItemModification item) {
         try {
-            HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(item.mServerURL + "/rest/items/" + item.mItemName + "/state", mAuthString);
-            try {
-                urlConnection.setRequestMethod("PUT");
-                urlConnection.setDoOutput(true);
-                urlConnection.setRequestProperty("Content-Type", "text/plain");
-                urlConnection.setRequestProperty("Accept", "application/json");
+            OkHttpClient client = ConnectionStatistics.OkHttpClientFactory.getInstance().create();
 
-                OutputStreamWriter osw = new OutputStreamWriter(urlConnection.getOutputStream());
-                osw.write(item.mItemState);
-                osw.flush();
-                osw.close();
-                Log.v(TAG, "set " + item.mItemName + " request response: " + urlConnection.getResponseMessage()
-                        + "(" + urlConnection.getResponseCode() + ")");
-            } finally {
-                urlConnection.disconnect();
+            MediaType PLAIN
+                    = MediaType.get("text/plain; charset=utf-8");
+
+            RequestBody body = RequestBody.create(PLAIN, item.mItemState);
+            Request request = new Request.Builder()
+                    .url(item.mServerURL + "/rest/items/" + item.mItemName + "/state")
+                    .put(body)
+                    .build();
+            try (Response response = client.newCall(request).execute()) {
+                Log.v(TAG, "set " + item.mItemName + " request response: " + response.body().string()
+                        + "(" + response.code() + ")");
             }
-        } catch (IOException | GeneralSecurityException e) {
+        } catch (IOException e) {
             Log.e(TAG, "Failed to set state for item " + item.mItemName, e);
         }
     }
@@ -78,34 +75,17 @@ public class RestClient extends HandlerThread {
         String itemName = item.mItemName;
         ISubscriptionListener listener = item.mListener;
 
-        StringBuilder response = new StringBuilder();
-        try {
-            HttpURLConnection urlConnection = ConnectionUtil.getInstance().createUrlConnection(item.mServerURL + "/rest/items/" + itemName + "/state", mAuthString);
-            try {
-                BufferedInputStream in = new BufferedInputStream(urlConnection.getInputStream());
+        OkHttpClient client = ConnectionStatistics.OkHttpClientFactory.getInstance().create();
+        Request request = new Request.Builder()
+                .url(item.mServerURL + "/rest/items/" + itemName + "/state")
+                .build();
 
-                byte[] contents = new byte[1024];
-
-                int bytesRead;
-                while (!isInterrupted() && (bytesRead = in.read(contents)) != -1) {
-                    response.append(new String(contents, 0, bytesRead));
-                }
-            } finally {
-                urlConnection.disconnect();
-            }
-
-            listener.itemUpdated(itemName, response.toString());
-        } catch (FileNotFoundException e) {
-            listener.itemInvalid(itemName);
-            Log.e(TAG, "Failed to obtain state for item " + itemName + ". Item not found.");
-        } catch (IOException | GeneralSecurityException e) {
+        try (Response response = client.newCall(request).execute()) {
+            listener.itemUpdated(itemName, response.body().string());
+        } catch (IOException e) {
             listener.itemInvalid(itemName);
             Log.e(TAG, "Failed to obtain state for item " + itemName, e);
         }
-    }
-
-    void setAuth(String restAuth) {
-        mAuthString = restAuth;
     }
 
     private class ItemSubscription {

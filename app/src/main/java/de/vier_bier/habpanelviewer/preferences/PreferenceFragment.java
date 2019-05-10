@@ -1,11 +1,11 @@
 package de.vier_bier.habpanelviewer.preferences;
 
 import android.app.Activity;
-import android.app.LoaderManager;
-import android.content.Loader;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
@@ -26,43 +26,44 @@ import de.vier_bier.habpanelviewer.R;
 public class PreferenceFragment extends android.preference.PreferenceFragment implements Preference.OnPreferenceClickListener {
     private static final String TAG_ID = "NESTED_KEY";
 
+    private final Handler mUiHandler = new Handler(Looper.getMainLooper());
     private PreferenceCallback mCallback;
 
-    ItemsAsyncTaskLoader mLoader;
-    private final LoaderManager.LoaderCallbacks<List<String>> mLoaderCallbacks = new LoaderManager.LoaderCallbacks<List<String>>() {
+    ItemValidator mValidator;
+    private final ItemValidator.VaildationStateListener mListener = new ItemValidator.VaildationStateListener() {
         @Override
-        public Loader<List<String>> onCreateLoader(int i, Bundle bundle) {
-            return mLoader;
+        public void validationAvailable(List<String> items) {
+            mUiHandler.post(() -> {
+                List<Preference> list = getPreferenceList(getPreferenceScreen(), new ArrayList<>());
+                for (Preference p : list) {
+                    if (p.getKey().endsWith("_item") && p instanceof EditTextPreference) {
+                        final EditText editText = ((EditTextPreference) p).getEditText();
+
+                        if (editText instanceof AutoCompleteTextView) {
+                            AutoCompleteTextView t = (AutoCompleteTextView) editText;
+                            t.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, items));
+                            t.performValidation();
+                        }
+                    }
+                }
+            });
         }
 
         @Override
-        public void onLoadFinished(Loader<List<String>> loader, List<String> strings) {
-            List<Preference> list = getPreferenceList(getPreferenceScreen(), new ArrayList<>());
-            for (Preference p : list) {
-                if (p.getKey().endsWith("_item") && p instanceof EditTextPreference) {
-                    final EditText editText = ((EditTextPreference) p).getEditText();
+        public void validationUnavailable() {
+            mUiHandler.post(() -> {
+                List<Preference> list = getPreferenceList(getPreferenceScreen(), new ArrayList<>());
+                for (Preference p : list) {
+                    if (p.getKey().endsWith("_item") && p instanceof EditTextPreference) {
+                        final EditText editText = ((EditTextPreference) p).getEditText();
 
-                    if (editText instanceof AutoCompleteTextView) {
-                        AutoCompleteTextView t = (AutoCompleteTextView) editText;
-                        t.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, strings));
+                        if (editText instanceof AutoCompleteTextView) {
+                            AutoCompleteTextView t = (AutoCompleteTextView) editText;
+                            t.setAdapter(null);
+                        }
                     }
                 }
-            }
-        }
-
-        @Override
-        public void onLoaderReset(Loader<List<String>> loader) {
-            List<Preference> list = getPreferenceList(getPreferenceScreen(), new ArrayList<>());
-            for (Preference p : list) {
-                if (p.getKey().endsWith("_item") && p instanceof EditTextPreference) {
-                    final EditText editText = ((EditTextPreference) p).getEditText();
-
-                    if (editText instanceof AutoCompleteTextView) {
-                        AutoCompleteTextView t = (AutoCompleteTextView) editText;
-                        t.setAdapter(null);
-                    }
-                }
-            }
+            });
         }
     };
 
@@ -159,16 +160,15 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
             }
         }
 
-        if (mLoader != null) {
+        if (mValidator != null) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            mLoader.setServerUrl(prefs.getString("pref_server_url", ""));
-            getLoaderManager().initLoader(1234, null, mLoaderCallbacks);
+            mValidator.setServerUrl(prefs.getString("pref_server_url", ""), mListener);
         }
     }
 
     private void addItemValidation(EditTextPreference p) {
-        if (mLoader == null) {
-            mLoader = new ItemsAsyncTaskLoader(getActivity());
+        if (mValidator == null) {
+            mValidator = new ItemValidator();
         }
 
         final EditText editText = p.getEditText();
@@ -178,7 +178,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
                 final String itemName = editable.toString();
 
                 getActivity().runOnUiThread(() -> {
-                    if (mLoader.isValid(itemName)) {
+                    if (mValidator.isValid(itemName)) {
                         editText.setTextColor(Color.GREEN);
                     } else {
                         editText.setTextColor(Color.RED);

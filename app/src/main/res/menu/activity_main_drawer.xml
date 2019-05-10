@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/action_enter_credentials"
+        android:orderInCategory="100"
+        android:title="@string/action_enter_credentials"
+        android:visible="false"
+        android:icon="@drawable/ic_vpn_key_black_24dp" />
+    <item
         android:id="@+id/action_preferences"
         android:orderInCategory="100"
         android:title="@string/action_preferences"
@@ -35,9 +41,4 @@
         android:orderInCategory="100"
         android:title="@string/action_restart"
         android:icon="@drawable/ic_replay_black_24dp" />
-    <item
-        android:id="@+id/action_exit"
-        android:orderInCategory="100"
-        android:title="@string/action_exit"
-        android:icon="@drawable/ic_power_black_24dp" />
 </menu>

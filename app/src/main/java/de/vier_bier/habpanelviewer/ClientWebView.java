@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
-import androidx.appcompat.app.AlertDialog;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -26,15 +25,18 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 
+import androidx.appcompat.app.AlertDialog;
+
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 
-import de.vier_bier.habpanelviewer.db.CredentialsHelper;
-import de.vier_bier.habpanelviewer.openhab.IConnectionListener;
-import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
+import de.vier_bier.habpanelviewer.db.CredentialManager;
+import de.vier_bier.habpanelviewer.openhab.ISseConnectionListener;
+import de.vier_bier.habpanelviewer.openhab.SseConnection;
+import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 
 /**
  * WebView
@@ -86,7 +88,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         }
     }
 
-    synchronized void initialize(final IConnectionListener cl, final NetworkTracker nt) {
+    synchronized void initialize(final ISseConnectionListener cl, final NetworkTracker nt) {
         mNetworkTracker = nt;
         Log.d(TAG, "registering as network listener...");
         mNetworkTracker.addListener(this);
@@ -97,7 +99,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
                 if (mTrackBrowserConnection && consoleMessage.message().contains("SSE error, closing EventSource")) {
-                    cl.disconnected();
+                    cl.statusChanged(SseConnection.Status.FAILURE);
                 }
                 return !mLogBrowserMsg || super.onConsoleMessage(consoleMessage);
             }
@@ -135,7 +137,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                 Log.d(TAG, "onReceivedSslError: " + error.getUrl());
 
                 SslCertificate cert = error.getCertificate();
-                if (ConnectionUtil.getInstance().isTrusted(error.getCertificate())) {
+                if (CertificateManager.getInstance().isTrusted(error.getCertificate())) {
                     Log.d(TAG, "certificate is trusted: " + error.getUrl());
 
                     handler.proceed();
@@ -188,7 +190,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
                             try {
-                                ConnectionUtil.getInstance().addCertificate(error.getCertificate());
+                                CertificateManager.getInstance().addCertificate(error.getCertificate());
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -206,12 +208,12 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             @Override
             public void onReceivedHttpAuthRequest(WebView view, final HttpAuthHandler handler, final String host, final String realm) {
                 Log.i(TAG, "realm " + realm);
-                CredentialsHelper.getInstance(getContext()).handleAuthRequest(host, realm, handler,
+                CredentialManager.getInstance().handleAuthRequest(host, realm, handler,
                         () -> UiUtil.showPasswordDialog(getContext(), host, realm, new UiUtil.CredentialsListener() {
                     @Override
                     public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
                         if (store) {
-                            CredentialsHelper.getInstance(getContext()).registerCredentials(host, realm, user, password);
+                            CredentialManager.getInstance().registerCredentials(host, realm, user, password);
                         }
 
                         handler.proceed(user, password);
@@ -402,7 +404,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     }
 
     public void clearPasswords() {
-        CredentialsHelper.getInstance(getContext()).clearCredentials();
+        CredentialManager.getInstance().clearCredentials();
     }
 
     public boolean isShowingHabPanel() {

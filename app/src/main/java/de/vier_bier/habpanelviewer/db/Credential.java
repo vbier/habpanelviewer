@@ -33,11 +33,11 @@ public class Credential {
         return realm;
     }
 
-    String getUser() {
+    public String getUser() {
         return user;
     }
 
-    String getPasswd() {
+    public String getPasswd() {
         return passwd;
     }
 

@@ -39,7 +39,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +54,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.room.Room;
+
 import de.vier_bier.habpanelviewer.command.AdminHandler;
 import de.vier_bier.habpanelviewer.command.BluetoothHandler;
 import de.vier_bier.habpanelviewer.command.CommandQueue;
@@ -60,9 +66,13 @@ import de.vier_bier.habpanelviewer.command.TtsHandler;
 import de.vier_bier.habpanelviewer.command.VolumeHandler;
 import de.vier_bier.habpanelviewer.command.WebViewHandler;
 import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
+import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
+import de.vier_bier.habpanelviewer.db.AppDatabase;
+import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
-import de.vier_bier.habpanelviewer.openhab.IConnectionListener;
+import de.vier_bier.habpanelviewer.openhab.ISseConnectionListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
+import de.vier_bier.habpanelviewer.openhab.SseConnection;
 import de.vier_bier.habpanelviewer.preferences.PreferenceActivity;
 import de.vier_bier.habpanelviewer.reporting.AccelerometerMonitor;
 import de.vier_bier.habpanelviewer.reporting.BatteryMonitor;
@@ -79,7 +89,7 @@ import de.vier_bier.habpanelviewer.reporting.motion.Camera;
 import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionVisualizer;
-import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
+import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
 
@@ -87,14 +97,16 @@ import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
  * Main activity showing the Webview for openHAB.
  */
 public class MainActivity extends ScreenControllingActivity
-        implements NavigationView.OnNavigationItemSelectedListener, IConnectionListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "HPV-MainActivity";
 
     private final static int REQUEST_PICK_APPLICATION = 12352;
 
     private ClientWebView mWebView;
-    private TextView mTextView;
+    private TextView mUrlTextView;
+    private TextView mStatusTextView;
 
+    private ISseConnectionListener mConnectionListener;
     private ConnectionStatistics mConnections;
     private ServerConnection mServerConnection;
     private AppRestartingExceptionHandler mRestartingExceptionHandler;
@@ -237,12 +249,31 @@ public class MainActivity extends ScreenControllingActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         try {
-            ConnectionUtil.getInstance().setContext(this);
+            CredentialManager.getInstance().setDatabase(Room.databaseBuilder(getApplicationContext(),
+                    AppDatabase.class, "HPV").build());
+
+            File localTrustStoreFile = new File(getFilesDir(), "localTrustStore.bks");
+            if (!localTrustStoreFile.exists()) {
+                try (InputStream in = getResources().openRawResource(R.raw.mytruststore)) {
+                    try (OutputStream out = new FileOutputStream(localTrustStoreFile)) {
+                        // Transfer bytes from in to out
+                        byte[] buf = new byte[1024];
+                        int len;
+                        while ((len = in.read(buf)) > 0) {
+                            out.write(buf, 0, len);
+                        }
+                    }
+                }
+            }
+            CertificateManager.getInstance().setTrustStore(localTrustStoreFile);
+
             Log.d(TAG, "SSL protocol initialized");
         } catch (GeneralSecurityException | IOException e) {
-            Log.e(TAG, "failed to initialize ConnectionUtil", e);
+            Log.e(TAG, "failed to initialize CertificateManager", e);
             UiUtil.showSnackBar(navigationView, R.string.sslFailed);
         }
+
+        CredentialManager.getInstance().addCredentialsListener(ConnectionStatistics.OkHttpClientFactory.getInstance());
 
         int restartCount = getIntent().getIntExtra("restartCount", 0);
 
@@ -257,9 +288,7 @@ public class MainActivity extends ScreenControllingActivity
 
         if (mServerConnection == null) {
             mServerConnection = new ServerConnection(this);
-            mServerConnection.addConnectionListener(this);
-
-            mNetworkTracker.addListener(mServerConnection);
+            mNetworkTracker.addListener(mServerConnection.getSseConnection());
         }
 
         if (mConnections == null) {
@@ -341,10 +370,55 @@ public class MainActivity extends ScreenControllingActivity
             }
         }
 
-        mTextView = navHeader.findViewById(R.id.textView);
+        mUrlTextView = navHeader.findViewById(R.id.urlTextView);
+        mStatusTextView = navHeader.findViewById(R.id.statusTextView);
+        MenuItem enterCredMenu = navigationView.getMenu().findItem(R.id.action_enter_credentials);
+
+        mConnectionListener = new ISseConnectionListener() {
+            private SseConnection.Status mLastStatus;
+
+            @Override
+            public void statusChanged(SseConnection.Status newStatus) {
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                String url = prefs.getString("pref_server_url", "");
+
+                runOnUiThread(() -> {
+                    mUrlTextView.setText(url);
+                    mStatusTextView.setText(newStatus.name());
+                    mUrlTextView.setTextColor(newStatus.getColor());
+                    enterCredMenu.setVisible(newStatus == SseConnection.Status.UNAUTHORIZED);
+                });
+
+                if (newStatus == SseConnection.Status.CONNECTED) {
+                    mConnections.connected();
+                } else {
+                    if (mLastStatus == SseConnection.Status.CONNECTED) {
+                        mConnections.disconnected();
+                    }
+
+                    if (newStatus == SseConnection.Status.UNAUTHORIZED) {
+                        UiUtil.showPasswordDialog(MainActivity.this, url, "Rest API", new UiUtil.CredentialsListener() {
+                            @Override
+                            public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
+                                CredentialManager.getInstance().setRestCredentials(user, password, store);
+                            }
+
+                            @Override
+                            public void credentialsCancelled() {
+                            }
+                        });
+
+                    }
+                }
+
+                mLastStatus = newStatus;
+            }
+        };
+
+        mServerConnection.addConnectionListener(mConnectionListener);
 
         if (restartCount > 0) {
-            UiUtil.showSnackBar(mTextView, R.string.appRestarted, R.string.disableRestart, view -> {
+            UiUtil.showSnackBar(mUrlTextView, R.string.appRestarted, R.string.disableRestart, view -> {
                 mRestartingExceptionHandler.disable();
                 SharedPreferences.Editor editor1 = prefs.edit();
                 editor1.putBoolean("pref_restart_enabled", false);
@@ -353,14 +427,15 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         mWebView = findViewById(R.id.activity_main_webview);
-        mWebView.initialize(new IConnectionListener() {
-            @Override
-            public void connected(String url) {
-            }
+        mWebView.initialize(new ISseConnectionListener() {
+            private SseConnection.Status mLastStatus;
 
             @Override
-            public void disconnected() {
-                mServerConnection.reconnect();
+            public void statusChanged(SseConnection.Status newStatus) {
+                if (newStatus != SseConnection.Status.CONNECTED && mLastStatus == SseConnection.Status.CONNECTED) {
+                    mServerConnection.reconnect();
+                }
+                mLastStatus = newStatus;
             }
         }, mNetworkTracker);
         mCommandQueue.addHandler(new WebViewHandler(mWebView));
@@ -674,14 +749,13 @@ public class MainActivity extends ScreenControllingActivity
             showIntro();
         } else if (id == R.id.action_restart) {
             restartApp();
-        } else if (id == R.id.action_exit) {
-            destroy();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                finishAndRemoveTask();
-            } else {
-                finish();
+        } else if (id == R.id.action_enter_credentials) {
+            if (mServerConnection.getSseConnection().getStatus() == SseConnection.Status.UNAUTHORIZED) {
+                mConnectionListener.statusChanged(SseConnection.Status.UNAUTHORIZED);
+
+                // leave drawer open so connection status is visible
+                return true;
             }
-            Runtime.getRuntime().exit(0);
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -692,18 +766,6 @@ public class MainActivity extends ScreenControllingActivity
     private void restartApp() {
         destroy();
         ProcessPhoenix.triggerRebirth(this);
-    }
-
-    @Override
-    public void connected(final String url) {
-        mConnections.connected();
-        runOnUiThread(() -> mTextView.setText(url));
-    }
-
-    @Override
-    public void disconnected() {
-        mConnections.disconnected();
-        runOnUiThread(() -> mTextView.setText(R.string.notConnected));
     }
 
     private Intent getLaunchIntent() {

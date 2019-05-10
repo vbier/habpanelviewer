@@ -32,6 +32,12 @@ public class NetworkTracker extends BroadcastReceiver {
     public void addListener(INetworkListener l) {
         synchronized (mListeners) {
             mListeners.add(l);
+
+            if (isConnected()) {
+                l.connected();
+            } else {
+                l.disconnected();
+            }
         }
     }
 
