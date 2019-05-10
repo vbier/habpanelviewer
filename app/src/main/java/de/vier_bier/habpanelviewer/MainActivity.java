@@ -71,6 +71,7 @@ import de.vier_bier.habpanelviewer.db.AppDatabase;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.ISseConnectionListener;
+import de.vier_bier.habpanelviewer.openhab.IUrlListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.openhab.SseConnection;
 import de.vier_bier.habpanelviewer.preferences.PreferenceActivity;
@@ -436,6 +437,13 @@ public class MainActivity extends ScreenControllingActivity
                     mServerConnection.reconnect();
                 }
                 mLastStatus = newStatus;
+            }
+        }, new IUrlListener() {
+            @Override
+            public void changed(String url, boolean isHabPanelUrl) {
+                if (prefs.getBoolean("pref_current_url_enabled", false)) {
+                    mServerConnection.updateState(prefs.getString("pref_current_url_item", ""), url);
+                }
             }
         }, mNetworkTracker);
         mCommandQueue.addHandler(new WebViewHandler(mWebView));

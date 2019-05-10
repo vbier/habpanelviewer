@@ -3,34 +3,56 @@
     android:persistent="false"
     android:title="@string/pref_connectionIndicators">
 
-    <CheckBoxPreference
-        android:key="pref_startup_enabled"
-        android:defaultValue="false"
-        android:summary="@string/pref_startupEnabled_summ"
-        android:title="@string/pref_startupEnabled" />
-    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-        android:key="pref_startup_item"
-        android:dependency="pref_startup_enabled"
-        android:summary="@string/pref_startupItem_summ"
-        android:inputType="textPhonetic"
-        android:title="@string/pref_startupItem" />
-    <CheckBoxPreference
-        android:key="pref_connected_enabled"
-        android:defaultValue="false"
-        android:summary="@string/pref_connectedEnabled_summ"
-        android:title="@string/pref_connectedEnabled" />
-    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
-        android:key="pref_connected_item"
-        android:dependency="pref_connected_enabled"
-        android:summary="@string/pref_connectedItem_summ"
-        android:inputType="textPhonetic"
-        android:title="@string/pref_connectedItem" />
-    <EditTextPreference
-        android:key="pref_connected_interval"
-        android:dependency="pref_connected_enabled"
-        android:defaultValue="60"
-        android:inputType="number"
-        android:summary="@string/pref_connectedInterval_summ"
-        android:title="@string/pref_connectedInterval" />
+    <PreferenceCategory
+        android:title="@string/startupIndicator">
+        <CheckBoxPreference
+            android:key="pref_startup_enabled"
+            android:defaultValue="false"
+            android:summary="@string/pref_startupEnabled_summ"
+            android:title="@string/pref_startupEnabled" />
+        <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+            android:key="pref_startup_item"
+            android:dependency="pref_startup_enabled"
+            android:summary="@string/pref_startupItem_summ"
+            android:inputType="textPhonetic"
+            android:title="@string/pref_startupItem" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/connectedIndicator">
+        <CheckBoxPreference
+            android:key="pref_connected_enabled"
+            android:defaultValue="false"
+            android:summary="@string/pref_connectedEnabled_summ"
+            android:title="@string/pref_connectedEnabled" />
+        <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+            android:key="pref_connected_item"
+            android:dependency="pref_connected_enabled"
+            android:summary="@string/pref_connectedItem_summ"
+            android:inputType="textPhonetic"
+            android:title="@string/pref_connectedItem" />
+        <EditTextPreference
+            android:key="pref_connected_interval"
+            android:dependency="pref_connected_enabled"
+            android:defaultValue="60"
+            android:inputType="number"
+            android:summary="@string/pref_connectedInterval_summ"
+            android:title="@string/pref_connectedInterval" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_browser">
+        <CheckBoxPreference
+            android:key="pref_current_url_enabled"
+            android:defaultValue="false"
+            android:summary="@string/pref_currentUrlEnabled_summ"
+            android:title="@string/pref_currentUrlEnabled" />
+        <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+            android:key="pref_current_url_item"
+            android:dependency="pref_current_url_enabled"
+            android:summary="@string/pref_currentUrlItem_summ"
+            android:inputType="textPhonetic"
+            android:title="@string/pref_currentUrlItem" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
