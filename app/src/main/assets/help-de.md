@@ -275,6 +275,7 @@ Ermöglicht es, Werte der Geräte Sensoren oder andere Dinge an openHAB zu melde
 - [Benutzung](#usage) (momentane App Benutzung)
 - [Verbindungsindikatoren](#connectedIndicators) (App Startzeit, zyklischer Zeitstempel)
 - [Docking Status](#dockingState)
+- [URL](#url)
 
 ### <a name="batteryReporting"/>Batteriesensor
 Wenn aktiviert, ändert die Anwendung die Werte von bis zu drei openHAB Items in Abhängigkeit des Batteriezustands:
@@ -398,6 +399,13 @@ Der Kontakt wird geschlossen, wenn das Gerät in der Docking Station ist.
 Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Contact Tablet_Docked
+
+### <a name="url"/>URL
+Setzt den Wert eines openHAB Items auf die URL der momentan angezeigten Webseite.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    String Tablet_Url
 
 [zurück nach oben](#top)
 

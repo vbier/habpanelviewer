@@ -1,10 +1,11 @@
 0.9.26pre
 ======
-* der Docking Status kann jetzt an openHAB gemeldet werden
-* Gerätebewegung kann jetzt an openHAB gemeldet werden
+* neue Wertemeldung: momentan angezeigte URL
+* neue Wertemeldung: Docking Status
+* neue Wertemeldung: Gerätebewegung
 * erlaube Zugriff auf http Seiten in Android 9
 * deaktiviere Kamera und Mikrophone bezogene Einstellungen beim Start wenn die Berechtigungen fehlen
-* Unterstützung für Passwort geschützte openHAB Server (nur basic auth)
+* Unterstützung für Passwort geschützte openHAB Server
 
 0.9.25
 ======

@@ -164,7 +164,7 @@
     <string name="pref_connectedInterval">Meldungsintervall</string>
     <string name="pref_connectedInterval_summ">Die Anzahl der Sekunden, nach denen der Wert an openHAB gemeldet wird</string>
     <string name="pref_currentUrlEnabled">Aktuelle URL aktiviert</string>
-    <string name="pref_currentUrlEnabled_summ">Meldet der URL an openHAB</string>
+    <string name="pref_currentUrlEnabled_summ">Meldet die URL an openHAB</string>
     <string name="pref_currentUrlItem">URL Item</string>
     <string name="pref_currentUrlItem_summ">Name des openHAB Items an das die URL gemeldet wird</string>
     <string name="pref_volume">Lautstärke</string>

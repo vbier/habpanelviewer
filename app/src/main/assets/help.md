@@ -276,6 +276,7 @@ Allows to set the values of openHAB items depending on the device sensors or oth
 - [usage](#usage) (current app usage)
 - [connected indicators](#connectedIndicators) (app startup time, cyclic time stamp)
 - [docking state](#dockingState)
+- [URL](#url)
 
 ### <a name="batteryReporting"/>battery reporting
 When enabled, the app updates the state of up to three openHAB items depending on the battery state:
@@ -403,6 +404,13 @@ The contact state will be *CLOSED* whenever the device is docked, *OPEN* otherwi
 A sample openHAB items file looks like this:
 
     Contact Tablet_Docked
+
+### <a name="url"/>URL
+Allows to set the URL of the currently display page as value of an openHAB string item.
+
+A sample openHAB items file looks like this:
+
+    String Tablet_Url
 
 [go back to top](#top)
 
