@@ -30,7 +30,7 @@
     <string name="action_startApp">Starte App</string>
     <string name="action_info">Status Information</string>
     <string name="action_help">Hilfe</string>
-    <string name="action_exit">Beenden</string>
+    <string name="action_enter_credentials">Zugangsdaten eingeben</string>
     <string name="action_restart">Neustart</string>
     <string name="action_preferences">Einstellungen</string>
     <string name="action_cmdLog">Kommando Log</string>
@@ -347,5 +347,5 @@
     <string name="diablePowerSaving">Momentan ist die Akku-Optimierung für HPV aktiviert. Dies hindert die App am Empfangen von Kommandos und Senden von Sensorwerten während das Gerät im Stand-by ist. Möchtest du die Akku-Optimierung für HPV ausschalten?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
-    <string name="httpWithBasicAuth">Sie sind im Begriff ihre Zugangsdaten für eine unverschlüsselte HTTP Verbindung einzugeben. Sie sollten dies nur in einem privaten Netzwerk tun, da das Passwort für alle lesbar übertragen wird.</string>
+    <string name="httpWithBasicAuth">Sie sind im Begriff ihre Zugangsdaten für eine unverschlüsselte HTTP Verbindung einzugeben. Sie sollten dies nur in einem privaten Netzwerk tun, da das Passwort für alle lesbar übertragen werden könnte.</string>
 </resources>

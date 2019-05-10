@@ -32,7 +32,7 @@
     <string name="action_startApp">Start App</string>
     <string name="action_info">Status Information</string>
     <string name="action_help">Help</string>
-    <string name="action_exit">Exit</string>
+    <string name="action_enter_credentials">Enter Credentials</string>
     <string name="action_restart">Restart App</string>
     <string name="action_preferences">Preferences</string>
     <string name="action_cmdLog">Command Log</string>
@@ -350,5 +350,5 @@
     <string name="diablePowerSaving">You currently have battery optimization enabled for HPV. This prevents the app from receiving commands as well as from reporting sensor values while the device is in stand-by. Do you want to disable battery optimization?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="httpWithBasicAuth">You are about to enter you credentials for an unencrypted HTTP connection. You should only do this in a private network, as your password will be sent in plain text.</string>
+    <string name="httpWithBasicAuth">You are about to enter you credentials for an unencrypted HTTP connection. You should only do this in a private network, as your password might be sent in plain text.</string>
 </resources>

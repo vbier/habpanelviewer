@@ -5,16 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,23 +17,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import de.vier_bier.habpanelviewer.NetworkTracker;
-import de.vier_bier.habpanelviewer.UiUtil;
-import de.vier_bier.habpanelviewer.db.CredentialsHelper;
+import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.openhab.average.AveragePropagator;
 import de.vier_bier.habpanelviewer.openhab.average.IStatePropagator;
-import de.vier_bier.habpanelviewer.ssl.ConnectionUtil;
-import io.opensensors.sse.client.EventSource;
-import io.opensensors.sse.client.EventSourceHandler;
-import io.opensensors.sse.client.MessageEvent;
+import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 
 /**
  * Client for openHABs SSE service. Listens for item value changes.
  */
-public class ServerConnection implements IStatePropagator, NetworkTracker.INetworkListener {
+public class ServerConnection implements IStatePropagator {
     public static final String ACTION_SET_WITH_TIMEOUT = "ACTION_SET_WITH_TIMEOUT";
     public static final String FLAG_ITEM_NAME = "itemName";
     public static final String FLAG_ITEM_STATE = "itemState";
@@ -48,13 +36,10 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
     private static final String TAG = "HPV-ServerConnection";
 
     private String mServerURL;
-    private String mAuthStr;
-    private EventSource mEventSource;
-    private final AtomicBoolean mConnected = new AtomicBoolean(false);
+    private OpenhabSseConnection mSseConnection = new OpenhabSseConnection();
     private RestClient mRestClient = new RestClient();
 
-    private final ConnectionUtil.CertChangedListener mCertListener;
-    private final ConnectivityManager mConnManager;
+    private final CertificateManager.ICertChangedListener mCertListener;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent i) {
@@ -71,25 +56,23 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
     private final HashMap<String, ArrayList<IStateUpdateListener>> mCmdSubscriptions = new HashMap<>();
     private final HashMap<String, String> mValues = new HashMap<>();
 
-    private SSEHandler client;
-    private final ArrayList<IConnectionListener> connectionListeners = new ArrayList<>();
     private final HashMap<String, String> lastUpdates = new HashMap<>();
     private final AveragePropagator averagePropagator = new AveragePropagator(this);
 
     public ServerConnection(Context context) {
-        mConnManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-
         mCertListener = () -> {
             Log.d(TAG, "cert added, reconnecting to server...");
 
-            // if we are not connected, try to connect. connection may have failed due to
-            // certificate errors
-            if (!isConnected()) {
-                connect();
+            if (mSseConnection.getStatus() == SseConnection.Status.CERTIFICATE_ERROR) {
+                mSseConnection.connect();
             }
         };
 
-        ConnectionUtil.getInstance().addCertListener(mCertListener);
+        mSseConnection.addListener(new SseConnectionListener());
+        mSseConnection.addItemValueListener(new SseStateUpdateListener());
+
+        CertificateManager.getInstance().addCertListener(mCertListener);
+        CredentialManager.getInstance().addCredentialsListener(mSseConnection);
 
         IntentFilter f = new IntentFilter();
         f.addAction(ACTION_SET_WITH_TIMEOUT);
@@ -97,12 +80,8 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         LocalBroadcastManager.getInstance(context).registerReceiver(mReceiver, f);
     }
 
-    public void addConnectionListener(IConnectionListener l) {
-        synchronized (connectionListeners) {
-            if (!connectionListeners.contains(l)) {
-                connectionListeners.add(l);
-            }
-        }
+    public void addConnectionListener(ISseConnectionListener l) {
+        mSseConnection.addListener(l);
     }
 
     public void subscribeCommandItem(IStateUpdateListener l, String name) {
@@ -175,6 +154,8 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         }
 
         if (itemsChanged) {
+            String cmdItemName = mCmdSubscriptions.isEmpty() ? null : mCmdSubscriptions.keySet().iterator().next();
+            mSseConnection.setItemNames(cmdItemName, subscriptions.keySet().toArray(new String[subscriptions.size()]));
             reconnect();
         }
     }
@@ -186,140 +167,36 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         if (serverChanged) {
             mServerURL = prefs.getString("pref_server_url", "");
             Log.d(TAG, "new server URL: " + mServerURL);
-        }
+            close();
 
-        if (mServerURL != null) {
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    String newAuth = CredentialsHelper.getInstance(ctx).getRestAuth(mServerURL);
-                    boolean authChanged = newAuth == null && mAuthStr != null
-                            || newAuth != null && !newAuth.equals(mAuthStr);
-
-                    if (authChanged || serverChanged) {
-                        close();
-                        setAuthStr(ctx, newAuth);
-                    }
-
-                    return null;
-                }
-            }.execute();
+            mSseConnection.setServerUrl(mServerURL);
         }
     }
 
-    private void setAuthStr(Context ctx, final String authStr) {
-        mAuthStr = authStr;
-        mRestClient.setAuth(mAuthStr);
-
-        new AsyncTask<Void, Void, Integer>() {
-            @Override
-            protected Integer doInBackground(Void... voids) {
-                return ConnectionUtil.getInstance().testConnection(mServerURL, authStr);
-            }
-
-            @Override
-            protected void onPostExecute(Integer httpCode) {
-                if (httpCode == 401 || httpCode == 407) {
-                    UiUtil.showPasswordDialog(ctx, mServerURL, "Rest API", new UiUtil.CredentialsListener() {
-                        @Override
-                        public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
-                            CredentialsHelper.getInstance(ctx).setRestAuth(mServerURL, user, password, store);
-                            setAuthStr(ctx, user + ":" + password);
-                        }
-
-                        @Override
-                        public void credentialsCancelled() {
-                        }
-                    });
-                } else if (!isConnected()) {
-                    connect();
-                }
-            }
-        }.execute();
-    }
-
-    private synchronized boolean isConnected() {
-        return mEventSource != null && mConnected.get();
+    private synchronized boolean isSseConnected() {
+        return mSseConnection != null && mSseConnection.getStatus() == SseConnection.Status.CONNECTED;
     }
 
     public synchronized void reconnect() {
-        if (isConnected()) {
-            close();
+        if (isSseConnected()) {
+            mSseConnection.disconnect();
         }
-        connect();
-    }
-
-    private synchronized void connect() {
-        if (mServerURL != null && !mServerURL.isEmpty() && !isConnected()) {
-            String topic = buildTopic();
-
-            if (topic.length() > 0) {
-                URI uri;
-
-                try {
-                    uri = new URI(mServerURL + "/rest/events?topics=" + topic);
-
-                    if (uri.getPort() < 0 || uri.getPort() > 65535) {
-                        Log.e(TAG, "Could not create SSE connection, port out of range: " + uri.getPort());
-                        return;
-                    }
-                } catch (URISyntaxException e) {
-                    Log.e(TAG, "Could not create SSE connection", e);
-                    return;
-                }
-
-                client = new SSEHandler();
-                mEventSource = new EventSource(client);
-
-                new AsyncConnectTask(uri, mAuthStr).execute(mEventSource);
-                Log.d(TAG, "EventSource connection initiated");
-            } else {
-                Log.d(TAG, "EventSource connection skipped: no subscriptions");
-            }
-        } else {
-            Log.d(TAG, "EventSource connection skipped: serverURL=" + mServerURL
-                    + ", connected=" + isConnected());
-        }
-    }
-
-    private String buildTopic() {
-        StringBuilder topic = new StringBuilder();
-        synchronized (mSubscriptions) {
-            for (String item : mSubscriptions.keySet()) {
-                if (topic.length() > 0) {
-                    topic.append(",");
-                }
-                topic.append("smarthome/items/").append(item).append("/statechanged");
-            }
-        }
-        synchronized (mCmdSubscriptions) {
-            for (String item : mCmdSubscriptions.keySet()) {
-                if (topic.length() > 0) {
-                    topic.append(",");
-                }
-                topic.append("smarthome/items/").append(item).append("/command");
-            }
-        }
-
-        return topic.toString();
+        mSseConnection.connect();
     }
 
     private synchronized void close() {
-        if (mEventSource != null) {
-            AsyncCloseTask t = new AsyncCloseTask();
-            t.execute(mEventSource);
-            mEventSource = null;
+        if (mSseConnection != null) {
+            mSseConnection.disconnect();
         }
-
-        client = null;
     }
 
     public void terminate(Context context) {
-        ConnectionUtil.getInstance().removeCertListener(mCertListener);
+        CertificateManager.getInstance().removeCertListener(mCertListener);
+        CredentialManager.getInstance().removeCredentialsListener(mSseConnection);
         LocalBroadcastManager.getInstance(context).unregisterReceiver(mReceiver);
 
         averagePropagator.terminate();
-        connectionListeners.clear();
+        mSseConnection.dispose();
         mSubscriptions.clear();
     }
 
@@ -355,7 +232,7 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
                     lastUpdates.put(item, state);
                 }
 
-                if (isConnected()) {
+                if (isSseConnected()) {
                     Log.v(TAG, "Sending state update for " + item + ": " + state);
                     mRestClient.setItemState(mServerURL, new ItemState(item, state));
                 }
@@ -379,21 +256,52 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
         Log.v(TAG, "Pending updates sent");
     }
 
-    @Override
-    public void disconnected() {
-        if (isConnected()) {
-            close();
+    public SseConnection getSseConnection() {
+        return mSseConnection;
+    }
+
+    private void propagateItem(String name, String value) {
+        if (!value.equals(mValues.get(name))) {
+            propagate(mSubscriptions, name, value);
         }
     }
 
-    @Override
-    public void connected() {
-        if (!isConnected()) {
-            connect();
+    private void propagateCommand(String name, String value) {
+        propagate(mCmdSubscriptions, name, value);
+    }
+
+    private void propagate(HashMap<String, ArrayList<IStateUpdateListener>> subscriptions, String name, String value) {
+        mValues.put(name, value);
+
+        Log.v(TAG, "propagating item: " + name + "=" + value);
+
+        final ArrayList<IStateUpdateListener> listeners;
+        synchronized (subscriptions) {
+            listeners = subscriptions.get(name);
+        }
+
+        if (listeners != null) {
+            for (IStateUpdateListener l : listeners) {
+                l.itemUpdated(name, value);
+            }
         }
     }
 
-    private class SSEHandler implements EventSourceHandler {
+    private class SseStateUpdateListener implements IStateUpdateListener {
+        @Override
+        public void itemUpdated(String name, String value) {
+            if (mSubscriptions.containsKey(name)) {
+                propagateItem(name, value);
+            }
+            if (mCmdSubscriptions.containsKey(name)) {
+                propagateCommand(name, value);
+            }
+        }
+    }
+
+    private class SseConnectionListener implements ISseConnectionListener {
+        private SseConnection.Status mLastStatus;
+
         private final ISubscriptionListener mListener = new ISubscriptionListener() {
             @Override
             public void itemUpdated(String name, String value) {
@@ -406,79 +314,17 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
             }
         };
 
-        private SSEHandler() {
-            mConnected.set(false);
-        }
-
         @Override
-        public void onConnect() {
-            Log.v(TAG, "SSE onConnect");
-
-            if (!mConnected.getAndSet(true)) {
-                synchronized (connectionListeners) {
-                    for (IConnectionListener l : connectionListeners) {
-                        l.connected(mServerURL);
-                    }
-                }
+        public void statusChanged(SseConnection.Status newStatus) {
+            if (newStatus == SseConnection.Status.CONNECTED && mLastStatus != SseConnection.Status.CONNECTED) {
                 sendCurrentValues();
                 fetchCurrentItemsState();
-            }
-        }
-
-        @Override
-        public void onMessage(String event, MessageEvent message) {
-            Log.v(TAG, "onMessage: message=" + message);
-
-            if (message != null) {
-                try {
-                    JSONObject jObject = new JSONObject(message.data);
-                    String type = jObject.getString("type");
-                    if ("ItemStateChangedEvent".equals(type) || "GroupItemStateChangedEvent".equals(type)) {
-                        JSONObject payload = new JSONObject(jObject.getString("payload"));
-                        String topic = jObject.getString("topic");
-                        String name = topic.split("/")[2];
-
-                        if (mSubscriptions.containsKey(name)) {
-                            final String value = payload.getString("value");
-                            propagateItem(name, value);
-                        }
-                    } else if ("ItemCommandEvent".equals(type)) {
-                        JSONObject payload = new JSONObject(jObject.getString("payload"));
-                        String topic = jObject.getString("topic");
-                        String name = topic.split("/")[2];
-
-                        if (mCmdSubscriptions.containsKey(name)) {
-                            final String value = payload.getString("value");
-                            propagateCommand(name, value);
-                        }
-                    }
-                } catch (JSONException e) {
-                    Log.e(TAG, "Error parsing JSON", e);
-                }
-            }
-        }
-
-        @Override
-        public void onError(Throwable t) {
-            Log.v(TAG, "SSE onError: t=" + t.getMessage());
-
-            if (mConnected.getAndSet(false)) {
+            } else if (mLastStatus == SseConnection.Status.CONNECTED && newStatus != SseConnection.Status.CONNECTED) {
                 mValues.clear();
                 averagePropagator.clear();
-
-                synchronized (connectionListeners) {
-                    for (IConnectionListener l : connectionListeners) {
-                        l.disconnected();
-                    }
-                }
-            } else {
-                // in case we get an error before the connect, try to close
-                close();
             }
+            mLastStatus = newStatus;
         }
-
-        @Override
-        public void onLogMessage(String s) { }
 
         private synchronized void fetchCurrentItemsState() {
             HashSet<String> missingItems = new HashSet<>();
@@ -496,31 +342,5 @@ public class ServerConnection implements IStatePropagator, NetworkTracker.INetwo
             }
         }
 
-        private void propagateItem(String name, String value) {
-            if (!value.equals(mValues.get(name))) {
-                propagate(mSubscriptions, name, value);
-            }
-        }
-
-        private void propagateCommand(String name, String value) {
-            propagate(mCmdSubscriptions, name, value);
-        }
-
-        private void propagate(HashMap<String, ArrayList<IStateUpdateListener>> subscriptions, String name, String value) {
-            mValues.put(name, value);
-
-            Log.v(TAG, "propagating item: " + name + "=" + value);
-
-            final ArrayList<IStateUpdateListener> listeners;
-            synchronized (subscriptions) {
-                listeners = subscriptions.get(name);
-            }
-
-            if (listeners != null) {
-                for (IStateUpdateListener l : listeners) {
-                    l.itemUpdated(name, value);
-                }
-            }
-        }
     }
 }
