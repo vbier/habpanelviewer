@@ -4,6 +4,7 @@
 * neue Wertemeldung: Docking Status
 * neue Wertemeldung: Gerätebewegung
 * erlaube Zugriff auf http Seiten in Android 9
+* neuer roter Rand um den Browser wenn die SSE Verbindung fehlt
 * deaktiviere Kamera und Mikrophone bezogene Einstellungen beim Start wenn die Berechtigungen fehlen
 * Unterstützung für Passwort geschützte openHAB Server
 

@@ -32,6 +32,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.room.Room;
+
 import com.google.android.material.navigation.NavigationView;
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
@@ -50,12 +56,6 @@ import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.room.Room;
-
 import de.vier_bier.habpanelviewer.command.AdminHandler;
 import de.vier_bier.habpanelviewer.command.BluetoothHandler;
 import de.vier_bier.habpanelviewer.command.CommandQueue;
@@ -67,11 +67,11 @@ import de.vier_bier.habpanelviewer.command.VolumeHandler;
 import de.vier_bier.habpanelviewer.command.WebViewHandler;
 import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
 import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
+import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 import de.vier_bier.habpanelviewer.db.AppDatabase;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.ISseConnectionListener;
-import de.vier_bier.habpanelviewer.openhab.IUrlListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.openhab.SseConnection;
 import de.vier_bier.habpanelviewer.preferences.PreferenceActivity;
@@ -90,7 +90,6 @@ import de.vier_bier.habpanelviewer.reporting.motion.Camera;
 import de.vier_bier.habpanelviewer.reporting.motion.IMotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionDetector;
 import de.vier_bier.habpanelviewer.reporting.motion.MotionVisualizer;
-import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 import de.vier_bier.habpanelviewer.status.StatusInfoActivity;
 
@@ -388,6 +387,12 @@ public class MainActivity extends ScreenControllingActivity
                     mStatusTextView.setText(newStatus.name());
                     mUrlTextView.setTextColor(newStatus.getColor());
                     enterCredMenu.setVisible(newStatus == SseConnection.Status.UNAUTHORIZED);
+
+                    if (newStatus == SseConnection.Status.CONNECTED) {
+                        findViewById(R.id.activity_main_layout).setPadding(0,0,0,0);
+                    } else {
+                        findViewById(R.id.activity_main_layout).setPadding(10, 10,10,10);
+                    }
                 });
 
                 if (newStatus == SseConnection.Status.CONNECTED) {
@@ -438,12 +443,9 @@ public class MainActivity extends ScreenControllingActivity
                 }
                 mLastStatus = newStatus;
             }
-        }, new IUrlListener() {
-            @Override
-            public void changed(String url, boolean isHabPanelUrl) {
-                if (prefs.getBoolean("pref_current_url_enabled", false)) {
-                    mServerConnection.updateState(prefs.getString("pref_current_url_item", ""), url);
-                }
+        }, (url, isHabPanelUrl) -> {
+            if (prefs.getBoolean("pref_current_url_enabled", false)) {
+                mServerConnection.updateState(prefs.getString("pref_current_url_item", ""), url);
             }
         }, mNetworkTracker);
         mCommandQueue.addHandler(new WebViewHandler(mWebView));
@@ -590,23 +592,19 @@ public class MainActivity extends ScreenControllingActivity
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case Camera.MY_REQUEST_CAMERA: {
-                // If request is cancelled, the result arrays are empty.
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (mCam != null) {
-                        mCam.updateFromPreferences(prefs);
-                        updateMotionPreferences();
-                    }
-                } else {
-                    SharedPreferences.Editor editor1 = prefs.edit();
-                    editor1.putBoolean("pref_motion_detection_enabled", false);
-                    editor1.putBoolean("pref_motion_detection_preview", false);
-                    editor1.apply();
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == Camera.MY_REQUEST_CAMERA) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (mCam != null) {
+                    mCam.updateFromPreferences(prefs);
+                    updateMotionPreferences();
                 }
+            } else {
+                SharedPreferences.Editor editor1 = prefs.edit();
+                editor1.putBoolean("pref_motion_detection_enabled", false);
+                editor1.putBoolean("pref_motion_detection_preview", false);
+                editor1.apply();
             }
         }
     }
