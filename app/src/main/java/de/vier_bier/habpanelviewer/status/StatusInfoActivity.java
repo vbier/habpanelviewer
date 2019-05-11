@@ -41,7 +41,7 @@ public class StatusInfoActivity extends ScreenControllingActivity {
             runOnUiThread(adapter::notifyDataSetChanged);
         }, 0, 1, TimeUnit.SECONDS);
 
-        setContentView(R.layout.info_main);
+        setContentView(R.layout.activity_statusinfo);
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -97,7 +97,7 @@ public class StatusInfoActivity extends ScreenControllingActivity {
         @Override
         public View getView(int position, View view, @NonNull ViewGroup parent) {
             LayoutInflater inflater = mContext.getLayoutInflater();
-            View rowView= inflater.inflate(R.layout.list_info_item, parent, false);
+            View rowView= inflater.inflate(R.layout.row_commandlog, parent, false);
 
             TextView txtTitle = rowView.findViewById(R.id.name);
             TextView txtValue = rowView.findViewById(R.id.value);

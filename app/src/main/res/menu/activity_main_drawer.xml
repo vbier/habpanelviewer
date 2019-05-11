@@ -37,6 +37,11 @@
         android:title="@string/action_intro"
         android:icon="@drawable/ic_ondemand_video_black_24dp" />
     <item
+        android:id="@+id/action_show_log"
+        android:orderInCategory="100"
+        android:title="@string/action_debug_log"
+        android:icon="@drawable/ic_view_headline_black_24dp" />
+    <item
         android:id="@+id/action_restart"
         android:orderInCategory="100"
         android:title="@string/action_restart"

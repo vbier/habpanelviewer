@@ -30,7 +30,7 @@ class PreferenceUtil {
                 .withFilter(true, false)
                 .withStartFile(Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOCUMENTS).getPath())
-                .withRowLayoutView(R.layout.li_row_textview)
+                .withRowLayoutView(R.layout.row_filechooser)
                 .withResources(R.string.chooseTargetDirectory, R.string.okay, R.string.cancel)
                 .withChosenListener((path, pathFile) -> saveSharedPreferencesToFile(ctx, v, new File(path, "HPV.prefs")));
 
@@ -43,7 +43,7 @@ class PreferenceUtil {
                 .withStartFile(Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOCUMENTS).getPath())
                 .withResources(R.string.choose_file, R.string.okay, R.string.cancel)
-                .withRowLayoutView(R.layout.li_row_textview)
+                .withRowLayoutView(R.layout.row_filechooser)
                 .withChosenListener((path, pathFile) -> {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
                     try {

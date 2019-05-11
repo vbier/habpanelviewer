@@ -34,7 +34,7 @@ public class PreferenceActivity extends ScreenControllingActivity implements Pre
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.preferences_main);
+        setContentView(R.layout.activity_preferences);
 
         mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);

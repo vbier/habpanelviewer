@@ -245,7 +245,7 @@ public class MainActivity extends ScreenControllingActivity
 
         // inflate navigation header to make sure the textview holding the connection text is created
         NavigationView navigationView = findViewById(R.id.nav_view);
-        LinearLayout navHeader = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.nav_header_main, null);
+        LinearLayout navHeader = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.navheader_main, null);
         navigationView.addHeaderView(navHeader);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -755,6 +755,8 @@ public class MainActivity extends ScreenControllingActivity
             startActivity(HelpActivity.class);
         } else if (id == R.id.action_intro) {
             showIntro();
+        } else if (id == R.id.action_show_log) {
+            startActivity(LogActivity.class);
         } else if (id == R.id.action_restart) {
             restartApp();
         } else if (id == R.id.action_enter_credentials) {

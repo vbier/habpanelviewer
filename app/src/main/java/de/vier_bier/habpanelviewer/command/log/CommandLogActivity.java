@@ -69,7 +69,7 @@ public class CommandLogActivity extends ScreenControllingActivity {
             }
         }), 0, 1, TimeUnit.SECONDS);
 
-        setContentView(R.layout.command_log_main);
+        setContentView(R.layout.activity_commandlog);
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
@@ -102,7 +102,7 @@ public class CommandLogActivity extends ScreenControllingActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.command_log_toolbar_menu, menu);
+        getMenuInflater().inflate(R.menu.commandlog_toolbar_menu, menu);
 
         mClearItem = menu.findItem(R.id.action_clear_log);
         UiUtil.tintItemPreV21(mClearItem, getApplicationContext(), getTheme());
@@ -162,7 +162,7 @@ public class CommandLogActivity extends ScreenControllingActivity {
         @Override
         public View getView(int position, View view, @NonNull ViewGroup parent) {
             LayoutInflater inflater = mContext.getLayoutInflater();
-            View rowView = inflater.inflate(R.layout.list_info_item, parent, false);
+            View rowView = inflater.inflate(R.layout.row_commandlog, parent, false);
 
             TextView txtTitle = rowView.findViewById(R.id.name);
             TextView txtValue = rowView.findViewById(R.id.value);

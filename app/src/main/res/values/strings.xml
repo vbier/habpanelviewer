@@ -42,6 +42,7 @@
     <string name="action_show_help">Manual</string>
     <string name="action_clear_log">Clear Log</string>
     <string name="action_back">Go back</string>
+    <string name="action_debug_log">Debug log</string>
 
     <string name="menu_reload">Reload page</string>
     <string name="menu_gotoStartUrl">Go to start page</string>
@@ -351,4 +352,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="httpWithBasicAuth">You are about to enter you credentials for an unencrypted HTTP connection. You should only do this in a private network, as your password might be sent in plain text.</string>
+    <string name="empty_log">Clear Log</string>
+    <string name="log_empty">Log is empty</string>
+    <string name="share_log">Share log</string>
 </resources>

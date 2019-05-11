@@ -40,6 +40,7 @@
     <string name="action_show_help">Handbuch</string>
     <string name="action_clear_log">Log leeren</string>
     <string name="action_back">Zurück</string>
+    <string name="action_debug_log">Protokoll</string>
 
     <string name="menu_reload">Lade Seite neu</string>
     <string name="menu_gotoStartUrl">Gehe zur Startseite</string>
@@ -348,4 +349,7 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="httpWithBasicAuth">Sie sind im Begriff ihre Zugangsdaten für eine unverschlüsselte HTTP Verbindung einzugeben. Sie sollten dies nur in einem privaten Netzwerk tun, da das Passwort für alle lesbar übertragen werden könnte.</string>
+    <string name="empty_log">Log leeren</string>
+    <string name="log_empty">Das Log ist leer</string>
+    <string name="share_log">Log verschicken</string>
 </resources>

@@ -240,7 +240,7 @@ public class IntroActivity extends AppIntro2 {
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                                  @Nullable Bundle savedInstanceState) {
-            View v = inflater.inflate(R.layout.intro_discover, container, false);
+            View v = inflater.inflate(R.layout.activity_intro_discover, container, false);
             v.setBackgroundColor(Color.parseColor("#4CAF50"));
 
             return v;

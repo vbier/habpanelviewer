@@ -73,6 +73,10 @@
             android:name="de.vier_bier.habpanelviewer.command.log.CommandLogActivity"
             android:label="@string/action_cmdLog"
             android:parentActivityName="de.vier_bier.habpanelviewer.MainActivity"/>
+        <activity
+            android:name="de.vier_bier.habpanelviewer.LogActivity"
+            android:label="@string/action_debug_log"
+            android:parentActivityName="de.vier_bier.habpanelviewer.MainActivity"/>
 
         <receiver
             android:name="de.vier_bier.habpanelviewer.AdminReceiver"

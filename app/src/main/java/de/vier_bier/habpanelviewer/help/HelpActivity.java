@@ -32,7 +32,7 @@ public class HelpActivity extends ScreenControllingActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.help_main);
+        setContentView(R.layout.activity_help);
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);

@@ -78,7 +78,7 @@ public class UiUtil {
         android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(ctx)
                 .setTitle(title)
                 .setPositiveButton(android.R.string.yes, (dialog1, which) -> dialog1.dismiss())
-                .setView(LayoutInflater.from(ctx).inflate(R.layout.scrollable_text_dialog, null))
+                .setView(LayoutInflater.from(ctx).inflate(R.layout.dialog_scrollable_text, null))
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .show();
 
