@@ -22,12 +22,17 @@ The app does support android from SDK version 19, which means it will run on dev
 For further details see the <a href="app/src/main/assets/help.md">app's help file</a>.
 
 The app uses the following libraries:
-- **michaelklishin/eventsource-netty5** licensed under the BSD-3 License: https://opensource.org/licenses/BSD-3-Clause
+- **com.github.heremaps:oksse** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
+- **com.squareup.okhttp3:okhttp** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
+- **com.burgstaller:okhttp-digest** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
 - **com.jakewharton:process-phoenix** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
 - **org.greenrobot:eventbus** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
 - **com.github.mukeshsolanki:MarkdownView-Android** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
 - **com.github.apl-devs:appintro** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
 - **com.github.hedzr:android-file-chooser** licensed under the Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0
+
+The app uses code from the following projects:
+- LogActivity is based on the LogActivity from the openHAB client for Android (https://github.com/openhab/openhab-android)
 
 The app uses following icons:
 - Icons made by <a href="https://www.flaticon.com/authors/webalys-freebies" title="Webalys Freebies">Webalys Freebies</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
