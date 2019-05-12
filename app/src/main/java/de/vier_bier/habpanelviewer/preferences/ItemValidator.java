@@ -16,6 +16,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 class ItemValidator {
     private static final String TAG = "HPV-ItemValidator";
@@ -43,11 +44,16 @@ class ItemValidator {
                             mNames.clear();
 
                             if (response.code() == 200) {
-                                try {
-                                    JSONArray itemArr = new JSONArray(response.body().string());
-                                    for (int i = 0; i < itemArr.length(); i++) {
-                                        JSONObject item = (JSONObject) itemArr.get(i);
-                                        mNames.add(item.getString("name"));
+                                try (ResponseBody responseBody = response.body()) {
+                                    if (responseBody != null) {
+                                        JSONArray itemArr = new JSONArray(responseBody.string());
+                                        for (int i = 0; i < itemArr.length(); i++) {
+                                            JSONObject item = (JSONObject) itemArr.get(i);
+                                            mNames.add(item.getString("name"));
+                                        }
+                                    } else {
+                                        mNames.clear();
+                                        l.validationUnavailable();
                                     }
                                 } catch (JSONException e) {
                                     Log.e(TAG, "Failed to fetch item names from server " + serverUrl, e);

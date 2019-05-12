@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class RestClient extends HandlerThread {
     private static final String TAG = "HPV-RestClient";
@@ -63,8 +64,12 @@ public class RestClient extends HandlerThread {
                     .put(body)
                     .build();
             try (Response response = client.newCall(request).execute()) {
-                Log.v(TAG, "set " + item.mItemName + " request response: " + response.body().string()
-                        + "(" + response.code() + ")");
+                try (ResponseBody responseBody = response.body()) {
+                    if (responseBody != null) {
+                        Log.v(TAG, "set " + item.mItemName + " request response: " + responseBody.string()
+                                + "(" + response.code() + ")");
+                    }
+                }
             }
         } catch (IOException e) {
             Log.e(TAG, "Failed to set state for item " + item.mItemName, e);
@@ -81,7 +86,12 @@ public class RestClient extends HandlerThread {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            listener.itemUpdated(itemName, response.body().string());
+            try (ResponseBody responseBody = response.body()) {
+                if (responseBody != null) {
+                    listener.itemUpdated(itemName, responseBody.string());
+                }
+            }
+
         } catch (IOException e) {
             listener.itemInvalid(itemName);
             Log.e(TAG, "Failed to obtain state for item " + itemName, e);
