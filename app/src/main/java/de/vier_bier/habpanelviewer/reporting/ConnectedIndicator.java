@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
@@ -86,10 +87,10 @@ public class ConnectedIndicator implements IStateUpdateListener {
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         int interval;
         try {
-            interval = Integer.parseInt(prefs.getString("pref_connected_interval", "60"));
+            interval = Integer.parseInt(prefs.getString(Constants.PREF_CONNECTED_INTERVAL, "60"));
         } catch (NumberFormatException e) {
             Log.e(TAG, "preferences contain invalid connected interval: "
-                    + prefs.getString("pref_connected_interval", "60"));
+                    + prefs.getString(Constants.PREF_CONNECTED_INTERVAL, "60"));
             interval = 60;
         }
         boolean intervalChanged = mInterval != interval;
@@ -99,7 +100,7 @@ public class ConnectedIndicator implements IStateUpdateListener {
         }
 
         boolean started = false;
-        if (mEnabled != prefs.getBoolean("pref_connected_enabled", false)) {
+        if (mEnabled != prefs.getBoolean(Constants.PREF_CONNECTED_ENABLED, false)) {
             mEnabled = !mEnabled;
 
             if (!mEnabled) {
@@ -112,9 +113,9 @@ public class ConnectedIndicator implements IStateUpdateListener {
             }
         }
 
-        mStartEnabled = prefs.getBoolean("pref_startup_enabled", false);
-        mStartStatusItem = prefs.getString("pref_startup_item", "");
-        mStatusItem = prefs.getString("pref_connected_item", "");
+        mStartEnabled = prefs.getBoolean(Constants.PREF_STARTUP_ENABLED, false);
+        mStartStatusItem = prefs.getString(Constants.PREF_STARTUP_ITEM, "");
+        mStatusItem = prefs.getString(Constants.PREF_CONNECTED_ITEM, "");
 
         if (mStartEnabled && mStartTime == -1) {
             mStartTime = System.currentTimeMillis();

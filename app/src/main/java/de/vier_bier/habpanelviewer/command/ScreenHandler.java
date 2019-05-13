@@ -7,6 +7,7 @@ import android.os.PowerManager;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.EmptyActivity;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 
@@ -90,8 +91,8 @@ public class ScreenHandler implements ICommandHandler {
         intent.setClass(mActivity, EmptyActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("dim", dim);
-        intent.putExtra("keepScreenOn", mKeepScreenOn);
+        intent.putExtra(Constants.INTENT_FLAG_DIM, dim);
+        intent.putExtra(Constants.INTENT_FLAG_KEEP_SCREEN_ON, mKeepScreenOn);
         mActivity.startActivityForResult(intent, 0);
     }
 

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 import de.vier_bier.habpanelviewer.UiUtil;
@@ -43,7 +44,7 @@ public class HelpActivity extends ScreenControllingActivity {
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String theme = prefs.getString("pref_theme", "dark");
+        String theme = prefs.getString(Constants.PREF_THEME, "dark");
 
         if ("dark".equals(theme)) {
             myToolbar.setPopupTheme(R.style.Theme_AppCompat_NoActionBar);
@@ -72,7 +73,7 @@ public class HelpActivity extends ScreenControllingActivity {
         UiUtil.tintItemPreV21(mWikiItem, getApplicationContext(), getTheme());
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String theme = prefs.getString("pref_theme", "dark");
+        String theme = prefs.getString(Constants.PREF_THEME, "dark");
 
         loadMarkdownFromAssets(getString(R.string.helpFile), "dark".equals(theme));
     }

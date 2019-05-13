@@ -32,7 +32,7 @@ public class IntroActivity extends AppIntro2 {
         super.onCreate(savedInstanceState);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean serverConfigured = !"".equals(prefs.getString("pref_server_url", ""));
+        boolean serverConfigured = !"".equals(prefs.getString(Constants.PREF_SERVER_URL, ""));
 
         showSkipButton(serverConfigured);
         setTitle(R.string.intro_initialConfiguration);
@@ -74,7 +74,7 @@ public class IntroActivity extends AppIntro2 {
             }
         } else {
             addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_openhabServerDetection),
-                    getString(R.string.intro_serverConfigured, prefs.getString("pref_server_url", "")),
+                    getString(R.string.intro_serverConfigured, prefs.getString(Constants.PREF_SERVER_URL, "")),
                     R.drawable.server, bgColor));
         }
 
@@ -95,7 +95,7 @@ public class IntroActivity extends AppIntro2 {
     @Override
     public void onBackPressed() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean serverConfigured = !"".equals(prefs.getString("pref_server_url", ""));
+        boolean serverConfigured = !"".equals(prefs.getString(Constants.PREF_SERVER_URL, ""));
 
         if (mSelectedSlide == 0 && !serverConfigured) {
             UiUtil.showSnackBar(getWindow().getDecorView().findViewById(android.R.id.content),
@@ -116,7 +116,7 @@ public class IntroActivity extends AppIntro2 {
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         SharedPreferences.Editor editor1 = prefs.edit();
-        editor1.putBoolean("pref_intro_shown", true);
+        editor1.putBoolean(Constants.PREF_INTRO_SHOWN, true);
         editor1.apply();
 
         finish();
@@ -130,7 +130,7 @@ public class IntroActivity extends AppIntro2 {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
                 SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putString("pref_server_url", url);
+                editor1.putString(Constants.PREF_SERVER_URL, url);
                 editor1.apply();
             }
         }

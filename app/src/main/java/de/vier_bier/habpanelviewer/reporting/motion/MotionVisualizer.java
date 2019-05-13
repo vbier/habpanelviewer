@@ -14,6 +14,7 @@ import android.view.SurfaceView;
 
 import java.util.ArrayList;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 
 /**
@@ -56,15 +57,15 @@ public class MotionVisualizer implements IMotionListener {
 
     @Override
     public void motionDetected(ArrayList<Point> differing) {
-        boolean showPreview = mPreferences.getBoolean("pref_motion_detection_preview", false);
-        boolean motionDetection = mPreferences.getBoolean("pref_motion_detection_enabled", false);
+        boolean showPreview = mPreferences.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
+        boolean motionDetection = mPreferences.getBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false);
 
         if (showPreview && motionDetection && mMotionView.getHolder().getSurface().isValid()) {
             final Canvas canvas = mMotionView.getHolder().lockCanvas();
 
             if (canvas != null) {
                 try {
-                    int boxes = Integer.parseInt(mPreferences.getString("pref_motion_detection_granularity", "20"));
+                    int boxes = Integer.parseInt(mPreferences.getString(Constants.PREF_MOTION_DETECTION_GRANULARITY, "20"));
                     float xsize = canvas.getWidth() / (float) boxes;
                     float ysize = canvas.getHeight() / (float) boxes;
 
@@ -113,8 +114,8 @@ public class MotionVisualizer implements IMotionListener {
 
     @Override
     public void noMotion() {
-        boolean showPreview = mPreferences.getBoolean("pref_motion_detection_preview", false);
-        boolean motionDetection = mPreferences.getBoolean("pref_motion_detection_enabled", false);
+        boolean showPreview = mPreferences.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
+        boolean motionDetection = mPreferences.getBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false);
 
         if (showPreview && motionDetection && mMotionView.getHolder().getSurface().isValid()) {
             final Canvas canvas = mMotionView.getHolder().lockCanvas();
@@ -127,8 +128,8 @@ public class MotionVisualizer implements IMotionListener {
 
     @Override
     public void tooDark() {
-        boolean showPreview = mPreferences.getBoolean("pref_motion_detection_preview", false);
-        boolean motionDetection = mPreferences.getBoolean("pref_motion_detection_enabled", false);
+        boolean showPreview = mPreferences.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
+        boolean motionDetection = mPreferences.getBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false);
 
         if (showPreview && motionDetection && mMotionView.getHolder().getSurface().isValid()) {
             final Canvas canvas = mMotionView.getHolder().lockCanvas();

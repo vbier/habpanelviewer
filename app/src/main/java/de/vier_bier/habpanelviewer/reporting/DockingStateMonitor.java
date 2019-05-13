@@ -11,6 +11,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
@@ -88,9 +89,9 @@ public class DockingStateMonitor implements IDeviceMonitor, IStateUpdateListener
 
     @Override
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        mDockStateItem = prefs.getString("pref_docking_state_item", "");
+        mDockStateItem = prefs.getString(Constants.PREF_DOCKING_STATE_ITEM, "");
 
-        if (mDockStateEnabled != prefs.getBoolean("pref_docking_state_enabled", false)) {
+        if (mDockStateEnabled != prefs.getBoolean(Constants.PREF_DOCKING_STATE_ENABLED, false)) {
             mDockStateEnabled = !mDockStateEnabled;
 
             if (mDockStateEnabled) {

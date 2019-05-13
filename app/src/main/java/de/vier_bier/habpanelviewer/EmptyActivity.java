@@ -14,7 +14,7 @@ public class EmptyActivity extends ScreenControllingActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean dim = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("dim");
+        boolean dim = getIntent().getExtras() != null && getIntent().getExtras().getBoolean(Constants.INTENT_FLAG_DIM);
         if (dim) {
             setContentView(R.layout.activity_empty);
 
@@ -50,7 +50,7 @@ public class EmptyActivity extends ScreenControllingActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
 
-        boolean dim = intent.getExtras() != null && intent.getExtras().getBoolean("dim");
+        boolean dim = intent.getExtras() != null && intent.getExtras().getBoolean(Constants.INTENT_FLAG_DIM);
         if (!dim) {
             finish();
         }

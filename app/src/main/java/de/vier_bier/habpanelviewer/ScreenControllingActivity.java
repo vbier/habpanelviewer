@@ -13,18 +13,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import de.vier_bier.habpanelviewer.openhab.ServerConnection;
-
 /**
  * Activity that support controlling screen state.
  */
 public abstract class ScreenControllingActivity extends AppCompatActivity {
-    private static final String ACTION_KEEP_SCREEN_ON = "ACTION_KEEP_SCREEN_ON";
-    private static final String FLAG_KEEP_SCREEN_ON = "keepScreenOn";
     private static boolean mKeepScreenOn = false;
 
-    private static final String ACTION_SET_BRIGHTNESS = "ACTION_SET_BRIGHTNESS";
-    private static final String FLAG_BRIGHTNESS = "brightness";
     private static float mBrightness = -1;
 
     private static boolean mTouchEnabled;
@@ -35,16 +29,16 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
     public static void setBrightness(Context ctx, float brightness) {
         mBrightness = brightness;
 
-        Intent i = new Intent(ACTION_SET_BRIGHTNESS);
-        i.putExtra(FLAG_BRIGHTNESS, brightness);
+        Intent i = new Intent(Constants.INTENT_ACTION_SET_BRIGHTNESS);
+        i.putExtra(Constants.INTENT_FLAG_BRIGHTNESS, brightness);
         LocalBroadcastManager.getInstance(ctx).sendBroadcast(i);
     }
 
     public static void setKeepScreenOn(Context ctx, boolean keepOn) {
         mKeepScreenOn = keepOn;
 
-        Intent i = new Intent(ACTION_KEEP_SCREEN_ON);
-        i.putExtra(FLAG_KEEP_SCREEN_ON, keepOn);
+        Intent i = new Intent(Constants.INTENT_ACTION_KEEP_SCREEN_ON);
+        i.putExtra(Constants.INTENT_FLAG_KEEP_SCREEN_ON, keepOn);
         LocalBroadcastManager.getInstance(ctx).sendBroadcast(i);
     }
 
@@ -53,7 +47,7 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        setTheme(UiUtil.getThemeId(prefs.getString("pref_theme", "dark")));
+        setTheme(UiUtil.getThemeId(prefs.getString(Constants.PREF_THEME, "dark")));
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
@@ -62,20 +56,20 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
         super.onStart();
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        boolean showOnLockScreen = prefs.getBoolean("pref_show_on_lock_screen", false);
+        boolean showOnLockScreen = prefs.getBoolean(Constants.PREF_SHOW_ON_LOCK_SCREEN, false);
         if (showOnLockScreen) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         }
 
-        mTouchEnabled = prefs.getBoolean("pref_usage_enabled", false);
-        mTouchItem = prefs.getString("pref_usage_item", "");
-        mTouchTimeout = Integer.parseInt(prefs.getString("pref_usage_timeout", "60000"));
+        mTouchEnabled = prefs.getBoolean(Constants.PREF_USAGE_ENABLED, false);
+        mTouchItem = prefs.getString(Constants.PREF_USAGE_ITEM, "");
+        mTouchTimeout = Integer.parseInt(prefs.getString(Constants.PREF_USAGE_TIMEOUT, "60000"));
 
         IntentFilter f = new IntentFilter();
-        f.addAction(ACTION_KEEP_SCREEN_ON);
-        f.addAction(ACTION_SET_BRIGHTNESS);
+        f.addAction(Constants.INTENT_ACTION_KEEP_SCREEN_ON);
+        f.addAction(Constants.INTENT_ACTION_SET_BRIGHTNESS);
         LocalBroadcastManager.getInstance(this).registerReceiver(onEvent, f);
 
         setKeepScreenOn(mKeepScreenOn);
@@ -88,11 +82,11 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
 
         if (mTouchEnabled && ev.getActionMasked() == MotionEvent.ACTION_DOWN
                 && mTouchTime + mTouchTimeout * 1000 < System.currentTimeMillis()) {
-            Intent i = new Intent(ServerConnection.ACTION_SET_WITH_TIMEOUT);
-            i.putExtra(ServerConnection.FLAG_ITEM_NAME, mTouchItem);
-            i.putExtra(ServerConnection.FLAG_ITEM_STATE, "CLOSED");
-            i.putExtra(ServerConnection.FLAG_ITEM_TIMEOUT_STATE, "OPEN");
-            i.putExtra(ServerConnection.FLAG_TIMEOUT, mTouchTimeout);
+            Intent i = new Intent(Constants.INTENT_ACTION_SET_WITH_TIMEOUT);
+            i.putExtra(Constants.INTENT_FLAG_ITEM_NAME, mTouchItem);
+            i.putExtra(Constants.INTENT_FLAG_ITEM_STATE, "CLOSED");
+            i.putExtra(Constants.INTENT_FLAG_ITEM_TIMEOUT_STATE, "OPEN");
+            i.putExtra(Constants.INTENT_FLAG_TIMEOUT, mTouchTimeout);
             LocalBroadcastManager.getInstance(getBaseContext()).sendBroadcast(i);
 
             mTouchTime = System.currentTimeMillis();
@@ -111,12 +105,12 @@ public abstract class ScreenControllingActivity extends AppCompatActivity {
 
     private final BroadcastReceiver onEvent = new BroadcastReceiver() {
         public void onReceive(Context ctx, Intent i) {
-            if (ACTION_KEEP_SCREEN_ON.equals(i.getAction())) {
-                final boolean keepOn = i.getBooleanExtra(FLAG_KEEP_SCREEN_ON, false);
+            if (Constants.INTENT_ACTION_KEEP_SCREEN_ON.equals(i.getAction())) {
+                final boolean keepOn = i.getBooleanExtra(Constants.INTENT_FLAG_KEEP_SCREEN_ON, false);
 
                 runOnUiThread(() -> setKeepScreenOn(keepOn));
-            } else if (ACTION_SET_BRIGHTNESS.equals(i.getAction())) {
-                final float brightness = i.getFloatExtra(FLAG_BRIGHTNESS, 1.0f);
+            } else if (Constants.INTENT_ACTION_SET_BRIGHTNESS.equals(i.getAction())) {
+                final float brightness = i.getFloatExtra(Constants.INTENT_FLAG_BRIGHTNESS, 1.0f);
 
                 runOnUiThread(() -> setBrightness(brightness));
             }

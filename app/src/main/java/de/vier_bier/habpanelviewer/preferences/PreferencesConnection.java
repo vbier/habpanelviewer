@@ -7,6 +7,7 @@ import android.preference.Preference;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 
@@ -17,7 +18,7 @@ public class PreferencesConnection extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.preferences_connection);
 
-        EditTextPreference urlPreference = (EditTextPreference) findPreference("pref_server_url");
+        EditTextPreference urlPreference = (EditTextPreference) findPreference(Constants.PREF_SERVER_URL);
         urlPreference.setOnPreferenceChangeListener(new URLValidatingListener());
     }
 

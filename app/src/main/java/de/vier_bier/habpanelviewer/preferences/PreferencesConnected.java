@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 
@@ -15,7 +16,7 @@ public class PreferencesConnected extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences_connected);
 
         EditTextPreference connectedIntervalPreference =
-                (EditTextPreference) findPreference("pref_connected_interval");
+                (EditTextPreference) findPreference(Constants.PREF_CONNECTED_INTERVAL);
         connectedIntervalPreference.setOnPreferenceChangeListener(new NumberValidatingListener(0, 6000));
     }
 

@@ -8,6 +8,7 @@ import android.hardware.SensorManager;
 
 import java.util.Arrays;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
@@ -77,7 +78,7 @@ public class AccelerometerMonitor extends AbstractDeviceMonitor {
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         super.updateFromPreferences(prefs);
 
-        mSensitivityStr = prefs.getString("pref_" + mPreferenceKey + "_sensitivity", "3.0");
+        mSensitivityStr = prefs.getString(Constants.PREF_PREFIX + mPreferenceKey + Constants.PREF_SUFFIX_SENSITIVITY, "3.0");
         mSensitivity = Float.valueOf(mSensitivityStr);
     }
 }

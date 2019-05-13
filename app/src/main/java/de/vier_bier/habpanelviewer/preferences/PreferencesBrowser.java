@@ -12,11 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.legacy.app.FragmentCompat;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 
 public class PreferencesBrowser extends PreferenceFragment {
-    public static final int MY_PERMISSIONS_REQUEST_WEBRTC = 125;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,7 +25,7 @@ public class PreferencesBrowser extends PreferenceFragment {
         addPreferencesFromResource(R.xml.preferences_browser);
 
         // add validation to the allow webrtc
-        CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference("pref_allow_webrtc");
+        CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference(Constants.PREF_ALLOW_WEBRTC);
         allowPreference.setOnPreferenceChangeListener(new WebRtcValidatingListener());
     }
 
@@ -34,7 +34,7 @@ public class PreferencesBrowser extends PreferenceFragment {
         super.onStart();
 
         if (needsPermissions()) {
-            CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference("pref_allow_webrtc");
+            CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference(Constants.PREF_ALLOW_WEBRTC);
             allowPreference.setChecked(false);
         }
     }
@@ -43,7 +43,7 @@ public class PreferencesBrowser extends PreferenceFragment {
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == MY_PERMISSIONS_REQUEST_WEBRTC) {
+        if (requestCode == Constants.REQUEST_WEBRTC) {
             setAllowWebRtcPref(grantResults.length == 2
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                     && grantResults[1] == PackageManager.PERMISSION_GRANTED);
@@ -52,12 +52,12 @@ public class PreferencesBrowser extends PreferenceFragment {
 
     private void setAllowWebRtcPref(boolean allowWebRtc) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        if (prefs.getBoolean("pref_allow_webrtc", false) != allowWebRtc) {
+        if (prefs.getBoolean(Constants.PREF_ALLOW_WEBRTC, false) != allowWebRtc) {
             SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putBoolean("pref_allow_webrtc", allowWebRtc);
+            editor1.putBoolean(Constants.PREF_ALLOW_WEBRTC, allowWebRtc);
             editor1.apply();
 
-            CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference("pref_allow_webrtc");
+            CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference(Constants.PREF_ALLOW_WEBRTC);
             allowPreference.setChecked(allowWebRtc);
         }
     }
@@ -70,7 +70,7 @@ public class PreferencesBrowser extends PreferenceFragment {
     private void requestMissingPermissions() {
         FragmentCompat.requestPermissions(this,
                 new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA},
-                MY_PERMISSIONS_REQUEST_WEBRTC);
+                Constants.REQUEST_WEBRTC);
     }
 
     private class WebRtcValidatingListener implements Preference.OnPreferenceChangeListener {
@@ -84,15 +84,15 @@ public class PreferencesBrowser extends PreferenceFragment {
 
             if (value) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                if (prefs.getBoolean("pref_motion_detection_enabled", false)
-                        || prefs.getBoolean("pref_motion_detection_preview", false)) {
+                if (prefs.getBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false)
+                        || prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false)) {
                     UiUtil.showCancelDialog(getActivity(), null,
                             "Enabling WebRTC will disable other camera related features. Continue?",
                             (dialogInterface, i) -> {
                                 final SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(getActivity());
                                 SharedPreferences.Editor editor1 = prefs1.edit();
-                                editor1.putBoolean("pref_motion_detection_enabled", false);
-                                editor1.putBoolean("pref_motion_detection_preview", false);
+                                editor1.putBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false);
+                                editor1.putBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
                                 editor1.apply();
 
                                 onPreferenceChange(value, true, true);
@@ -101,17 +101,17 @@ public class PreferencesBrowser extends PreferenceFragment {
                     return false;
                 }
 
-                if (checkAccel && !prefs.getBoolean("pref_hardware_accelerated", false)) {
+                if (checkAccel && !prefs.getBoolean(Constants.PREF_HW_ACCELERATED, false)) {
                     UiUtil.showButtonDialog(getActivity(), null,
                             "HW Acceleration is disabled, WebRTC might not be able to show video. Do you want to enable HW acceleration?",
                             R.string.yes,
                             (dialogInterface, i) -> {
                                 final SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(getActivity());
                                 SharedPreferences.Editor editor1 = prefs1.edit();
-                                editor1.putBoolean("pref_hardware_accelerated", true);
+                                editor1.putBoolean(Constants.PREF_HW_ACCELERATED, true);
                                 editor1.apply();
 
-                                CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference("pref_hardware_accelerated");
+                                CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference(Constants.PREF_HW_ACCELERATED);
                                 allowPreference.setChecked(true);
 
                                 onPreferenceChange(true, true, false);

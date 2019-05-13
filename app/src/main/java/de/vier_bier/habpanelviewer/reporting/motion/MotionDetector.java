@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
@@ -119,11 +120,11 @@ public class MotionDetector extends Thread implements IMotionDetector, ICamera.I
 
     @Override
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        boolean newEnabled = prefs.getBoolean("pref_motion_detection_enabled", false);
-        int newBoxes = Integer.parseInt(prefs.getString("pref_motion_detection_granularity", "20"));
-        int newLeniency = Integer.parseInt(prefs.getString("pref_motion_detection_leniency", "20"));
+        boolean newEnabled = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false);
+        int newBoxes = Integer.parseInt(prefs.getString(Constants.PREF_MOTION_DETECTION_GRANULARITY, "20"));
+        int newLeniency = Integer.parseInt(prefs.getString(Constants.PREF_MOTION_DETECTION_LENIENCY, "20"));
 
-        mSleepTime = Integer.parseInt(prefs.getString("pref_motion_detection_sleep", "500"));
+        mSleepTime = Integer.parseInt(prefs.getString(Constants.PREF_MOTION_DETECTION_SLEEP, "500"));
 
         if (newEnabled) {
             boolean changed = newBoxes != mBoxes || newLeniency != mLeniency;

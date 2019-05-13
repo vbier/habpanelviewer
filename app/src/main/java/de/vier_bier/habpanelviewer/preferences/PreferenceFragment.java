@@ -21,6 +21,7 @@ import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 
 public class PreferenceFragment extends android.preference.PreferenceFragment implements Preference.OnPreferenceClickListener {
@@ -36,7 +37,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
             mUiHandler.post(() -> {
                 List<Preference> list = getPreferenceList(getPreferenceScreen(), new ArrayList<>());
                 for (Preference p : list) {
-                    if (p.getKey().endsWith("_item") && p instanceof EditTextPreference) {
+                    if (p.getKey().endsWith(Constants.PREF_SUFFIX_ITEM) && p instanceof EditTextPreference) {
                         final EditText editText = ((EditTextPreference) p).getEditText();
 
                         if (editText instanceof AutoCompleteTextView) {
@@ -54,7 +55,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
             mUiHandler.post(() -> {
                 List<Preference> list = getPreferenceList(getPreferenceScreen(), new ArrayList<>());
                 for (Preference p : list) {
-                    if (p.getKey().endsWith("_item") && p instanceof EditTextPreference) {
+                    if (p.getKey().endsWith(Constants.PREF_SUFFIX_ITEM) && p instanceof EditTextPreference) {
                         final EditText editText = ((EditTextPreference) p).getEditText();
 
                         if (editText instanceof AutoCompleteTextView) {
@@ -155,14 +156,14 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
         for (Preference p : list) {
             if (p.getKey().startsWith("nested_")) {
                 p.setOnPreferenceClickListener(this);
-            } else if (p.getKey().endsWith("_item") && p instanceof EditTextPreference) {
+            } else if (p.getKey().endsWith(Constants.PREF_SUFFIX_ITEM) && p instanceof EditTextPreference) {
                 addItemValidation((EditTextPreference) p);
             }
         }
 
         if (mValidator != null) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            mValidator.setServerUrl(prefs.getString("pref_server_url", ""), mListener);
+            mValidator.setServerUrl(prefs.getString(Constants.PREF_SERVER_URL, ""), mListener);
         }
     }
 

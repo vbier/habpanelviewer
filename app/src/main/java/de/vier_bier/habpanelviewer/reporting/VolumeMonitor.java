@@ -11,6 +11,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
@@ -56,9 +57,9 @@ public class VolumeMonitor implements IDeviceMonitor, IStateUpdateListener {
 
     @Override
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        mVolumeItem = prefs.getString("pref_volume_item", "");
+        mVolumeItem = prefs.getString(Constants.PREF_VOLUME_ITEM, "");
 
-        if (mVolumeEnabled != prefs.getBoolean("pref_volume_enabled", false)) {
+        if (mVolumeEnabled != prefs.getBoolean(Constants.PREF_VOLUME_ENABLED, false)) {
             mVolumeEnabled = !mVolumeEnabled;
 
             if (mVolumeEnabled) {

@@ -14,6 +14,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
@@ -112,7 +113,7 @@ public class BatteryMonitor implements IDeviceMonitor, IStateUpdateListener {
 
     @Override
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        if (mBatteryEnabled != prefs.getBoolean("pref_battery_enabled", false)) {
+        if (mBatteryEnabled != prefs.getBoolean(Constants.PREF_BATTERY_ENABLED, false)) {
             mBatteryEnabled = !mBatteryEnabled;
 
             if (mBatteryEnabled) {
@@ -129,9 +130,9 @@ public class BatteryMonitor implements IDeviceMonitor, IStateUpdateListener {
             mPollBatteryLevel = null;
         }
 
-        mBatteryLowItem = prefs.getString("pref_battery_item", "");
-        mBatteryChargingItem = prefs.getString("pref_battery_charging_item", "");
-        mBatteryLevelItem = prefs.getString("pref_battery_level_item", "");
+        mBatteryLowItem = prefs.getString(Constants.PREF_BATTERY_ITEM, "");
+        mBatteryChargingItem = prefs.getString(Constants.PREF_BATTERY_CHARGING_ITEM, "");
+        mBatteryLevelItem = prefs.getString(Constants.PREF_BATTERY_LEVEL_ITEM, "");
 
         mServerConnection.subscribeItems(this, mBatteryLowItem, mBatteryChargingItem, mBatteryLevelItem);
 

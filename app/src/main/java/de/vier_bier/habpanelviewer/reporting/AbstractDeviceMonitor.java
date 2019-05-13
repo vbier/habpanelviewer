@@ -12,6 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
@@ -62,14 +63,14 @@ public abstract class AbstractDeviceMonitor implements IDeviceMonitor, SensorEve
 
     @Override
     public void disablePreferences(Intent intent) {
-        intent.putExtra(mPreferenceKey + "_enabled", mSensor != null);
+        intent.putExtra(mPreferenceKey + Constants.PREF_SUFFIX_ENABLED, mSensor != null);
     }
 
     protected abstract void addStatusItems(ApplicationStatus status);
 
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         if (mSensor != null) {
-            if (mSensorEnabled != prefs.getBoolean("pref_" + mPreferenceKey + "_enabled", false)) {
+            if (mSensorEnabled != prefs.getBoolean(Constants.PREF_PREFIX + mPreferenceKey + Constants.PREF_SUFFIX_ENABLED, false)) {
                 mSensorEnabled = !mSensorEnabled;
 
                 if (mSensorEnabled) {
@@ -79,7 +80,7 @@ public abstract class AbstractDeviceMonitor implements IDeviceMonitor, SensorEve
                 }
             }
 
-            mSensorItem = prefs.getString("pref_" + mPreferenceKey + "_item", "");
+            mSensorItem = prefs.getString(Constants.PREF_PREFIX + mPreferenceKey + Constants.PREF_SUFFIX_ITEM, "");
             mServerConnection.subscribeItems(this, mSensorItem);
         }
     }

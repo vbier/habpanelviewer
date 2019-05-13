@@ -100,8 +100,6 @@ public class MainActivity extends ScreenControllingActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = "HPV-MainActivity";
 
-    private final static int REQUEST_PICK_APPLICATION = 12352;
-
     private ClientWebView mWebView;
     private TextView mUrlTextView;
     private TextView mStatusTextView;
@@ -230,10 +228,10 @@ public class MainActivity extends ScreenControllingActivity
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
-        String lastVersion = prefs.getString("pref_app_version", "");
+        String lastVersion = prefs.getString(Constants.PREF_APP_VERSION, "");
         Log.d(TAG, "Version: " + getAppVersion());
 
-        boolean introShown = prefs.getBoolean("pref_intro_shown", false);
+        boolean introShown = prefs.getBoolean(Constants.PREF_INTRO_SHOWN, false);
         if (!introShown) {
             mIntroShowing = true;
             showIntro();
@@ -275,7 +273,7 @@ public class MainActivity extends ScreenControllingActivity
 
         CredentialManager.getInstance().addCredentialsListener(ConnectionStatistics.OkHttpClientFactory.getInstance());
 
-        int restartCount = getIntent().getIntExtra("restartCount", 0);
+        int restartCount = getIntent().getIntExtra(Constants.INTENT_FLAG_RESTART_COUNT, 0);
 
         if (mRestartingExceptionHandler == null) {
             mRestartingExceptionHandler = new AppRestartingExceptionHandler(this,
@@ -321,7 +319,7 @@ public class MainActivity extends ScreenControllingActivity
 
         if (!"".equals(lastVersion) && !BuildConfig.VERSION_NAME.equals(lastVersion)) {
             SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putString("pref_app_version", BuildConfig.VERSION_NAME);
+            editor1.putString(Constants.PREF_APP_VERSION, BuildConfig.VERSION_NAME);
             editor1.apply();
 
             final String relText = ResourcesUtil.fetchReleaseNotes(this, lastVersion);
@@ -344,7 +342,7 @@ public class MainActivity extends ScreenControllingActivity
 
             @Override
             public boolean isActive() {
-                return prefs.getBoolean("pref_load_start_url_on_screenon", false);
+                return prefs.getBoolean(Constants.PREF_LOAD_START_URL_ON_SCREENON, false);
             }
         }));
         mMonitors.add(new VolumeMonitor(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection));
@@ -380,7 +378,7 @@ public class MainActivity extends ScreenControllingActivity
             @Override
             public void statusChanged(SseConnection.Status newStatus) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                String url = prefs.getString("pref_server_url", "");
+                String url = prefs.getString(Constants.PREF_SERVER_URL, "");
 
                 runOnUiThread(() -> {
                     mUrlTextView.setText(url);
@@ -427,7 +425,7 @@ public class MainActivity extends ScreenControllingActivity
             UiUtil.showSnackBar(mUrlTextView, R.string.appRestarted, R.string.disableRestart, view -> {
                 mRestartingExceptionHandler.disable();
                 SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putBoolean("pref_restart_enabled", false);
+                editor1.putBoolean(Constants.PREF_RESTART_ENABLED, false);
                 editor1.apply();
             });
         }
@@ -444,8 +442,8 @@ public class MainActivity extends ScreenControllingActivity
                 mLastStatus = newStatus;
             }
         }, (url, isHabPanelUrl) -> {
-            if (prefs.getBoolean("pref_current_url_enabled", false)) {
-                mServerConnection.updateState(prefs.getString("pref_current_url_item", ""), url);
+            if (prefs.getBoolean(Constants.PREF_CURRENT_URL_ENABLED, false)) {
+                mServerConnection.updateState(prefs.getString(Constants.PREF_CURRENT_URL_ITEM, ""), url);
             }
         }, mNetworkTracker);
         mCommandQueue.addHandler(new WebViewHandler(mWebView));
@@ -489,7 +487,7 @@ public class MainActivity extends ScreenControllingActivity
             case R.id.menu_set_start_url:
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
                 SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putString("pref_start_url", mWebView.getUrl());
+                editor1.putString(Constants.PREF_START_URL, mWebView.getUrl());
                 editor1.apply();
                 break;
             case R.id.menu_clear_credentials:
@@ -517,16 +515,16 @@ public class MainActivity extends ScreenControllingActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_PICK_APPLICATION && resultCode == RESULT_OK) {
+        if (requestCode == Constants.REQUEST_PICK_APPLICATION && resultCode == RESULT_OK) {
             startActivity(data);
-        } else if (requestCode == ScreenCapturer.REQUEST_MEDIA_PROJECTION
+        } else if (requestCode == Constants.REQUEST_MEDIA_PROJECTION
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             boolean allowCapture = resultCode == RESULT_OK;
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-            if (prefs.getBoolean("pref_capture_screen_enabled", false) != allowCapture) {
+            if (prefs.getBoolean(Constants.PREF_CAPTURE_SCREEN_ENABLED, false) != allowCapture) {
                 SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putBoolean("pref_capture_screen_enabled", allowCapture);
+                editor1.putBoolean(Constants.PREF_CAPTURE_SCREEN_ENABLED, allowCapture);
                 editor1.apply();
             }
 
@@ -593,7 +591,7 @@ public class MainActivity extends ScreenControllingActivity
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == Camera.MY_REQUEST_CAMERA) {
+        if (requestCode == Constants.REQUEST_CAMERA) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (mCam != null) {
@@ -602,8 +600,8 @@ public class MainActivity extends ScreenControllingActivity
                 }
             } else {
                 SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putBoolean("pref_motion_detection_enabled", false);
-                editor1.putBoolean("pref_motion_detection_preview", false);
+                editor1.putBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false);
+                editor1.putBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
                 editor1.apply();
             }
         }
@@ -620,7 +618,7 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        final boolean psWarnShown = prefs.getBoolean("pref_powerSavingWarningShown", false);
+        final boolean psWarnShown = prefs.getBoolean(Constants.PREF_POWER_SAVE_WARNING_SHOWN, false);
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(getPackageName())
             && !psWarnShown) {
@@ -631,7 +629,7 @@ public class MainActivity extends ScreenControllingActivity
                 startActivity(intent);
             }, (dialogInterface, i) -> {
                 SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putBoolean("pref_powerSavingWarningShown", true);
+                editor1.putBoolean(Constants.PREF_POWER_SAVE_WARNING_SHOWN, true);
                 editor1.apply();
             });
         }
@@ -640,7 +638,7 @@ public class MainActivity extends ScreenControllingActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
-        final String menuPos = prefs.getString("pref_menu_position", "");
+        final String menuPos = prefs.getString(Constants.PREF_MENU_POSITION, "");
         if (getString(R.string.left).equalsIgnoreCase(menuPos)) {
             params.gravity = Gravity.START;
         } else {
@@ -656,10 +654,10 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         if (mCapturer == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && prefs.getBoolean("pref_capture_screen_enabled", false)) {
+                && prefs.getBoolean(Constants.PREF_CAPTURE_SCREEN_ENABLED, false)) {
             MediaProjectionManager projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-            startActivityForResult(projectionManager.createScreenCaptureIntent(), ScreenCapturer.REQUEST_MEDIA_PROJECTION);
-        } else if (mCapturer != null && !prefs.getBoolean("pref_capture_screen_enabled", false)) {
+            startActivityForResult(projectionManager.createScreenCaptureIntent(), Constants.REQUEST_MEDIA_PROJECTION);
+        } else if (mCapturer != null && !prefs.getBoolean(Constants.PREF_CAPTURE_SCREEN_ENABLED, false)) {
             mCapturer.terminate();
             mCapturer = null;
         }
@@ -674,7 +672,7 @@ public class MainActivity extends ScreenControllingActivity
 
         updateMotionPreferences();
 
-        if (prefs.getBoolean("pref_show_context_menu", true)) {
+        if (prefs.getBoolean(Constants.PREF_SHOW_CONTEXT_MENU, true)) {
             registerForContextMenu(mWebView);
         } else {
             unregisterForContextMenu(mWebView);
@@ -684,13 +682,13 @@ public class MainActivity extends ScreenControllingActivity
     private void updatePrefsDueToMissingPermissions(SharedPreferences prefs) {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putBoolean("pref_allow_webrtc", false);
-            editor1.putBoolean("pref_motion_detection_enabled", false);
-            editor1.putBoolean("pref_motion_detection_preview", false);
+            editor1.putBoolean(Constants.PREF_ALLOW_WEBRTC, false);
+            editor1.putBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false);
+            editor1.putBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
             editor1.apply();
         } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putBoolean("pref_allow_webrtc", false);
+            editor1.putBoolean(Constants.PREF_ALLOW_WEBRTC, false);
             editor1.apply();
         }
     }
@@ -707,7 +705,7 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         SurfaceView motionView = findViewById(R.id.motionView);
-        boolean showPreview = prefs.getBoolean("pref_motion_detection_preview", false);
+        boolean showPreview = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
 
         if (showPreview && mCam != null) {
             motionView.setVisibility(View.VISIBLE);
@@ -743,7 +741,7 @@ public class MainActivity extends ScreenControllingActivity
             Intent launchIntent = getLaunchIntent();
 
             if (launchIntent != null) {
-                startActivityForResult(launchIntent, REQUEST_PICK_APPLICATION);
+                startActivityForResult(launchIntent, Constants.REQUEST_PICK_APPLICATION);
             }
         } else if (id == R.id.action_info) {
             startActivity(StatusInfoActivity.class);
@@ -789,9 +787,9 @@ public class MainActivity extends ScreenControllingActivity
 
     private void showPreferences() {
         Intent intent = new Intent(MainActivity.this, PreferenceActivity.class);
-        intent.putExtra("camera_enabled", mCam != null);
-        intent.putExtra("flash_enabled", mFlashService != null && mFlashService.isAvailable());
-        intent.putExtra("motion_enabled", mMotionDetector != null && mCam != null && mCam.canBeUsed());
+        intent.putExtra(Constants.INTENT_FLAG_CAMERA_ENABLED, mCam != null);
+        intent.putExtra(Constants.INTENT_FLAG_FLASH_ENABLED, mFlashService != null && mFlashService.isAvailable());
+        intent.putExtra(Constants.INTENT_FLAG_MOTION_ENABLED, mMotionDetector != null && mCam != null && mCam.canBeUsed());
 
         for (IDeviceMonitor m : mMonitors) {
             m.disablePreferences(intent);

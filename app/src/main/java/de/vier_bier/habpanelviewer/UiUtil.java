@@ -133,7 +133,7 @@ public class UiUtil {
     }
 
     public static boolean themeChanged(SharedPreferences prefs, Activity ctx) {
-        String theme = prefs.getString("pref_theme", "dark");
+        String theme = prefs.getString(Constants.PREF_THEME, "dark");
         return themeChanged(theme, ctx);
     }
 

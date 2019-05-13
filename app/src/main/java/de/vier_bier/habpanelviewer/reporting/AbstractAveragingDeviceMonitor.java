@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
@@ -42,16 +43,16 @@ public abstract class AbstractAveragingDeviceMonitor extends AbstractDeviceMonit
     @Override
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         boolean removeFromAverage = false;
-        if (mDoAverage != prefs.getBoolean("pref_" + mPreferenceKey + "_average", true)) {
-            mDoAverage = prefs.getBoolean("pref_" + mPreferenceKey + "_average", true);
+        if (mDoAverage != prefs.getBoolean(Constants.PREF_PREFIX + mPreferenceKey + Constants.PREF_SUFFIX_AVERAGE, true)) {
+            mDoAverage = prefs.getBoolean(Constants.PREF_PREFIX + mPreferenceKey + Constants.PREF_SUFFIX_AVERAGE, true);
 
             if (!mDoAverage) {
                 removeFromAverage = true;
             }
         }
 
-        if (mInterval != Integer.parseInt(prefs.getString("pref_" + mPreferenceKey + "_intervall", "60"))) {
-            mInterval = Integer.parseInt(prefs.getString("pref_" + mPreferenceKey + "_intervall", "60"));
+        if (mInterval != Integer.parseInt(prefs.getString(Constants.PREF_PREFIX + mPreferenceKey + Constants.PREF_SUFFIX_INTERVAL, "60"))) {
+            mInterval = Integer.parseInt(prefs.getString(Constants.PREF_PREFIX + mPreferenceKey + Constants.PREF_SUFFIX_INTERVAL, "60"));
         }
         boolean wasEnabled = mSensorEnabled;
         super.updateFromPreferences(prefs);

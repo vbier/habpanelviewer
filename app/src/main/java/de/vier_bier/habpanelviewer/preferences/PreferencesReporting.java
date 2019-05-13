@@ -2,6 +2,7 @@ package de.vier_bier.habpanelviewer.preferences;
 
 import android.os.Bundle;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 
 public class PreferencesReporting extends PreferenceFragment {
@@ -20,7 +21,7 @@ public class PreferencesReporting extends PreferenceFragment {
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            motionEnabled = bundle.getBoolean("motion_enabled");
+            motionEnabled = bundle.getBoolean(Constants.INTENT_FLAG_MOTION_ENABLED);
             proximityEnabled = bundle.getBoolean("proximity_enabled");
             pressureEnabled = bundle.getBoolean("pressure_enabled");
             brightnessEnabled = bundle.getBoolean("brightness_enabled");

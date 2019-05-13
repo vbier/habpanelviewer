@@ -53,7 +53,7 @@ public class LogActivity extends ScreenControllingActivity {
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String theme = prefs.getString("pref_theme", "dark");
+        String theme = prefs.getString(Constants.PREF_THEME, "dark");
 
         if ("dark".equals(theme)) {
             myToolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Dark);
@@ -163,7 +163,7 @@ public class LogActivity extends ScreenControllingActivity {
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             log = redactHost(log,
-                    sharedPreferences.getString("pref_server_url", ""),
+                    sharedPreferences.getString(Constants.PREF_SERVER_URL, ""),
                     "<openhab-local-address>");
             return log;
         }

@@ -74,8 +74,8 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
         if (mStartActivity != null) {
             mStartActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             if (count != -1) {
-                mStartActivity.putExtra("crash", true);
-                mStartActivity.putExtra("restartCount", count + 1);
+                mStartActivity.putExtra(Constants.INTENT_FLAG_CRASH, true);
+                mStartActivity.putExtra(Constants.INTENT_FLAG_RESTART_COUNT, count + 1);
             }
 
             context.destroy();
@@ -85,13 +85,14 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     public void updateFromPreferences(SharedPreferences prefs) {
         try {
-            mMaxRestarts = Integer.parseInt(prefs.getString("pref_max_restarts", "5"));
+            mMaxRestarts = Integer.parseInt(prefs.getString(Constants.PREF_MAX_RESTARTS, "5"));
         } catch (NumberFormatException e) {
-            Log.e(TAG, "could not parse pref_max_restarts value " + prefs.getString("pref_max_restarts", "5") + ". using default 5");
+            Log.e(TAG, "could not parse pref_max_restarts value "
+                    + prefs.getString(Constants.PREF_MAX_RESTARTS, "5") + ". using default 5");
             mMaxRestarts = 5;
         }
 
-        mRestartEnabled = prefs.getBoolean("pref_restart_enabled", false);
+        mRestartEnabled = prefs.getBoolean(Constants.PREF_RESTART_ENABLED, false);
     }
 
     void disable() {

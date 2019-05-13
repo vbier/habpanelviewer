@@ -5,6 +5,7 @@ import android.graphics.Point;
 
 import java.util.ArrayList;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 
 /**
@@ -46,8 +47,8 @@ public class MotionReporter extends IMotionListener.MotionAdapter {
     }
 
     public void updateFromPreferences(SharedPreferences prefs) {
-        if (mMotionItem == null || !mMotionItem.equalsIgnoreCase(prefs.getString("pref_motion_item", ""))) {
-            mMotionItem = prefs.getString("pref_motion_item", "");
+        if (mMotionItem == null || !mMotionItem.equalsIgnoreCase(prefs.getString(Constants.PREF_MOTION_DETECTION_ITEM, ""))) {
+            mMotionItem = prefs.getString(Constants.PREF_MOTION_DETECTION_ITEM, "");
             mMotion = false;
         }
 

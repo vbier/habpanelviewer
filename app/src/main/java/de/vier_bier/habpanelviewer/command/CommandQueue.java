@@ -11,6 +11,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.command.log.CommandLog;
 import de.vier_bier.habpanelviewer.command.log.CommandLogClient;
 import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
@@ -89,9 +90,9 @@ public class CommandQueue extends HandlerThread implements IStateUpdateListener 
     }
 
     public void updateFromPreferences(final SharedPreferences prefs) {
-        String mCmdItemName = prefs.getString("pref_command_item", "");
+        String mCmdItemName = prefs.getString(Constants.PREF_CMD_ITEM, "");
 
-        mUiHandler.post(() -> mCmdLog.setSize(prefs.getInt("pref_command_log_size", 100)));
+        mUiHandler.post(() -> mCmdLog.setSize(prefs.getInt(Constants.PREF_CMD_LOG_SIZE, 100)));
 
         mServerConnection.subscribeCommandItem(this, mCmdItemName);
     }

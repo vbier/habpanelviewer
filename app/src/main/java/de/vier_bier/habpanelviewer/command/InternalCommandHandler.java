@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.MainActivity;
 import de.vier_bier.habpanelviewer.ScreenCapturer;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
@@ -44,10 +45,10 @@ public class InternalCommandHandler implements ICommandHandler {
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
         try {
-            takePictureDelay = Integer.parseInt(prefs.getString("pref_take_pic_delay", "100"));
+            takePictureDelay = Integer.parseInt(prefs.getString(Constants.PREF_TAKE_PIC_DELAY, "100"));
         } catch (NumberFormatException e) {
             takePictureDelay = 100;
-            Log.e(TAG, "could not parse pref_take_pic_delay value " + prefs.getString("pref_take_pic_delay", "100") + ". using default 100");
+            Log.e(TAG, "could not parse pref_take_pic_delay value " + prefs.getString(Constants.PREF_TAKE_PIC_DELAY, "100") + ". using default 100");
         }
     }
 
@@ -139,14 +140,14 @@ public class InternalCommandHandler implements ICommandHandler {
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
-        return Integer.parseInt(prefs.getString("pref_jpeg_quality", "70"));
+        return Integer.parseInt(prefs.getString(Constants.PREF_JPEG_QUALITY, "70"));
     }
 
     private void setMotionDetectionEnabled(boolean enabled) {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mActivity);
 
         SharedPreferences.Editor editor1 = prefs.edit();
-        editor1.putBoolean("pref_motion_detection_enabled", enabled);
+        editor1.putBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, enabled);
         editor1.apply();
 
         mActivity.runOnUiThread(mActivity::updateMotionPreferences);

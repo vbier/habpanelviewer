@@ -27,6 +27,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import androidx.core.app.ActivityCompat;
+
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
@@ -35,7 +37,6 @@ import de.vier_bier.habpanelviewer.status.ApplicationStatus;
  * Generic camera implementation that delegates to the V1 and V2 camera implementations.
  */
 public class Camera {
-    public final static int MY_REQUEST_CAMERA = 42;
 
     private static final String TAG = "HPV-Camera";
 
@@ -189,7 +190,7 @@ public class Camera {
                 }
             }
 
-            mShowPreview = prefs.getBoolean("pref_motion_detection_preview", false);
+            mShowPreview = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
 
             // ensure camera preview state is correct
             // - preview state ON or lumalisteners -> preview running
@@ -499,16 +500,16 @@ public class Camera {
 
     private CameraVersion getCameraVersion(SharedPreferences prefs) {
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            boolean shouldRun = prefs.getBoolean("pref_motion_detection_preview", false) || !mListeners.isEmpty();
+            boolean shouldRun = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false) || !mListeners.isEmpty();
             if (shouldRun) {
                 ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA},
-                        MY_REQUEST_CAMERA);
+                        Constants.REQUEST_CAMERA);
             }
 
             return CameraVersion.PERMISSION_MISSING;
         }
 
-        boolean newApi = prefs.getBoolean("pref_motion_detection_new_api", Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+        boolean newApi = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_NEW_API, Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
         if (newApi && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return CameraVersion.V2;
         }

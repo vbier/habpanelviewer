@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 import de.vier_bier.habpanelviewer.UiUtil;
@@ -79,7 +80,7 @@ public class CommandLogActivity extends ScreenControllingActivity {
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String theme = prefs.getString("pref_theme", "dark");
+        String theme = prefs.getString(Constants.PREF_THEME, "dark");
 
         if ("dark".equals(theme)) {
             myToolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Dark);

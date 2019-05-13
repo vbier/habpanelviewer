@@ -10,6 +10,7 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 
 import de.vier_bier.habpanelviewer.AdminReceiver;
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 
 import static android.app.Activity.RESULT_OK;
@@ -26,7 +27,7 @@ public class PreferencesOther extends PreferenceFragment {
         mDPM = (DevicePolicyManager) getActivity().getSystemService(Context.DEVICE_POLICY_SERVICE);
 
         // add validation to the device admin
-        CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
+        CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference(Constants.PREF_DEVICE_ADMIN);
         adminPreference.setOnPreferenceChangeListener(new AdminValidatingListener());
     }
 
@@ -34,21 +35,21 @@ public class PreferencesOther extends PreferenceFragment {
     public void onStart() {
         super.onStart();
 
-        onActivityResult(42, RESULT_OK, null);
+        onActivityResult(Constants.REQUEST_DEVICE_ADMIN, RESULT_OK, null);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 42 && resultCode == RESULT_OK) {
+        if (requestCode == Constants.REQUEST_DEVICE_ADMIN && resultCode == RESULT_OK) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             boolean isActive = mDPM.isAdminActive(AdminReceiver.COMP);
 
-            if (prefs.getBoolean("pref_device_admin", false) != isActive) {
+            if (prefs.getBoolean(Constants.PREF_DEVICE_ADMIN, false) != isActive) {
                 SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putBoolean("pref_device_admin", isActive);
+                editor1.putBoolean(Constants.PREF_DEVICE_ADMIN, isActive);
                 editor1.apply();
 
-                CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
+                CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference(Constants.PREF_DEVICE_ADMIN);
                 adminPreference.setChecked(isActive);
             }
         }
@@ -57,7 +58,7 @@ public class PreferencesOther extends PreferenceFragment {
     private void removeAsAdmin() {
         mDPM.removeActiveAdmin(AdminReceiver.COMP);
 
-        CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference("pref_device_admin");
+        CheckBoxPreference adminPreference = (CheckBoxPreference) findPreference(Constants.PREF_DEVICE_ADMIN);
         adminPreference.setChecked(false);
     }
 
@@ -65,7 +66,7 @@ public class PreferencesOther extends PreferenceFragment {
         Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
         intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, AdminReceiver.COMP);
         intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.deviceAdminDescription));
-        startActivityForResult(intent, 42);
+        startActivityForResult(intent, Constants.REQUEST_DEVICE_ADMIN);
     }
 
     private class AdminValidatingListener implements Preference.OnPreferenceChangeListener {

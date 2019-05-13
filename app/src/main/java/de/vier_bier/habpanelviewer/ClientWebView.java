@@ -267,19 +267,19 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     }
 
     void updateFromPreferences(SharedPreferences prefs) {
-        String theme = prefs.getString("pref_theme", "dark");
+        String theme = prefs.getString(Constants.PREF_THEME, "dark");
         mDarkTheme = "dark".equals(theme);
-        mImmersive = prefs.getBoolean("pref_immersive", false);
-        mTrackBrowserConnection = prefs.getBoolean("pref_track_browser_connection", false);
-        mLogBrowserMsg = prefs.getBoolean("pref_log_browser_messages", false);
-        mAllowWebRTC = prefs.getBoolean("pref_allow_webrtc", false);
+        mImmersive = prefs.getBoolean(Constants.PREF_IMMERSIVE, false);
+        mTrackBrowserConnection = prefs.getBoolean(Constants.PREF_TRACK_BROWSER_CONNECTION, false);
+        mLogBrowserMsg = prefs.getBoolean(Constants.PREF_LOG_BROWSER_MESSAGES, false);
+        mAllowWebRTC = prefs.getBoolean(Constants.PREF_ALLOW_WEBRTC, false);
 
-        boolean isDesktop = prefs.getBoolean("pref_desktop_mode", false);
-        boolean isJavascript = prefs.getBoolean("pref_javascript", false);
-        boolean isAutoplay = prefs.getBoolean("pref_autoplay_video", false);
-        boolean cacheDeactivated = prefs.getBoolean("pref_disable_cache", false);
+        boolean isDesktop = prefs.getBoolean(Constants.PREF_DESKTOP_MODE, false);
+        boolean isJavascript = prefs.getBoolean(Constants.PREF_JAVASCRIPT, false);
+        boolean isAutoplay = prefs.getBoolean(Constants.PREF_AUTOPLAY_VIDEO, false);
+        boolean cacheDeactivated = prefs.getBoolean(Constants.PREF_DISABLE_CACHE, false);
 
-        mDraggingPrevented = prefs.getBoolean("pref_prevent_dragging", false);
+        mDraggingPrevented = prefs.getBoolean(Constants.PREF_PREVENT_DRAGGING, false);
 
         WebSettings webSettings = getSettings();
         webSettings.setUseWideViewPort(isDesktop);
@@ -290,23 +290,23 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
         boolean loadStartUrl = false;
         boolean reloadUrl = false;
-        if (mStartPage == null || !mStartPage.equalsIgnoreCase(prefs.getString("pref_start_url", ""))) {
-            mStartPage = prefs.getString("pref_start_url", "");
+        if (mStartPage == null || !mStartPage.equalsIgnoreCase(prefs.getString(Constants.PREF_START_URL, ""))) {
+            mStartPage = prefs.getString(Constants.PREF_START_URL, "");
             loadStartUrl = true;
         }
         loadStartUrl = loadStartUrl || isShowingErrorPage();
 
-        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", "!$%"))) {
-            mServerURL = prefs.getString("pref_server_url", "");
+        if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString(Constants.PREF_SERVER_URL, "!$%"))) {
+            mServerURL = prefs.getString(Constants.PREF_SERVER_URL, "");
             loadStartUrl = loadStartUrl || mStartPage == null || mStartPage.isEmpty();
         }
-        if (mAllowMixedContent != prefs.getBoolean("pref_allow_mixed_content", false)) {
-            mAllowMixedContent = prefs.getBoolean("pref_allow_mixed_content", false);
+        if (mAllowMixedContent != prefs.getBoolean(Constants.PREF_ALLOW_MIXED_CONTENT, false)) {
+            mAllowMixedContent = !mAllowMixedContent;
             reloadUrl = true;
         }
 
-        if (mHwAccelerated != prefs.getBoolean("pref_hardware_accelerated", false)) {
-            mHwAccelerated = prefs.getBoolean("pref_hardware_accelerated", false);
+        if (mHwAccelerated != prefs.getBoolean(Constants.PREF_HW_ACCELERATED, false)) {
+            mHwAccelerated = !mHwAccelerated;
 
             if (mHwAccelerated) {
                 setLayerType(LAYER_TYPE_HARDWARE, null);

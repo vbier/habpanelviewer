@@ -6,6 +6,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 
@@ -16,7 +17,7 @@ public class PreferencesMotion extends PreferenceFragment implements Preference.
 
         addPreferencesFromResource(R.xml.preferences_motion);
 
-        CheckBoxPreference cbPref = (CheckBoxPreference) findPreference("pref_motion_detection_enabled");
+        CheckBoxPreference cbPref = (CheckBoxPreference) findPreference(Constants.PREF_MOTION_DETECTION_ENABLED);
         cbPref.setOnPreferenceChangeListener(this);
     }
 
@@ -27,17 +28,17 @@ public class PreferencesMotion extends PreferenceFragment implements Preference.
         if (value) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-            if (prefs.getBoolean("pref_allow_webrtc", false)) {
+            if (prefs.getBoolean(Constants.PREF_ALLOW_WEBRTC, false)) {
                 UiUtil.showCancelDialog(getActivity(), null,
                         "Enabling motion detection will disable WebRTC. Continue?",
                         (dialogInterface, i) -> {
                             final SharedPreferences prefs1 = PreferenceManager.getDefaultSharedPreferences(getActivity());
                             SharedPreferences.Editor editor1 = prefs1.edit();
-                            editor1.putBoolean("pref_allow_webrtc", false);
-                            editor1.putBoolean("pref_motion_detection_enabled", true);
+                            editor1.putBoolean(Constants.PREF_ALLOW_WEBRTC, false);
+                            editor1.putBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, true);
                             editor1.apply();
 
-                            CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference("pref_motion_detection_enabled");
+                            CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference(Constants.PREF_MOTION_DETECTION_ENABLED);
                             allowPreference.setChecked(true);
                         }, null);
 

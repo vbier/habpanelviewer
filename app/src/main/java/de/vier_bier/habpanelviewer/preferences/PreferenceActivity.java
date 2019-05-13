@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
 import de.vier_bier.habpanelviewer.UiUtil;
@@ -23,8 +24,6 @@ import de.vier_bier.habpanelviewer.UiUtil;
  * Activity for setting preferences.
  */
 public class PreferenceActivity extends ScreenControllingActivity implements PreferenceCallback {
-    private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 123;
-    private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 124;
     private static final String TAG_NESTED = "TAG_NESTED";
 
     private Toolbar mToolbar;
@@ -44,7 +43,7 @@ public class PreferenceActivity extends ScreenControllingActivity implements Pre
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String theme = prefs.getString("pref_theme", "dark");
+        String theme = prefs.getString(Constants.PREF_THEME, "dark");
 
         if ("dark".equals(theme)) {
             mToolbar.setPopupTheme(R.style.ThemeOverlay_AppCompat_Dark);
@@ -99,7 +98,7 @@ public class PreferenceActivity extends ScreenControllingActivity implements Pre
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+                        Constants.REQUEST_WRITE_EXTERNAL_STORAGE);
             } else {
                 PreferenceUtil.saveSharedPreferencesToFile(this, mToolbar);
             }
@@ -112,7 +111,7 @@ public class PreferenceActivity extends ScreenControllingActivity implements Pre
                     != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                        Constants.REQUEST_READ_EXTERNAL_STORAGE);
             } else {
                 PreferenceUtil.loadSharedPreferencesFromFile(this, mToolbar);
             }
@@ -132,13 +131,13 @@ public class PreferenceActivity extends ScreenControllingActivity implements Pre
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+            case Constants.REQUEST_READ_EXTERNAL_STORAGE: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     PreferenceUtil.loadSharedPreferencesFromFile(this, mToolbar);
                 }
             }
-            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+            case Constants.REQUEST_WRITE_EXTERNAL_STORAGE: {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     PreferenceUtil.saveSharedPreferencesToFile(this, mToolbar);

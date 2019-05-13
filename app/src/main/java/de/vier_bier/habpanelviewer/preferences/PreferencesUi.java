@@ -5,6 +5,7 @@ import android.preference.ListPreference;
 
 import com.jakewharton.processphoenix.ProcessPhoenix;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 
@@ -15,7 +16,7 @@ public class PreferencesUi extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.preferences_ui);
 
-        ListPreference themePreference = (ListPreference) findPreference("pref_theme");
+        ListPreference themePreference = (ListPreference) findPreference(Constants.PREF_THEME);
         themePreference.setOnPreferenceChangeListener((preference, o) -> {
             if (getActivity() != null && !getActivity().isFinishing()) {
                 if (UiUtil.themeChanged((String) o, getActivity())) {

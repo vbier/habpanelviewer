@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.openhab.average.AveragePropagator;
 import de.vier_bier.habpanelviewer.openhab.average.IStatePropagator;
@@ -27,11 +28,6 @@ import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
  * Client for openHABs SSE service. Listens for item value changes.
  */
 public class ServerConnection implements IStatePropagator {
-    public static final String ACTION_SET_WITH_TIMEOUT = "ACTION_SET_WITH_TIMEOUT";
-    public static final String FLAG_ITEM_NAME = "itemName";
-    public static final String FLAG_ITEM_STATE = "itemState";
-    public static final String FLAG_ITEM_TIMEOUT_STATE = "itemTimeoutState";
-    public static final String FLAG_TIMEOUT = "timeout";
 
     private static final String TAG = "HPV-ServerConnection";
 
@@ -43,10 +39,10 @@ public class ServerConnection implements IStatePropagator {
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent i) {
-            final String item = i.getStringExtra(FLAG_ITEM_NAME);
-            final String state = i.getStringExtra(FLAG_ITEM_STATE);
-            final String timeoutState = i.getStringExtra(FLAG_ITEM_TIMEOUT_STATE);
-            final int timeout = i.getIntExtra(FLAG_TIMEOUT, 60);
+            final String item = i.getStringExtra(Constants.INTENT_FLAG_ITEM_NAME);
+            final String state = i.getStringExtra(Constants.INTENT_FLAG_ITEM_STATE);
+            final String timeoutState = i.getStringExtra(Constants.INTENT_FLAG_ITEM_TIMEOUT_STATE);
+            final int timeout = i.getIntExtra(Constants.INTENT_FLAG_TIMEOUT, 60);
 
             updateStateWithTimeout(item, state, timeoutState, timeout);
         }
@@ -75,7 +71,7 @@ public class ServerConnection implements IStatePropagator {
         CredentialManager.getInstance().addCredentialsListener(mSseConnection);
 
         IntentFilter f = new IntentFilter();
-        f.addAction(ACTION_SET_WITH_TIMEOUT);
+        f.addAction(Constants.INTENT_ACTION_SET_WITH_TIMEOUT);
 
         LocalBroadcastManager.getInstance(context).registerReceiver(mReceiver, f);
     }
@@ -162,10 +158,10 @@ public class ServerConnection implements IStatePropagator {
 
     public void updateFromPreferences(SharedPreferences prefs, Context ctx) {
         final boolean serverChanged = mServerURL == null
-                || !mServerURL.equalsIgnoreCase(prefs.getString("pref_server_url", ""));
+                || !mServerURL.equalsIgnoreCase(prefs.getString(Constants.PREF_SERVER_URL, ""));
 
         if (serverChanged) {
-            mServerURL = prefs.getString("pref_server_url", "");
+            mServerURL = prefs.getString(Constants.PREF_SERVER_URL, "");
             Log.d(TAG, "new server URL: " + mServerURL);
             close();
 

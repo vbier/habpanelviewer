@@ -12,6 +12,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.openhab.IStateUpdateListener;
 import de.vier_bier.habpanelviewer.openhab.ServerConnection;
@@ -97,12 +98,12 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
 
     @Override
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        mScreenOnItem = prefs.getString("pref_screen_item", "");
+        mScreenOnItem = prefs.getString(Constants.PREF_SCREEN_ITEM, "");
 
-        if (mReceiverRegistered != (prefs.getBoolean("pref_screen_enabled", false) || mListener.isActive())) {
+        if (mReceiverRegistered != (prefs.getBoolean(Constants.PREF_SCREEN_ENABLED, false) || mListener.isActive())) {
             mReceiverRegistered = !mReceiverRegistered;
 
-            mMonitorEnabled = prefs.getBoolean("pref_screen_enabled", false);
+            mMonitorEnabled = prefs.getBoolean(Constants.PREF_SCREEN_ENABLED, false);
 
             if (mReceiverRegistered) {
                 PowerManager powerManager = (PowerManager) mCtx.getSystemService(POWER_SERVICE);
@@ -118,7 +119,7 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
                 Log.d(TAG, "unregistering screen receiver...");
                 mCtx.unregisterReceiver(mScreenReceiver);
             }
-        } else if (mMonitorEnabled != prefs.getBoolean("pref_screen_enabled", false)) {
+        } else if (mMonitorEnabled != prefs.getBoolean(Constants.PREF_SCREEN_ENABLED, false)) {
             mMonitorEnabled = !mMonitorEnabled;
 
             if (mMonitorEnabled && mScreenOnItem != null) {
