@@ -168,35 +168,38 @@ public class UiUtil {
 
     public static void showPasswordDialog(final Context ctx, final String host, final String realm,
                                           final CredentialsListener l, boolean showWarning) {
-        // host only contains the complete URL for the SSE and REST connections using basic auth
-        if (showWarning && host.toLowerCase().startsWith("http:")) {
-            showCancelDialog(ctx, ctx.getString(R.string.credentials_required),
-                    ctx.getString(R.string.httpWithBasicAuth),
-                    (dialogInterface, i) -> {
-                        showPasswordDialog(ctx, host, realm, l, false);
-                    }, null);
-            return;
-        }
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            // host only contains the complete URL for the SSE and REST connections using basic auth
+            if (showWarning && host.toLowerCase().startsWith("http:")) {
+                showCancelDialog(ctx, ctx.getString(R.string.credentials_required),
+                        ctx.getString(R.string.httpWithBasicAuth),
+                        (dialogInterface, i) -> {
+                            showPasswordDialog(ctx, host, realm, l, false);
+                        }, null);
+                return;
+            }
 
-        final AlertDialog alert = new AlertDialog.Builder(ctx)
-                .setCancelable(false)
-                .setTitle(R.string.credentials_required)
-                .setMessage(ctx.getString(R.string.host_realm, host, realm))
-                .setView(R.layout.dialog_credentials)
-                .setPositiveButton(R.string.okay, (dialog12, id) -> {
-                    EditText userT = ((AlertDialog) dialog12).findViewById(R.id.username);
-                    EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
-                    CheckBox storeCB = ((AlertDialog) dialog12).findViewById(R.id.checkBox);
+            final AlertDialog alert = new AlertDialog.Builder(ctx)
+                    .setCancelable(false)
+                    .setTitle(R.string.credentials_required)
+                    .setMessage(ctx.getString(R.string.host_realm, host, realm))
+                    .setView(R.layout.dialog_credentials)
+                    .setPositiveButton(R.string.okay, (dialog12, id) -> {
+                        EditText userT = ((AlertDialog) dialog12).findViewById(R.id.username);
+                        EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
+                        CheckBox storeCB = ((AlertDialog) dialog12).findViewById(R.id.checkBox);
 
-                    l.credentialsEntered(host, realm, userT.getText().toString(), passT.getText().toString(), storeCB.isChecked());
-                })
-                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                    l.credentialsCancelled();
-                }).create();
+                        l.credentialsEntered(host, realm, userT.getText().toString(), passT.getText().toString(), storeCB.isChecked());
+                    })
+                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
+                        l.credentialsCancelled();
+                    }).create();
 
-        if (!(ctx instanceof Activity) || !((Activity) ctx).isFinishing()) {
-            alert.show();
-        }
+            if (!(ctx instanceof Activity) || !((Activity) ctx).isFinishing()) {
+                alert.show();
+            }
+        });
     }
 
     public interface CredentialsListener {
