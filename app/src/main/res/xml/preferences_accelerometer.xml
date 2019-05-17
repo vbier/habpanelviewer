@@ -12,7 +12,7 @@
         android:key="pref_accelerometer_item"
         android:dependency="pref_accelerometer_enabled"
         android:inputType="textPhonetic"
-        android:summary="@string/pref_proximityItem_summ"
+        android:summary="@string/pref_accelerometerItem_summ"
         android:title="@string/pref_accelerometerItem" />
     <ListPreference
         android:key="pref_accelerometer_sensitivity"
