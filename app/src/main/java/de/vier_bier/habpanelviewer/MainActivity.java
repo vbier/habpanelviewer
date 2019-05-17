@@ -33,6 +33,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -242,7 +243,7 @@ public class MainActivity extends ScreenControllingActivity
 
         // inflate navigation header to make sure the textview holding the connection text is created
         NavigationView navigationView = findViewById(R.id.nav_view);
-        LinearLayout navHeader = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.navheader_main, null);
+        ConstraintLayout navHeader = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.navheader_main, null);
         navigationView.addHeaderView(navHeader);
         navigationView.setNavigationItemSelectedListener(this);
 
