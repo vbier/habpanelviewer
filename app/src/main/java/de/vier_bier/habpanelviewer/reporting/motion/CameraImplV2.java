@@ -58,7 +58,6 @@ public class CameraImplV2 extends AbstractCameraImpl {
     private volatile boolean mPreviewRunning;
     @SuppressWarnings("FieldCanBeLocal")
     private ImageReader mMotionReader; //do not use a variable as this gets GC'ed
-    @SuppressWarnings("FieldCanBeLocal")
     private ImageReader mPictureReader; //do not use a variable as this gets GC'ed
 
 

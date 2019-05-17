@@ -219,7 +219,6 @@
     <string name="startupIndicator">Startup Indicator</string>
     <string name="connectedIndicator">Connected Indicator</string>
     <string name="flashControl">Flashlight Control</string>
-    <string name="notConnected">not connected</string>
     <string name="sslFailed">Failed to initialize SSL protocol!</string>
     <string name="updated">HABPanelViewer Update</string>
     <string name="updatedText">The application has been updated. Find the bug fixes and new features below:</string>
@@ -245,11 +244,6 @@
     <string name="notConnectedReloadPendingHTML"><![CDATA[The device is currently not connected to the network.<br/><br/>Once the connection has been established, the configured HABPanel page will automatically be loaded.]]></string>
     <string name="startPageNotSetHTML"><![CDATA[Neither the openHAB server URL nor a start page has been defined in the preferences, please specify them.<br/><br/>To do this, swipe with your finger from the right side of the screen to the middle and select Preferences from the menu.]]></string>
     <string name="invalid">invalid</string>
-    <string name="notValidUrl">is not a valid URL</string>
-    <string name="notValidOpenHabUrl">Could not query available services from openHAB</string>
-    <string name="habPanelNotAvailable">HabPanel not available</string>
-    <string name="couldNotConnect">Could not connect to server at URL</string>
-    <string name="acceptCertWhenOurOfPrefs">You can accept the certificate once you have left the preferences.</string>
     <string name="notAvailableOnDevice">%s is not available on this device</string>
     <string name="enabled">enabled</string>
     <string name="disabled">disabled</string>
@@ -285,7 +279,6 @@
         <item quantity="other"> motion detected %1$d times</item>
     </plurals>
     <string name="timeBetweenDetections">time between detections %d ms</string>
-    <string name="couldNotFindBackFlash">Could not find back facing camera with flash!</string>
     <string name="left">left</string>
     <plurals name="updateInterval">
         <item quantity="one">interval is %d second</item>

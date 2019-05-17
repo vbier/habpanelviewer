@@ -8,21 +8,6 @@
 
     <include layout="@layout/toolbar"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/shareFab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        app:fabSize="normal"
-        android:src="@drawable/ic_share_black_24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:visibility="gone"
-        tools:visibility="visible" />
-
     <ScrollView
         android:id="@+id/scrollview"
         android:layout_width="match_parent"
@@ -78,7 +63,6 @@
                 <!--app:tint="@color/empty_list_text_color"-->
 
                 <TextView
-                    android:id="@+id/empty_message"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"

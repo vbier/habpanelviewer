@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:scrollbars="vertical"
     android:scrollbarAlwaysDrawVerticalTrack="true"
-    android:padding="10dp"
-    android:id="@+id/release_notes_view">
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/release_notes_title"
@@ -16,7 +15,6 @@
 
     <ScrollView
         android:padding="10dp"
-        android:id="@+id/release_notes_scroll"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 

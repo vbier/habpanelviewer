@@ -216,7 +216,6 @@
     <string name="startupIndicator">Startindikator</string>
     <string name="connectedIndicator">Verbindungsindikator</string>
     <string name="flashControl">Blitzlichtsteuerung</string>
-    <string name="notConnected">nicht verbunden</string>
     <string name="sslFailed">SSL-Protokoll konnte nicht initialisiert werden!</string>
     <string name="updated">HABPanelViewer Aktualisierung</string>
     <string name="updatedText">Die Anwendung wurde aktualisiert. Folgende Fehlerbehebungen und Verbesserungen wurden eingearbeitet:</string>
@@ -239,14 +238,9 @@
     <string name="sslCert">Das SSL Zertifikat von</string>
     <string name="storeSecurityException">Willst du fortfahren und eine Ausnahme für dieses Zertifikat speichern?</string>
     <string name="configMissing">Konfiguration unvollständig</string>
-    <string name="notConnectedReloadPendingHTML"><![CDATA[Das Ger&auml;t ist momentan nicht mit dem Netzwerk verbunden.<br/><br/>Sobald die Verbindung hergestellt wurde, wird HABPanel automatisch geladen.]]></string>
+    <string name="notConnectedReloadPendingHTML"><![CDATA[Das Gerät ist momentan nicht mit dem Netzwerk verbunden.<br/><br/>Sobald die Verbindung hergestellt wurde, wird HABPanel automatisch geladen.]]></string>
     <string name="startPageNotSetHTML"><![CDATA[Weder die openHAB URL noch die Startseite ist in den Einstellungen definiert, bitte gib sie ein.<br/><br/>Um das zu tun, streiche mit dem Finger vom rechten Rand zur Mitte und w&auml;hle Einstellungen im Men&uuml;.]]></string>
     <string name="invalid">ungültig</string>
-    <string name="notValidUrl">ist keine gültige URL</string>
-    <string name="notValidOpenHabUrl">Konnte die Liste der verfügbaren Services nicht von openHAB laden</string>
-    <string name="habPanelNotAvailable">HabPanel nicht verfügbar</string>
-    <string name="couldNotConnect">Verbindung fehlgeschlagen zum Server mit der URL</string>
-    <string name="acceptCertWhenOurOfPrefs">Du kannst eine Ausnahme für das Zertifikat erstellen, wenn du die Einstellungen verlassen hast.</string>
     <string name="notAvailableOnDevice">%s ist auf diesem Gerät nicht verfügbar</string>
     <string name="enabled">aktiviert</string>
     <string name="disabled">deaktiviert</string>
@@ -254,8 +248,8 @@
     <string name="maxRangeResolution">Max. Reichweite ist %1$.1f, Auflösung ist %2$.1f</string>
     <string name="objectClose">Objekt nah: %1$b [%2$s=%3$s]</string>
     <string name="deviceMoving">Gerät in Bewegung: %1$b [%2$s=%3$s]</string>
-    <string name="pressure">Druck: %1$d hPa oder mbar [%2$s=%3$s]</string>
-    <string name="brightness">Helligkeit: %1$d lx [%2$s=%3$s]</string>
+    <string name="pressure">Druck: %1$.1f hPa oder mbar [%2$s=%3$s]</string>
+    <string name="brightness">Helligkeit: %1$.1f lx [%2$s=%3$s]</string>
     <string name="battLow">Batterie leer: %1$b [%2$s=%3$s]</string>
     <string name="docked">Gerät in Dockingstation: %1$b [%2$s=%3$s]</string>
     <string name="battCharging">Batterie wird geladen: %1$b [%2$s=%3$s]</string>
@@ -282,7 +276,6 @@
         <item quantity="other">%1$d mal Bewegung erkannt</item>
     </plurals>
     <string name="timeBetweenDetections">Zeit zwischen Erkennungen %d ms</string>
-    <string name="couldNotFindBackFlash">Konnte keine nach hinten gerichtete Kamera mit Blitz finden!</string>
     <string name="left">links</string>
     <plurals name="updateInterval">
         <item quantity="one">Meldeintervall ist %d Sekunde</item>
