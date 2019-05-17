@@ -52,7 +52,7 @@ class LocalTrustManager implements X509TrustManager {
     }
 
     private static X509TrustManager findX509TrustManager(TrustManagerFactory tmf) {
-        TrustManager tms[] = tmf.getTrustManagers();
+        TrustManager[] tms = tmf.getTrustManagers();
         for (TrustManager tm : tms) {
             if (tm instanceof X509TrustManager) {
                 return (X509TrustManager) tm;

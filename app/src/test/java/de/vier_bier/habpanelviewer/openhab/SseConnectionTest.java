@@ -45,8 +45,8 @@ import static org.junit.Assert.assertTrue;
 public class SseConnectionTest {
     private WebServer mWebServer;
     private SseConnection mSseConnection;
-    private String[] mCreds = new String[2];
-    private AtomicBoolean mCertValid = new AtomicBoolean();
+    private final String[] mCreds = new String[2];
+    private final AtomicBoolean mCertValid = new AtomicBoolean();
 
     @Before
     public void createServer() {

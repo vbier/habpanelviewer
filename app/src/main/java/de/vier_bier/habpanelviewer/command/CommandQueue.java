@@ -23,7 +23,7 @@ import de.vier_bier.habpanelviewer.openhab.ServerConnection;
 public class CommandQueue extends HandlerThread implements IStateUpdateListener {
     private final ServerConnection mServerConnection;
 
-    private Handler mUiHandler;
+    private final Handler mUiHandler;
     private Handler mWorkerHandler;
 
     private final ArrayList<ICommandHandler> mHandlers = new ArrayList<>();

@@ -27,7 +27,7 @@ public class ConnectedIndicator implements IStateUpdateListener {
     private static final String TAG = "HPV-ConnectedIndicator";
 
     @SuppressLint("SimpleDateFormat")
-    private SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private final SimpleDateFormat mFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     private boolean mStartEnabled;
     private boolean mEnabled;

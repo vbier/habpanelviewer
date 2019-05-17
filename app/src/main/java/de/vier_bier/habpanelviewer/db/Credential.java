@@ -13,10 +13,10 @@ public class Credential {
     @NonNull
     private final String host;
     @NonNull
-    private String realm;
+    private final String realm;
 
-    private String user;
-    private String passwd;
+    private final String user;
+    private final String passwd;
 
     Credential(@NonNull String host, @NonNull String realm, String user, String passwd) {
         this.host = host;
@@ -25,10 +25,12 @@ public class Credential {
         this.passwd = passwd;
     }
 
+    @NonNull
     public String getHost() {
         return host;
     }
 
+    @NonNull
     String getRealm() {
         return realm;
     }

@@ -95,7 +95,7 @@ public class PreferencesBrowser extends PreferenceFragment {
                                 editor1.putBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
                                 editor1.apply();
 
-                                onPreferenceChange(value, true, true);
+                                onPreferenceChange(true, true, true);
                             }, null);
 
                     return false;

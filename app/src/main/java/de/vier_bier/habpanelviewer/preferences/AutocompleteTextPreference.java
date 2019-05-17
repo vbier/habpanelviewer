@@ -13,7 +13,7 @@ import android.widget.EditText;
 /**
  * EditTextPreference with auto completion.
  */
-public class AutocompleteTextPreference extends EditTextPreference {
+class AutocompleteTextPreference extends EditTextPreference {
     private final AutoCompleteTextView mTextView;
 
     public AutocompleteTextPreference(Context context, AttributeSet attrs) {

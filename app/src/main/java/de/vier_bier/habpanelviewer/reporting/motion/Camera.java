@@ -259,7 +259,7 @@ public class Camera {
 
         final CountDownLatch latch = new CountDownLatch(1);
         final ICamera.IPreviewListener pl = new ICamera.IPreviewListener() {
-            AtomicBoolean pictureTaken = new AtomicBoolean();
+            final AtomicBoolean pictureTaken = new AtomicBoolean();
 
             @Override
             public void started() {

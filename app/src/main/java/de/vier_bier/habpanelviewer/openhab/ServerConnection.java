@@ -32,8 +32,8 @@ public class ServerConnection implements IStatePropagator {
     private static final String TAG = "HPV-ServerConnection";
 
     private String mServerURL;
-    private OpenhabSseConnection mSseConnection = new OpenhabSseConnection();
-    private RestClient mRestClient = new RestClient();
+    private final OpenhabSseConnection mSseConnection = new OpenhabSseConnection();
+    private final RestClient mRestClient = new RestClient();
 
     private final CertificateManager.ICertChangedListener mCertListener;
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -151,7 +151,7 @@ public class ServerConnection implements IStatePropagator {
 
         if (itemsChanged) {
             String cmdItemName = mCmdSubscriptions.isEmpty() ? null : mCmdSubscriptions.keySet().iterator().next();
-            mSseConnection.setItemNames(cmdItemName, subscriptions.keySet().toArray(new String[subscriptions.size()]));
+            mSseConnection.setItemNames(cmdItemName, subscriptions.keySet().toArray(new String[0]));
             reconnect();
         }
     }

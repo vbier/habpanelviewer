@@ -30,7 +30,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
     private final Handler mUiHandler = new Handler(Looper.getMainLooper());
     private PreferenceCallback mCallback;
 
-    ItemValidator mValidator;
+    private ItemValidator mValidator;
     private final ItemValidator.VaildationStateListener mListener = new ItemValidator.VaildationStateListener() {
         @Override
         public void validationAvailable(List<String> items) {

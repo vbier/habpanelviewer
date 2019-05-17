@@ -109,11 +109,11 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         }
     }
 
-    protected OkHttpClient createConnection() {
+    OkHttpClient createConnection() {
         return ConnectionStatistics.OkHttpClientFactory.getInstance().create();
     }
 
-    protected String buildUrl() {
+    String buildUrl() {
         return mUrl + "/rest/events";
     }
 
@@ -135,7 +135,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         }
     }
 
-    protected void setStatus(Status status) {
+    private void setStatus(Status status) {
         if (status != mStatus) {
             mStatus = status;
             Log.v(TAG, "status=" + mStatus.name());
@@ -180,7 +180,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         // other failure
         FAILURE;
 
-        public boolean isConnecting() {
+        boolean isConnecting() {
             return this == RECONNECTING || this == CONNECTING;
         }
 

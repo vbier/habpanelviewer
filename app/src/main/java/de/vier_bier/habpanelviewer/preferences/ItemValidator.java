@@ -20,7 +20,7 @@ import okhttp3.ResponseBody;
 
 class ItemValidator {
     private static final String TAG = "HPV-ItemValidator";
-    private List<String> mNames = new ArrayList<>();
+    private final List<String> mNames = new ArrayList<>();
 
     void setServerUrl(String serverUrl, VaildationStateListener l) {
         OkHttpClient client = ConnectionStatistics.OkHttpClientFactory.getInstance().create();

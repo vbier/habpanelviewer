@@ -186,7 +186,7 @@ public class LogActivity extends ScreenControllingActivity {
         return text;
     }
 
-    public static String getHostFromUrl(String url) {
+    private static String getHostFromUrl(String url) {
         Uri uri = Uri.parse(url);
         return uri.getHost();
     }

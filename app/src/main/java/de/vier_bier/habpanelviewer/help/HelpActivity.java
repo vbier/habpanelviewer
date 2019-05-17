@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
@@ -140,7 +141,7 @@ public class HelpActivity extends ScreenControllingActivity {
                 buf.append("<style> body { background:black; color:white } a { color: lightblue; } </style>\n");
             }
             InputStream json = getAssets().open(assetsFilePath);
-            BufferedReader in = new BufferedReader(new InputStreamReader(json, "UTF-8"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(json, StandardCharsets.UTF_8));
 
             String str;
             while((str = in.readLine()) != null) {

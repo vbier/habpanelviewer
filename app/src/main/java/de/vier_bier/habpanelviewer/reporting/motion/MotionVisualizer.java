@@ -87,7 +87,7 @@ public class MotionVisualizer implements IMotionListener {
                         }
                     }
 
-                    canvas.drawText(mNavigationView.getContext().getString(R.string.motion), (canvas.getWidth() - mMotionTextWidth) / 2, 50, mPaint);
+                    canvas.drawText(mNavigationView.getContext().getString(R.string.motion), (canvas.getWidth() - mMotionTextWidth) / 2f, 50, mPaint);
 
                     for (Point p : differing) {
                         Point c = correctSensorRotation(p, mCorrectionAngle, boxes);
@@ -134,7 +134,7 @@ public class MotionVisualizer implements IMotionListener {
         if (showPreview && motionDetection && mMotionView.getHolder().getSurface().isValid()) {
             final Canvas canvas = mMotionView.getHolder().lockCanvas();
             if (canvas != null) {
-                canvas.drawText(mNavigationView.getContext().getString(R.string.tooDark), (canvas.getWidth() - mDarkTextWidth) / 2, 50, mPaint);
+                canvas.drawText(mNavigationView.getContext().getString(R.string.tooDark), (canvas.getWidth() - mDarkTextWidth) / 2f, 50, mPaint);
                 mMotionView.getHolder().unlockCanvasAndPost(canvas);
             }
         }

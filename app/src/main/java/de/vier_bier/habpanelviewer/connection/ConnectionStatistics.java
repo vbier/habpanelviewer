@@ -182,7 +182,7 @@ public class ConnectionStatistics {
             return create(mRestUser, mRestPasswd);
         }
 
-        public OkHttpClient create(final String user, final String passwd) {
+        OkHttpClient create(final String user, final String passwd) {
             OkHttpClient.Builder builder = new OkHttpClient.Builder().readTimeout(0, TimeUnit.SECONDS);
 
             builder.sslSocketFactory(CertificateManager.getInstance().getSocketFactory(),

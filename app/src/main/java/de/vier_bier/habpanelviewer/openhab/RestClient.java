@@ -14,7 +14,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class RestClient extends HandlerThread {
+class RestClient extends HandlerThread {
     private static final String TAG = "HPV-RestClient";
 
     private static final int SET_ID = 213;

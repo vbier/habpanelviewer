@@ -166,17 +166,15 @@ public class UiUtil {
         showPasswordDialog(ctx, host, realm, l, true);
     }
 
-    public static void showPasswordDialog(final Context ctx, final String host, final String realm,
-                                          final CredentialsListener l, boolean showWarning) {
+    private static void showPasswordDialog(final Context ctx, final String host, final String realm,
+                                           final CredentialsListener l, boolean showWarning) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(() -> {
             // host only contains the complete URL for the SSE and REST connections using basic auth
             if (showWarning && host.toLowerCase().startsWith("http:")) {
                 showCancelDialog(ctx, ctx.getString(R.string.credentials_required),
                         ctx.getString(R.string.httpWithBasicAuth),
-                        (dialogInterface, i) -> {
-                            showPasswordDialog(ctx, host, realm, l, false);
-                        }, null);
+                        (dialogInterface, i) -> showPasswordDialog(ctx, host, realm, l, false), null);
                 return;
             }
 
@@ -192,9 +190,7 @@ public class UiUtil {
 
                         l.credentialsEntered(host, realm, userT.getText().toString(), passT.getText().toString(), storeCB.isChecked());
                     })
-                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
-                        l.credentialsCancelled();
-                    }).create();
+                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> l.credentialsCancelled()).create();
 
             if (!(ctx instanceof Activity) || !((Activity) ctx).isFinishing()) {
                 alert.show();
