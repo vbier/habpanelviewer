@@ -82,7 +82,6 @@ public class ServerConnection implements IStatePropagator {
 
     public void subscribeCommandItem(IStateUpdateListener l, String name) {
         if (name != null && !"".equals(name)) {
-            Log.d(TAG, "subscribing command item: " + name);
             subscribeItems(mCmdSubscriptions, l, false, name);
         }
     }
@@ -91,7 +90,6 @@ public class ServerConnection implements IStatePropagator {
         String[] namesArr = removeEmpty(names);
 
         if (namesArr.length > 0) {
-            Log.d(TAG, "subscribing items: " + Arrays.toString(namesArr));
             subscribeItems(mSubscriptions, l, true, namesArr);
         }
     }
@@ -131,6 +129,10 @@ public class ServerConnection implements IStatePropagator {
                         mValues.remove(name);
                     }
                 }
+            }
+
+            if (newItems.size() > 0) {
+                Log.d(TAG, "subscribing items: " + newItems.toString());
             }
 
             for (String name : newItems) {
