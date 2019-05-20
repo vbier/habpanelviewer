@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="intro_urlNotFound">Die richtige URL wurde nicht gefunden. Ich werde diese in den Einstellungen eintragen.</string>
+    <string name="intro_urlNotFound">Die richtige URL wurde nicht gefunden.\nIch werde diese in den Einstellungen eintragen.</string>
     <string name="intro_openhabServerDetection">openHAB Server Suche</string>
     <string name="intro_discoveryInProgress">Server Suche läuft…</string>
     <string name="intro_initialConfiguration">Initiale Konfiguration</string>
-    <string name="intro_discoveryFinished">Suche beendet. Wähle eine der folgenden openHAB Server URLs:</string>
+    <string name="intro_discoveryFinished">Suche beendet.\nWähle die openHAB Server URL:</string>
     <string name="intro_pleaseSelectUrl">Bitte wähle eine URL oder \"Die richtige URL wurde nicht gefunden\".</string>
     <string name="intro_welcome">Willkommen</string>
     <string name="intro_welcome_text">Willkommen zu HABPanelViewer, einem Kiosk Browser mit ein paar zusätzlichen openHAB bezogenen Funktionen.</string>
@@ -34,7 +34,7 @@
     <string name="action_restart">Neustart</string>
     <string name="action_preferences">Einstellungen</string>
     <string name="action_cmdLog">Kommando Log</string>
-    <string name="action_intro">Zeige Intro</string>
+    <string name="action_discover">Suche Server</string>
     <string name="action_goto_forum">HPV Support Thread</string>
     <string name="action_goto_wiki">HPV Wiki</string>
     <string name="action_show_help">Handbuch</string>

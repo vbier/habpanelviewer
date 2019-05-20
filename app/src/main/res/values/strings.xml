@@ -36,7 +36,7 @@
     <string name="action_restart">Restart App</string>
     <string name="action_preferences">Preferences</string>
     <string name="action_cmdLog">Command Log</string>
-    <string name="action_intro">Show Intro</string>
+    <string name="action_discover">Discover Server</string>
     <string name="action_goto_forum">HPV support thread</string>
     <string name="action_goto_wiki">HPV wiki</string>
     <string name="action_show_help">Manual</string>

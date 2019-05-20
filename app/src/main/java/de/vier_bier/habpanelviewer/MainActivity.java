@@ -29,7 +29,6 @@ import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -750,7 +749,7 @@ public class MainActivity extends ScreenControllingActivity
             startActivity(CommandLogActivity.class);
         } else if (id == R.id.action_help) {
             startActivity(HelpActivity.class);
-        } else if (id == R.id.action_intro) {
+        } else if (id == R.id.action_discover) {
             showIntro();
         } else if (id == R.id.action_show_log) {
             startActivity(LogActivity.class);
@@ -807,6 +806,9 @@ public class MainActivity extends ScreenControllingActivity
     }
 
     private void showIntro() {
-        new Thread(() -> runOnUiThread(() -> startActivity(new Intent(MainActivity.this, IntroActivity.class)))).start();
+        Intent intent = new Intent(MainActivity.this, IntroActivity.class);
+        intent.putExtra(Constants.INTENT_FLAG_INTRO_ONLY, true);
+
+        new Thread(() -> runOnUiThread(() -> startActivity(intent))).start();
     }
 }

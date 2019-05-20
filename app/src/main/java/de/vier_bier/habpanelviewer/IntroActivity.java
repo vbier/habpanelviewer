@@ -31,36 +31,42 @@ public class IntroActivity extends AppIntro2 {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle bundle = getIntent().getExtras();
+        boolean introOnly = bundle != null && Boolean.TRUE.equals(bundle.getBoolean(Constants.INTENT_FLAG_INTRO_ONLY));
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean serverConfigured = !"".equals(prefs.getString(Constants.PREF_SERVER_URL, ""));
 
-        showSkipButton(serverConfigured);
+        showSkipButton(serverConfigured || introOnly);
         setTitle(R.string.intro_initialConfiguration);
 
         int bgColor = Color.parseColor("#4CAF50");
 
+
         // Ask for CAMERA permission on the second slide
         //askForPermissions(new String[]{Manifest.permission.CAMERA}, 2);
 
-        addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_welcome),
-                getString(R.string.intro_welcome_text), R.drawable.logo, bgColor));
+        if (!introOnly) {
+            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_welcome),
+                    getString(R.string.intro_welcome_text), R.drawable.logo, bgColor));
 
-        addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_browser),
-                getString(R.string.intro_browser_text), R.drawable.browser, bgColor));
+            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_browser),
+                    getString(R.string.intro_browser_text), R.drawable.browser, bgColor));
 
-        addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_reporting),
-                getString(R.string.intro_reporting_text), R.drawable.reporting, bgColor));
+            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_reporting),
+                    getString(R.string.intro_reporting_text), R.drawable.reporting, bgColor));
 
-        addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_commanding),
-                getString(R.string.intro_commanding_text), R.drawable.commanding, bgColor));
+            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_commanding),
+                    getString(R.string.intro_commanding_text), R.drawable.commanding, bgColor));
 
-        addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_credentials),
-                getString(R.string.intro_credentials_text), R.drawable.credentials, bgColor));
+            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_credentials),
+                    getString(R.string.intro_credentials_text), R.drawable.credentials, bgColor));
 
-        addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_credentials),
-                getString(R.string.intro_credentials_text2), R.drawable.database, bgColor));
+            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_credentials),
+                    getString(R.string.intro_credentials_text2), R.drawable.database, bgColor));
+        }
 
-        if (!serverConfigured) {
+        if (!serverConfigured || introOnly) {
             NsdManager nsdm = (NsdManager) getSystemService(Context.NSD_SERVICE);
 
             if (nsdm != null) {
@@ -78,14 +84,16 @@ public class IntroActivity extends AppIntro2 {
                     R.drawable.server, bgColor));
         }
 
-        addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_configuration),
-                getString(R.string.intro_configuration_text), R.drawable.configuration, bgColor));
+        if (!introOnly) {
+            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_configuration),
+                    getString(R.string.intro_configuration_text), R.drawable.configuration, bgColor));
 
-        addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_help),
-                getString(R.string.intro_help_text), R.drawable.ready, bgColor));
+            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_help),
+                    getString(R.string.intro_help_text), R.drawable.ready, bgColor));
 
-        addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_ready),
-                getString(R.string.intro_ready_text), R.drawable.ready, bgColor));
+            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_ready),
+                    getString(R.string.intro_ready_text), R.drawable.ready, bgColor));
+        }
     }
 
     protected void onPageSelected(int position) {
@@ -115,10 +123,11 @@ public class IntroActivity extends AppIntro2 {
         super.onDonePressed(currentFragment);
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        SharedPreferences.Editor editor1 = prefs.edit();
-        editor1.putBoolean(Constants.PREF_INTRO_SHOWN, true);
-        editor1.apply();
-
+        if (!prefs.getBoolean(Constants.PREF_INTRO_SHOWN, false)) {
+            SharedPreferences.Editor editor1 = prefs.edit();
+            editor1.putBoolean(Constants.PREF_INTRO_SHOWN, true);
+            editor1.apply();
+        }
         finish();
     }
 
@@ -185,6 +194,15 @@ public class IntroActivity extends AppIntro2 {
                 final ProgressBar pbar = getView().findViewById(R.id.intro_discover_progressBar);
                 final TextView tv = getView().findViewById(R.id.intro_discover_text);
 
+                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+                final String currentURL = prefs.getString(Constants.PREF_SERVER_URL, "");
+
+                if (!"".equals(currentURL)) {
+                    RadioButton button = new RadioButton(getActivity());
+                    button.setText(currentURL);
+                    rg.addView(button);
+                }
+
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected void onPreExecute() {
@@ -195,9 +213,11 @@ public class IntroActivity extends AppIntro2 {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         mDiscovery.discover(serverUrl -> getActivity().runOnUiThread(() -> {
-                            RadioButton button = new RadioButton(getActivity());
-                            button.setText(serverUrl);
-                            rg.addView(button);
+                            if (!serverUrl.equals(currentURL)) {
+                                RadioButton button = new RadioButton(getActivity());
+                                button.setText(serverUrl);
+                                rg.addView(button);
+                            }
                         }));
                         return null;
                     }

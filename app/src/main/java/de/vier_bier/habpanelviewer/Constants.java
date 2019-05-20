@@ -33,6 +33,8 @@ public final class Constants {
     public static final String INTENT_FLAG_ITEM_TIMEOUT_STATE = "itemTimeoutState";
     public static final String INTENT_FLAG_TIMEOUT = "timeout";
 
+    public static final String INTENT_FLAG_INTRO_ONLY = "introOnly";
+
     /** preference related constants **/
     public static final String PREF_PREFIX = "pref_";
     public static final String PREF_SUFFIX_ENABLED = "_enabled";

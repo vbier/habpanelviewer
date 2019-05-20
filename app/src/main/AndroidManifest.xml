@@ -98,7 +98,7 @@
 
         <activity android:name="de.vier_bier.habpanelviewer.IntroActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:label="@string/action_intro"
+            android:label="@string/action_discover"
             android:parentActivityName="de.vier_bier.habpanelviewer.MainActivity"/>
 
         <service android:name="de.vier_bier.habpanelviewer.TrackShutdownService" android:stopWithTask="false" />

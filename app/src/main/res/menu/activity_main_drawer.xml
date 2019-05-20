@@ -7,11 +7,6 @@
         android:visible="false"
         android:icon="@drawable/ic_vpn_key_black_24dp" />
     <item
-        android:id="@+id/action_preferences"
-        android:orderInCategory="100"
-        android:title="@string/action_preferences"
-        android:icon="@drawable/ic_preferences_black_24dp" />
-    <item
         android:id="@+id/action_start_app"
         android:orderInCategory="100"
         android:title="@string/action_startApp"
@@ -27,20 +22,25 @@
         android:title="@string/action_cmdLog"
         android:icon="@drawable/ic_access_time_black_24dp" />
     <item
+        android:id="@+id/action_show_log"
+        android:orderInCategory="100"
+        android:title="@string/action_debug_log"
+        android:icon="@drawable/ic_view_headline_black_24dp" />
+    <item
         android:id="@+id/action_help"
         android:orderInCategory="100"
         android:title="@string/action_help"
         android:icon="@drawable/ic_help_outline_black_24dp" />
     <item
-        android:id="@+id/action_intro"
+        android:id="@+id/action_preferences"
         android:orderInCategory="100"
-        android:title="@string/action_intro"
-        android:icon="@drawable/ic_ondemand_video_black_24dp" />
+        android:title="@string/action_preferences"
+        android:icon="@drawable/ic_preferences_black_24dp" />
     <item
-        android:id="@+id/action_show_log"
+        android:id="@+id/action_discover"
         android:orderInCategory="100"
-        android:title="@string/action_debug_log"
-        android:icon="@drawable/ic_view_headline_black_24dp" />
+        android:title="@string/action_discover"
+        android:icon="@drawable/ic_search_black_24dp" />
     <item
         android:id="@+id/action_restart"
         android:orderInCategory="100"
