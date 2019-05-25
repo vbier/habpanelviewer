@@ -227,14 +227,13 @@ public class MainActivity extends ScreenControllingActivity
         }
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-
         String lastVersion = prefs.getString(Constants.PREF_APP_VERSION, "");
         Log.d(TAG, "Version: " + getAppVersion());
 
         boolean introShown = prefs.getBoolean(Constants.PREF_INTRO_SHOWN, false);
         if (!introShown) {
             mIntroShowing = true;
-            showIntro();
+            showIntro(false);
         }
 
         EventBus.getDefault().register(this);
@@ -750,7 +749,7 @@ public class MainActivity extends ScreenControllingActivity
         } else if (id == R.id.action_help) {
             startActivity(HelpActivity.class);
         } else if (id == R.id.action_discover) {
-            showIntro();
+            showIntro(true);
         } else if (id == R.id.action_show_log) {
             startActivity(LogActivity.class);
         } else if (id == R.id.action_restart) {
@@ -805,9 +804,9 @@ public class MainActivity extends ScreenControllingActivity
         startActivityForResult(intent, 0);
     }
 
-    private void showIntro() {
+    private void showIntro(boolean discover) {
         Intent intent = new Intent(MainActivity.this, IntroActivity.class);
-        intent.putExtra(Constants.INTENT_FLAG_INTRO_ONLY, true);
+        intent.putExtra(Constants.INTENT_FLAG_INTRO_ONLY, discover);
 
         new Thread(() -> runOnUiThread(() -> startActivity(intent))).start();
     }

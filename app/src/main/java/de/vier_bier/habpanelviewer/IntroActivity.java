@@ -147,7 +147,7 @@ public class IntroActivity extends AppIntro2 {
         super.onSlideChanged(oldFragment, newFragment);
     }
 
-    static class DiscoverSlide extends Fragment implements ISlidePolicy {
+    public static class DiscoverSlide extends Fragment implements ISlidePolicy {
         private NsdManager mSystemService;
         private ServerDiscovery mDiscovery;
 

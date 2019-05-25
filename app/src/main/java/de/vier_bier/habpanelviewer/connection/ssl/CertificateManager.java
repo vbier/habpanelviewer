@@ -113,10 +113,6 @@ public class CertificateManager {
 
         saveTrustStore(localTrustStore);
 
-        // reset fields so the keystore gets read again
-        mTrustManager = null;
-        mSslContext = null;
-
         // notify listeners
         synchronized (mListeners) {
             for (ICertChangedListener l : mListeners) {
@@ -246,6 +242,12 @@ public class CertificateManager {
             throws IOException, GeneralSecurityException {
         FileOutputStream out = new FileOutputStream(mLocalTrustStoreFile);
         localTrustStore.store(out, mTrustStorePasswd.toCharArray());
+
+        // reset fields so the keystore gets read again
+        mTrustManager = null;
+        mSslContext = null;
+
+        createSslContext();
     }
 
     private String hashName(X500Principal principal) {
