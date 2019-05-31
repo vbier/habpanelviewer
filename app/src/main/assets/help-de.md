@@ -249,6 +249,28 @@ aktiviert die Bewegungserkennung in den App Einstellungen und startet sie.
 
 deaktiviert die Bewegungserkennung in den App Einstellungen und stoppt sie.
 
+#### NOTIFICATION_SHOW
+
+Zeigt eine Android Benachrichtigung auf dem Gerät.
+
+Syntax: NOTIFICATION_SHOW *\[Farbe\]* *\[Text\]?*
+
+Beispiel: NOTIFICATION_SHOW white Text der weißen Benachrichtigung
+
+Der erforderliche Parameter *Farbe* spezifiziert die Farbe der LED (wenn das Gerät eine farbige Benachrichtigungs LED hat). Momentan sind nur die Werte white, red, green, blue erlaubt.
+Der optionale String parameter *Text* spezifiziert den Benachrichtigungs Text.
+
+> Wenn du mehrere Benachrichtigungen mit der gleichen Farbe schickst, ohne sie in der Zwischenzeit auf dem Gerät zu bestätigen, wird nur die letzte Benachrichtigung pro Farbe angezeigt.
+
+### NOTIFICATION_HIDE
+
+Bestätigt eine vorher geschickte Benachrichtigung, so dass sie nicht länger auf dem Gerät angezeigt wird.
+
+Syntax: NOTIFICATION_HIDE *\[Farbe\]?*
+
+Der optionale Parameter *Farbe* bestimmt welche Benachrichtigungen bestätigt werden. Momentan sind nur die Werte white, red, green, blue erlaubt.
+Wenn die Farbe nicht angegeben wird, werden alle von HPV angeziegten Benachrichtigungen bestätigt.
+
 ### Kommando Log
 Zeigt die letzten 100 von HABPanelViewer prozessierten Kommandos. Der Status wird durch die Textfarbe angezeigt:
 * grün: Das Kommando wurde erfolgreich ausgeführt.

@@ -250,6 +250,28 @@ Motion detection has to be configured in the preferences in order for this to wo
 
 disables the motion detection in the app preferences and stops motion detection.
 
+#### NOTIFICATION_SHOW
+
+show an android notification on the device.
+
+Syntax: NOTIFICATION_SHOW *\[color\]* *\[text\]?*
+
+Example: NOTIFICATION_SHOW white White notification with text
+
+The mandatory parameter *color* specifies the color of the LED (if the device has a colored notification LED). Currently only the values white, red, green, blue are allowed.
+The optional string parameter *text* specifies the notification text.
+
+> If you send multiple notifications with the same color without dismissing them in-between, only the last notification will be shown per color.
+
+### NOTIFICATION_HIDE
+
+hides a previously shown notification on the device.
+
+Syntax: NOTIFICATION_HIDE *\[color\]?*
+
+The optional parameter *color* specifies the color of the notification to hide. Currently only the values white, red, green, blue are allowed.
+If it is not specified, all HPV notifications are hidden.
+
 ### command log
 Shows the last 100 commands that have been processed by HPV. Color coding indicates processing status:
 * green: command has been processed successfully

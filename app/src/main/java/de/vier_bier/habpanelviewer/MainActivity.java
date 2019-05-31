@@ -61,6 +61,7 @@ import de.vier_bier.habpanelviewer.command.BluetoothHandler;
 import de.vier_bier.habpanelviewer.command.CommandQueue;
 import de.vier_bier.habpanelviewer.command.FlashHandler;
 import de.vier_bier.habpanelviewer.command.InternalCommandHandler;
+import de.vier_bier.habpanelviewer.command.NotificationHandler;
 import de.vier_bier.habpanelviewer.command.ScreenHandler;
 import de.vier_bier.habpanelviewer.command.TtsHandler;
 import de.vier_bier.habpanelviewer.command.VolumeHandler;
@@ -360,6 +361,7 @@ public class MainActivity extends ScreenControllingActivity
             mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
             mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this));
             mCommandQueue.addHandler(new VolumeHandler(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE)));
+            mCommandQueue.addHandler(new NotificationHandler(this));
             mCommandQueue.addHandler(new TtsHandler(this));
 
             if (mFlashService != null) {
