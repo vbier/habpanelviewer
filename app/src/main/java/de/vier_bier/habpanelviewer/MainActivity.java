@@ -207,12 +207,14 @@ public class MainActivity extends ScreenControllingActivity
         startService(new Intent(getBaseContext(), TrackShutdownService.class));
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences_main, false);
-        for (int id : new int[] {R.xml.preferences_battery,
+        for (int id : new int[] {R.xml.preferences_accelerometer,
+                R.xml.preferences_battery,
                 R.xml.preferences_brightness,
                 R.xml.preferences_browser,
                 R.xml.preferences_camera,
                 R.xml.preferences_connected,
                 R.xml.preferences_connection,
+                R.xml.preferences_docking_state,
                 R.xml.preferences_motion,
                 R.xml.preferences_other,
                 R.xml.preferences_pressure,
