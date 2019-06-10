@@ -5,9 +5,6 @@ An openHAB integrated kiosk browser.
 [<img src="https://f-droid.org/badge/get-it-on.png"
       alt="Get it on F-Droid"
       height="90">](https://f-droid.org/packages/de.vier_bier.habpanelviewer/)
-[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
-      alt="Get it on Google Play"
-      height="90">](https://play.google.com/store/apps/details?id=de.vier_bier.habpanelviewer)
 
 Main features:
 - **mDNS server discovery**: finds the openHAB server on your network by using mDNS discovery
