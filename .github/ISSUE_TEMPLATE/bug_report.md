@@ -7,6 +7,8 @@ assignees: vbier
 
 ---
 
+** Before reporting bugs, make sure you have searched for your problem in the openHAB community thread at: https://community.openhab.org/t/habpanelviewer-0-9-25/34112 **
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
