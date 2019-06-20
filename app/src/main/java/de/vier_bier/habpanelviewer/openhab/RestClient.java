@@ -86,12 +86,22 @@ class RestClient extends HandlerThread {
                 .build();
 
         try (Response response = client.newCall(request).execute()) {
-            try (ResponseBody responseBody = response.body()) {
-                if (responseBody != null) {
-                    listener.itemUpdated(itemName, responseBody.string());
+            if (response.code() > 199 && response.code() < 300) {
+                try (ResponseBody responseBody = response.body()) {
+                    if (responseBody != null) {
+                        listener.itemUpdated(itemName, responseBody.string());
+                    }
+                }
+            } else {
+                listener.itemInvalid(itemName);
+
+                try (ResponseBody responseBody = response.body()) {
+                    if (responseBody != null) {
+                        Log.e(TAG, "Failed to obtain state for item " + itemName
+                                + ": " + responseBody.string());
+                    }
                 }
             }
-
         } catch (IOException e) {
             listener.itemInvalid(itemName);
             Log.e(TAG, "Failed to obtain state for item " + itemName, e);

@@ -26,5 +26,11 @@
         android:inputType="textPhonetic"
         android:summary="@string/pref_batteryLevelItem_summ"
         android:title="@string/pref_batteryLevelItem" />
+    <de.vier_bier.habpanelviewer.preferences.AutocompleteTextPreference
+        android:key="pref_battery_temp_item"
+        android:dependency="pref_battery_enabled"
+        android:inputType="textPhonetic"
+        android:summary="@string/pref_batteryTempItem_summ"
+        android:title="@string/pref_batteryTempItem" />
 
 </PreferenceScreen>

@@ -79,6 +79,7 @@ public final class Constants {
     public static final String PREF_BATTERY_ITEM = "pref_battery_item";
     public static final String PREF_BATTERY_CHARGING_ITEM = "pref_battery_charging_item";
     public static final String PREF_BATTERY_LEVEL_ITEM = "pref_battery_level_item";
+    public static final String PREF_BATTERY_TEMP_ITEM = "pref_battery_temp_item";
 
     public static final String PREF_MOTION_DETECTION_ENABLED = "pref_motion_detection_enabled";
     public static final String PREF_MOTION_DETECTION_ITEM = "pref_motion_item";

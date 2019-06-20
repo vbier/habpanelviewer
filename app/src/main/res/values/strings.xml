@@ -145,6 +145,8 @@
     <string name="pref_batteryChargingItem_summ">Name of the contact item whose state shall be set when battery is charged/not charged</string>
     <string name="pref_batteryLevelItem">Battery Level Item</string>
     <string name="pref_batteryLevelItem_summ">Name of the number item whose state shall be set when the battery level changes</string>
+    <string name="pref_batteryTempItem">Battery Temperature Item</string>
+    <string name="pref_batteryTempItem_summ">Name of the number item whose state shall be set when the battery temperature changes</string>
     <string name="pref_motion">Motion Detection</string>
     <string name="pref_motionEnabled">Motion Detection</string>
     <string name="pref_motionEnabled_summ">Toggle openHAB contact item when motion is detected</string>
@@ -253,10 +255,11 @@
     <string name="deviceMoving">Device moving: %1$b [%2$s=%3$s]</string>
     <string name="pressure">Pressure: %1$.1f hPa or mbar [%2$s=%3$s]</string>
     <string name="brightness">Brightness: %1$.1f lx [%2$s=%3$s]</string>
-    <string name="battLow">Battery low: %1$b [%2$s=%3$s]</string>
+    <string name="battLow">Low: %1$b [%2$s=%3$s]</string>
     <string name="docked">Device in docking station: %1$b [%2$s=%3$s]</string>
-    <string name="battCharging">Battery charging: %1$b [%2$s=%3$s]</string>
-    <string name="battLevel">Battery level: %1$d%% [%2$s=%3$s]</string>
+    <string name="battCharging">Charging: %1$b [%2$s=%3$s]</string>
+    <string name="battLevel">Level: %1$d%% [%2$s=%3$s]</string>
+    <string name="battTemp">Temperature: %1$.1f°C [%2$s=%3$s]</string>
     <string name="volumeIsOf">Volume: %1$d of %2$d [%3$s=%4$s]</string>
     <string name="screenOn">Screen on: %1$b [%2$s=%3$s]</string>
     <string name="tooDark">too dark</string>

@@ -153,6 +153,8 @@
     <string name="pref_batteryChargingItem_summ">Name des openHAB Kontakts der geschaltet wird wenn die Batterie geladen wird</string>
     <string name="pref_batteryLevelItem">Batterieladung Item</string>
     <string name="pref_batteryLevelItem_summ">Name des openHAB Items das den Batterie Ladezustand in Prozent anzeigen soll</string>
+    <string name="pref_batteryTempItem">Batterietemperatur Item</string>
+    <string name="pref_batteryTempItem_summ">Name des openHAB Items das die Batterie Temperatur anzeigen soll</string>
     <string name="pref_connectionIndicators">Verbindungsindikatoren</string>
     <string name="pref_startupEnabled">Startindikator aktiviert</string>
     <string name="pref_startupEnabled_summ">Meldet bei App Start einen Zeitstempel an openHAB</string>
@@ -250,10 +252,11 @@
     <string name="deviceMoving">Gerät in Bewegung: %1$b [%2$s=%3$s]</string>
     <string name="pressure">Druck: %1$.1f hPa oder mbar [%2$s=%3$s]</string>
     <string name="brightness">Helligkeit: %1$.1f lx [%2$s=%3$s]</string>
-    <string name="battLow">Batterie leer: %1$b [%2$s=%3$s]</string>
+    <string name="battLow">Schwach: %1$b [%2$s=%3$s]</string>
     <string name="docked">Gerät in Dockingstation: %1$b [%2$s=%3$s]</string>
-    <string name="battCharging">Batterie wird geladen: %1$b [%2$s=%3$s]</string>
-    <string name="battLevel">Batterie Ladung: %1$d%% [%2$s=%3$s]</string>
+    <string name="battCharging">Wird geladen: %1$b [%2$s=%3$s]</string>
+    <string name="battLevel">Ladung: %1$d%% [%2$s=%3$s]</string>
+    <string name="battTemp">Temperatur: %1$.1f°C [%2$s=%3$s]</string>
     <string name="volumeIsOf">Lautstärke: %1$d von %2$d [%3$s=%4$s]</string>
     <string name="screenOn">Bildschirm an: %1$b [%2$s=%3$s]</string>
     <string name="tooDark">zu dunkel</string>
