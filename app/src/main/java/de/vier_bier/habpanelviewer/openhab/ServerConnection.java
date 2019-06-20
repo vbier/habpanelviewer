@@ -11,18 +11,15 @@ import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import de.vier_bier.habpanelviewer.Constants;
+import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.openhab.average.AveragePropagator;
 import de.vier_bier.habpanelviewer.openhab.average.IStatePropagator;
-import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 
 /**
  * Client for openHABs SSE service. Listens for item value changes.
@@ -81,66 +78,63 @@ public class ServerConnection implements IStatePropagator {
     }
 
     public void subscribeCommandItem(IStateUpdateListener l, String name) {
-        if (name != null && !"".equals(name)) {
-            subscribeItems(mCmdSubscriptions, l, false, name);
+        if (name != null && !"".equals(name) && checkItemsChanged(mCmdSubscriptions, l, false, name)) {
+            String cmdItemName = mCmdSubscriptions.isEmpty() ? null : mCmdSubscriptions.keySet().iterator().next();
+            mSseConnection.setItemNames(cmdItemName, mSubscriptions.keySet().toArray(new String[0]));
+            reconnect();
         }
     }
 
     public void subscribeItems(IStateUpdateListener l, String... names) {
-        String[] namesArr = removeEmpty(names);
-
-        if (namesArr.length > 0) {
-            subscribeItems(mSubscriptions, l, true, namesArr);
+        if (checkItemsChanged(mSubscriptions, l, true, names)) {
+            String cmdItemName = mCmdSubscriptions.isEmpty() ? null : mCmdSubscriptions.keySet().iterator().next();
+            mSseConnection.setItemNames(cmdItemName, mSubscriptions.keySet().toArray(new String[0]));
+            reconnect();
         }
     }
 
-    private String[] removeEmpty(String[] names) {
-        List<String> list = new ArrayList<>(Arrays.asList(names));
-        Iterator<String> i = list.iterator();
-        while (i.hasNext()) {
-            String s = i.next();
-            if (s == null || s.trim().isEmpty()) {
-                i.remove();
-            }
-        }
-        return list.toArray(new String[0]);
-    }
-
-    private void subscribeItems(HashMap<String, ArrayList<IStateUpdateListener>> subscriptions,
-                                IStateUpdateListener l, boolean initialValue, String... names) {
-        boolean itemsChanged = false;
-
+    private boolean checkItemsChanged(HashMap<String, ArrayList<IStateUpdateListener>> subscriptions,
+                                      IStateUpdateListener l, boolean initialValue, String... names) {
+        final HashSet<String> currentItems = new HashSet<>();
         final HashSet<String> newItems = new HashSet<>();
+        final HashSet<String> removedItems = new HashSet<>();
+
+        // remove empty names
         for (String name : names) {
-            if (name != null && !name.isEmpty()) {
-                newItems.add(name);
+            if (name != null && !name.trim().isEmpty()) {
+                currentItems.add(name);
             }
         }
 
+        boolean itemsChanged = false;
         synchronized (subscriptions) {
             for (String name : new HashSet<>(subscriptions.keySet())) {
                 ArrayList<IStateUpdateListener> listeners = subscriptions.get(name);
-                if (listeners != null && listeners.contains(l) && !newItems.contains(name)) {
+                if (listeners != null && listeners.contains(l) && !currentItems.contains(name)) {
                     listeners.remove(l);
 
                     if (listeners.isEmpty()) {
                         itemsChanged = true;
                         subscriptions.remove(name);
                         mValues.remove(name);
+
+                        removedItems.add(name);
                     }
                 }
             }
 
-            if (newItems.size() > 0) {
-                Log.d(TAG, "subscribing items: " + newItems.toString());
+            if (removedItems.size() > 0) {
+                Log.d(TAG, "unsubscribing items: " + removedItems.toString());
             }
 
-            for (String name : newItems) {
+            for (String name : currentItems) {
                 ArrayList<IStateUpdateListener> listeners = subscriptions.get(name);
                 if (listeners == null) {
                     itemsChanged = true;
                     listeners = new ArrayList<>();
                     subscriptions.put(name, listeners);
+
+                    newItems.add(name);
                 } else if (mValues.containsKey(name) && initialValue) {
                     l.itemUpdated(name, mValues.get(name));
                 }
@@ -149,13 +143,17 @@ public class ServerConnection implements IStatePropagator {
                     listeners.add(l);
                 }
             }
+
+            if (newItems.size() > 0) {
+                Log.d(TAG, "subscribing items: " + newItems.toString());
+            }
+
+            if (subscriptions.size() > 0) {
+                Log.v(TAG, "current set of items: " + subscriptions.keySet().toString());
+            }
         }
 
-        if (itemsChanged) {
-            String cmdItemName = mCmdSubscriptions.isEmpty() ? null : mCmdSubscriptions.keySet().iterator().next();
-            mSseConnection.setItemNames(cmdItemName, subscriptions.keySet().toArray(new String[0]));
-            reconnect();
-        }
+        return itemsChanged;
     }
 
     public void updateFromPreferences(SharedPreferences prefs, Context ctx) {
@@ -172,7 +170,7 @@ public class ServerConnection implements IStatePropagator {
     }
 
     private synchronized boolean isSseConnected() {
-        return mSseConnection != null && mSseConnection.getStatus() == SseConnection.Status.CONNECTED;
+        return mSseConnection.getStatus() == SseConnection.Status.CONNECTED;
     }
 
     public synchronized void reconnect() {
@@ -183,9 +181,7 @@ public class ServerConnection implements IStatePropagator {
     }
 
     private synchronized void close() {
-        if (mSseConnection != null) {
-            mSseConnection.disconnect();
-        }
+        mSseConnection.disconnect();
     }
 
     public void terminate(Context context) {

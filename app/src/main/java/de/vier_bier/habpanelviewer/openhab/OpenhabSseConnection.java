@@ -17,7 +17,7 @@ public class OpenhabSseConnection extends SseConnection implements SseConnection
 
     private final ArrayList<IStateUpdateListener> mListeners = new ArrayList<>();
 
-    public OpenhabSseConnection() {
+    OpenhabSseConnection() {
         super.addListener(this);
     }
 
@@ -112,6 +112,8 @@ public class OpenhabSseConnection extends SseConnection implements SseConnection
             topic.append("smarthome/items/dummyItemThatDoesNotExist/statechanged");
         }
 
+
+        Log.v(TAG, "new SSE topic: " + topic.toString());
         return topic.toString();
     }
 }

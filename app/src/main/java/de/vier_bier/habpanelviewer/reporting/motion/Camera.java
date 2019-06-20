@@ -84,11 +84,7 @@ public class Camera {
     }
 
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
-        mWorkHandler.post(() -> {
-            Log.d(TAG, "updating from preferences...");
-            doUpdateFromPreferences(prefs);
-            Log.d(TAG, "updating from preferences finished");
-        });
+        mWorkHandler.post(() -> doUpdateFromPreferences(prefs));
     }
 
     public void terminate(CountDownLatch l) {
