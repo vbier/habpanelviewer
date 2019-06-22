@@ -11,7 +11,7 @@ import org.jetbrains.annotations.TestOnly;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 
 import de.vier_bier.habpanelviewer.NetworkTracker;
 import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
@@ -201,13 +201,11 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
         @Override
         public void onOpen(ServerSentEvent sse, Response response) {
-            System.out.println("SSEHandler.onOpen");
             setStatus(Status.CONNECTED);
         }
 
         @Override
         public void onMessage(ServerSentEvent sse, String id, String event, String message) {
-            System.out.println("SSEHandler.onMessage");
             synchronized (mListeners) {
                 for (ISseListener l : mListeners) {
                     if (l instanceof ISseDataListener) {
@@ -219,20 +217,16 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
         @Override
         public void onComment(ServerSentEvent sse, String comment) {
-            System.out.println("SSEHandler.onComment");
         }
 
         @Override
         public boolean onRetryTime(ServerSentEvent sse, long milliseconds) {
-            System.out.println("SSEHandler.onRetryTime");
             return false;
         }
 
         @Override
         public boolean onRetryError(ServerSentEvent sse, Throwable throwable, Response response) {
-            System.out.println("SSEHandler.onRetryError: response=" + (response == null ? "null" : response.code()));
-            if (throwable != null) throwable.printStackTrace();
-            if (throwable instanceof SSLException) {
+            if (throwable instanceof SSLHandshakeException) {
                 setStatus(Status.CERTIFICATE_ERROR);
                 return false;
             }
@@ -261,7 +255,6 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
         @Override
         public void onClosed(ServerSentEvent sse) {
-            System.out.println("SSEHandler.onClosed");
             if (mStatus == Status.CONNECTED){
                 setStatus(Status.NOT_CONNECTED);
                 mEventSource.close();
@@ -270,7 +263,6 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
         @Override
         public Request onPreRetry(ServerSentEvent sse, Request originalRequest) {
-            System.out.println("SSEHandler.onPreRetry");
             return originalRequest;
         }
     }
