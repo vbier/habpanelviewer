@@ -469,6 +469,7 @@ Weitere Berechtigungen um die volle Funktionalität verfügbar zu machen:
 * android.permission.CAMERA - um Fotos aufzunehmen, für die Bewegungserkennung und WebRTC
 * android.permission.WAKE_LOCK - um das Gerät aufzuwecken
 * android.permission.WRITE_EXTERNAL_STORAGE - für den Export der Einstellungen
+* android.permission.FOREGROUND_SERVICE - um die Kamera zu beenden, wenn die App geschlossen wird 
 * android.permission.RECORD_AUDIO
 & android.permission.MODIFY_AUDIO_SETTINGS - Für WebRTC
 

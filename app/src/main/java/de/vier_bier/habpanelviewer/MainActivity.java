@@ -1,9 +1,14 @@
 package de.vier_bier.habpanelviewer;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -16,6 +21,7 @@ import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -33,6 +39,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -117,6 +124,18 @@ public class MainActivity extends ScreenControllingActivity
     private CommandQueue mCommandQueue;
     private ScreenCapturer mCapturer;
     private Camera mCam;
+    private TrackShutdownService mService;
+    private final ServiceConnection mSC = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            mService = ((TrackShutdownService.LocalBinder) iBinder).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mService = null;
+        }
+    };
 
     private final ArrayList<IDeviceMonitor> mMonitors = new ArrayList<>();
 
@@ -608,6 +627,34 @@ public class MainActivity extends ScreenControllingActivity
                 editor1.apply();
             }
         }
+    }
+
+    @Override
+    protected void onPause() {
+        unbindService(mSC);
+        if (mService != null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel("de.vier_bier.habpanelviewer.status", "Status", NotificationManager.IMPORTANCE_MIN);
+                channel.enableLights(false);
+                channel.setSound(null, null);
+                ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+            }
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "de.vier_bier.habpanelviewer.status");
+            builder.setSmallIcon(R.drawable.logo);
+            mService.startForeground(42, builder.build());
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mService != null) {
+            mService.stopForeground(true);
+        }
+        bindService(new Intent(getBaseContext(), TrackShutdownService.class), mSC, Context.BIND_AUTO_CREATE);
     }
 
     @Override

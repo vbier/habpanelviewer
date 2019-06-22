@@ -473,6 +473,7 @@ Additional optional permissions allowing to use the full functionality:
 * android.permission.CAMERA - for capturing photos, motion detection and WebRTC
 * android.permission.WAKE_LOCK - for waking up the device
 * android.permission.WRITE_EXTERNAL_STORAGE - for exporting preferences
+* android.permission.FOREGROUND_SERVICE - to make sure camera is correctly closed 
 * android.permission.RECORD_AUDIO
 & android.permission.MODIFY_AUDIO_SETTINGS - for WebRTC
 
