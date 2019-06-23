@@ -300,7 +300,7 @@ Ermöglicht es, Werte der Geräte Sensoren oder andere Dinge an openHAB zu melde
 - [URL](#url)
 
 ### <a name="batteryReporting"/>Batteriesensor
-Wenn aktiviert, ändert die Anwendung die Werte von bis zu drei openHAB Items in Abhängigkeit des Batteriezustands:
+Wenn aktiviert, ändert die Anwendung die Werte von openHAB Items in Abhängigkeit des Batteriezustands:
 - Batterie Leer Kontakt: Name des openHAB Kontakts (Item vom Typ **Contact**) der geschaltet wird wenn die Batterie leer ist
 - Batterie wird geladen Kontakt: Name des openHAB Kontakts der geschaltet wird wenn die Batterie geladen wird.
 - Batterieladung Item: Name des openHAB Items (vom Typ **Number**) das den Batterie Ladezustand in Prozent anzeigen soll.

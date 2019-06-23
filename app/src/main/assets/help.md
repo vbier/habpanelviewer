@@ -301,7 +301,7 @@ Allows to set the values of openHAB items depending on the device sensors or oth
 - [URL](#url)
 
 ### <a name="batteryReporting"/>battery reporting
-When enabled, the app updates the state of up to three openHAB items depending on the battery state:
+When enabled, the app updates the state of openHAB items depending on the battery state:
 - Battery Low Contact: the name of a **Contact** Item that shall be set whenever the battery is low.
 - Battery Charging Contact: the name of a **Contact** Item that shall be set whenever the battery is charging.
 - Battery Level Item: the name of a **Number** Item that shall be set when the battery level changes.
