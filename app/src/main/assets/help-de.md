@@ -303,13 +303,15 @@ Ermöglicht es, Werte der Geräte Sensoren oder andere Dinge an openHAB zu melde
 Wenn aktiviert, ändert die Anwendung die Werte von bis zu drei openHAB Items in Abhängigkeit des Batteriezustands:
 - Batterie Leer Kontakt: Name des openHAB Kontakts (Item vom Typ **Contact**) der geschaltet wird wenn die Batterie leer ist
 - Batterie wird geladen Kontakt: Name des openHAB Kontakts der geschaltet wird wenn die Batterie geladen wird.
-- Batterieladung Item: Name des openHAB Items das den Batterie Ladezustand in Prozent anzeigen soll. Dieser Wert wird alle 5 Sekunden aktualisiert, solange das Gerät am Strom angeschlossen ist, alle 5 Minuten anderenfalls. 
+- Batterieladung Item: Name des openHAB Items (vom Typ **Number**) das den Batterie Ladezustand in Prozent anzeigen soll.
+- Battertemperatur Item: Name des openHAB Items (vom Typ **Number**) das die Batterie Temperatur anzeigen soll.
 
 Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Contact Tablet_Battery_Low
     Contact Tablet_Battery_Charging
     Number Tablet_Battery_Level
+    Number Tablet_Battery_Temp
 
 Lasse Item Namen leer, um das Melden bestimmter Werte zu unterdrücken. Die Kontakte werden geschlossen, sobald die Batterie leer ist, bzw. das Gerät geladen wird.
 Das Number Item reflektiert den Akku Ladezustand in Prozent.

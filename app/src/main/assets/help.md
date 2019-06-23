@@ -304,7 +304,8 @@ Allows to set the values of openHAB items depending on the device sensors or oth
 When enabled, the app updates the state of up to three openHAB items depending on the battery state:
 - Battery Low Contact: the name of a **Contact** Item that shall be set whenever the battery is low.
 - Battery Charging Contact: the name of a **Contact** Item that shall be set whenever the battery is charging.
-- Battery Level Item: the name of a **Number** Item that shall be set when the battery level changes. This value is updated every 5 seconds while the device is connected to power, every 5 minutes when running on battery.
+- Battery Level Item: the name of a **Number** Item that shall be set when the battery level changes.
+- Battery Temperature Item: the name of a **Number** Item that shall be set when the battery temperature changes.
 reports device sensor values to openHAB (currently only battery, more to come)
 
 A sample openHAB items file looks like this:
@@ -312,6 +313,7 @@ A sample openHAB items file looks like this:
     Contact Tablet_Battery_Low
     Contact Tablet_Battery_Charging
     Number Tablet_Battery_Level
+    Number Tablet_Battery_Temp
 
 Leave item names empty in the preferences in order to skip reporting for this specific value. The contact item states will be *CLOSED* whenever the battery is low or the device is charging, *OPEN* otherwise.
 The number item state will be set to the battery charging level (in percent).
