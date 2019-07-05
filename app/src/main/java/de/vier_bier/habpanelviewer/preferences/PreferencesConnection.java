@@ -36,8 +36,13 @@ public class PreferencesConnection extends PreferenceFragment {
             try {
                 URL uri = new URL(text);
 
-                if (uri.getPort() < 0 || uri.getPort() > 65535) {
-                    dialogText = "Port invalid: " + uri.getPort();
+                int port = uri.getPort();
+                if (port == -1) {
+                    port = uri.getDefaultPort();
+                }
+
+                if (port < 0 || port > 65535) {
+                    dialogText = "Port invalid: " + port;
                 }
             } catch (MalformedURLException e) {
                 dialogText = "URL invalid: " + e.getLocalizedMessage();
