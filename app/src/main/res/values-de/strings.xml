@@ -51,7 +51,7 @@
     <string name="menu_toggleKiosk">Kiosk Modus umschalten</string>
 
     <string name="pref_connection">Verbindung</string>
-    <string name="pref_url_summ">Die URL des openHAB Servers. Um die Suche zu starten, setze eine leere URL und starte das Intro im Menü.</string>
+    <string name="pref_url_summ">Die URL des openHAB Servers. Um den Server zu suchen benutze das Hauptmenü.</string>
     <string name="pref_startUrl">Startseite</string>
     <string name="pref_startUrl_summ">Die Webseite, die beim Start gezeigt werden soll. Falls leer, wird die openHAB URL als Startseite benutzt</string>
     <string name="pref_trackBrowserConnection">Überwache Browser Verbindung</string>

@@ -54,7 +54,7 @@
 
     <string name="pref_connection">Connection</string>
     <string name="pref_url" translatable="false">openHAB URL</string>
-    <string name="pref_url_summ">URL of the openHAB server. To use discovery, set an empty URL and start the intro from the menu.</string>
+    <string name="pref_url_summ">URL of the openHAB server. To start server discovery use the main menu</string>
     <string name="pref_startUrl">Start page</string>
     <string name="pref_startUrl_summ">The page to load on start. If empty, the openHAB URL is used as start page</string>
     <string name="pref_trackBrowserConnection">Track Browser Connection</string>
