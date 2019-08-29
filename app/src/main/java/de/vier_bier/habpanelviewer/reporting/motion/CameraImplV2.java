@@ -70,20 +70,10 @@ public class CameraImplV2 extends AbstractCameraImpl {
         }
 
         try {
-            for (String camId : mCamManager.getCameraIdList()) {
-                CameraCharacteristics characteristics = mCamManager.getCameraCharacteristics(camId);
-                Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+            findCameraFacing(CameraCharacteristics.LENS_FACING_FRONT);
 
-                if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-                    mCameraId = camId;
-
-                    Integer orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-                    if (orientation != null) {
-                        mCameraOrientation = orientation;
-                    }
-
-                    Log.v(TAG, "found front-facing camera with id " + camId + " and orientation " + mCameraOrientation);
-                }
+            if (mCameraId == null) {
+                findCameraFacing(CameraCharacteristics.LENS_FACING_BACK);
             }
         } catch (CameraAccessException e) {
             throw new CameraException(e);
@@ -96,6 +86,25 @@ public class CameraImplV2 extends AbstractCameraImpl {
         mPreviewThread = new HandlerThread("previewThread");
         mPreviewThread.start();
         mPreviewHandler = new Handler(mPreviewThread.getLooper());
+    }
+
+    private void findCameraFacing(int direction) throws CameraAccessException {
+        for (String camId : mCamManager.getCameraIdList()) {
+            CameraCharacteristics characteristics = mCamManager.getCameraCharacteristics(camId);
+            Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+
+            if (facing != null && facing == direction) {
+                mCameraId = camId;
+
+                Integer orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+                if (orientation != null) {
+                    mCameraOrientation = orientation;
+                }
+
+                Log.v(TAG, "found " + (direction == CameraCharacteristics.LENS_FACING_FRONT ? "front" : "back")
+                        + "-facing camera with id " + camId + " and orientation " + mCameraOrientation);
+            }
+        }
     }
 
     @Override
