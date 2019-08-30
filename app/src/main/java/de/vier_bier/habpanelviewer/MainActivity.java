@@ -321,7 +321,8 @@ public class MainActivity extends ScreenControllingActivity
 
         final SurfaceView motionView = findViewById(R.id.motionView);
         final TextureView previewView = findViewById(R.id.previewView);
-        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)
+            || getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             if (mCam == null) {
                 mCam = new Camera(this, previewView, prefs);
             }
