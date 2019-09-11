@@ -3,10 +3,16 @@
 * neue Wertemeldung: momentan angezeigte URL
 * neue Wertemeldung: Docking Status
 * neue Wertemeldung: Gerätebewegung
-* erlaube Zugriff auf http Seiten in Android 9
+* neue Wertemeldung: Batterietemperatur
+* benutze den Standard Port bei der URL Überprüfung, wenn kein Port angegeben wurde
 * neuer roter Rand um den Browser wenn die SSE Verbindung fehlt
+* neue Funktionalität zum Anzeigen und Teilen des System Logs
+* neue Kommandos: NOTIFICATION_SHOW, NOTIFICATION_HIDE
 * deaktiviere Kamera und Mikrophone bezogene Einstellungen beim Start wenn die Berechtigungen fehlen
 * Unterstützung für Passwort geschützte openHAB Server
+* benutze okhttp zur Realisierung der SSE Verbindung
+* Verbesserung des Menü Layouts
+* BUG: erlaube Zugriff auf http Seiten in Android 9
 
 0.9.25
 ======
