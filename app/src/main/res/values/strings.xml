@@ -212,6 +212,8 @@
     <string name="pref_takePicDelay_summ">Delay in milliseconds to wait after preview has been started until taking the picture for CAPTURE_CAMERA commands.</string>
     <string name="pref_jpegQuality">JPEG Quality</string>
     <string name="pref_jpegQuality_summ">JPEG compression quality</string>
+    <string name="pref_cameraFallback">Fall back to back facing camera</string>
+    <string name="pref_cameraFallback_summ">Uses the back facing camera in case the front facing camera can not be opened</string>
 
     <string name="pref_export">Export</string>
     <string name="pref_import">Import</string>
@@ -264,6 +266,7 @@
     <string name="screenOn">Screen on: %1$b [%2$s=%3$s]</string>
     <string name="tooDark">too dark</string>
     <string name="motion">Motion</string>
+    <string name="cameraMissing">Could not find camera!</string>
     <string name="frontCameraMissing">Could not find front facing camera!</string>
     <string name="camApiPreLollipop">Camera API (Pre-Lollipop)</string>
     <string name="camApi2">Camera API 2 (Lollipop)</string>

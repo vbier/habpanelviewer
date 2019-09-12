@@ -27,5 +27,9 @@
         android:entryValues="@array/granularity"
         android:summary="@string/pref_jpegQuality_summ"
         android:title="@string/pref_jpegQuality" />
-
+    <CheckBoxPreference
+        android:key="pref_camera_fallback"
+        android:defaultValue="false"
+        android:summary="@string/pref_cameraFallback_summ"
+        android:title="@string/pref_cameraFallback" />
 </PreferenceScreen>

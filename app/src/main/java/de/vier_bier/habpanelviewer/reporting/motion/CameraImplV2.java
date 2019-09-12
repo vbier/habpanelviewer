@@ -35,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 
 /**
@@ -61,7 +63,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
     private ImageReader mPictureReader; //do not use a variable as this gets GC'ed
 
 
-    CameraImplV2(Activity context, TextureView prevView) throws CameraException {
+    CameraImplV2(Activity context, TextureView prevView, boolean cameraFallback) throws CameraException {
         super(context, prevView);
 
         mCamManager = (CameraManager) mActivity.getSystemService(Context.CAMERA_SERVICE);
@@ -72,7 +74,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
         try {
             findCameraFacing(CameraCharacteristics.LENS_FACING_FRONT);
 
-            if (mCameraId == null) {
+            if (mCameraId == null && cameraFallback) {
                 findCameraFacing(CameraCharacteristics.LENS_FACING_BACK);
             }
         } catch (CameraAccessException e) {
@@ -80,7 +82,11 @@ public class CameraImplV2 extends AbstractCameraImpl {
         }
 
         if (mCameraId == null) {
-            throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
+            if (cameraFallback) {
+                throw new CameraException(mActivity.getString(R.string.cameraMissing));
+            } else {
+                throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
+            }
         }
 
         mPreviewThread = new HandlerThread("previewThread");
