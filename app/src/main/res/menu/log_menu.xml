@@ -5,12 +5,12 @@
     <item
         android:id="@+id/delete_log"
         android:icon="@drawable/ic_delete_black_24dp"
-        android:title="@string/empty_log"
+        android:title="@string/emptyLog"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/share_log"
         android:icon="@drawable/ic_share_black_24dp"
-        android:title="@string/share_log"
+        android:title="@string/shareLog"
         app:showAsAction="ifRoom" />
 </menu>

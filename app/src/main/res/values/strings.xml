@@ -348,7 +348,13 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="httpWithBasicAuth">You are about to enter you credentials for an unencrypted HTTP connection. You should only do this in a private network, as your password might be sent in plain text.</string>
-    <string name="empty_log">Clear Log</string>
-    <string name="log_empty">Log is empty</string>
-    <string name="share_log">Share log</string>
+    <string name="emptyLog">Clear Log</string>
+    <string name="logIsEmpty">Log is empty</string>
+    <string name="shareLog">Share log</string>
+    <string name="checkingAppUpdated">Checking if app has been updated…</string>
+    <string name="showingIntro">Showing intro…</string>
+    <string name="checkingOsSettings">Checking Android settings…</string>
+    <string name="initPwdDb">Initializing password database…</string>
+    <string name="initCertStore">Initializing certificate store…</string>
+    <string name="starting">Starting…</string>
 </resources>

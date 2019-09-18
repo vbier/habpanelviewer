@@ -345,7 +345,13 @@
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="httpWithBasicAuth">Sie sind im Begriff ihre Zugangsdaten für eine unverschlüsselte HTTP Verbindung einzugeben. Sie sollten dies nur in einem privaten Netzwerk tun, da das Passwort für alle lesbar übertragen werden könnte.</string>
-    <string name="empty_log">Log leeren</string>
-    <string name="log_empty">Das Log ist leer</string>
-    <string name="share_log">Log verschicken</string>
+    <string name="emptyLog">Log leeren</string>
+    <string name="logIsEmpty">Das Log ist leer</string>
+    <string name="shareLog">Log verschicken</string>
+    <string name="checkingAppUpdated">Prüfe ob die App aktualisiert wurde…</string>
+    <string name="showingIntro">Zeige Einführung…</string>
+    <string name="checkingOsSettings">Prüfe Android Einstellungen…</string>
+    <string name="initPwdDb">Initialisiere Passwort Datenbank…</string>
+    <string name="initCertStore">Initialisiere Zertifikat Speicher…</string>
+    <string name="starting">Starte…</string>
 </resources>

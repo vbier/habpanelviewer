@@ -109,4 +109,6 @@ public final class Constants {
 
     public static final String PREF_SCREEN_ITEM = "pref_screen_item";
     public static final String PREF_SCREEN_ENABLED = "pref_screen_enabled";
+
+    public static final String REST_CRED_STORED = "pref_show_on_lock_screen";
 }

@@ -174,10 +174,6 @@ public class ConnectionStatistics {
             return ourInstance;
         }
 
-        private OkHttpClientFactory() {
-            CredentialManager.getInstance().addCredentialsListener(this);
-        }
-
         public OkHttpClient create() {
             return create(mRestUser, mRestPasswd);
         }

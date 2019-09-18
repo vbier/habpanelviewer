@@ -1,7 +1,6 @@
 package de.vier_bier.habpanelviewer;
 
 import android.Manifest;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothManager;
@@ -24,7 +23,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -43,7 +41,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.room.Room;
 
 import com.google.android.material.navigation.NavigationView;
 import com.jakewharton.processphoenix.ProcessPhoenix;
@@ -52,12 +49,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
@@ -75,8 +66,7 @@ import de.vier_bier.habpanelviewer.command.VolumeHandler;
 import de.vier_bier.habpanelviewer.command.WebViewHandler;
 import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
 import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
-import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
-import de.vier_bier.habpanelviewer.db.AppDatabase;
+import de.vier_bier.habpanelviewer.db.Credential;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.ISseConnectionListener;
@@ -138,8 +128,6 @@ public class MainActivity extends ScreenControllingActivity
     };
 
     private final ArrayList<IDeviceMonitor> mMonitors = new ArrayList<>();
-
-    private boolean mIntroShowing;
 
     @Override
     protected void onDestroy() {
@@ -223,40 +211,9 @@ public class MainActivity extends ScreenControllingActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        startService(new Intent(getBaseContext(), TrackShutdownService.class));
-
-        PreferenceManager.setDefaultValues(this, R.xml.preferences_main, false);
-        for (int id : new int[] {R.xml.preferences_accelerometer,
-                R.xml.preferences_battery,
-                R.xml.preferences_brightness,
-                R.xml.preferences_browser,
-                R.xml.preferences_camera,
-                R.xml.preferences_connected,
-                R.xml.preferences_connection,
-                R.xml.preferences_docking_state,
-                R.xml.preferences_motion,
-                R.xml.preferences_other,
-                R.xml.preferences_pressure,
-                R.xml.preferences_proximity,
-                R.xml.preferences_reporting,
-                R.xml.preferences_restart,
-                R.xml.preferences_screen,
-                R.xml.preferences_temperature,
-                R.xml.preferences_ui,
-                R.xml.preferences_usage,
-                R.xml.preferences_volume}) {
-            PreferenceManager.setDefaultValues(this, id, true);
-        }
-
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        String lastVersion = prefs.getString(Constants.PREF_APP_VERSION, "");
-        Log.d(TAG, "Version: " + getAppVersion());
 
-        boolean introShown = prefs.getBoolean(Constants.PREF_INTRO_SHOWN, false);
-        if (!introShown) {
-            mIntroShowing = true;
-            showIntro(false);
-        }
+        startService(new Intent(getBaseContext(), TrackShutdownService.class));
 
         EventBus.getDefault().register(this);
         setContentView(R.layout.activity_main);
@@ -266,33 +223,6 @@ public class MainActivity extends ScreenControllingActivity
         ConstraintLayout navHeader = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.navheader_main, null);
         navigationView.addHeaderView(navHeader);
         navigationView.setNavigationItemSelectedListener(this);
-
-        try {
-            CredentialManager.getInstance().setDatabase(Room.databaseBuilder(getApplicationContext(),
-                    AppDatabase.class, "HPV").build());
-
-            File localTrustStoreFile = new File(getFilesDir(), "localTrustStore.bks");
-            if (!localTrustStoreFile.exists()) {
-                try (InputStream in = getResources().openRawResource(R.raw.mytruststore)) {
-                    try (OutputStream out = new FileOutputStream(localTrustStoreFile)) {
-                        // Transfer bytes from in to out
-                        byte[] buf = new byte[1024];
-                        int len;
-                        while ((len = in.read(buf)) > 0) {
-                            out.write(buf, 0, len);
-                        }
-                    }
-                }
-            }
-            CertificateManager.getInstance().setTrustStore(localTrustStoreFile);
-
-            Log.d(TAG, "SSL protocol initialized");
-        } catch (GeneralSecurityException | IOException e) {
-            Log.e(TAG, "failed to initialize CertificateManager", e);
-            UiUtil.showSnackBar(navigationView, R.string.sslFailed);
-        }
-
-        CredentialManager.getInstance().addCredentialsListener(ConnectionStatistics.OkHttpClientFactory.getInstance());
 
         int restartCount = getIntent().getIntExtra(Constants.INTENT_FLAG_RESTART_COUNT, 0);
 
@@ -336,17 +266,6 @@ public class MainActivity extends ScreenControllingActivity
             Log.d(TAG, "no camera feature_front, hiding preview");
             motionView.setVisibility(View.INVISIBLE);
             previewView.setVisibility(View.INVISIBLE);
-        }
-
-        if (!"".equals(lastVersion) && !BuildConfig.VERSION_NAME.equals(lastVersion)) {
-            SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putString(Constants.PREF_APP_VERSION, BuildConfig.VERSION_NAME);
-            editor1.apply();
-
-            final String relText = ResourcesUtil.fetchReleaseNotes(this, lastVersion);
-            UiUtil.showScrollDialog(this, getString(R.string.updated),
-                    getString(R.string.updatedText),
-                    relText);
         }
 
         if (mConnectedIndicator == null) {
@@ -427,6 +346,10 @@ public class MainActivity extends ScreenControllingActivity
                             @Override
                             public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
                                 CredentialManager.getInstance().setRestCredentials(user, password, store);
+
+                                SharedPreferences.Editor editor1 = prefs.edit();
+                                editor1.putBoolean(Constants.REST_CRED_STORED, true);
+                                editor1.apply();
                             }
 
                             @Override
@@ -661,29 +584,7 @@ public class MainActivity extends ScreenControllingActivity
     public void onStart() {
         super.onStart();
 
-        if (mIntroShowing) {
-            // skip initialization if intro is showing
-            mIntroShowing = false;
-            return;
-        }
-
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        final boolean psWarnShown = prefs.getBoolean(Constants.PREF_POWER_SAVE_WARNING_SHOWN, false);
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !pm.isIgnoringBatteryOptimizations(getPackageName())
-            && !psWarnShown) {
-
-            UiUtil.showCancelDialog(this, getString(R.string.powerSavingEnabled), getString(R.string.diablePowerSaving), (dialogInterface, i) -> {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                startActivity(intent);
-            }, (dialogInterface, i) -> {
-                SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putBoolean(Constants.PREF_POWER_SAVE_WARNING_SHOWN, true);
-                editor1.apply();
-            });
-        }
-
         updatePrefsDueToMissingPermissions(prefs);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -730,19 +631,25 @@ public class MainActivity extends ScreenControllingActivity
     }
 
     private void updatePrefsDueToMissingPermissions(SharedPreferences prefs) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                && (prefs.getBoolean(Constants.PREF_ALLOW_WEBRTC, false) || prefs.getBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false)
+                || prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false))) {
             SharedPreferences.Editor editor1 = prefs.edit();
             editor1.putBoolean(Constants.PREF_ALLOW_WEBRTC, false);
             editor1.putBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false);
             editor1.putBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
             editor1.apply();
-        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+
+            UiUtil.showSnackBar(mWebView, "Camera related preferences have been disabled because camera permissions are missing!");
+        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
+                && prefs.getBoolean(Constants.PREF_ALLOW_WEBRTC, false)) {
             SharedPreferences.Editor editor1 = prefs.edit();
             editor1.putBoolean(Constants.PREF_ALLOW_WEBRTC, false);
             editor1.apply();
+
+            UiUtil.showSnackBar(mWebView, "WebRTC related preferences have been disabled because audio permissions are missing!");
         }
     }
-
     public void updateMotionPreferences() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
@@ -800,7 +707,7 @@ public class MainActivity extends ScreenControllingActivity
         } else if (id == R.id.action_help) {
             startActivity(HelpActivity.class);
         } else if (id == R.id.action_discover) {
-            showIntro(true);
+            showIntro();
         } else if (id == R.id.action_show_log) {
             startActivity(LogActivity.class);
         } else if (id == R.id.action_restart) {
@@ -855,9 +762,9 @@ public class MainActivity extends ScreenControllingActivity
         startActivityForResult(intent, 0);
     }
 
-    private void showIntro(boolean discover) {
+    private void showIntro() {
         Intent intent = new Intent(MainActivity.this, IntroActivity.class);
-        intent.putExtra(Constants.INTENT_FLAG_INTRO_ONLY, discover);
+        intent.putExtra(Constants.INTENT_FLAG_INTRO_ONLY, true);
 
         new Thread(() -> runOnUiThread(() -> startActivity(intent))).start();
     }
