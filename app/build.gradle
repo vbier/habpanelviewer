@@ -57,7 +57,7 @@ dependencies {
     implementation 'com.burgstaller:okhttp-digest:1.18'
 
     //noinspection GradleDependency,InvalidPackage
-    implementation 'com.github.mukeshsolanki:MarkdownView-Android:1.0.4'
+    implementation 'com.github.mukeshsolanki:MarkdownView-Android:1.0.8'
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.jakewharton:process-phoenix:2.0.0'
     implementation 'com.github.paolorotolo:appintro:v5.0.1'
