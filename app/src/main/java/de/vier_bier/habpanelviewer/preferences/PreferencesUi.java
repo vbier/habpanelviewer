@@ -3,7 +3,7 @@ package de.vier_bier.habpanelviewer.preferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 
-import com.jakewharton.processphoenix.ProcessPhoenix;
+import org.greenrobot.eventbus.EventBus;
 
 import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
@@ -22,10 +22,7 @@ public class PreferencesUi extends PreferenceFragment {
                 if (UiUtil.themeChanged((String) o, getActivity())) {
                     UiUtil.showSnackBar(getActivity().findViewById(R.id.myCoordinatorLayout),
                             R.string.themeChangedRestartRequired, R.string.action_restart,
-                            view -> {
-                                getActivity().finish();
-                                ProcessPhoenix.triggerRebirth(getActivity().getApplication());
-                            });
+                            view -> EventBus.getDefault().post(new Constants.Restart()));
                 }
             }
 

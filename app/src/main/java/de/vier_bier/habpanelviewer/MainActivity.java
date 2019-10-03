@@ -66,7 +66,6 @@ import de.vier_bier.habpanelviewer.command.VolumeHandler;
 import de.vier_bier.habpanelviewer.command.WebViewHandler;
 import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
 import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
-import de.vier_bier.habpanelviewer.db.Credential;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.ISseConnectionListener;
@@ -488,6 +487,11 @@ public class MainActivity extends ScreenControllingActivity
                 }
             }
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(Constants.Restart r) {
+        restartApp();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

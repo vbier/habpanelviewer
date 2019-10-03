@@ -7,7 +7,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.jakewharton.processphoenix.ProcessPhoenix;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.ByteArrayOutputStream;
 import java.util.regex.Matcher;
@@ -60,8 +60,7 @@ public class InternalCommandHandler implements ICommandHandler {
 
         if ("RESTART".equals(cmdStr)) {
             cmd.start();
-            mActivity.destroy();
-            ProcessPhoenix.triggerRebirth(mActivity);
+            EventBus.getDefault().post(new Constants.Restart());
         } else if ("UPDATE_ITEMS".equals(cmdStr)) {
             cmd.start();
             mConnection.sendCurrentValues();

@@ -8,8 +8,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 
-import com.jakewharton.processphoenix.ProcessPhoenix;
 import com.obsez.android.lib.filechooser.ChooserDialog;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,6 +20,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
 
@@ -51,10 +53,7 @@ class PreferenceUtil {
 
                         if (UiUtil.themeChanged(prefs, ctx)) {
                             UiUtil.showSnackBar(v, R.string.themeChangedRestartRequired, R.string.action_restart,
-                                    view -> {
-                                        ctx.finish();
-                                        ProcessPhoenix.triggerRebirth(ctx.getApplication());
-                                    });
+                                    view -> EventBus.getDefault().post(new Constants.Restart()));
                         } else {
                             UiUtil.showSnackBar(v, R.string.prefsImported);
                         }
