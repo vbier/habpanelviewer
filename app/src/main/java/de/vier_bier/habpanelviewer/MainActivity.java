@@ -571,12 +571,15 @@ public class MainActivity extends ScreenControllingActivity
             builder.setSmallIcon(R.drawable.logo);
             mService.startForeground(42, builder.build());
         }
+
+        mWebView.onPause();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mWebView.onResume();
 
         if (mService != null) {
             mService.stopForeground(true);
