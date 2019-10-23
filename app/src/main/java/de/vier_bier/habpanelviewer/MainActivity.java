@@ -497,6 +497,14 @@ public class MainActivity extends ScreenControllingActivity
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(Constants.LoadStartUrl r) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        if (prefs.getBoolean(Constants.PREF_LOAD_START_URL_ON_SCREENON, false)) {
+            mWebView.loadStartUrl();
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ApplicationStatus status) {
         status.set(getString(R.string.app_name), "Version: " + getAppVersion());
 

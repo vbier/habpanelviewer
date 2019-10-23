@@ -8,6 +8,8 @@ import android.os.Looper;
 import android.view.View;
 import android.view.WindowManager;
 
+import org.greenrobot.eventbus.EventBus;
+
 public class EmptyActivity extends ScreenControllingActivity {
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -28,6 +30,7 @@ public class EmptyActivity extends ScreenControllingActivity {
 
             view.setOnTouchListener((view1, motionEvent) -> {
                 finish();
+                EventBus.getDefault().post(new Constants.LoadStartUrl());
                 return true;
             });
 
@@ -37,6 +40,7 @@ public class EmptyActivity extends ScreenControllingActivity {
                 getWindow().setAttributes(layout);
             }, 500);
         } else {
+            EventBus.getDefault().post(new Constants.LoadStartUrl());
             finish();
         }
     }
