@@ -250,7 +250,9 @@ public class MainActivity extends ScreenControllingActivity
 
         final SurfaceView motionView = findViewById(R.id.motionView);
         final TextureView previewView = findViewById(R.id.previewView);
-        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)) {
+        boolean cameraFallback = prefs.getBoolean(Constants.PREF_CAMERA_FALLBACK, false);
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)
+            || (cameraFallback && getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA))) {
             if (mCam == null) {
                 mCam = new Camera(this, previewView, prefs);
             }
@@ -671,7 +673,7 @@ public class MainActivity extends ScreenControllingActivity
         SurfaceView motionView = findViewById(R.id.motionView);
         boolean showPreview = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
 
-        if (showPreview && mCam != null) {
+        if (showPreview && mCam != null && mCam.canBeUsed()) {
             motionView.setVisibility(View.VISIBLE);
         } else {
             motionView.setVisibility(View.INVISIBLE);

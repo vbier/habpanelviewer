@@ -5,6 +5,8 @@ import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCharacteristics;
 import android.util.Log;
 import android.view.TextureView;
 
@@ -25,25 +27,36 @@ class CameraImplV1 extends AbstractCameraImpl {
     private int mCameraId = -1;
     private int mCameraOrientation = 0;
 
-    CameraImplV1(Activity context, TextureView previewView) throws CameraException {
+    CameraImplV1(Activity context, TextureView previewView, boolean cameraFallback) throws CameraException {
         super(context, previewView);
 
+        findCameraFacing(Camera.CameraInfo.CAMERA_FACING_FRONT);
+
+        if (mCameraId == -1 && cameraFallback) {
+            findCameraFacing(Camera.CameraInfo.CAMERA_FACING_BACK);
+        }
+
+        if (mCameraId == -1) {
+            if (cameraFallback) {
+                throw new CameraException(mActivity.getString(R.string.cameraMissing));
+            } else {
+                throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
+            }
+        }
+    }
+
+    private void findCameraFacing(int direction) {
         Camera.CameraInfo info = new Camera.CameraInfo();
         for (int i = 0; i < Camera.getNumberOfCameras(); i++) {
             Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            if (info.facing == direction) {
                 mCameraId = i;
                 mCameraOrientation = info.orientation;
 
                 Log.v(TAG, "found front-facing camera with id " + i + " and orientation " + mCameraOrientation);
             }
         }
-
-        if (mCameraId == -1) {
-            throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
-        }
     }
-
 
     @Override
     public void lockCamera() throws CameraException {

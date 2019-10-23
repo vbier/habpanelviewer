@@ -51,6 +51,8 @@ public class Camera {
 
     private CameraVersion mVersion;
     private boolean mShowPreview;
+    private boolean mCameraFallback;
+
 
     private final List<ICamera.ILumaListener> mListeners = new ArrayList<>();
 
@@ -63,6 +65,8 @@ public class Camera {
         mWorkHandler = new Handler(mWorker.getLooper());
 
         EventBus.getDefault().register(this);
+
+        mCameraFallback = prefs.getBoolean(Constants.PREF_CAMERA_FALLBACK, false);
 
         mVersion = getCameraVersion(prefs);
         mImplementation = createCamera(mVersion);
@@ -166,8 +170,11 @@ public class Camera {
         try {
             CameraVersion v = getCameraVersion(prefs);
 
-            // if camera api changed, close old camera, create new one
-            if (v != mVersion) {
+            boolean camFallback = prefs.getBoolean(Constants.PREF_CAMERA_FALLBACK, false);
+            // if camera api or fallback changed, close old camera, create new one
+            if (v != mVersion || camFallback != mCameraFallback) {
+                mCameraFallback = camFallback;
+
                 if (isPreviewRunning()) {
                     Log.d(TAG, "stopping preview...");
                     mImplementation.stopPreview();
@@ -186,7 +193,8 @@ public class Camera {
                 }
             }
 
-            mShowPreview = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
+            mShowPreview = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false)
+                    && canBeUsed();
 
             // ensure camera preview state is correct
             // - preview state ON or lumalisteners -> preview running
@@ -483,11 +491,11 @@ public class Camera {
 
             if (version == CameraVersion.V2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mVersion = CameraVersion.V2;
-                return new CameraImplV2(mContext, mPreviewView);
+                return new CameraImplV2(mContext, mPreviewView, mCameraFallback);
             }
 
             mVersion = CameraVersion.V1;
-            return new CameraImplV1(mContext, mPreviewView);
+            return new CameraImplV1(mContext, mPreviewView, mCameraFallback);
         } catch (CameraException e) {
             mVersion = CameraVersion.NONE;
             return new CameraImplNone(e.getMessage());

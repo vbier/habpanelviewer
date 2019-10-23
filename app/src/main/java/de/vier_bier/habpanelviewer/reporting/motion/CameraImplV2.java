@@ -35,6 +35,8 @@ import java.util.concurrent.TimeUnit;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+
+import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 
 /**
@@ -61,7 +63,7 @@ public class CameraImplV2 extends AbstractCameraImpl {
     private ImageReader mPictureReader; //do not use a variable as this gets GC'ed
 
 
-    CameraImplV2(Activity context, TextureView prevView) throws CameraException {
+    CameraImplV2(Activity context, TextureView prevView, boolean cameraFallback) throws CameraException {
         super(context, prevView);
 
         mCamManager = (CameraManager) mActivity.getSystemService(Context.CAMERA_SERVICE);
@@ -70,32 +72,45 @@ public class CameraImplV2 extends AbstractCameraImpl {
         }
 
         try {
-            for (String camId : mCamManager.getCameraIdList()) {
-                CameraCharacteristics characteristics = mCamManager.getCameraCharacteristics(camId);
-                Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+            findCameraFacing(CameraCharacteristics.LENS_FACING_FRONT);
 
-                if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
-                    mCameraId = camId;
-
-                    Integer orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
-                    if (orientation != null) {
-                        mCameraOrientation = orientation;
-                    }
-
-                    Log.v(TAG, "found front-facing camera with id " + camId + " and orientation " + mCameraOrientation);
-                }
+            if (mCameraId == null && cameraFallback) {
+                findCameraFacing(CameraCharacteristics.LENS_FACING_BACK);
             }
         } catch (CameraAccessException e) {
             throw new CameraException(e);
         }
 
         if (mCameraId == null) {
-            throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
+            if (cameraFallback) {
+                throw new CameraException(mActivity.getString(R.string.cameraMissing));
+            } else {
+                throw new CameraException(mActivity.getString(R.string.frontCameraMissing));
+            }
         }
 
         mPreviewThread = new HandlerThread("previewThread");
         mPreviewThread.start();
         mPreviewHandler = new Handler(mPreviewThread.getLooper());
+    }
+
+    private void findCameraFacing(int direction) throws CameraAccessException {
+        for (String camId : mCamManager.getCameraIdList()) {
+            CameraCharacteristics characteristics = mCamManager.getCameraCharacteristics(camId);
+            Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+
+            if (facing != null && facing == direction) {
+                mCameraId = camId;
+
+                Integer orientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+                if (orientation != null) {
+                    mCameraOrientation = orientation;
+                }
+
+                Log.v(TAG, "found " + (direction == CameraCharacteristics.LENS_FACING_FRONT ? "front" : "back")
+                        + "-facing camera with id " + camId + " and orientation " + mCameraOrientation);
+            }
+        }
     }
 
     @Override

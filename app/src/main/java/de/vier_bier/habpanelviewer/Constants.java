@@ -88,6 +88,7 @@ public final class Constants {
     public static final String PREF_MOTION_DETECTION_GRANULARITY = "pref_motion_detection_granularity";
     public static final String PREF_MOTION_DETECTION_LENIENCY = "pref_motion_detection_leniency";
     public static final String PREF_MOTION_DETECTION_SLEEP = "pref_motion_detection_sleep";
+    public static final String PREF_CAMERA_FALLBACK = "pref_camera_fallback";
 
     public static final String PREF_CAPTURE_SCREEN_ENABLED = "pref_capture_screen_enabled";
     public static final String PREF_ALLOW_MIXED_CONTENT = "pref_allow_mixed_content";
