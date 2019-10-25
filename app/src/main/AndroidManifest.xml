@@ -60,7 +60,7 @@
             android:name="de.vier_bier.habpanelviewer.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:configChanges="orientation|screenSize|uiMode|keyboard"/>
+            android:configChanges="orientation|screenSize|uiMode|keyboard|keyboardHidden"/>
         <activity
             android:name="de.vier_bier.habpanelviewer.preferences.PreferenceActivity"
             android:label="@string/action_preferences"
