@@ -325,7 +325,6 @@ public class MainActivity extends ScreenControllingActivity
                 runOnUiThread(() -> {
                     mUrlTextView.setText(url);
                     mStatusTextView.setText(newStatus.name());
-                    mUrlTextView.setTextColor(newStatus.getColor());
                     enterCredMenu.setVisible(newStatus == SseConnection.Status.UNAUTHORIZED);
 
                     if (newStatus == SseConnection.Status.CONNECTED) {

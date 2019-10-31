@@ -183,18 +183,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         boolean isConnecting() {
             return this == RECONNECTING || this == CONNECTING;
         }
-
-        public int getColor() {
-            switch (this) {
-                case NOT_CONNECTED: return Color.GRAY;
-                case CONNECTED:
-                case CONNECTING:
-                case RECONNECTING: return Color.WHITE;
-            }
-
-            return Color.RED;
-        }
-    }
+   }
 
     private class SSEHandler implements ServerSentEvent.Listener {
         SSEHandler() { }
