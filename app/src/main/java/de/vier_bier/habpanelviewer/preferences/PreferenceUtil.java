@@ -28,11 +28,10 @@ class PreferenceUtil {
     private static final String TAG = "HPV-PreferenceUtil";
 
     static void saveSharedPreferencesToFile(Context ctx, View v) {
-        ChooserDialog d = new ChooserDialog().with(ctx)
+        ChooserDialog d = new ChooserDialog(ctx)
                 .withFilter(true, false)
                 .withStartFile(Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOCUMENTS).getPath())
-                .withRowLayoutView(R.layout.row_filechooser)
                 .withResources(R.string.chooseTargetDirectory, R.string.okay, R.string.cancel)
                 .withChosenListener((path, pathFile) -> saveSharedPreferencesToFile(ctx, v, new File(path, "HPV.prefs")));
 
@@ -40,12 +39,11 @@ class PreferenceUtil {
     }
 
     static void loadSharedPreferencesFromFile(Activity ctx, View v) {
-        new ChooserDialog().with(ctx)
+        new ChooserDialog(ctx)
                 .withFilter(file -> "HPV.prefs".equals(file.getName()) || file.isDirectory())
                 .withStartFile(Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DOCUMENTS).getPath())
                 .withResources(R.string.choose_file, R.string.okay, R.string.cancel)
-                .withRowLayoutView(R.layout.row_filechooser)
                 .withChosenListener((path, pathFile) -> {
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
                     try {
