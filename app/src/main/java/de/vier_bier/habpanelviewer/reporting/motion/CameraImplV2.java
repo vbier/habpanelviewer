@@ -27,16 +27,15 @@ import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
-
-import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 
 /**

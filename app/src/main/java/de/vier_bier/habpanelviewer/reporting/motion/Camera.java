@@ -504,12 +504,6 @@ public class Camera {
 
     private CameraVersion getCameraVersion(SharedPreferences prefs) {
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            boolean shouldRun = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false) || !mListeners.isEmpty();
-            if (shouldRun) {
-                ActivityCompat.requestPermissions(mContext, new String[]{Manifest.permission.CAMERA},
-                        Constants.REQUEST_CAMERA);
-            }
-
             return CameraVersion.PERMISSION_MISSING;
         }
 

@@ -1,10 +1,16 @@
 package de.vier_bier.habpanelviewer.preferences;
 
+import android.Manifest;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.legacy.app.FragmentCompat;
 
 import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
@@ -44,9 +50,45 @@ public class PreferencesCamera extends PreferenceFragment implements Preference.
 
                 return false;
             }
+
+            if (needsPermissions()) {
+                requestMissingPermissions();
+                return false;
+            }
         }
 
         return true;
+    }
+
+    private boolean needsPermissions() {
+        return ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestMissingPermissions() {
+        FragmentCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
+                Constants.REQUEST_CAMERA);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == Constants.REQUEST_CAMERA) {
+            setAllowPreviewPref(grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED);
+        }
+    }
+
+    private void setAllowPreviewPref(boolean allowPreview) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        if (prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false) != allowPreview) {
+            SharedPreferences.Editor editor1 = prefs.edit();
+            editor1.putBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, allowPreview);
+            editor1.apply();
+
+            CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference(Constants.PREF_MOTION_DETECTION_PREVIEW);
+            allowPreference.setChecked(allowPreview);
+        }
     }
 }
 

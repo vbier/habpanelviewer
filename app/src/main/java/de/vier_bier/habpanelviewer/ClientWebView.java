@@ -513,7 +513,9 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
     @Override
     public void connected() {
-        Log.d(TAG, "connected: loading start URL...");
-        loadStartUrl();
+        if (mServerURL != null || mStartPage != null) {
+            Log.d(TAG, "connected: loading start URL...");
+            loadStartUrl();
+        }
     }
 }

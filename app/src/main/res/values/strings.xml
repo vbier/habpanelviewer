@@ -223,7 +223,7 @@
     <string name="startupIndicator">Startup Indicator</string>
     <string name="connectedIndicator">Connected Indicator</string>
     <string name="flashControl">Flashlight Control</string>
-    <string name="sslFailed">Failed to initialize SSL protocol!</string>
+    <string name="sslFailed">Failed to initialize SSL certificate support!</string>
     <string name="updated">HABPanelViewer Update</string>
     <string name="updatedText">The application has been updated. Find the bug fixes and new features below:</string>
     <string name="appRestarted">App restarted after crash</string>
@@ -357,7 +357,9 @@
     <string name="checkingAppUpdated">Checking if app has been updated…</string>
     <string name="showingIntro">Showing intro…</string>
     <string name="checkingOsSettings">Checking Android settings…</string>
+    <string name="checkingPermissions">Checking permissions…</string>
     <string name="initPwdDb">Initializing password database…</string>
     <string name="initCertStore">Initializing certificate store…</string>
     <string name="starting">Starting…</string>
+    <string name="prefsDisabledMissingPermissions">Preferences have been disabled because permissions are missing!</string>
 </resources>

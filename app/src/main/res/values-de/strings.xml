@@ -220,7 +220,7 @@
     <string name="startupIndicator">Startindikator</string>
     <string name="connectedIndicator">Verbindungsindikator</string>
     <string name="flashControl">Blitzlichtsteuerung</string>
-    <string name="sslFailed">SSL-Protokoll konnte nicht initialisiert werden!</string>
+    <string name="sslFailed">SSL Zertifikat Unterstützung konnte nicht initialisiert werden!</string>
     <string name="updated">HABPanelViewer Aktualisierung</string>
     <string name="updatedText">Die Anwendung wurde aktualisiert. Folgende Fehlerbehebungen und Verbesserungen wurden eingearbeitet:</string>
     <string name="appRestarted">App wurde nach Absturz neu gestartet</string>
@@ -354,7 +354,9 @@
     <string name="checkingAppUpdated">Prüfe ob die App aktualisiert wurde…</string>
     <string name="showingIntro">Zeige Einführung…</string>
     <string name="checkingOsSettings">Prüfe Android Einstellungen…</string>
+    <string name="checkingPermissions">Prüfe Berechtigungen…</string>
     <string name="initPwdDb">Initialisiere Passwort Datenbank…</string>
     <string name="initCertStore">Initialisiere Zertifikat Speicher…</string>
     <string name="starting">Starte…</string>
+    <string name="prefsDisabledMissingPermissions">Einstellungen wurden wegen fehlender Berechtigungen geändert!</string>
 </resources>

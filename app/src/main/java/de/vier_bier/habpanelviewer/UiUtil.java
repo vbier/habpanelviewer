@@ -14,22 +14,21 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.content.ContextCompat;
 
 /**
  * UI utility methods.
@@ -71,21 +70,6 @@ public class UiUtil {
             }
             builder.show();
         });
-    }
-
-
-    static void showScrollDialog(Context ctx, String title, String text, String scrollText) {
-        android.app.AlertDialog dialog = new android.app.AlertDialog.Builder(ctx)
-                .setTitle(title)
-                .setPositiveButton(android.R.string.yes, (dialog1, which) -> dialog1.dismiss())
-                .setView(LayoutInflater.from(ctx).inflate(R.layout.dialog_scrollable_text, null))
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .show();
-
-        TextView titleView = dialog.findViewById(R.id.release_notes_title);
-        titleView.setText(text);
-        TextView textView = dialog.findViewById(R.id.release_notes_text);
-        textView.setText(scrollText);
     }
 
     public static void showSnackBar(View view, int textId, int actionTextId, View.OnClickListener clickListener) {

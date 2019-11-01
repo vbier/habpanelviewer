@@ -11,6 +11,7 @@ public final class Constants {
     public static final int REQUEST_WRITE_EXTERNAL_STORAGE = 202;
     public static final int REQUEST_READ_EXTERNAL_STORAGE = 203;
     public static final int REQUEST_WEBRTC = 204;
+    public static final int REQUEST_VALIDATE = 205;
 
     /** Intent related constants **/
     public static final String INTENT_FLAG_CRASH = "crash";
@@ -34,6 +35,8 @@ public final class Constants {
     public static final String INTENT_FLAG_TIMEOUT = "timeout";
 
     public static final String INTENT_FLAG_INTRO_ONLY = "introOnly";
+
+    public static final String INTENT_FLAG_PERMISSIONS = "permissions";
 
     /** preference related constants **/
     public static final String PREF_PREFIX = "pref_";

@@ -20,7 +20,9 @@ import android.widget.TextView;
 
 import com.github.paolorotolo.appintro.AppIntro2;
 import com.github.paolorotolo.appintro.AppIntro2Fragment;
+import com.github.paolorotolo.appintro.AppIntroFragment;
 import com.github.paolorotolo.appintro.ISlidePolicy;
+import com.github.paolorotolo.appintro.model.SliderPage;
 
 import de.vier_bier.habpanelviewer.openhab.ServerDiscovery;
 
@@ -47,23 +49,23 @@ public class IntroActivity extends AppIntro2 {
         //askForPermissions(new String[]{Manifest.permission.CAMERA}, 2);
 
         if (!introOnly) {
-            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_welcome),
-                    getString(R.string.intro_welcome_text), R.drawable.logo, bgColor));
+            addSlide(getString(R.string.intro_welcome),
+                    getString(R.string.intro_welcome_text), R.drawable.logo, bgColor);
 
-            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_browser),
-                    getString(R.string.intro_browser_text), R.drawable.browser, bgColor));
+            addSlide(getString(R.string.intro_browser),
+                    getString(R.string.intro_browser_text), R.drawable.browser, bgColor);
 
-            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_reporting),
-                    getString(R.string.intro_reporting_text), R.drawable.reporting, bgColor));
+            addSlide(getString(R.string.intro_reporting),
+                    getString(R.string.intro_reporting_text), R.drawable.reporting, bgColor);
 
-            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_commanding),
-                    getString(R.string.intro_commanding_text), R.drawable.commanding, bgColor));
+            addSlide(getString(R.string.intro_commanding),
+                    getString(R.string.intro_commanding_text), R.drawable.commanding, bgColor);
 
-            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_credentials),
-                    getString(R.string.intro_credentials_text), R.drawable.credentials, bgColor));
+            addSlide(getString(R.string.intro_credentials),
+                    getString(R.string.intro_credentials_text), R.drawable.credentials, bgColor);
 
-            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_credentials),
-                    getString(R.string.intro_credentials_text2), R.drawable.database, bgColor));
+            addSlide(getString(R.string.intro_credentials),
+                    getString(R.string.intro_credentials_text2), R.drawable.database, bgColor);
         }
 
         if (!serverConfigured || introOnly) {
@@ -94,6 +96,15 @@ public class IntroActivity extends AppIntro2 {
             addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_ready),
                     getString(R.string.intro_ready_text), R.drawable.ready, bgColor));
         }
+    }
+
+    private void addSlide(String title, String text, int icon, int bgColor) {
+        SliderPage sp = new SliderPage();
+        sp.setTitle(title);
+        sp.setDescription(text);
+        sp.setBgColor(icon);
+        sp.setImageDrawable(icon);
+        addSlide(AppIntroFragment.newInstance(sp));
     }
 
     protected void onPageSelected(int position) {

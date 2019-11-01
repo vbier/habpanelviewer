@@ -24,11 +24,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.GeneralSecurityException;
 import java.util.Date;
 
 import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
-import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 import de.vier_bier.habpanelviewer.db.AppDatabase;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
@@ -132,16 +130,13 @@ public class StartActivity extends AppCompatActivity {
                             }
                         }
                     }
+                    Log.d(TAG, "Local trust store file created");
                 }
-                CertificateManager.getInstance().setTrustStore(localTrustStoreFile);
 
-                Log.d(TAG, "Certificate store initialized");
                 CredentialManager.getInstance().addCredentialsListener(ConnectionStatistics.OkHttpClientFactory.getInstance());
-
                 statusTView.setText(getString(R.string.starting));
-            } catch (GeneralSecurityException | IOException e) {
-                Log.e(TAG, "failed to initialize CertificateManager", e);
-                UiUtil.showSnackBar(statusTView, R.string.sslFailed);
+            } catch (IOException e) {
+                Log.e(TAG, "failed to create local trust store", e);
             }
 
             Intent intent = new Intent(this, MainActivity.class);

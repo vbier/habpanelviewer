@@ -154,7 +154,7 @@ public class SseConnectionTest {
             }, CERTIFICATE_ERROR);
 
             String storeFile = getClass().getResource("/keystore").getFile();
-            CertificateManager.getInstance().setTrustStore(new File(storeFile), "webbit");
+            CertificateManager.get(new File(storeFile), "webbit");
             mCertValid.set(true);
 
             runAndWait(() -> mSseConnection.connect(), CONNECTED);

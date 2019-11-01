@@ -1,6 +1,5 @@
 package de.vier_bier.habpanelviewer.openhab;
 
-import android.graphics.Color;
 import android.util.Log;
 
 import com.here.oksse.OkSse;

@@ -105,6 +105,11 @@
             android:label="@string/action_discover"
             android:parentActivityName="de.vier_bier.habpanelviewer.MainActivity"/>
 
+        <activity android:name="de.vier_bier.habpanelviewer.PermissionValidatingActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait"/>
+
         <service android:name="de.vier_bier.habpanelviewer.TrackShutdownService" android:stopWithTask="false" />
     </application>
 

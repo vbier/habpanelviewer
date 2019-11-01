@@ -10,6 +10,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -61,8 +62,13 @@ public class ConnectedIndicator implements IStateUpdateListener {
             state += "\n" + res.getQuantityString(R.plurals.updateInterval, mInterval, mInterval);
 
             if (!mStatusItem.isEmpty()) {
-                state += "\n" + SimpleDateFormat.getDateTimeInstance().format(new Date(mStatus))
-                        + " [" + mStatusItem + "=" + mStatusState + "]";
+                try {
+                    Date date = mFormat.parse(mStatus);
+                    state += "\n" + SimpleDateFormat.getDateTimeInstance().format(date)
+                            + " [" + mStatusItem + "=" + mStatusState + "]";
+                } catch (ParseException e) {
+                    state += "\n???" + " [" + mStatusItem + "=" + mStatusState + "]";
+                }
             }
 
             status.set(mCtx.getString(R.string.connectedIndicator), state);

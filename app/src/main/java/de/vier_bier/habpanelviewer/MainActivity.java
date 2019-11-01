@@ -1,6 +1,6 @@
 package de.vier_bier.habpanelviewer;
 
-import android.Manifest;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.bluetooth.BluetoothManager;
@@ -38,7 +38,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -66,6 +65,7 @@ import de.vier_bier.habpanelviewer.command.VolumeHandler;
 import de.vier_bier.habpanelviewer.command.WebViewHandler;
 import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
 import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
+import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
 import de.vier_bier.habpanelviewer.openhab.ISseConnectionListener;
@@ -224,6 +224,10 @@ public class MainActivity extends ScreenControllingActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         int restartCount = getIntent().getIntExtra(Constants.INTENT_FLAG_RESTART_COUNT, 0);
+
+        if (!CertificateManager.getInstance().isInitialized()) {
+            UiUtil.showDialog(this, null, getString(R.string.sslFailed));
+        }
 
         if (mRestartingExceptionHandler == null) {
             mRestartingExceptionHandler = new AppRestartingExceptionHandler(this,
@@ -487,6 +491,14 @@ public class MainActivity extends ScreenControllingActivity
                     mCapturer = new ScreenCapturer(projection, size.x, size.y, metrics.densityDpi);
                 }
             }
+        } else if (requestCode == Constants.REQUEST_VALIDATE) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                UiUtil.showButtonDialog(this, null,
+                        getString(R.string.prefsDisabledMissingPermissions),
+                        android.R.string.ok, (dialogInterface, i) -> onStart(), -1, null);
+            } else {
+                onStart();
+            }
         }
     }
 
@@ -600,8 +612,13 @@ public class MainActivity extends ScreenControllingActivity
     public void onStart() {
         super.onStart();
 
+        Intent permissionIntent = PermissionUtil.createRequestPermissionsIntent(this);
+        if (permissionIntent != null) {
+            startActivityForResult(permissionIntent, Constants.REQUEST_VALIDATE);
+            return;
+        }
+
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        updatePrefsDueToMissingPermissions(prefs);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
@@ -646,26 +663,6 @@ public class MainActivity extends ScreenControllingActivity
         }
     }
 
-    private void updatePrefsDueToMissingPermissions(SharedPreferences prefs) {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                && (prefs.getBoolean(Constants.PREF_ALLOW_WEBRTC, false) || prefs.getBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false)
-                || prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false))) {
-            SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putBoolean(Constants.PREF_ALLOW_WEBRTC, false);
-            editor1.putBoolean(Constants.PREF_MOTION_DETECTION_ENABLED, false);
-            editor1.putBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
-            editor1.apply();
-
-            UiUtil.showSnackBar(mWebView, "Camera related preferences have been disabled because camera permissions are missing!");
-        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
-                && prefs.getBoolean(Constants.PREF_ALLOW_WEBRTC, false)) {
-            SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putBoolean(Constants.PREF_ALLOW_WEBRTC, false);
-            editor1.apply();
-
-            UiUtil.showSnackBar(mWebView, "WebRTC related preferences have been disabled because audio permissions are missing!");
-        }
-    }
     public void updateMotionPreferences() {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
 
