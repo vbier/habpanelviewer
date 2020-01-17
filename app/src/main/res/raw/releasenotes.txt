@@ -13,6 +13,7 @@
 * use okhttp for realizing the SSE connection
 * improve menu layout
 * BUG: allow access to http pages for android 9 devices
+* BUG: fix reconnect during openHAB startup
 
 0.9.25
 ======

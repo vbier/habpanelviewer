@@ -138,6 +138,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         if (status != mStatus) {
             mStatus = status;
             Log.v(TAG, "status=" + mStatus.name());
+            System.out.println("status = " + status);
 
             synchronized (mListeners) {
                 for (ISseListener l : mListeners) {
@@ -214,15 +215,21 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
         @Override
         public boolean onRetryError(ServerSentEvent sse, Throwable throwable, Response response) {
+            System.out.println("SSEHandler.onRetryError");
             if (throwable instanceof SSLHandshakeException) {
                 setStatus(Status.CERTIFICATE_ERROR);
                 return false;
             }
 
             if (response != null && response.code() >= 400 && response.code() < 500) {
+                System.out.println("response = " + response + ", status = " + mStatus);
                 // client error, no need to retry
                 if (response.code() == 401 || response.code() == 407) {
                     setStatus(Status.UNAUTHORIZED);
+                } else if (response.code() == 404 && mStatus == Status.RECONNECTING) {
+                    // in case we get a 404 after a successful connection, try again
+                    System.out.println("try again");
+                    return true;
                 } else {
                     setStatus(Status.FAILURE);
                 }
@@ -251,6 +258,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
         @Override
         public Request onPreRetry(ServerSentEvent sse, Request originalRequest) {
+            System.out.println("onPreRetry");
             return originalRequest;
         }
     }
