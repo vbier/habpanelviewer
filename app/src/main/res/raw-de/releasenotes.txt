@@ -1,4 +1,4 @@
-0.9.26pre
+0.9.26
 ======
 * neue Wertemeldung: momentan angezeigte URL
 * neue Wertemeldung: Docking Status

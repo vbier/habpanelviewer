@@ -1,4 +1,4 @@
-0.9.26pre
+0.9.26
 ======
 * add reporting of docking state
 * add reporting of device movement
