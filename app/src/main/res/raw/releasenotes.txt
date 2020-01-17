@@ -1,3 +1,6 @@
+0.9.27pre
+======
+
 0.9.26
 ======
 * add reporting of docking state
