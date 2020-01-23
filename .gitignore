@@ -2,3 +2,5 @@
 .gradle
 build
 local.properties
+app/src/test/java/de/vier_bier/habpanelviewer/openhab/PrivateSseConnectionTest.java
+app/src/test/resources/keystore2
