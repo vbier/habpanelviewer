@@ -15,15 +15,9 @@ import org.webbitserver.EventSourceConnection;
 import org.webbitserver.EventSourceHandler;
 import org.webbitserver.WebServer;
 import org.webbitserver.WebServers;
-import org.webbitserver.handler.ServerHeaderHandler;
-import org.webbitserver.handler.StringHttpHandler;
 import org.webbitserver.handler.authentication.BasicAuthenticationHandler;
 import org.webbitserver.handler.authentication.InMemoryPasswords;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -31,10 +25,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 import okhttp3.OkHttpClient;
 
-import static de.vier_bier.habpanelviewer.openhab.SseConnection.Status.CERTIFICATE_ERROR;
 import static de.vier_bier.habpanelviewer.openhab.SseConnection.Status.CONNECTED;
 import static de.vier_bier.habpanelviewer.openhab.SseConnection.Status.FAILURE;
 import static de.vier_bier.habpanelviewer.openhab.SseConnection.Status.RECONNECTING;
@@ -80,7 +72,6 @@ public class SseConnectionTest {
 
     @After
     public void die() throws InterruptedException, ExecutionException {
-        System.out.println("SseConnectionTest.die");
         mSseConnection.disconnect();
         mWebServer.stop().get();
     }
@@ -137,28 +128,6 @@ public class SseConnectionTest {
         mSseConnection.connected();
 
         runAndWait(() -> mSseConnection.setServerUrl("http://localhost:8080"), CONNECTED);
-    }
-
-    @Test
-    public void testCertError() throws IOException, ExecutionException, InterruptedException, GeneralSecurityException {
-        try (InputStream keystore = getClass().getResourceAsStream("/keystore")) {
-            mWebServer.setupSsl(keystore, "webbit")
-                    .add(new ServerHeaderHandler("My Server"))
-                    .add(new StringHttpHandler("text/plain", "body"));
-
-            mWebServer.add("/rest/events", new EmptyEventSourceHandler()).start().get();
-
-            runAndWait(() -> {
-                mSseConnection.connected();
-                mSseConnection.setServerUrl("https://localhost:8080");
-            }, CERTIFICATE_ERROR);
-
-            String storeFile = getClass().getResource("/keystore").getFile();
-            CertificateManager.get(new File(storeFile), "webbit");
-            mCertValid.set(true);
-
-            runAndWait(() -> mSseConnection.connect(), CONNECTED);
-        }
     }
 
     @Test
