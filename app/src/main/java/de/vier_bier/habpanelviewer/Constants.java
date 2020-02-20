@@ -86,6 +86,7 @@ public final class Constants {
 
     public static final String PREF_MOTION_DETECTION_ENABLED = "pref_motion_detection_enabled";
     public static final String PREF_MOTION_DETECTION_ITEM = "pref_motion_item";
+    public static final String PREF_MOTION_DETECTION_TIMEOUT = "pref_motion_timeout";
     public static final String PREF_MOTION_DETECTION_PREVIEW = "pref_motion_detection_preview";
     public static final String PREF_MOTION_DETECTION_NEW_API = "pref_motion_detection_new_api";
     public static final String PREF_MOTION_DETECTION_GRANULARITY = "pref_motion_detection_granularity";

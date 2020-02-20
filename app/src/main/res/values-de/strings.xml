@@ -115,6 +115,8 @@
     <string name="pref_motionItem_summ">Name des openHAB Kontakts der geschaltet wird wenn Bewegung erkannt wird</string>
     <string name="pref_motionDetectionGranularity">Erkennungsgranularität</string>
     <string name="pref_motionDetectionGranularity_summ">Die Anzahl der Teile pro Achse, in die das Bild eingeteilt wird um Bewegung zu erkennen</string>
+    <string name="pref_motionDetectionTimeout">Erkennungstimeout</string>
+    <string name="pref_motionDetectionTimeout_summ">Die Anzahl der Sekunden ohne Bewegung bis der Kontakt geöffnet wird</string>
     <string name="pref_motionDetectionLeniency">Erkennungsschwelle</string>
     <string name="pref_motionDetectionLeniency_summ">Helligkeitsdifferenz, ab der Bewegung erkannt wird</string>
     <string name="pref_motionDetectionSleep">Erkennungsintervall</string>

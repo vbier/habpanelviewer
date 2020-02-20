@@ -154,6 +154,8 @@
     <string name="pref_motionItem_summ">Name of the contact item whose state shall be set motion has been detected</string>
     <string name="pref_motionDetectionGranularity">Detection granularity</string>
     <string name="pref_motionDetectionGranularity_summ">The number of rectangles per axis the image is divided into to detect changes</string>
+    <string name="pref_motionDetectionTimeout">Detection timeout</string>
+    <string name="pref_motionDetectionTimeout_summ">The number of seconds without motion until the contact is opened</string>
     <string name="pref_motionDetectionLeniency">Detection leniency</string>
     <string name="pref_motionDetectionLeniency_summ">Threshold of changed pixels in a single detection are that triggers motion</string>
     <string name="pref_motionDetectionSleep">Detection interval</string>

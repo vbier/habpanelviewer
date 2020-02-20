@@ -19,6 +19,7 @@ public class MotionReporter extends IMotionListener.MotionAdapter {
     private boolean mMotion;
 
     private String mMotionItem;
+    private int mMotionTimeout;
 
     MotionReporter(IMotionListener l, ServerConnection serverConnection) {
         mServerConnection = serverConnection;
@@ -40,7 +41,7 @@ public class MotionReporter extends IMotionListener.MotionAdapter {
     public void noMotion() {
         mListener.noMotion();
 
-        if (mMotion && System.currentTimeMillis() - mLastMotionTime > 60000) {
+        if (mMotion && System.currentTimeMillis() - mLastMotionTime > mMotionTimeout) {
             mMotion = false;
             mServerConnection.updateState(mMotionItem, "OPEN");
         }
@@ -52,6 +53,7 @@ public class MotionReporter extends IMotionListener.MotionAdapter {
             mMotion = false;
         }
 
+        mMotionTimeout = Integer.parseInt(prefs.getString(Constants.PREF_MOTION_DETECTION_TIMEOUT, "60")) * 1000;
         mServerConnection.updateState(mMotionItem, mMotion ? "CLOSED" : "OPEN");
     }
 

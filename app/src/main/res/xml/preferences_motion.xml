@@ -14,6 +14,14 @@
         android:inputType="textPhonetic"
         android:summary="@string/pref_motionItem_summ"
         android:title="@string/pref_motionItem" />
+    <EditTextPreference
+        android:key="pref_motion_timeout"
+        android:defaultValue="60"
+        android:inputType="numberDecimal"
+        android:digits="0123456789"
+        android:dependency="pref_motion_detection_enabled"
+        android:summary="@string/pref_motionDetectionTimeout_summ"
+        android:title="@string/pref_motionDetectionTimeout" />
     <ListPreference
         android:key="pref_motion_detection_granularity"
         android:defaultValue="20"
