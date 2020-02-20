@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -678,6 +679,11 @@ public class MainActivity extends ScreenControllingActivity
         boolean showPreview = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_PREVIEW, false);
 
         if (showPreview && mCam != null && mCam.canBeUsed()) {
+            ViewGroup.LayoutParams params = motionView.getLayoutParams();
+            params.height = 480;
+            params.width = 640;
+            motionView.setLayoutParams(params);
+
             motionView.setVisibility(View.VISIBLE);
         } else {
             motionView.setVisibility(View.INVISIBLE);
