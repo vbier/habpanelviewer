@@ -96,10 +96,7 @@ public class LogActivity extends ScreenControllingActivity {
         inflater.inflate(R.menu.log_menu, menu);
 
         mClearItem = menu.findItem(R.id.delete_log);
-        UiUtil.tintItemPreV21(mClearItem, getApplicationContext(), getTheme());
-
         mShareItem = menu.findItem(R.id.share_log);
-        UiUtil.tintItemPreV21(mShareItem, getApplicationContext(), getTheme());
 
         return true;
     }

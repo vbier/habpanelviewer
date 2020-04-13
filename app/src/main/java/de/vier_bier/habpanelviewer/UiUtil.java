@@ -121,30 +121,6 @@ public class UiUtil {
         return themeChanged(theme, ctx);
     }
 
-    @SuppressLint("ResourceType")
-    public static void tintItemPreV21(MenuItem item, Context ctx, Resources.Theme theme) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            TypedValue typedValue = new TypedValue();
-            theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
-
-            try {
-                int color = ContextCompat.getColor(ctx, typedValue.resourceId);
-                ColorStateList csl = AppCompatResources.getColorStateList(ctx, typedValue.resourceId);
-                if (csl != null) {
-                    color = csl.getColorForState(new int[] {item.isEnabled() ? android.R.attr.state_enabled : 0}, color);
-                }
-
-                Drawable icon = item.getIcon();
-                if (icon != null) {
-                    icon.mutate();
-                    icon.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-                }
-            } catch (Resources.NotFoundException e) {
-                Log.e(TAG, "Could not tint action bar icon on pre-lollipop device", e);
-            }
-        }
-    }
-
     public static void showPasswordDialog(final Context ctx, final String host, final String realm,
                                           final CredentialsListener l) {
         showPasswordDialog(ctx, host, realm, l, true);

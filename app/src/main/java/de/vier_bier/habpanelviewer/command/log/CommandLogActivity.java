@@ -66,7 +66,6 @@ public class CommandLogActivity extends ScreenControllingActivity {
             }
             if (mClearItem != null && mClearItem.isEnabled() != adapter.getCount() > 0) {
                 mClearItem.setEnabled(adapter.getCount() > 0);
-                UiUtil.tintItemPreV21(mClearItem, getApplicationContext(), getTheme());
             }
         }), 0, 1, TimeUnit.SECONDS);
 
@@ -104,10 +103,7 @@ public class CommandLogActivity extends ScreenControllingActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.commandlog_toolbar_menu, menu);
-
         mClearItem = menu.findItem(R.id.action_clear_log);
-        UiUtil.tintItemPreV21(mClearItem, getApplicationContext(), getTheme());
-
         return true;
     }
 
@@ -120,7 +116,6 @@ public class CommandLogActivity extends ScreenControllingActivity {
 
             if (mClearItem != null && mClearItem.isEnabled()) {
                 mClearItem.setEnabled(false);
-                UiUtil.tintItemPreV21(mClearItem, getApplicationContext(), getTheme());
             }
 
             return true;

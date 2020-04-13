@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat;
 import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
-import de.vier_bier.habpanelviewer.UiUtil;
 
 /**
  * Activity for setting preferences.
@@ -66,7 +65,6 @@ public class PreferenceActivity extends ScreenControllingActivity implements Pre
             super.onBackPressed();
         } else {
             mUpItem.setEnabled(getFragmentManager().getBackStackEntryCount() > 1);
-            UiUtil.tintItemPreV21(mUpItem, getApplicationContext(), getTheme());
             getFragmentManager().popBackStack();
         }
     }
@@ -74,7 +72,6 @@ public class PreferenceActivity extends ScreenControllingActivity implements Pre
     @Override
     public void onNestedPreferenceSelected(String id) {
         mUpItem.setEnabled(true);
-        UiUtil.tintItemPreV21(mUpItem, getApplicationContext(), getTheme());
         getFragmentManager().beginTransaction().replace(R.id.preferences_fragment_container,
                 PreferenceFragment.newInstance(id, getIntent().getExtras()), TAG_NESTED).addToBackStack(TAG_NESTED).commit();
     }
@@ -82,9 +79,7 @@ public class PreferenceActivity extends ScreenControllingActivity implements Pre
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.preferences_toolbar_menu, menu);
-
         mUpItem = menu.findItem(R.id.action_back);
-        UiUtil.tintItemPreV21(mUpItem, getApplicationContext(), getTheme());
 
         return true;
     }

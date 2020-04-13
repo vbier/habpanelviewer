@@ -467,8 +467,7 @@ public class MainActivity extends ScreenControllingActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == Constants.REQUEST_PICK_APPLICATION && resultCode == RESULT_OK) {
             startActivity(data);
-        } else if (requestCode == Constants.REQUEST_MEDIA_PROJECTION
-                && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        } else if (requestCode == Constants.REQUEST_MEDIA_PROJECTION) {
 
             boolean allowCapture = resultCode == RESULT_OK;
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
@@ -638,8 +637,7 @@ public class MainActivity extends ScreenControllingActivity
             mCommandQueue.updateFromPreferences(prefs);
         }
 
-        if (mCapturer == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-                && prefs.getBoolean(Constants.PREF_CAPTURE_SCREEN_ENABLED, false)) {
+        if (mCapturer == null && prefs.getBoolean(Constants.PREF_CAPTURE_SCREEN_ENABLED, false)) {
             MediaProjectionManager projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
             startActivityForResult(projectionManager.createScreenCaptureIntent(), Constants.REQUEST_MEDIA_PROJECTION);
         } else if (mCapturer != null && !prefs.getBoolean(Constants.PREF_CAPTURE_SCREEN_ENABLED, false)) {

@@ -1,6 +1,5 @@
 package de.vier_bier.habpanelviewer;
 
-import android.annotation.TargetApi;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.hardware.display.DisplayManager;
@@ -8,7 +7,6 @@ import android.hardware.display.VirtualDisplay;
 import android.media.Image;
 import android.media.ImageReader;
 import android.media.projection.MediaProjection;
-import android.os.Build;
 import android.os.Handler;
 
 import java.nio.ByteBuffer;
@@ -19,7 +17,6 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Captures screen shots
  */
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class ScreenCapturer {
 
     private final MediaProjection mProjection;

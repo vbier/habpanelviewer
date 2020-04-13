@@ -5,7 +5,7 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "de.vier_bier.habpanelviewer"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 10
         versionName "0.9.27pre"
@@ -42,15 +42,15 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    annotationProcessor "androidx.room:room-compiler:2.2.1"
-    implementation "androidx.room:room-runtime:2.2.1"
-    implementation 'androidx.room:room-rxjava2:2.2.1'
+    annotationProcessor "androidx.room:room-compiler:2.2.5"
+    implementation "androidx.room:room-runtime:2.2.5"
+    implementation 'androidx.room:room-rxjava2:2.2.5'
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation "androidx.legacy:legacy-support-v13:1.0.0"
 
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
 
     implementation 'com.github.heremaps:oksse:0.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.2.2'
@@ -62,6 +62,9 @@ dependencies {
     implementation 'com.jakewharton:process-phoenix:2.0.0'
     implementation 'com.github.paolorotolo:appintro:v5.1.0'
     implementation 'com.github.hedzr:android-file-chooser:v1.2.0-final'
+
+    implementation 'net.zetetic:android-database-sqlcipher:4.3.0'
+    implementation "androidx.sqlite:sqlite:2.1.0"
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'com.github.webbit:webbit:0.4.19'

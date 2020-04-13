@@ -69,10 +69,6 @@ public class HelpActivity extends ScreenControllingActivity {
             mWikiItem.setEnabled(true);
         }
 
-        UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
-        UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
-        UiUtil.tintItemPreV21(mWikiItem, getApplicationContext(), getTheme());
-
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String theme = prefs.getString(Constants.PREF_THEME, "dark");
 
@@ -87,10 +83,6 @@ public class HelpActivity extends ScreenControllingActivity {
         mWikiItem = menu.findItem(R.id.action_goto_wiki);
         mFileItem = menu.findItem(R.id.action_show_help);
 
-        UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
-        UiUtil.tintItemPreV21(mWikiItem, getApplicationContext(), getTheme());
-        UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
-
         return true;
     }
 
@@ -103,10 +95,6 @@ public class HelpActivity extends ScreenControllingActivity {
             mWikiItem.setEnabled(true);
             mForumItem.setEnabled(false);
 
-            UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
-            UiUtil.tintItemPreV21(mWikiItem, getApplicationContext(), getTheme());
-            UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
-
             final MarkdownView markdownView = findViewById(R.id.activity_help_webview);
             markdownView.loadUrl("https://community.openhab.org/t/habpanelviewer/34112/");
             return true;
@@ -116,10 +104,6 @@ public class HelpActivity extends ScreenControllingActivity {
             mFileItem.setEnabled(true);
             mWikiItem.setEnabled(false);
             mForumItem.setEnabled(true);
-
-            UiUtil.tintItemPreV21(mForumItem, getApplicationContext(), getTheme());
-            UiUtil.tintItemPreV21(mWikiItem, getApplicationContext(), getTheme());
-            UiUtil.tintItemPreV21(mFileItem, getApplicationContext(), getTheme());
 
             final MarkdownView markdownView = findViewById(R.id.activity_help_webview);
             markdownView.loadUrl("https://github.com/vbier/habpanelviewer/wiki");

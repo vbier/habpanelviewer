@@ -19,7 +19,6 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
@@ -28,7 +27,6 @@ import android.view.Surface;
 import android.view.TextureView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import java.nio.ByteBuffer;
@@ -41,7 +39,6 @@ import de.vier_bier.habpanelviewer.R;
 /**
  * Concrete camera implementation using the V2 API.
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class CameraImplV2 extends AbstractCameraImpl {
     private static final String TAG = "HPV-CameraImplV2";
 

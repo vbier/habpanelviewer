@@ -3,7 +3,6 @@ package de.vier_bier.habpanelviewer.command;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -71,25 +70,21 @@ public class InternalCommandHandler implements ICommandHandler {
             cmd.start();
             setMotionDetectionEnabled(false);
         } else if ((paras = matchesRegexp(CAPTURE_SCREEN_PATTERN, cmdStr)) != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ScreenCapturer c = mActivity.getCapturer();
-                if (c == null) {
-                    cmd.failed("could not create capture class. Has the permission been granted?");
-                } else {
-                    cmd.start();
-
-                    int compQuality = getQuality(paras);
-
-                    Bitmap bmp = c.captureScreen();
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    bmp.compress(Bitmap.CompressFormat.JPEG, compQuality, os);
-
-                    byte[] bytes = os.toByteArray();
-
-                    mConnection.updateJpeg(paras[0], bytes);
-                }
+            ScreenCapturer c = mActivity.getCapturer();
+            if (c == null) {
+                cmd.failed("could not create capture class. Has the permission been granted?");
             } else {
-                cmd.failed("Lollipop or newer needed to capture the screen");
+                cmd.start();
+
+                int compQuality = getQuality(paras);
+
+                Bitmap bmp = c.captureScreen();
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.JPEG, compQuality, os);
+
+                byte[] bytes = os.toByteArray();
+
+                mConnection.updateJpeg(paras[0], bytes);
             }
         } else if ((paras = matchesRegexp(CAPTURE_CAMERA_PATTERN, cmdStr)) != null) {
             cmd.start();

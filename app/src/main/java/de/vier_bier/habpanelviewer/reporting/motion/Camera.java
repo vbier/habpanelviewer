@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
-import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -489,7 +488,7 @@ public class Camera {
                 return new CameraImplNone(mContext.getString(R.string.permissionMissing, Manifest.permission.CAMERA));
             }
 
-            if (version == CameraVersion.V2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            if (version == CameraVersion.V2) {
                 mVersion = CameraVersion.V2;
                 return new CameraImplV2(mContext, mPreviewView, mCameraFallback);
             }
@@ -507,8 +506,8 @@ public class Camera {
             return CameraVersion.PERMISSION_MISSING;
         }
 
-        boolean newApi = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_NEW_API, Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
-        if (newApi && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        boolean newApi = prefs.getBoolean(Constants.PREF_MOTION_DETECTION_NEW_API, true);
+        if (newApi) {
             return CameraVersion.V2;
         }
 

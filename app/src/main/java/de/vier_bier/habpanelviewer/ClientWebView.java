@@ -1,12 +1,10 @@
 package de.vier_bier.habpanelviewer;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
-import android.os.Build;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -105,7 +103,6 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                 return !mLogBrowserMsg || super.onConsoleMessage(consoleMessage);
             }
 
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onPermissionRequest(PermissionRequest request) {
                 if (mAllowWebRTC) {
@@ -235,9 +232,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         setOnTouchListener((v, event) -> (event.getAction() == MotionEvent.ACTION_MOVE && mDraggingPrevented));
 
         CookieManager.getInstance().setAcceptCookie(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            CookieManager.getInstance().setAcceptThirdPartyCookies(this, true);
-        }
+        CookieManager.getInstance().setAcceptThirdPartyCookies(this, true);
 
         WebSettings webSettings = getSettings();
         webSettings.setDomStorageEnabled(true);
@@ -316,9 +311,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         }
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            webSettings.setMixedContentMode(mAllowMixedContent ? WebSettings.MIXED_CONTENT_ALWAYS_ALLOW : WebSettings.MIXED_CONTENT_NEVER_ALLOW);
-        }
+        webSettings.setMixedContentMode(mAllowMixedContent ? WebSettings.MIXED_CONTENT_ALWAYS_ALLOW : WebSettings.MIXED_CONTENT_NEVER_ALLOW);
 
         if (mNetworkTracker.isConnected()) {
             if (loadStartUrl) {
