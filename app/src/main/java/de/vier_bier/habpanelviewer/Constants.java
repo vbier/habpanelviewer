@@ -49,6 +49,7 @@ public final class Constants {
     public static final String PREF_RESTART_ENABLED = "pref_restart_enabled";
     public static final String PREF_MAX_RESTARTS = "pref_max_restarts";
     public static final String PREF_LOAD_START_URL_ON_SCREENON = "pref_load_start_url_on_screenon";
+    public static final String PREF_PAUSE_WEBVIEW = "pref_pause_webview";
     public static final String PREF_HW_ACCELERATED = "pref_hardware_accelerated";
     public static final String PREF_APP_VERSION = "pref_app_version";
     public static final String PREF_START_URL = "pref_start_url";

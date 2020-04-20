@@ -98,6 +98,8 @@
     <string name="pref_disableCache_summ">Forces loading of every resource from the server</string>
     <string name="pref_loadStartUrlOnScreenOn">Show Start page on wakeup</string>
     <string name="pref_loadStartUrlOnScreenOn_summ">Shows the start page when the device is turned on</string>
+    <string name="pref_pauseWebview">Pause webiew when screen is off</string>
+    <string name="pref_pauseWebview_summ">Enable this if the device is unresponsive after it has been turned on</string>
     <string name="pref_autoplayVideo">Allow video autoplay</string>
     <string name="pref_autoplayVideo_summ">Allows the browser to start videos without user interaction</string>
     <string name="pref_logBrowserMsgs">Log browser messages</string>

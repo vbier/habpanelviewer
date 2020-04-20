@@ -42,6 +42,7 @@ import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
  */
 public class ClientWebView extends WebView implements NetworkTracker.INetworkListener {
     private static final String TAG = "HPV-ClientWebView";
+    private static final String START_URL = "StartURL";
 
     private boolean mAllowMixedContent;
     private boolean mDraggingPrevented;
@@ -55,6 +56,9 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     private boolean mTrackBrowserConnection;
     private boolean mLogBrowserMsg;
     private boolean mAllowWebRTC;
+
+    private String mPauseUrl;
+    private boolean mPaused;
 
     public ClientWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -97,7 +101,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                if (mTrackBrowserConnection && consoleMessage.message().contains("SSE error, closing EventSource")) {
+                if (mTrackBrowserConnection && !mPaused && consoleMessage.message().contains("SSE error, closing EventSource")) {
                     cl.statusChanged(SseConnection.Status.FAILURE);
                 }
                 return !mLogBrowserMsg || super.onConsoleMessage(consoleMessage);
@@ -127,10 +131,14 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
                                 s -> mKioskMode = Boolean.parseBoolean(s));
                     }
                     Log.d(TAG, "habpanel page loaded. url=" + url + ", kioskMode=" + mKioskMode);
-                    ul.changed(url, true);
+                    if (!mPaused) {
+                        ul.changed(url, true);
+                    }
                 } else {
                     Log.d(TAG, "external page loaded. url=" + url);
-                    ul.changed(url, false);
+                    if (!mPaused) {
+                        ul.changed(url, false);
+                    }
                 }
             }
 
@@ -236,29 +244,6 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
 
         WebSettings webSettings = getSettings();
         webSettings.setDomStorageEnabled(true);
-    }
-
-    public void loadStartUrl() {
-        String url = mStartPage;
-        if ("".equals(url)) {
-            url = mServerURL;
-        }
-
-        if (url == null || "".equals(url)) {
-            post(() -> showHtml(getContext().getString(R.string.configMissing),
-                    getContext().getString(R.string.startPageNotSetHTML)));
-            return;
-        }
-
-        final String startPage = url;
-        mKioskMode = isHabPanelUrl(startPage) && startPage.toLowerCase().contains("kiosk=on");
-        Log.d(TAG, "loadStartUrl: loading start page " + startPage + "...");
-
-        post(() -> {
-            if (getUrl() == null || !startPage.equalsIgnoreCase(getUrl())) {
-                loadUrl(startPage);
-            }
-        });
     }
 
     void updateFromPreferences(SharedPreferences prefs) {
@@ -509,6 +494,67 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         if (mServerURL != null || mStartPage != null) {
             Log.d(TAG, "connected: loading start URL...");
             loadStartUrl();
+        }
+    }
+
+    public void pause() {
+        if (!mPaused) {
+            Log.d(TAG, "pausing webview...");
+
+            mPauseUrl = getUrl();
+            mPaused = true;
+
+            super.loadUrl("about:blank");
+        }
+    }
+
+    public void resume(boolean loadStartOnScreenOn) {
+        if (mPaused) {
+            Log.d(TAG, "resuming webview...");
+
+            mPaused = false;
+            if (mPauseUrl == START_URL || loadStartOnScreenOn) {
+                loadStartUrl();
+            } else {
+                loadUrl(mPauseUrl);
+            }
+            mPauseUrl = null;
+        }
+    }
+
+    @Override
+    public void loadUrl(String url) {
+        if (mPaused) {
+            mPauseUrl = url;
+        } else {
+            super.loadUrl(url);
+        }
+    }
+
+    public void loadStartUrl() {
+        if (mPaused) {
+            mPauseUrl = START_URL;
+        } else {
+            String url = mStartPage;
+            if ("".equals(url)) {
+                url = mServerURL;
+            }
+
+            if (url == null || "".equals(url)) {
+                post(() -> showHtml(getContext().getString(R.string.configMissing),
+                        getContext().getString(R.string.startPageNotSetHTML)));
+                return;
+            }
+
+            final String startPage = url;
+            mKioskMode = isHabPanelUrl(startPage) && startPage.toLowerCase().contains("kiosk=on");
+            Log.d(TAG, "loadStartUrl: loading start page " + startPage + "...");
+
+            post(() -> {
+                if (getUrl() == null || !startPage.equalsIgnoreCase(getUrl())) {
+                    loadUrl(startPage);
+                }
+            });
         }
     }
 }
