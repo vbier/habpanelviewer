@@ -504,6 +504,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             mPauseUrl = getUrl();
             mPaused = true;
 
+            //showHtml("Webview paused","The webview has been paused and will resume to work shortly.");
             super.loadUrl("about:blank");
         }
     }

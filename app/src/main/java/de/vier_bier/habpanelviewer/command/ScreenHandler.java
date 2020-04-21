@@ -20,10 +20,12 @@ public class ScreenHandler implements ICommandHandler {
 
     private final PowerManager.WakeLock screenOnLock;
     private final Activity mActivity;
+    private final DimListener mDimListener;
     private boolean mKeepScreenOn;
 
-    public ScreenHandler(PowerManager pwrManager, Activity activity) {
+    public ScreenHandler(PowerManager pwrManager, Activity activity, DimListener l) {
         mActivity = activity;
+        mDimListener = l;
         screenOnLock = pwrManager.newWakeLock(
                 PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP
                         | PowerManager.ON_AFTER_RELEASE, "HPV:ScreenOnWakeLock");
@@ -93,6 +95,7 @@ public class ScreenHandler implements ICommandHandler {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra(Constants.INTENT_FLAG_DIM, dim);
         intent.putExtra(Constants.INTENT_FLAG_KEEP_SCREEN_ON, mKeepScreenOn);
+        mDimListener.deviceDimming();
         mActivity.startActivityForResult(intent, 0);
     }
 
@@ -103,5 +106,9 @@ public class ScreenHandler implements ICommandHandler {
 
     private synchronized void screenOn(int durationSeconds) {
         screenOnLock.acquire(durationSeconds == 0 ? 500 : durationSeconds * 1000);
+    }
+
+    public interface DimListener {
+        void deviceDimming();
     }
 }
