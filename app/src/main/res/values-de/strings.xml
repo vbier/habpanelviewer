@@ -95,7 +95,7 @@
     <string name="pref_disableCache_summ">Erzwingt, das jede Ressource vom Server geladen wird.</string>
     <string name="pref_loadStartUrlOnScreenOn">Zeige Startseite beim Aufwachen</string>
     <string name="pref_loadStartUrlOnScreenOn_summ">Zeigt die Startseite, wenn das Gerät angeschaltet wird</string>
-    <string name="pref_pauseWebview">Pausiere den Browser wenn das Gerät ausgechaltet ist</string>
+    <string name="pref_pauseWebview">Pausiere den Browser wenn das Gerät ausgeschaltet ist</string>
     <string name="pref_pauseWebview_summ">Aktiviere dies, wenn der Browser nach dem Einschalten hängt</string>
     <string name="pref_autoplayVideo">Erlaube Starten von Videos</string>
     <string name="pref_autoplayVideo_summ">Erlaubt es dem Browser Videos in Webseiten ohne Benutzerinteraktion zu starten</string>
