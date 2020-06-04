@@ -25,7 +25,6 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
 
     private final Context mCtx;
     private final ServerConnection mServerConnection;
-    private final ScreenListener mListener;
 
     private final BroadcastReceiver mScreenReceiver;
     private boolean mMonitorEnabled;
@@ -36,10 +35,9 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
     private boolean mScreenOn;
     private final IntentFilter mIntentFilter;
 
-    public ScreenMonitor(Context context, ServerConnection serverConnection, ScreenListener listener) {
+    public ScreenMonitor(Context context, ServerConnection serverConnection) {
         mCtx = context;
         mServerConnection = serverConnection;
-        mListener = listener;
 
         EventBus.getDefault().register(this);
 
@@ -47,10 +45,6 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
             @Override
             public void onReceive(Context context, Intent intent) {
                 mScreenOn = Intent.ACTION_SCREEN_ON.equals(intent.getAction());
-                if (mListener.isActive() && mScreenOn) {
-                    mListener.screenOn();
-                }
-
                 if (mMonitorEnabled && mScreenOnItem != null) {
                     mServerConnection.updateState(mScreenOnItem, mScreenOn ? "CLOSED" : "OPEN");
                 }
@@ -100,7 +94,7 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
     public synchronized void updateFromPreferences(SharedPreferences prefs) {
         mScreenOnItem = prefs.getString(Constants.PREF_SCREEN_ITEM, "");
 
-        if (mReceiverRegistered != (prefs.getBoolean(Constants.PREF_SCREEN_ENABLED, false) || mListener.isActive())) {
+        if (mReceiverRegistered != (prefs.getBoolean(Constants.PREF_SCREEN_ENABLED, false))) {
             mReceiverRegistered = !mReceiverRegistered;
 
             mMonitorEnabled = prefs.getBoolean(Constants.PREF_SCREEN_ENABLED, false);
@@ -128,10 +122,5 @@ public class ScreenMonitor implements IDeviceMonitor, IStateUpdateListener {
         }
 
         mServerConnection.subscribeItems(this, mScreenOnItem);
-    }
-
-    public interface ScreenListener {
-        void screenOn();
-        boolean isActive();
     }
 }

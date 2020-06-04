@@ -280,17 +280,7 @@ public class MainActivity extends ScreenControllingActivity
 
         mMonitors.add(new BatteryMonitor(this, mServerConnection));
         mMonitors.add(new DockingStateMonitor(this, mServerConnection));
-        mMonitors.add(new ScreenMonitor(this, mServerConnection, new ScreenMonitor.ScreenListener() {
-            @Override
-            public void screenOn() {
-                mWebView.loadStartUrl();
-            }
-
-            @Override
-            public boolean isActive() {
-                return prefs.getBoolean(Constants.PREF_LOAD_START_URL_ON_SCREENON, false);
-            }
-        }));
+        mMonitors.add(new ScreenMonitor(this, mServerConnection));
         mMonitors.add(new VolumeMonitor(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE), mServerConnection));
 
         SensorManager m = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -305,7 +295,7 @@ public class MainActivity extends ScreenControllingActivity
             mCommandQueue.addHandler(new InternalCommandHandler(this, mMotionDetector, mServerConnection));
             mCommandQueue.addHandler(new AdminHandler(this));
             mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
-            mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this));
+            mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this, () -> mWebView.post(() -> mWebView.pause())));
             mCommandQueue.addHandler(new VolumeHandler(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE)));
             mCommandQueue.addHandler(new NotificationHandler(this));
             mCommandQueue.addHandler(new TtsHandler(this));
@@ -593,14 +583,20 @@ public class MainActivity extends ScreenControllingActivity
             mService.startForeground(42, builder.build());
         }
 
-        mWebView.onPause();
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        boolean pauseWebview = prefs.getBoolean(Constants.PREF_PAUSE_WEBVIEW, false);
+        if (pauseWebview && !((PowerManager) getSystemService(POWER_SERVICE)).isInteractive()) {
+            mWebView.pause();
+        }
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mWebView.onResume();
+
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        mWebView.resume(prefs.getBoolean(Constants.PREF_LOAD_START_URL_ON_SCREENON, false));
 
         if (mService != null) {
             mService.stopForeground(true);
