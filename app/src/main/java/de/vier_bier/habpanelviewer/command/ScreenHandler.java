@@ -95,7 +95,7 @@ public class ScreenHandler implements ICommandHandler {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.putExtra(Constants.INTENT_FLAG_DIM, dim);
         intent.putExtra(Constants.INTENT_FLAG_KEEP_SCREEN_ON, mKeepScreenOn);
-        if (dim) {
+        if (dim && mDimListener != null) {
             mDimListener.deviceDimming();
         }
         mActivity.startActivityForResult(intent, 0);

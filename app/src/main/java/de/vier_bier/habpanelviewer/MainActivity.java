@@ -295,7 +295,11 @@ public class MainActivity extends ScreenControllingActivity
             mCommandQueue.addHandler(new InternalCommandHandler(this, mMotionDetector, mServerConnection));
             mCommandQueue.addHandler(new AdminHandler(this));
             mCommandQueue.addHandler(new BluetoothHandler(this, (BluetoothManager) getSystemService(BLUETOOTH_SERVICE)));
-            mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this, () -> mWebView.post(() -> mWebView.pause())));
+            boolean pauseWebview = prefs.getBoolean(Constants.PREF_PAUSE_WEBVIEW, false);
+            if (pauseWebview)
+                mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this, () -> mWebView.post(() -> mWebView.pause())));
+            else
+                mCommandQueue.addHandler(new ScreenHandler((PowerManager) getSystemService(POWER_SERVICE), this, null));
             mCommandQueue.addHandler(new VolumeHandler(this, (AudioManager) getSystemService(Context.AUDIO_SERVICE)));
             mCommandQueue.addHandler(new NotificationHandler(this));
             mCommandQueue.addHandler(new TtsHandler(this));
