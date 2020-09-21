@@ -148,7 +148,8 @@ public class ServerConnection implements IStatePropagator {
                 Log.d(TAG, "subscribing items: " + newItems.toString());
             }
 
-            if (subscriptions.size() > 0) {
+
+            if (subscriptions.size() + newItems.size() + removedItems.size() > 0) {
                 Log.v(TAG, "current set of items: " + subscriptions.keySet().toString());
             }
         }
