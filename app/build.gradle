@@ -41,9 +41,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    annotationProcessor "androidx.room:room-compiler:2.2.5"
     implementation "androidx.room:room-runtime:2.2.5"
-    implementation 'androidx.room:room-rxjava2:2.2.5'
 
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation "androidx.legacy:legacy-support-v13:1.0.0"
