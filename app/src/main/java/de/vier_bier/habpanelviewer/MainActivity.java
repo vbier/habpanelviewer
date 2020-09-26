@@ -519,6 +519,10 @@ public class MainActivity extends ScreenControllingActivity
         if (mMotionDetector == null || mCam == null || !mCam.canBeUsed()) {
             status.set(getString(R.string.pref_motion), getString(R.string.unavailable));
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            status.set(getString(R.string.powerSavingEnabled),
+                    getString(((PowerManager) getSystemService(POWER_SERVICE)).isIgnoringBatteryOptimizations(getPackageName()) ? R.string.no : R.string.yes));
+        }
 
         String webview = "";
         PackageManager pm = getPackageManager();

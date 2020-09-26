@@ -350,7 +350,7 @@
     <string name="couldNotStopPreview">Could not stop preview</string>
     <string name="camFailedToTakePic">Failed to capture picture</string>
     <string name="camNotInitialized">Camera not initialized</string>
-    <string name="powerSavingEnabled">Power saving</string>
+    <string name="powerSavingEnabled">Battery optimization enabled</string>
     <string name="diablePowerSaving">You currently have battery optimization enabled for HPV. This prevents the app from receiving commands as well as from reporting sensor values while the device is in stand-by. Do you want to disable battery optimization?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
