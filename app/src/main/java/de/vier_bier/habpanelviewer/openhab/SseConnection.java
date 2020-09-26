@@ -1,10 +1,11 @@
 package de.vier_bier.habpanelviewer.openhab;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
-import com.here.oksse.OkSse;
-import com.here.oksse.ServerSentEvent;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.ArrayList;
@@ -18,6 +19,9 @@ import de.vier_bier.habpanelviewer.db.CredentialManager;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.sse.EventSource;
+import okhttp3.sse.EventSourceListener;
+import okhttp3.sse.EventSources;
 
 public class SseConnection implements NetworkTracker.INetworkListener, CredentialManager.CredentialsListener {
     private static final String TAG = "HPV-SseConnection";
@@ -27,7 +31,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
     private final List<ISseListener> mListeners = new ArrayList<>();
     Status mStatus = Status.NOT_CONNECTED;
-    private ServerSentEvent mEventSource;
+    private EventSource mEventSource;
 
     SseConnection() {
     }
@@ -85,7 +89,8 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         Log.v(TAG, "SseConnection.connect");
 
         if (mEventSource != null) {
-            mEventSource.close();
+            mEventSource.cancel();
+            mEventSource = null;
         }
 
         if (!mNetworkConnected) {
@@ -96,11 +101,11 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
             setStatus(Status.CONNECTING);
 
             OkHttpClient client = createConnection();
-            OkSse oksse = new OkSse(client);
-            ServerSentEvent.Listener sseHandler = new SSEHandler();
+            EventSourceListener sseHandler = new SSEHandler();
             try {
                 Request request = new Request.Builder().url(buildUrl()).build();
-                mEventSource = oksse.newServerSentEvent(request, sseHandler);
+                mEventSource = EventSources.createFactory(client).newEventSource(request, sseHandler);
+
                 Log.v(TAG, "mEventSource = " + mEventSource.request().url().toString());
             } catch (IllegalArgumentException e) {
                 setStatus(Status.INVALID_URL);
@@ -119,7 +124,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     @TestOnly
     void disconnect() {
         if (mEventSource != null) {
-            mEventSource.close();
+            mEventSource.cancel();
             mEventSource = null;
         }
 
@@ -137,7 +142,6 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     private void setStatus(Status status) {
         if (status != mStatus) {
             mStatus = status;
-            Log.e(TAG, "status=" + mStatus.name(), new Exception("dummy"));
 
             synchronized (mListeners) {
                 for (ISseListener l : mListeners) {
@@ -166,8 +170,6 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         // initial state
         NOT_CONNECTED,
         CONNECTING, CONNECTED,
-        // whenever the connection is lost, state will be RECONNECTING
-        RECONNECTING,
         // device has not network
         NO_NETWORK,
         // url is not set or invalid
@@ -180,66 +182,72 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         FAILURE;
 
         boolean isConnecting() {
-            return this == RECONNECTING || this == CONNECTING;
+            return this == CONNECTING;
         }
    }
 
-    private class SSEHandler implements ServerSentEvent.Listener {
+    private class SSEHandler extends EventSourceListener {
+        private int failureCount = 0;
         SSEHandler() { }
 
         @Override
-        public void onOpen(ServerSentEvent sse, Response response) {
+        public void onOpen(@NotNull EventSource eventSource, @NotNull Response response) {
+            failureCount = 0;
             setStatus(Status.CONNECTED);
         }
 
         @Override
-        public void onMessage(ServerSentEvent sse, String id, String event, String message) {
-            synchronized (mListeners) {
-                for (ISseListener l : mListeners) {
-                    if (l instanceof ISseDataListener) {
-                        ((ISseDataListener) l).data(message);
+        public void onClosed(@NotNull EventSource eventSource) {
+            if (mStatus == Status.CONNECTED){
+                setStatus(Status.NOT_CONNECTED);
+            }
+        }
+
+        @Override
+        public void onEvent(@NotNull EventSource eventSource, @Nullable String id, @Nullable String type, @NotNull String data) {
+            if ("message".equals(type)) {
+                synchronized (mListeners) {
+                    for (ISseListener l : mListeners) {
+                        if (l instanceof ISseDataListener) {
+                            ((ISseDataListener) l).data(data);
+                        }
                     }
                 }
             }
         }
 
         @Override
-        public void onComment(ServerSentEvent sse, String comment) {
-        }
+        public void onFailure(@NotNull EventSource eventSource, @Nullable Throwable t, @Nullable Response response) {
+            failureCount++;
 
-        @Override
-        public boolean onRetryTime(ServerSentEvent sse, long milliseconds) {
-            return false;
-        }
-
-        @Override
-        public boolean onRetryError(ServerSentEvent sse, Throwable throwable, Response response) {
-            if (throwable instanceof SSLHandshakeException) {
+            if (t instanceof SSLHandshakeException) {
                 setStatus(Status.CERTIFICATE_ERROR);
             } else if (response != null && (response.code() == 401 || response.code() == 407)) {
                 setStatus(Status.UNAUTHORIZED);
-            } else if (mStatus == Status.CONNECTED) {
-                // connection lost, retry
-                setStatus(Status.RECONNECTING);
             } else {
-                setStatus(Status.FAILURE);
-            }
-
-            return true;
-        }
-
-        @Override
-        public void onClosed(ServerSentEvent sse) {
-            if (mStatus == Status.CONNECTED){
                 setStatus(Status.NOT_CONNECTED);
-                mEventSource.close();
-            }
-        }
 
-        @Override
-        public Request onPreRetry(ServerSentEvent sse, Request originalRequest) {
-            System.out.println("onPreRetry");
-            return originalRequest;
+                int delay = 500;
+
+                if (failureCount > 100) {
+                    delay = 5000;
+                } else if (failureCount > 50) {
+                    delay = 2000;
+                } else if (failureCount > 30) {
+                    delay = 1000;
+                } else if (failureCount > 10) {
+                    delay = 1000;
+                }
+
+                // trigger reconnect
+                final Handler handler = new Handler(Looper.getMainLooper());
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        connect();
+                    }
+                }, delay);
+            }
         }
     }
 }
