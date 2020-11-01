@@ -85,7 +85,9 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         Log.v(TAG, "SseConnection.connect");
 
         if (mEventSource != null) {
-            mEventSource.close();
+            ServerSentEvent oldSource = mEventSource;
+            mEventSource = null;
+            oldSource.close();
         }
 
         if (!mNetworkConnected) {
@@ -119,8 +121,9 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     @TestOnly
     void disconnect() {
         if (mEventSource != null) {
-            mEventSource.close();
+            ServerSentEvent oldSource = mEventSource;
             mEventSource = null;
+            oldSource.close();
         }
 
         setStatus(Status.NOT_CONNECTED);
@@ -135,9 +138,10 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     }
 
     private void setStatus(Status status) {
+        Log.e(TAG, "status=" + status.name(), new Exception("dummy"));
+
         if (status != mStatus) {
             mStatus = status;
-            Log.e(TAG, "status=" + mStatus.name(), new Exception("dummy"));
 
             synchronized (mListeners) {
                 for (ISseListener l : mListeners) {
@@ -232,13 +236,16 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         public void onClosed(ServerSentEvent sse) {
             if (mStatus == Status.CONNECTED){
                 setStatus(Status.NOT_CONNECTED);
-                mEventSource.close();
+
+                if (mEventSource == sse) {
+                    // connection closed from outside, try to reconnect
+                    connect();
+                }
             }
         }
 
         @Override
         public Request onPreRetry(ServerSentEvent sse, Request originalRequest) {
-            System.out.println("onPreRetry");
             return originalRequest;
         }
     }
