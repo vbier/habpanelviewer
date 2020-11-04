@@ -44,6 +44,7 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     private static final String TAG = "HPV-ClientWebView";
     private static final String START_URL = "StartURL";
 
+    private boolean mIsDesktop;
     private boolean mAllowMixedContent;
     private boolean mDraggingPrevented;
     private String mServerURL;
@@ -262,6 +263,16 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         mDraggingPrevented = prefs.getBoolean(Constants.PREF_PREVENT_DRAGGING, false);
 
         WebSettings webSettings = getSettings();
+        String newUserAgent = webSettings.getUserAgentString();
+        if (isDesktop) {
+            String androidOSString = webSettings.getUserAgentString().substring(newUserAgent.indexOf("("), newUserAgent.indexOf(")") + 1);
+            newUserAgent = webSettings.getUserAgentString().replace(androidOSString, "(X11; Linux x86_64)");
+            newUserAgent = newUserAgent.replaceAll("Mobile", "");
+        } else {
+            newUserAgent = null;
+        }
+
+        webSettings.setUserAgentString(newUserAgent);
         webSettings.setUseWideViewPort(isDesktop);
         webSettings.setLoadWithOverviewMode(isDesktop);
         webSettings.setJavaScriptEnabled(isJavascript);
@@ -275,6 +286,11 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             loadStartUrl = true;
         }
         loadStartUrl = loadStartUrl || isShowingErrorPage();
+
+        if (mIsDesktop != isDesktop) {
+            mIsDesktop = isDesktop;
+            reloadUrl = true;
+        }
 
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString(Constants.PREF_SERVER_URL, "!$%"))) {
             mServerURL = prefs.getString(Constants.PREF_SERVER_URL, "");
