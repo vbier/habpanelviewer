@@ -83,8 +83,11 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
     void connect() {
         Log.v(TAG, "SseConnection.connect");
+        Log.v(TAG, "mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()));
 
+        boolean isReconnect = false;
         if (mEventSource != null) {
+            isReconnect = true;
             ServerSentEvent oldSource = mEventSource;
             mEventSource = null;
             oldSource.close();
@@ -95,7 +98,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         } else if (mUrl == null || mUrl.trim().isEmpty()) {
             setStatus(Status.URL_MISSING);
         } else {
-            setStatus(Status.CONNECTING);
+            setStatus(isReconnect ? Status.RECONNECTING : Status.CONNECTING);
 
             OkHttpClient client = createConnection();
             OkSse oksse = new OkSse(client);
@@ -104,6 +107,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
                 Request request = new Request.Builder().url(buildUrl()).build();
                 mEventSource = oksse.newServerSentEvent(request, sseHandler);
                 Log.v(TAG, "mEventSource = " + mEventSource.request().url().toString());
+                Log.v(TAG, "mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()));
             } catch (IllegalArgumentException e) {
                 setStatus(Status.INVALID_URL);
             }
@@ -138,7 +142,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     }
 
     private void setStatus(Status status) {
-        Log.e(TAG, "status=" + status.name(), new Exception("dummy"));
+        Log.e(TAG, "setting status " + status.name() + ", connection=" + (mEventSource == null ? "null" : mEventSource.hashCode()), new Exception("dummy"));
 
         if (status != mStatus) {
             mStatus = status;
@@ -193,17 +197,25 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
         @Override
         public void onOpen(ServerSentEvent sse, Response response) {
+            Log.v(TAG, "SSEHandler.onOpen: mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()) + ", sse=" + sse.hashCode());
+
             setStatus(Status.CONNECTED);
         }
 
         @Override
         public void onMessage(ServerSentEvent sse, String id, String event, String message) {
-            synchronized (mListeners) {
-                for (ISseListener l : mListeners) {
-                    if (l instanceof ISseDataListener) {
-                        ((ISseDataListener) l).data(message);
+            Log.v(TAG, "SSEHandler.onMessage: mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()) + ", sse=" + sse.hashCode());
+
+            if (mEventSource == sse) {
+                synchronized (mListeners) {
+                    for (ISseListener l : mListeners) {
+                        if (l instanceof ISseDataListener) {
+                            ((ISseDataListener) l).data(message);
+                        }
                     }
                 }
+            } else {
+                Log.v(TAG, "ignoring event from old event source!");
             }
         }
 
@@ -218,29 +230,43 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
         @Override
         public boolean onRetryError(ServerSentEvent sse, Throwable throwable, Response response) {
-            if (throwable instanceof SSLHandshakeException) {
-                setStatus(Status.CERTIFICATE_ERROR);
-            } else if (response != null && (response.code() == 401 || response.code() == 407)) {
-                setStatus(Status.UNAUTHORIZED);
-            } else if (mStatus == Status.CONNECTED) {
-                // connection lost, retry
-                setStatus(Status.RECONNECTING);
+            Log.v(TAG, "SSEHandler.onRetryError: mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()) + ", sse=" + sse.hashCode());
+
+            if (mEventSource == sse) {
+                if (throwable instanceof SSLHandshakeException) {
+                    setStatus(Status.CERTIFICATE_ERROR);
+                } else if (response != null && (response.code() == 401 || response.code() == 407)) {
+                    setStatus(Status.UNAUTHORIZED);
+                } else if (mStatus == Status.CONNECTED) {
+                    // connection lost, retry
+                    setStatus(Status.RECONNECTING);
+                } else {
+                    setStatus(Status.FAILURE);
+                }
+
+                return true;
             } else {
-                setStatus(Status.FAILURE);
+                Log.v(TAG, "ignoring event from old event source!");
             }
 
-            return true;
+            return false;
         }
 
         @Override
         public void onClosed(ServerSentEvent sse) {
-            if (mStatus == Status.CONNECTED){
-                setStatus(Status.NOT_CONNECTED);
+            Log.v(TAG, "SSEHandler.onClosed: mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()) + ", sse=" + sse.hashCode() + ", status=" + mStatus);
 
-                if (mEventSource == sse) {
+            if (mEventSource == sse) {
+                if (mStatus == Status.CONNECTED){
+                    setStatus(Status.NOT_CONNECTED);
+
+                    Log.v(TAG, "sse connection closed unexpectedly. reconnecting...");
+
                     // connection closed from outside, try to reconnect
                     connect();
                 }
+            } else {
+                Log.v(TAG, "ignoring event from old event source!");
             }
         }
 
