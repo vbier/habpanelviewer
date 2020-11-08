@@ -627,7 +627,7 @@ public class MainActivity extends ScreenControllingActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) navigationView.getLayoutParams();
         final String menuPos = prefs.getString(Constants.PREF_MENU_POSITION, "");
-        if (getString(R.string.left).equalsIgnoreCase(menuPos)) {
+        if ("left".equalsIgnoreCase(menuPos)) {
             params.gravity = Gravity.START;
         } else {
             params.gravity = Gravity.END;
