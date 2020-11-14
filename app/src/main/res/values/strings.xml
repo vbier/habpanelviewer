@@ -340,6 +340,7 @@
     <string name="cacheCleared">Cache cleared</string>
     <string name="disableRestart">Disable Restart</string>
     <string name="themeChangedRestartRequired">The theme has changed. Restart required to apply.</string>
+    <string name="desktopModeChangedRestartRequired">Desktop mode has changed. Restart required to apply.</string>
     <string name="permissionMissing">Required permission missing: %s</string>
     <string name="openingCamTimedOut">Opening camera timed out</string>
     <string name="openingCamInterrupted">Got interrupt while opening camera</string>

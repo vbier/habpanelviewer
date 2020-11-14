@@ -337,6 +337,7 @@
     <string name="cacheCleared">Cache geleert</string>
     <string name="disableRestart">Neustart abschalten</string>
     <string name="themeChangedRestartRequired">Das Theme wurde geändert. Neustart benötigt um es anzuwenden.</string>
+    <string name="desktopModeChangedRestartRequired">Der Desktop Modus wurde geändert. Neustart benötigt um es anzuwenden.</string>
     <string name="permissionMissing">Berechtigung fehlt: %s</string>
     <string name="openingCamTimedOut">Zeitüberschreitung beim Öffnen der Kamera</string>
     <string name="openingCamInterrupted">Öffnen der Kamera unterbrochen</string>

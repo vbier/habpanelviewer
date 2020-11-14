@@ -12,6 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.legacy.app.FragmentCompat;
 
+import org.greenrobot.eventbus.EventBus;
+
 import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.UiUtil;
@@ -27,6 +29,18 @@ public class PreferencesBrowser extends PreferenceFragment {
         // add validation to the allow webrtc
         CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference(Constants.PREF_ALLOW_WEBRTC);
         allowPreference.setOnPreferenceChangeListener(new WebRtcValidatingListener());
+
+        // restart on change of desktop mode
+        CheckBoxPreference desktopPreference = (CheckBoxPreference) findPreference(Constants.PREF_DESKTOP_MODE);
+        desktopPreference.setOnPreferenceChangeListener((preference, o) -> {
+            if (getActivity() != null && !getActivity().isFinishing()) {
+                UiUtil.showSnackBar(getActivity().findViewById(R.id.myCoordinatorLayout),
+                        R.string.themeChangedRestartRequired, R.string.action_restart,
+                        view -> EventBus.getDefault().post(new Constants.Restart()));
+            }
+
+            return true;
+        });
     }
 
     @Override

@@ -44,7 +44,6 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
     private static final String TAG = "HPV-ClientWebView";
     private static final String START_URL = "StartURL";
 
-    private boolean mIsDesktop;
     private boolean mAllowMixedContent;
     private boolean mDraggingPrevented;
     private String mServerURL;
@@ -273,8 +272,11 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         }
 
         webSettings.setUserAgentString(newUserAgent);
-        webSettings.setUseWideViewPort(isDesktop);
         webSettings.setLoadWithOverviewMode(isDesktop);
+        if (isDesktop) {
+            setInitialScale(100);
+            webSettings.setTextZoom(100);
+        }
         webSettings.setJavaScriptEnabled(isJavascript);
         webSettings.setCacheMode(cacheDeactivated ? WebSettings.LOAD_NO_CACHE : WebSettings.LOAD_DEFAULT);
         webSettings.setMediaPlaybackRequiresUserGesture(!isAutoplay);
@@ -286,11 +288,6 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             loadStartUrl = true;
         }
         loadStartUrl = loadStartUrl || isShowingErrorPage();
-
-        if (mIsDesktop != isDesktop) {
-            mIsDesktop = isDesktop;
-            reloadUrl = true;
-        }
 
         if (mServerURL == null || !mServerURL.equalsIgnoreCase(prefs.getString(Constants.PREF_SERVER_URL, "!$%"))) {
             mServerURL = prefs.getString(Constants.PREF_SERVER_URL, "");
