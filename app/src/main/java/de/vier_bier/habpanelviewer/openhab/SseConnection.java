@@ -26,7 +26,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     private boolean mNetworkConnected;
 
     private final List<ISseListener> mListeners = new ArrayList<>();
-    Status mStatus = Status.NOT_CONNECTED;
+    volatile Status mStatus = Status.NOT_CONNECTED;
     private ServerSentEvent mEventSource;
 
     SseConnection() {
@@ -81,7 +81,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         setNetworkConnected(true);
     }
 
-    void connect() {
+    synchronized void connect() {
         Log.v(TAG, "SseConnection.connect");
         Log.v(TAG, "mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()));
 
@@ -122,8 +122,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         return mUrl + "/rest/events";
     }
 
-    @TestOnly
-    void disconnect() {
+    synchronized void disconnect() {
         if (mEventSource != null) {
             ServerSentEvent oldSource = mEventSource;
             mEventSource = null;
@@ -136,7 +135,10 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     private void setNetworkConnected(boolean connected) {
         mNetworkConnected = connected;
 
-        if (!connected || (mStatus == Status.NOT_CONNECTED || mStatus == Status.NO_NETWORK)) {
+        if (!connected) {
+            disconnect();
+            setStatus(Status.NO_NETWORK);
+        } else if (mStatus == Status.NOT_CONNECTED || mStatus == Status.NO_NETWORK) {
             connect();
         }
     }
@@ -230,21 +232,23 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
         @Override
         public boolean onRetryError(ServerSentEvent sse, Throwable throwable, Response response) {
-            Log.v(TAG, "SSEHandler.onRetryError: mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()) + ", sse=" + sse.hashCode());
+            Log.v(TAG, "SSEHandler.onRetryError: mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()) + ", sse=" + sse.hashCode() + ", status=" + mStatus);
 
             if (mEventSource == sse) {
+                boolean reconnect = mStatus == Status.CONNECTED;
+
                 if (throwable instanceof SSLHandshakeException) {
                     setStatus(Status.CERTIFICATE_ERROR);
                 } else if (response != null && (response.code() == 401 || response.code() == 407)) {
                     setStatus(Status.UNAUTHORIZED);
-                } else if (mStatus == Status.CONNECTED) {
+                } else if (reconnect) {
                     // connection lost, retry
                     setStatus(Status.RECONNECTING);
                 } else {
                     setStatus(Status.FAILURE);
                 }
 
-                return true;
+                return reconnect;
             } else {
                 Log.v(TAG, "ignoring event from old event source!");
             }
