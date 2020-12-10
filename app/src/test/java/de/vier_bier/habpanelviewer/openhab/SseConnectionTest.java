@@ -13,6 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.webbitserver.EventSourceConnection;
 import org.webbitserver.EventSourceHandler;
+import org.webbitserver.HttpControl;
+import org.webbitserver.HttpHandler;
+import org.webbitserver.HttpRequest;
+import org.webbitserver.HttpResponse;
 import org.webbitserver.WebServer;
 import org.webbitserver.WebServers;
 import org.webbitserver.handler.authentication.BasicAuthenticationHandler;
@@ -144,6 +148,21 @@ public class SseConnectionTest {
         runAndWait(() -> mSseConnection.setServerUrl("http://localhost:8080"), CONNECTED);
     }
 
+    @Test
+    public void testReConnectOn404() throws InterruptedException, ExecutionException {
+        EmptyEventSourceHandler evh = new EmptyEventSourceHandler();
+        Return404Handler r404h = new Return404Handler();
+        mWebServer.add("/rest/events", r404h)
+                .add("/rest/events", evh).start().get();
+
+        mSseConnection.connected();
+        runAndWait(() -> mSseConnection.setServerUrl("http://localhost:8080"), CONNECTED);
+        runAndWait(() -> {r404h.setReturn404(true); evh.closeConnection();}, RECONNECTING);
+
+        r404h.wait404();
+        runAndWait(() -> r404h.setReturn404(false), CONNECTED);
+    }
+
     private void runAndWait(ExceptionRaisingRunnable r, SseConnection.Status status) throws InterruptedException {
         runAndWait(r, status, 5);
     }
@@ -176,13 +195,45 @@ public class SseConnectionTest {
         void run() throws Exception;
     }
 
-    class EmptyEventSourceHandler implements EventSourceHandler {
-        @Override
-        public void onOpen(EventSourceConnection connection) {
+    class Return404Handler implements HttpHandler {
+        private boolean mReturn404;
+        private CountDownLatch m404Latch = new CountDownLatch(5);
+
+        public synchronized void setReturn404(boolean return404) {
+            mReturn404 = return404;
         }
 
         @Override
-        public void onClose(EventSourceConnection connection) {
+        public void handleHttpRequest(HttpRequest request, HttpResponse response, HttpControl control) {
+            System.out.println("Return404Handler.handleHttpRequest");
+            if (mReturn404) {
+                m404Latch.countDown();
+                response.status(404).end();
+            } else {
+                control.nextHandler();
+            }
+        }
+
+        public void wait404() throws InterruptedException {
+            m404Latch.await();
+        }
+    }
+
+    class EmptyEventSourceHandler implements EventSourceHandler {
+        EventSourceConnection mConnection;
+
+        public synchronized void closeConnection() {
+            mConnection.close();
+        }
+
+        @Override
+        public synchronized void onOpen(EventSourceConnection connection) {
+            mConnection = connection;
+        }
+
+        @Override
+        public synchronized void onClose(EventSourceConnection connection) {
+            mConnection = null;
         }
     }
 }

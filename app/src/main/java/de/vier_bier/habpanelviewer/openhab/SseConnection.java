@@ -24,6 +24,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
     String mUrl;
     private boolean mNetworkConnected;
+    private boolean mHasBeenConnected;
 
     private final List<ISseListener> mListeners = new ArrayList<>();
     volatile Status mStatus = Status.NOT_CONNECTED;
@@ -35,6 +36,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     void setServerUrl(String url) {
         if (mUrl == null && url != null || mUrl != null && !mUrl.equals(url)) {
             mUrl = url;
+            mHasBeenConnected = false;
 
             if (mStatus.isConnecting() || mStatus == Status.CONNECTED) {
                 disconnect();
@@ -149,6 +151,10 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         if (status != mStatus) {
             mStatus = status;
 
+            if (mStatus == Status.CONNECTED) {
+                mHasBeenConnected = true;
+            }
+
             synchronized (mListeners) {
                 for (ISseListener l : mListeners) {
                     if (l instanceof ISseConnectionListener) {
@@ -235,20 +241,18 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
             Log.v(TAG, "SSEHandler.onRetryError: mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()) + ", sse=" + sse.hashCode() + ", status=" + mStatus);
 
             if (mEventSource == sse) {
-                boolean reconnect = mStatus == Status.CONNECTED;
-
                 if (throwable instanceof SSLHandshakeException) {
                     setStatus(Status.CERTIFICATE_ERROR);
                 } else if (response != null && (response.code() == 401 || response.code() == 407)) {
                     setStatus(Status.UNAUTHORIZED);
-                } else if (reconnect) {
+                } else if (mHasBeenConnected) {
                     // connection lost, retry
                     setStatus(Status.RECONNECTING);
                 } else {
                     setStatus(Status.FAILURE);
                 }
 
-                return reconnect;
+                return mHasBeenConnected;
             } else {
                 Log.v(TAG, "ignoring event from old event source!");
             }
