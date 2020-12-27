@@ -2,6 +2,7 @@ package de.vier_bier.habpanelviewer.preferences;
 
 import android.util.Log;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -10,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
+import de.vier_bier.habpanelviewer.connection.OkHttpClientFactory;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -22,8 +23,8 @@ class ItemValidator {
     private static final String TAG = "HPV-ItemValidator";
     private final List<String> mNames = new ArrayList<>();
 
-    void setServerUrl(String serverUrl, VaildationStateListener l) {
-        OkHttpClient client = ConnectionStatistics.OkHttpClientFactory.getInstance().create();
+    void setServerUrl(String serverUrl, ValidationStateListener l) {
+        OkHttpClient client = OkHttpClientFactory.getInstance().create();
 
         try {
             Request request = new Request.Builder()
@@ -33,14 +34,14 @@ class ItemValidator {
             client.newCall(request)
                     .enqueue(new Callback() {
                         @Override
-                        public void onFailure(final Call call, IOException e) {
+                        public void onFailure(@NotNull final Call call, @NotNull IOException e) {
                             Log.e(TAG, "Failed to fetch item names from server " + serverUrl, e);
                             mNames.clear();
                             l.validationUnavailable();
                         }
 
                         @Override
-                        public void onResponse(Call call, final Response response) throws IOException {
+                        public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
                             mNames.clear();
 
                             if (response.code() == 200) {
@@ -75,7 +76,7 @@ class ItemValidator {
         return mNames.contains(itemName);
     }
 
-    interface VaildationStateListener {
+    interface ValidationStateListener {
         void validationAvailable(List<String> items);
         void validationUnavailable();
     }

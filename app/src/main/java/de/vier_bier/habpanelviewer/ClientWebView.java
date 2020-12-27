@@ -31,11 +31,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 
+import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.openhab.ISseConnectionListener;
 import de.vier_bier.habpanelviewer.openhab.IUrlListener;
 import de.vier_bier.habpanelviewer.openhab.SseConnection;
-import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 
 /**
  * WebView
@@ -118,7 +118,6 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         });
 
         setWebViewClient(new WebViewClient() {
-
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -218,22 +217,17 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
             @Override
             public void onReceivedHttpAuthRequest(WebView view, final HttpAuthHandler handler, final String host, final String realm) {
                 Log.i(TAG, "realm " + realm);
-                CredentialManager.getInstance().handleAuthRequest(host, realm, handler,
-                        () -> UiUtil.showPasswordDialog(getContext(), host, realm, new UiUtil.CredentialsListener() {
+                CredentialManager.getInstance().handleAuthRequest(getContext(), host, realm, new CredentialManager.CredentialsListener() {
                     @Override
-                    public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
-                        if (store) {
-                            CredentialManager.getInstance().registerCredentials(host, realm, user, password);
-                        }
-
-                        handler.proceed(user, password);
+                    public void credentialsEntered(String user, String pass) {
+                        handler.proceed(user, pass);
                     }
 
                     @Override
                     public void credentialsCancelled() {
                         handler.cancel();
                     }
-                }));
+                });
             }
         });
 
@@ -397,10 +391,6 @@ public class ClientWebView extends WebView implements NetworkTracker.INetworkLis
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
         builder.show();
-    }
-
-    public void clearPasswords() {
-        CredentialManager.getInstance().clearCredentials();
     }
 
     public boolean isShowingHabPanel() {

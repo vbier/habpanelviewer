@@ -69,7 +69,7 @@ public class StatusInfoActivity extends ScreenControllingActivity {
         super.onDestroy();
     }
 
-    private class StatusItemAdapter extends BaseAdapter {
+    private static class StatusItemAdapter extends BaseAdapter {
         private final Activity mContext;
         private final ApplicationStatus mStatus;
 

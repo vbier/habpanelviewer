@@ -1,6 +1,7 @@
 # <img alt="Logo" src="app/src/main/res/mipmap-hdpi/ic_launcher.png" border="0"> HABPanelViewer
 
 An openHAB integrated kiosk browser.
+#### Version 0.9.26 is the last version to work with openHAB 2. Current master as well as future releases do only work with openHAB 3!
 
 [<img src="https://f-droid.org/badge/get-it-on.png"
       alt="Get it on F-Droid"

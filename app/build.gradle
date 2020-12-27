@@ -46,15 +46,18 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation "net.zetetic:android-database-sqlcipher:4.4.2"
+    implementation "androidx.sqlite:sqlite:2.1.0"
+
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0-alpha1'
     implementation "androidx.legacy:legacy-support-v13:1.0.0"
 
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.1'
 
     implementation 'com.github.heremaps:oksse:0.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.2.2'
-    implementation 'com.burgstaller:okhttp-digest:2.0'
+    implementation 'com.burgstaller:okhttp-digest:2.5'
 
     //noinspection GradleDependency,InvalidPackage
     implementation 'com.github.mukeshsolanki:MarkdownView-Android:1.0.8'

@@ -17,7 +17,6 @@ import java.util.Map;
 
 import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
-import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.openhab.average.AveragePropagator;
 import de.vier_bier.habpanelviewer.openhab.average.IStatePropagator;
 
@@ -65,7 +64,6 @@ public class ServerConnection implements IStatePropagator {
         mSseConnection.addItemValueListener(new SseStateUpdateListener());
 
         CertificateManager.getInstance().addCertListener(mCertListener);
-        CredentialManager.getInstance().addCredentialsListener(mSseConnection);
 
         IntentFilter f = new IntentFilter();
         f.addAction(Constants.INTENT_ACTION_SET_WITH_TIMEOUT);
@@ -186,7 +184,6 @@ public class ServerConnection implements IStatePropagator {
 
     public void terminate(Context context) {
         CertificateManager.getInstance().removeCertListener(mCertListener);
-        CredentialManager.getInstance().removeCredentialsListener(mSseConnection);
         LocalBroadcastManager.getInstance(context).unregisterReceiver(mReceiver);
 
         averagePropagator.terminate();

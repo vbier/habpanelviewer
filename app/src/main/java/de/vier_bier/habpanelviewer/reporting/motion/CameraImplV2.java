@@ -43,8 +43,8 @@ public class CameraImplV2 extends AbstractCameraImpl {
     private static final String TAG = "HPV-CameraImplV2";
 
     private final CameraManager mCamManager;
-    private HandlerThread mPreviewThread;
-    private Handler mPreviewHandler;
+    private final HandlerThread mPreviewThread;
+    private final Handler mPreviewHandler;
     private HandlerThread mPictureThread;
     private Handler mPictureHandler;
 

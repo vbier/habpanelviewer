@@ -18,6 +18,7 @@ import android.hardware.camera2.CameraManager;
 import android.media.AudioManager;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -48,6 +49,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -66,6 +68,7 @@ import de.vier_bier.habpanelviewer.command.VolumeHandler;
 import de.vier_bier.habpanelviewer.command.WebViewHandler;
 import de.vier_bier.habpanelviewer.command.log.CommandLogActivity;
 import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
+import de.vier_bier.habpanelviewer.connection.OkHttpClientFactory;
 import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.help.HelpActivity;
@@ -312,6 +315,10 @@ public class MainActivity extends ScreenControllingActivity
         mUrlTextView = navHeader.findViewById(R.id.urlTextView);
         mStatusTextView = navHeader.findViewById(R.id.statusTextView);
         MenuItem enterCredMenu = navigationView.getMenu().findItem(R.id.action_enter_credentials);
+        MenuItem removeDbMenu = navigationView.getMenu().findItem(R.id.action_remove_database);
+        removeDbMenu.setVisible(!CredentialManager.getInstance().isDatabaseUsed());
+        MenuItem encryptDbMenu = navigationView.getMenu().findItem(R.id.action_encrypt_database);
+        encryptDbMenu.setVisible(CredentialManager.getInstance().getDatabaseState(this) == CredentialManager.State.UNENCRYPTED);
 
         mConnectionListener = new ISseConnectionListener() {
             private SseConnection.Status mLastStatus;
@@ -319,7 +326,7 @@ public class MainActivity extends ScreenControllingActivity
             @Override
             public void statusChanged(SseConnection.Status newStatus) {
                 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                String url = prefs.getString(Constants.PREF_SERVER_URL, "");
+                String url = prefs.getString(Constants.PREF_SERVER_URL, "").replaceAll("HTTPS?://", "");
 
                 runOnUiThread(() -> {
                     mUrlTextView.setText(url);
@@ -335,27 +342,44 @@ public class MainActivity extends ScreenControllingActivity
 
                 if (newStatus == SseConnection.Status.CONNECTED) {
                     mConnections.connected();
+
+                    String host = OkHttpClientFactory.getInstance().getHost();
+                    String realm = OkHttpClientFactory.getInstance().getRealm();
+
+                    SharedPreferences.Editor editor1 = prefs.edit();
+                    if (realm != null) {
+                        editor1.putString(Constants.REST_REALM, realm);
+                        editor1.putString(Constants.REST_HOST, host);
+                    } else {
+                        editor1.remove(Constants.REST_REALM);
+                        editor1.remove(Constants.REST_HOST);
+                    }
+                    editor1.apply();
                 } else {
                     if (mLastStatus == SseConnection.Status.CONNECTED) {
                         mConnections.disconnected();
                     }
-
                     if (newStatus == SseConnection.Status.UNAUTHORIZED) {
-                        UiUtil.showPasswordDialog(MainActivity.this, url, "Rest API", new UiUtil.CredentialsListener() {
-                            @Override
-                            public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
-                                CredentialManager.getInstance().setRestCredentials(user, password, store);
+                        SharedPreferences.Editor editor1 = prefs.edit();
+                        editor1.remove(Constants.REST_REALM);
+                        editor1.remove(Constants.REST_HOST);
+                        editor1.apply();
 
-                                SharedPreferences.Editor editor1 = prefs.edit();
-                                editor1.putBoolean(Constants.REST_CRED_STORED, true);
-                                editor1.apply();
+                        String host = OkHttpClientFactory.getInstance().getHost();
+                        String realm = OkHttpClientFactory.getInstance().getRealm();
+                        CredentialManager.getInstance().handleAuthRequest(MainActivity.this, host, realm, new CredentialManager.CredentialsListener() {
+                            @Override
+                            public void credentialsEntered(String user, String pass) {
+                                OkHttpClientFactory.getInstance().setAuth(user, pass);
+                                mServerConnection.getSseConnection().credentialsEntered("", ""); //trigger reconnect
                             }
 
                             @Override
                             public void credentialsCancelled() {
+                                OkHttpClientFactory.getInstance().removeAuth();
+                                CredentialManager.getInstance().removeCredentials(host, realm);
                             }
                         });
-
                     }
                 }
 
@@ -394,7 +418,7 @@ public class MainActivity extends ScreenControllingActivity
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NotNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
         int rotation = getWindowManager().getDefaultDisplay().getRotation();
@@ -418,36 +442,29 @@ public class MainActivity extends ScreenControllingActivity
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_reload:
-                mWebView.reload();
-                break;
-            case R.id.menu_goto_start_url:
-                mWebView.loadStartUrl();
-                break;
-            case R.id.menu_goto_url:
-                mWebView.enterUrl(this);
-                break;
-            case R.id.menu_set_start_url:
-                final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                SharedPreferences.Editor editor1 = prefs.edit();
-                editor1.putString(Constants.PREF_START_URL, mWebView.getUrl());
-                editor1.apply();
-                break;
-            case R.id.menu_clear_credentials:
-                mWebView.clearPasswords();
-                UiUtil.showSnackBar(mWebView, R.string.credentialsCleared, R.string.action_restart, view -> restartApp());
-                break;
-            case R.id.menu_clear_cache:
-                mWebView.clearCache(true);
-                UiUtil.showSnackBar(mWebView, R.string.cacheCleared, R.string.menu_reload, view -> mWebView.reload());
-                break;
-            case R.id.menu_toggle_kiosk:
-                mWebView.toggleKioskMode();
-                break;
-            default:
-                super.onContextItemSelected(item);
-                return false;
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_reload) {
+            mWebView.reload();
+        } else if (itemId == R.id.menu_goto_start_url) {
+            mWebView.loadStartUrl();
+        } else if (itemId == R.id.menu_goto_url) {
+            mWebView.enterUrl(this);
+        } else if (itemId == R.id.menu_set_start_url) {
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            SharedPreferences.Editor editor1 = prefs.edit();
+            editor1.putString(Constants.PREF_START_URL, mWebView.getUrl());
+            editor1.apply();
+        } else if (itemId == R.id.menu_clear_credentials) {
+            CredentialManager.getInstance().clearCredentials();
+            UiUtil.showSnackBar(mWebView, R.string.credentialsCleared, R.string.action_restart, view -> restartApp());
+        } else if (itemId == R.id.menu_clear_cache) {
+            mWebView.clearCache(true);
+            UiUtil.showSnackBar(mWebView, R.string.cacheCleared, R.string.menu_reload, view -> mWebView.reload());
+        } else if (itemId == R.id.menu_toggle_kiosk) {
+            mWebView.toggleKioskMode();
+        } else {
+            super.onContextItemSelected(item);
+            return false;
         }
 
         return true;
@@ -459,6 +476,8 @@ public class MainActivity extends ScreenControllingActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == Constants.REQUEST_PICK_APPLICATION && resultCode == RESULT_OK) {
             startActivity(data);
         } else if (requestCode == Constants.REQUEST_MEDIA_PROJECTION) {
@@ -544,6 +563,12 @@ public class MainActivity extends ScreenControllingActivity
 
         webview += "user agent " + userAgentString;
         status.set("Webview", webview.trim());
+
+        if (!CredentialManager.getInstance().isDatabaseUsed()) {
+            status.set(getString(R.string.intro_credentials), getString(R.string.disabled));
+        } else {
+            status.set(getString(R.string.intro_credentials), CredentialManager.getInstance().getDatabaseState(this).name());
+        }
     }
 
     private String getAppVersion() {
@@ -740,6 +765,45 @@ public class MainActivity extends ScreenControllingActivity
                 // leave drawer open so connection status is visible
                 return true;
             }
+        } else if (id == R.id.action_remove_database) {
+            UiUtil.showCancelDialog(this, "Warning",
+                    "Removing the password database will remove all stored passwords including the master password. HPV will restart afterwards. Continue?",
+                    (dialogInterface, i) -> {
+                        deleteDatabase("HPV");
+
+                        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                        SharedPreferences.Editor editor1 = prefs.edit();
+                        editor1.remove(Constants.PREF_DB_ASKED_ENCRYPTION);
+                        editor1.remove(Constants.REST_REALM);
+                        editor1.remove(Constants.REST_HOST);
+                        editor1.apply();
+
+                        restartApp();
+                    }, null);
+        } else if (id == R.id.action_encrypt_database) {
+            UiUtil.showMasterPasswordDialog(this, new UiUtil.CredentialsListener() {
+                @Override
+                public void credentialsEntered(String host, String realm, String user, String password, boolean store) {
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            CredentialManager.getInstance().encryptDb(MainActivity.this, password);
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            NavigationView navigationView = findViewById(R.id.nav_view);
+                            MenuItem encryptDbMenu = navigationView.getMenu().findItem(R.id.action_encrypt_database);
+                            encryptDbMenu.setVisible(CredentialManager.getInstance().getDatabaseState(MainActivity.this) == CredentialManager.State.UNENCRYPTED);
+                        }
+                    }.execute();
+                }
+
+                @Override
+                public void credentialsCancelled() {
+                }
+            });
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

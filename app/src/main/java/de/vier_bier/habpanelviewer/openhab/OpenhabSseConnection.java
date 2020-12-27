@@ -98,18 +98,18 @@ public class OpenhabSseConnection extends SseConnection implements SseConnection
                 if (topic.length() > 0) {
                     topic.append(",");
                 }
-                topic.append("smarthome/items/").append(item).append("/statechanged");
+                topic.append("openhab/items/").append(item).append("/statechanged");
             }
         }
         if (mCmdItemName != null && !"".equals(mCmdItemName.trim())) {
             if (topic.length() > 0) {
                 topic.append(",");
             }
-            topic.append("smarthome/items/").append(mCmdItemName).append("/command");
+            topic.append("openhab/items/").append(mCmdItemName).append("/command");
         }
 
         if (topic.length() == 0) {
-            topic.append("smarthome/items/dummyItemThatDoesNotExist/statechanged");
+            topic.append("openhab/items/dummyItemThatDoesNotExist/statechanged");
         }
 
 

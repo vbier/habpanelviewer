@@ -5,16 +5,15 @@ import android.util.Log;
 import com.here.oksse.OkSse;
 import com.here.oksse.ServerSentEvent;
 
-import org.jetbrains.annotations.TestOnly;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.SSLHandshakeException;
 
 import de.vier_bier.habpanelviewer.NetworkTracker;
-import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
+import de.vier_bier.habpanelviewer.connection.OkHttpClientFactory;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
+import okhttp3.Challenge;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -23,6 +22,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     private static final String TAG = "HPV-SseConnection";
 
     String mUrl;
+
     private boolean mNetworkConnected;
     private boolean mHasBeenConnected;
 
@@ -49,7 +49,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     }
 
     @Override
-    public void credentialsEntered() {
+    public void credentialsEntered(String user, String pass) {
         if (mStatus.isConnecting() || mStatus == Status.CONNECTED) {
             disconnect();
         }
@@ -57,6 +57,10 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         if (mStatus == Status.NOT_CONNECTED || mStatus == Status.UNAUTHORIZED) {
             connect();
         }
+    }
+
+    @Override
+    public void credentialsCancelled() {
     }
 
     void addListener(ISseListener l) {
@@ -117,7 +121,7 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
     }
 
     OkHttpClient createConnection() {
-        return ConnectionStatistics.OkHttpClientFactory.getInstance().create();
+        return OkHttpClientFactory.getInstance().create();
     }
 
     String buildUrl() {
@@ -244,6 +248,16 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
                 if (throwable instanceof SSLHandshakeException) {
                     setStatus(Status.CERTIFICATE_ERROR);
                 } else if (response != null && (response.code() == 401 || response.code() == 407)) {
+                    String realm = null;
+                    for (Challenge c : response.challenges()) {
+                        realm = c.authParams().get("realm");
+                        if (realm != null) {
+                            break;
+                        }
+                    }
+                    OkHttpClientFactory.getInstance().setHost(response.request().url().host());
+                    OkHttpClientFactory.getInstance().setRealm(realm);
+
                     setStatus(Status.UNAUTHORIZED);
                 } else if (mHasBeenConnected) {
                     // connection lost, retry

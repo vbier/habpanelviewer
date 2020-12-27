@@ -116,7 +116,10 @@ public final class Constants {
     public static final String PREF_SCREEN_ITEM = "pref_screen_item";
     public static final String PREF_SCREEN_ENABLED = "pref_screen_enabled";
 
-    public static final String REST_CRED_STORED = "pref_rest_cred_stored";
+    public static final String REST_REALM = "pref_rest_realm";
+    public static final String REST_HOST = "pref_rest_host";
+    public static final String PREF_DB_ENCRYPTED = "pref_db_encrypted";
+    public static final String PREF_DB_ASKED_ENCRYPTION = "pref_db_asked_encryption";
 
     public static class Restart {}
     public static class LoadStartUrl {}

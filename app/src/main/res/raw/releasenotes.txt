@@ -1,5 +1,11 @@
 0.9.27pre
 ======
+* add credential storage encryption with master password
+* improve reconnect
+* improve desktop mode
+* show if battery optimization for HPV is enabled in system information
+* allow to pause webview when device screen is off
+* make motion timeout configurable
 
 0.9.26
 ======

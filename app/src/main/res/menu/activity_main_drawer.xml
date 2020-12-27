@@ -7,6 +7,16 @@
         android:visible="false"
         android:icon="@drawable/ic_vpn_key_black_24dp" />
     <item
+        android:id="@+id/action_remove_database"
+        android:orderInCategory="100"
+        android:title="@string/action_remove_database"
+        android:icon="@drawable/ic_delete_black_24dp" />
+    <item
+        android:id="@+id/action_encrypt_database"
+        android:orderInCategory="100"
+        android:title="@string/action_encrypt_database"
+        android:icon="@drawable/ic_baseline_enhanced_encryption_24" />
+    <item
         android:id="@+id/action_start_app"
         android:orderInCategory="100"
         android:title="@string/action_startApp"

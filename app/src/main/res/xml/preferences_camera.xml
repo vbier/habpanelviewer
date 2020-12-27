@@ -11,7 +11,6 @@
     <CheckBoxPreference
         android:key="pref_motion_detection_new_api"
         android:defaultValue="true"
-        android:enabled="@bool/is_post_api_21"
         android:summary="@string/pref_cameraNewApi_summ"
         android:title="@string/pref_cameraNewApi" />
     <EditTextPreference

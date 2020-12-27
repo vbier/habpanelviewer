@@ -18,8 +18,8 @@
     <string name="intro_configuration">Konfiguration</string>
     <string name="intro_configuration_text">Du kannst HPV konfigurieren, in dem du das Menü öffnest und Einstellungen auswählst. Um das Menü zu öffnen, streiche mit dem Finger vom rechten Rand zur Mitte.</string>
     <string name="intro_credentials">Zugangsdaten</string>
-    <string name="intro_credentials_text">HPV kann deine Basic Authentication (BA) Zugangsdaten speichern, so dass du dich an Webseiten mit BA nur ein mal anmelden musst.</string>
-    <string name="intro_credentials_text2">Zugangsdaten werden unverschlüsselt in einer Datenbank in einem privaten Teil des Dateisystems gespeichert, wo sie nur von root gelesen werden können wenn dein Gerät gerootet ist.</string>
+    <string name="intro_credentials_text">HPV kann deine Zugangsdaten speichern, so dass du dich an Webseiten mit Authentifizierung nur ein mal anmelden musst.</string>
+    <string name="intro_credentials_text2">Zugangsdaten können verschlüsselt und mit einem Master Passwort gesichert in einer Datenbank gespeichert werden.</string>
     <string name="intro_help">Hilfe</string>
     <string name="intro_help_text">Öffne die Hilfe im Menü und das Handbuch zu lesen oder das Wiki oder Forum zu besuchen.</string>
     <string name="intro_ready">Fertig</string>
@@ -31,6 +31,8 @@
     <string name="action_info">Status Information</string>
     <string name="action_help">Hilfe</string>
     <string name="action_enter_credentials">Zugangsdaten eingeben</string>
+    <string name="action_remove_database">Zugangsdatenbank löschen</string>
+    <string name="action_encrypt_database">Zugangsdatenbank verschlüsseln</string>
     <string name="action_restart">Neustart</string>
     <string name="action_preferences">Einstellungen</string>
     <string name="action_cmdLog">Kommando Log</string>
@@ -297,6 +299,7 @@
     <string name="host_realm">Rechner: %1$s\nBereich: %2$s</string>
     <string name="username">Benutzer</string>
     <string name="password">Passwort</string>
+    <string name="masterpassword">Master Passwort</string>
     <string name="credentials_required">Anmeldung erforderlich</string>
     <string name="cancel">Abbrechen</string>
     <string name="okay">OK</string>
@@ -352,16 +355,23 @@
     <string name="diablePowerSaving">Momentan ist die Akku-Optimierung für HPV aktiviert. Dies hindert die App am Empfangen von Kommandos und Senden von Sensorwerten während das Gerät im Stand-by ist. Möchtest du die Akku-Optimierung für HPV ausschalten?</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
-    <string name="httpWithBasicAuth">Sie sind im Begriff ihre Zugangsdaten für eine unverschlüsselte HTTP Verbindung einzugeben. Sie sollten dies nur in einem privaten Netzwerk tun, da das Passwort für alle lesbar übertragen werden könnte.</string>
+    <string name="httpWithBasicAuth">Du bist im Begriff deine Zugangsdaten für eine unverschlüsselte HTTP Verbindung einzugeben. Tue dies nur in einem privaten Netzwerk, da das Passwort unverschlüsselt übertragen wird.</string>
     <string name="emptyLog">Log leeren</string>
     <string name="logIsEmpty">Das Log ist leer</string>
     <string name="shareLog">Log verschicken</string>
     <string name="checkingAppUpdated">Prüfe ob die App aktualisiert wurde…</string>
     <string name="showingIntro">Zeige Einführung…</string>
     <string name="checkingOsSettings">Prüfe Android Einstellungen…</string>
+    <string name="openingDB">Opening password database…</string>
     <string name="checkingPermissions">Prüfe Berechtigungen…</string>
     <string name="initPwdDb">Initialisiere Passwort Datenbank…</string>
     <string name="initCertStore">Initialisiere Zertifikat Speicher…</string>
     <string name="starting">Starte…</string>
     <string name="prefsDisabledMissingPermissions">Einstellungen wurden wegen fehlender Berechtigungen geändert!</string>
+
+    <string name="EnterMaster">Bitte gib ein neues Master Passwort für die Zugangsdatenbank ein oder wähle Abbrechen um eine unverschlüsselte Zugangsdatenbank zu verwenden (nicht empfohlen).</string>
+    <string name="UnencryptedEnterMaster">Du hast eine unverschlüsselte Zugangsdatenbank. HPV unterstützt jetzt Datebank Verschlüsselung. Bitte gib ein neues Master Passwort für die Zugangsdatenbank ein oder wähle Abbrechen um eine unverschlüsselte Zugangsdatenbank zu verwenden (nicht empfohlen).</string>
+    <string name="ServerProtectedEnterMaster">Dein openHAB Server ist Passwortgeschützt. Bitte gib dein Master Passwort ein oder wähle Abbrechen um die Zugangsdatenbank nicht zu verwenden.</string>
+    <string name="WrongPassEnterMaster">Passwort falsch.\n\nBitte gib dein Master Passwort ein oder wähle Abbrechen um die Zugangsdatenbank nicht zu verwenden.</string>
+    <string name="EnterMasterDisable">Bitte gib dein Master Passwort ein oder wähle Abbrechen um die Zugangsdatenbank nicht zu verwenden.</string>
 </resources>

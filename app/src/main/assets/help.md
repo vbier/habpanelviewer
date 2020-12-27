@@ -449,7 +449,8 @@ The application can be set as the device launcher. It then starts with the devic
 Browse to an arbitrary page and set it as start page using the context menu.
 
 ### credentials storage
-Whenever a web page asks for credentials using basic authentication, HPV opens a login dialog. This dialog has a checkbox allowing to store the credentials. Credentials are stored unencrypted in a database in a private part of the filesystem. This is safe as long as your device is not rooted, otherwise apps with root privileges may read the stored credentials.
+Whenever a web page asks for credentials using basic or digest authentication, HPV opens a login dialog. This dialog has a checkbox allowing to store the credentials. Credentials can be stored either unencrypted (not recommended) or encrypted with a master password in a database in a private part of the filesystem.
+HPV will ask you once per start for the master password when it first tries to store/retrieve a password from the credentials storage.
 
 ### scrolling prevention
 In case you always scroll accidentally when trying to press buttons, activate **Prevent Dragging** in the preferences. This completely disables scrolling, and effectively disables the HABPanel menu.  

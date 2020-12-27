@@ -3,32 +3,12 @@ package de.vier_bier.habpanelviewer.connection;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.burgstaller.okhttp.AuthenticationCacheInterceptor;
-import com.burgstaller.okhttp.CachingAuthenticatorDecorator;
-import com.burgstaller.okhttp.DispatchingAuthenticator;
-import com.burgstaller.okhttp.basic.BasicAuthenticator;
-import com.burgstaller.okhttp.digest.CachingAuthenticator;
-import com.burgstaller.okhttp.digest.Credentials;
-import com.burgstaller.okhttp.digest.DigestAuthenticator;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLException;
-
 import de.vier_bier.habpanelviewer.R;
-import de.vier_bier.habpanelviewer.connection.ssl.CertificateManager;
-import de.vier_bier.habpanelviewer.db.Credential;
-import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
-import okhttp3.OkHttpClient;
 
 /**
  * Holds information about online/offline times.
@@ -161,68 +141,4 @@ public class ConnectionStatistics {
         CONNECTED, DISCONNECTED
     }
 
-    public static class OkHttpClientFactory implements CredentialManager.CredentialsListener {
-        private static OkHttpClientFactory ourInstance;
-
-        private String mRestUser;
-        private String mRestPasswd;
-
-        public static synchronized OkHttpClientFactory getInstance() {
-            if (ourInstance == null) {
-                ourInstance = new OkHttpClientFactory();
-            }
-            return ourInstance;
-        }
-
-        public OkHttpClient create() {
-            return create(mRestUser, mRestPasswd);
-        }
-
-        OkHttpClient create(final String user, final String passwd) {
-            OkHttpClient.Builder builder = new OkHttpClient.Builder().readTimeout(0, TimeUnit.SECONDS);
-
-            builder.sslSocketFactory(CertificateManager.getInstance().getSocketFactory(),
-                    CertificateManager.getInstance().getTrustManager())
-                    .hostnameVerifier((s, session) -> {
-                        try {
-                            Certificate[] certificates = session.getPeerCertificates();
-                            for (Certificate certificate : certificates) {
-                                if (!(certificate instanceof X509Certificate)) {
-                                    return false;
-                                }
-                                if (CertificateManager.getInstance().isTrusted((X509Certificate) certificate)) {
-                                    return true;
-                                }
-                            }
-                        } catch (SSLException e) {
-                            // return false;
-                        }
-                        return false;
-                    });
-
-            if (user != null || passwd != null) {
-                final Map<String, CachingAuthenticator> authCache = new ConcurrentHashMap<>();
-                final BasicAuthenticator basicAuthenticator = new BasicAuthenticator(new Credentials(user, passwd));
-                final DigestAuthenticator digestAuthenticator = new DigestAuthenticator(new Credentials(user, passwd));
-
-                // note that all auth schemes should be registered as lowercase!
-                DispatchingAuthenticator authenticator = new DispatchingAuthenticator.Builder()
-                        .with("digest", digestAuthenticator)
-                        .with("basic", basicAuthenticator)
-                        .build();
-
-                builder.authenticator(new CachingAuthenticatorDecorator(authenticator, authCache))
-                        .addInterceptor(new AuthenticationCacheInterceptor(authCache));
-            }
-
-            return builder.build();
-        }
-
-        @Override
-        public void credentialsEntered() {
-            Credential c = CredentialManager.getInstance().getRestCredentials();
-            mRestPasswd = c == null ? null : c.getPasswd();
-            mRestUser = c == null ? null : c.getUser();
-        }
-    }
 }

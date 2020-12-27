@@ -21,8 +21,9 @@
         android:id="@+id/start_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="HabPanelViewer"
         android:layout_weight="0"
+        android:text="HabPanelViewer"
+        android:focusable="false"
         android:textAlignment="center"
         android:textSize="18sp" />
 
@@ -31,49 +32,74 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
+        android:focusable="false"
         android:textAlignment="center" />
 
-    <ScrollView
-        android:id="@+id/start_text_scroll"
+    <EditText
+        android:id="@+id/start_passwd"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:importantForAutofill="no"
+        android:visibility="gone" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/start_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
         android:layout_marginStart="8dp"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp">
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1">
 
-        <TextView
-            android:id="@+id/start_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp" />
-    </ScrollView>
+        <ScrollView android:id="@+id/start_text_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/start_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:textSize="14sp" />
+        </ScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/start_buttons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0">
+        android:layout_gravity="center_horizontal">
 
         <Button
             android:id="@+id/start_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/okay"
-            android:visibility="gone"
+            android:visibility="invisible"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toStartOf="@id/start_cancel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/start_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cancel"
-            android:visibility="gone"
+            android:visibility="invisible"
+            android:layout_marginStart="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/start_ok" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/start_ok"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -2,19 +2,23 @@ package de.vier_bier.habpanelviewer;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -26,8 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
-import de.vier_bier.habpanelviewer.db.AppDatabase;
+import de.vier_bier.habpanelviewer.connection.OkHttpClientFactory;
 import de.vier_bier.habpanelviewer.db.CredentialManager;
 import de.vier_bier.habpanelviewer.status.ApplicationStatus;
 
@@ -38,6 +41,7 @@ public class StartActivity extends AppCompatActivity {
     private Button mOkB;
     private Button mCancelB;
     private ScrollView mScrollV;
+    private EditText mPasswd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,10 +84,12 @@ public class StartActivity extends AppCompatActivity {
         mOkB = findViewById(R.id.start_ok);
         mCancelB = findViewById(R.id.start_cancel);
         mScrollV = findViewById(R.id.start_text_scroll);
+        mPasswd = findViewById(R.id.start_passwd);
     }
 
     @Override
     public void onStart() {
+        Log.v(TAG, "onStart: " + mAction.name());
         super.onStart();
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -109,14 +115,126 @@ public class StartActivity extends AppCompatActivity {
             checkPowerSaving(prefs);
         }
 
+        if (mAction == Action.OPEN_DB) {
+            statusTView.setText(getString(R.string.openingDB));
+
+            CredentialManager.State dbState = CredentialManager.getInstance().getDatabaseState(this);
+            boolean needsCredentials = prefs.contains(Constants.REST_REALM);
+            final String password = mPasswd.getText().toString();
+
+            View.OnClickListener cancelListener = null;
+            TextView textView = findViewById(R.id.start_text);
+            if (CredentialManager.getInstance().hasDatabase()) {
+                mAction = Action.INIT_HTTP_FACTORY;
+            } else if (dbState == CredentialManager.State.DOES_NOT_EXIST) {
+                textView.setText(R.string.EnterMaster);
+
+                cancelListener = v -> {
+                    CredentialManager.getInstance().openDb(this, null);
+
+                    SharedPreferences.Editor editor1 = prefs.edit();
+                    editor1.putBoolean(Constants.PREF_DB_ASKED_ENCRYPTION, true);
+                    editor1.apply();
+
+                    mAction = Action.INIT_HTTP_FACTORY;
+                    onStart();
+                };
+            } else if (dbState == CredentialManager.State.UNENCRYPTED) {
+                if (prefs.contains(Constants.PREF_DB_ASKED_ENCRYPTION)) {
+                    CredentialManager.getInstance().openDb(this, null);
+                    mAction = Action.INIT_HTTP_FACTORY;
+                } else {
+                    textView.setText(R.string.UnencryptedEnterMaster);
+
+                    cancelListener = v -> {
+                        CredentialManager.getInstance().openDb(this, null);
+
+                        SharedPreferences.Editor editor1 = prefs.edit();
+                        editor1.putBoolean(Constants.PREF_DB_ASKED_ENCRYPTION, true);
+                        editor1.apply();
+
+                        mAction = Action.INIT_HTTP_FACTORY;
+                        onStart();
+                    };
+                }
+            } else if (needsCredentials) {
+                if ("".equals(password)) {
+                    textView.setText(R.string.ServerProtectedEnterMaster);
+                } else {
+                    textView.setText(R.string.WrongPassEnterMaster);
+                }
+
+                cancelListener = v -> {
+                    CredentialManager.getInstance().setDatabaseUsed(false);
+                    mAction = Action.STARTING;
+                    onStart();
+                };
+            } else {
+                // encrypted but no credentials needed for the rest api
+                mAction = Action.STARTING;
+            }
+
+            if (mAction == Action.OPEN_DB) {
+                boolean showCancel = cancelListener != null;
+
+                updateUi(View.VISIBLE, showCancel ? View.VISIBLE : View.GONE, View.VISIBLE, View.VISIBLE, (view) -> new AsyncTask<Void, Void, Void>() {
+                    String password = null;
+
+                    @Override
+                    protected void onPreExecute() {
+                        password = mPasswd.getText().toString();
+                    }
+
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        if (dbState == CredentialManager.State.UNENCRYPTED) {
+                            CredentialManager.getInstance().encryptDb(StartActivity.this, password);
+                        } else {
+                            CredentialManager.getInstance().openDb(StartActivity.this, password);
+                        }
+
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void val) {
+                        onStart();
+                    }
+                }.execute(), cancelListener);
+            }
+        }
+
+        if (mAction == Action.INIT_HTTP_FACTORY) {
+            if (prefs.contains(Constants.REST_REALM) && CredentialManager.getInstance().hasDatabase()) {
+                mAction = Action.STARTING;
+
+                String host = prefs.getString(Constants.REST_HOST, "");
+                String realm = prefs.getString(Constants.REST_REALM, "");
+                CredentialManager.getInstance().getRestCredential(host, realm, new CredentialManager.CredentialsListener() {
+                    @Override
+                    public void credentialsEntered(String user, String pass) {
+                        OkHttpClientFactory.getInstance().setHost(host);
+                        OkHttpClientFactory.getInstance().setRealm(realm);
+                        OkHttpClientFactory.getInstance().setAuth(user, pass);
+                        onStart();
+                    }
+
+                    @Override
+                    public void credentialsCancelled() {
+                        onStart();
+                    }
+                });
+
+                return;
+            } else {
+                mAction = Action.STARTING;
+            }
+        }
+
         if (mAction == Action.STARTING) {
-            updateUi(View.GONE, View.GONE, View.GONE,null,null);
+            updateUi(View.GONE, View.GONE, View.GONE, View.GONE, null,null);
 
             try {
-                statusTView.setText(getString(R.string.initPwdDb));
-                CredentialManager.getInstance().setDatabase(Room.databaseBuilder(getApplicationContext(),
-                        AppDatabase.class, "HPV").build());
-
                 statusTView.setText(getString(R.string.initCertStore));
                 File localTrustStoreFile = new File(getFilesDir(), "localTrustStore.bks");
                 if (!localTrustStoreFile.exists()) {
@@ -132,8 +250,6 @@ public class StartActivity extends AppCompatActivity {
                     }
                     Log.d(TAG, "Local trust store file created");
                 }
-
-                CredentialManager.getInstance().addCredentialsListener(ConnectionStatistics.OkHttpClientFactory.getInstance());
                 statusTView.setText(getString(R.string.starting));
             } catch (IOException e) {
                 Log.e(TAG, "failed to create local trust store", e);
@@ -155,7 +271,7 @@ public class StartActivity extends AppCompatActivity {
             TextView textView = findViewById(R.id.start_text);
             textView.setText(getString(R.string.diablePowerSaving));
 
-            updateUi(View.VISIBLE, View.VISIBLE, View.VISIBLE, (view) -> {
+            updateUi(View.VISIBLE, View.VISIBLE, View.VISIBLE, View.GONE, (view) -> {
                         Intent intent = new Intent();
                         intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
                         startActivity(intent);
@@ -163,22 +279,63 @@ public class StartActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor1 = prefs.edit();
                         editor1.putBoolean(Constants.PREF_POWER_SAVE_WARNING_SHOWN, true);
                         editor1.apply();
-                        mAction = Action.STARTING;
+                        mAction = Action.OPEN_DB;
                         onStart();
                     });
         } else {
-            mAction = Action.STARTING;
+            mAction = Action.OPEN_DB;
         }
     }
 
-    private void updateUi(int okVisible, int cancelVisible, int scrollVisible,
+    private void updateUi(int okVisible, int cancelVisible, int scrollVisible, int passwdVisible,
                           View.OnClickListener okListener, View.OnClickListener cancelListener) {
         mOkB.setVisibility(okVisible);
-        mOkB.setOnClickListener(okListener);
+        mOkB.setOnClickListener(v -> {
+            mCancelB.setEnabled(false);
+            mOkB.setEnabled(false);
+            okListener.onClick(v);
+        });
         mCancelB.setVisibility(cancelVisible);
-        mCancelB.setOnClickListener(cancelListener);
+        mCancelB.setOnClickListener(v -> {
+            mCancelB.setEnabled(false);
+            mOkB.setEnabled(false);
+            cancelListener.onClick(v);
+        });
+        mOkB.setEnabled(passwdVisible != View.VISIBLE);
+        mCancelB.setEnabled(true);
+
+        mPasswd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mOkB.setEnabled(s.toString().length() > 0);
+            }
+        });
+
+        mPasswd.setOnKeyListener((v, keyCode, event) -> {
+            // If the event is a key-down event on the "enter" button
+            if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                mCancelB.setEnabled(false);
+                mOkB.setEnabled(false);
+                okListener.onClick(v);
+
+                return true;
+            }
+            return false;
+        });
 
         mScrollV.setVisibility(scrollVisible);
+        mPasswd.setVisibility(passwdVisible);
+        mPasswd.requestFocus();
     }
 
 
@@ -197,7 +354,7 @@ public class StartActivity extends AppCompatActivity {
             TextView textView = findViewById(R.id.start_text);
             textView.setText(relText);
 
-            updateUi(View.VISIBLE, View.GONE, View.VISIBLE, (view) -> {
+            updateUi(View.VISIBLE, View.GONE, View.VISIBLE, View.GONE, (view) -> {
                 mAction = Action.SHOW_INTRO;
                 onStart();
             }, null);
@@ -230,6 +387,6 @@ public class StartActivity extends AppCompatActivity {
     }
 
     private enum Action {
-        SHOW_RELEASE_NOTES, SHOW_INTRO, SHOW_POWER_SAVING_NOTIFICATION, STARTING
+        SHOW_RELEASE_NOTES, SHOW_INTRO, SHOW_POWER_SAVING_NOTIFICATION, OPEN_DB, INIT_HTTP_FACTORY, STARTING
     }
 }

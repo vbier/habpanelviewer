@@ -31,7 +31,7 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
     private PreferenceCallback mCallback;
 
     private ItemValidator mValidator;
-    private final ItemValidator.VaildationStateListener mListener = new ItemValidator.VaildationStateListener() {
+    private final ItemValidator.ValidationStateListener mListener = new ItemValidator.ValidationStateListener() {
         @Override
         public void validationAvailable(List<String> items) {
             mUiHandler.post(() -> {

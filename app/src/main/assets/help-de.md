@@ -445,7 +445,8 @@ Die Anwendung kann in den Android Einstellungen als Launcher konfiguriert werden
 Browse eine beliebige Seite und setze sie mit dem Kontextmenü als Startseite.
 
 ### Zugangsdaten speichern
-Immer wenn eine Webseite mit basic authentication nach Zugangsdaten fragt, öffnet HPV einen Dialog. Dieser hat eine Checkbox die es erlaubt, die Zugansdaten zu speichern. Die Daten werden unverschlüsselt in einer Datenbank in einem privaten Teil des Dateisystems gespeichert. Dies ist sicher, so lange dein Gerät nicht gerootet ist, andernfalls könnten Apps mit Root Rechten die Zugangsdaten lesen.
+Immer wenn eine Webseite mit basic/digest authentication nach Zugangsdaten fragt, öffnet HPV einen Dialog. Dieser hat eine Checkbox die es erlaubt, die Zugansdaten zu speichern. Die Daten werden entweder unverschlüsselt (nicht empfohlen) oder mit einem Master Passwort verschlüsselt in einer Datenbank in einem privaten Teil des Dateisystems gespeichert.
+HPV fragt dich ein mal pro Start nach dem Master Passwort, wenn erstmals ein Passwort gespeichert/gelesen werden soll.
 
 ### Ziehen verhindern
 Falls du aus Versehen Scrollst, wenn du einen Knopf drücken willst, aktiviere die Einstellung **Ziehen verhindern**. Dies deaktiviert Scrolling in der Anwendung komplett, und verhindert so auch das Öffnen des HABPanel Menüs.

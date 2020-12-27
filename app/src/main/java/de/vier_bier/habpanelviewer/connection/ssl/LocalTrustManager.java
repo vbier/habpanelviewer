@@ -16,7 +16,7 @@ class LocalTrustManager implements X509TrustManager {
 
     static class LocalStoreX509TrustManager implements X509TrustManager {
 
-        private X509TrustManager trustManager;
+        private final X509TrustManager trustManager;
 
         LocalStoreX509TrustManager(KeyStore localTrustStore) {
             try {
@@ -62,10 +62,10 @@ class LocalTrustManager implements X509TrustManager {
         return null;
     }
 
-    private X509TrustManager defaultTrustManager;
-    private X509TrustManager localTrustManager;
+    private final X509TrustManager defaultTrustManager;
+    private final X509TrustManager localTrustManager;
 
-    private X509Certificate[] acceptedIssuers;
+    private final X509Certificate[] acceptedIssuers;
 
     LocalTrustManager(KeyStore localKeyStore) {
         try {

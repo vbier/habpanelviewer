@@ -42,12 +42,11 @@ public class AveragePropagator extends Thread {
                 if (futureState == null) {
                     futureState = new FutureState(item, timeout, state);
                     mFutureStates.put(item, futureState);
-                    mFutureStateQueue.add(futureState);
                 } else {
                     mFutureStateQueue.remove(futureState);
                     futureState.resetTime();
-                    mFutureStateQueue.add(futureState);
                 }
+                mFutureStateQueue.add(futureState);
             }
         }
     }

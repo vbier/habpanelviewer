@@ -1,5 +1,11 @@
 0.9.27pre
 ======
+* Passwort Datenbank kann mit Master Passwort verschlüsselt werden
+* Reconnect verbessert
+* Desktop Mode verbessert
+* Zeige in der System Information ob Batterie Optimierung for HPV aktiviert ist
+* Webview kann nun pausiert werden, wenn der Bildschirm aus ist
+* Bewegungs Timeout ist konfigurierbar
 
 0.9.26
 ======

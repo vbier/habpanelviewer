@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
-import de.vier_bier.habpanelviewer.UiUtil;
 
 /**
  * Activity showing the help markdown file.

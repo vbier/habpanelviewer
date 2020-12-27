@@ -123,7 +123,7 @@ public class SseConnectionTest {
 
         mCreds[0] = "joe";
         mCreds[1] = "secret";
-        runAndWait(() -> mSseConnection.credentialsEntered(), CONNECTED);
+        runAndWait(() -> mSseConnection.credentialsEntered(null, null), CONNECTED);
     }
 
     @Test
@@ -195,9 +195,9 @@ public class SseConnectionTest {
         void run() throws Exception;
     }
 
-    class Return404Handler implements HttpHandler {
+    static class Return404Handler implements HttpHandler {
         private boolean mReturn404;
-        private CountDownLatch m404Latch = new CountDownLatch(5);
+        private final CountDownLatch m404Latch = new CountDownLatch(5);
 
         public synchronized void setReturn404(boolean return404) {
             mReturn404 = return404;
@@ -219,7 +219,7 @@ public class SseConnectionTest {
         }
     }
 
-    class EmptyEventSourceHandler implements EventSourceHandler {
+    static class EmptyEventSourceHandler implements EventSourceHandler {
         EventSourceConnection mConnection;
 
         public synchronized void closeConnection() {

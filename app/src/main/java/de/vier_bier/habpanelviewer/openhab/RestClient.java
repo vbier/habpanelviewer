@@ -6,7 +6,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
-import de.vier_bier.habpanelviewer.connection.ConnectionStatistics;
+import de.vier_bier.habpanelviewer.connection.OkHttpClientFactory;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -53,7 +53,7 @@ class RestClient extends HandlerThread {
 
     private void putRequest(ItemModification item) {
         try {
-            OkHttpClient client = ConnectionStatistics.OkHttpClientFactory.getInstance().create();
+            OkHttpClient client = OkHttpClientFactory.getInstance().create();
 
             MediaType PLAIN
                     = MediaType.get("text/plain; charset=utf-8");
@@ -80,7 +80,7 @@ class RestClient extends HandlerThread {
         String itemName = item.mItemName;
         ISubscriptionListener listener = item.mListener;
 
-        OkHttpClient client = ConnectionStatistics.OkHttpClientFactory.getInstance().create();
+        OkHttpClient client = OkHttpClientFactory.getInstance().create();
         Request request = new Request.Builder()
                 .url(item.mServerURL + "/rest/items/" + itemName + "/state")
                 .build();
@@ -108,7 +108,7 @@ class RestClient extends HandlerThread {
         }
     }
 
-    private class ItemSubscription {
+    private static class ItemSubscription {
         final String mServerURL;
         final ISubscriptionListener mListener;
         final String mItemName;
@@ -120,7 +120,7 @@ class RestClient extends HandlerThread {
         }
     }
 
-    private class ItemModification {
+    private static class ItemModification {
         final String mServerURL;
         final String mItemName;
         final String mItemState;

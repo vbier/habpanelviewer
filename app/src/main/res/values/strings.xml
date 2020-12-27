@@ -20,8 +20,8 @@
     <string name="intro_configuration">Configuration</string>
     <string name="intro_configuration_text">You can configure HPV by opening the menu and selecting Preferences. To open the menu, swipe with your finger from the right side of the screen to the middle.</string>
     <string name="intro_credentials">Credentials Storage</string>
-    <string name="intro_credentials_text">HPV can store your basic authentication (BA) credentials so you only need to log in once to websites using BA.</string>
-    <string name="intro_credentials_text2">Credentials are stored unencrypted in a database in a private part of the file system that can only be read by root when you device is rooted.</string>
+    <string name="intro_credentials_text">HPV can store your web authentication credentials so you only need to log in once to websites using BA.</string>
+    <string name="intro_credentials_text2">Credentials can be stored in an encrypted database secured by a master password.</string>
     <string name="intro_help">Help</string>
     <string name="intro_help_text">Open help from the menu to access the manual or visit the wiki or support forum.</string>
     <string name="intro_ready">Ready</string>
@@ -33,7 +33,9 @@
     <string name="action_info">Status Information</string>
     <string name="action_help">Help</string>
     <string name="action_enter_credentials">Enter Credentials</string>
-    <string name="action_restart">Restart App</string>
+    <string name="action_remove_database">Remove Credentials DB</string>
+    <string name="action_encrypt_database">Encrypt Credentials DB</string>
+    <string name="action_restart">Restart</string>
     <string name="action_preferences">Preferences</string>
     <string name="action_cmdLog">Command Log</string>
     <string name="action_discover">Discover Server</string>
@@ -300,6 +302,7 @@
     <string name="host_realm">Host: %1$s\nRealm: %2$s</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="masterpassword">Master Password</string>
     <string name="credentials_required">Credentials required</string>
     <string name="cancel">Cancel</string>
     <string name="okay">OK</string>
@@ -362,9 +365,15 @@
     <string name="checkingAppUpdated">Checking if app has been updated…</string>
     <string name="showingIntro">Showing intro…</string>
     <string name="checkingOsSettings">Checking Android settings…</string>
+    <string name="openingDB">Opening password database…</string>
     <string name="checkingPermissions">Checking permissions…</string>
     <string name="initPwdDb">Initializing password database…</string>
     <string name="initCertStore">Initializing certificate store…</string>
     <string name="starting">Starting…</string>
     <string name="prefsDisabledMissingPermissions">Preferences have been disabled because permissions are missing!</string>
+    <string name="EnterMaster">Please enter a new master password for the credential storage or press cancel to use unencrypted credential storage (not advised).</string>
+    <string name="UnencryptedEnterMaster">You have an unencrypted credential storage. HPV does now support database encryption. Please enter a new master password for the credential storage or press cancel to continue using unencrypted credential storage (not advised).</string>
+    <string name="ServerProtectedEnterMaster">Your openHAB server seems to be password protected. Please enter your master password or press cancel to disable credential storage for now.</string>
+    <string name="WrongPassEnterMaster">Wrong password.\n\nPlease enter your master password or press cancel to disable credential storage for now.</string>
+    <string name="EnterMasterDisable">Please enter your master password or press cancel to disable credential storage for now.</string>
 </resources>

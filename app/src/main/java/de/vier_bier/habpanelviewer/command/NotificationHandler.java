@@ -20,8 +20,8 @@ public class NotificationHandler implements ICommandHandler {
     private static final Pattern SHOW_PATTERN = Pattern.compile("NOTIFICATION_SHOW ([a-zA-Z]+)(.*)");
     private static final Pattern HIDE_PATTERN = Pattern.compile("NOTIFICATION_HIDE ([a-zA-Z]+)?");
 
-    private Context mCtx;
-    private NotificationManager mNotificationManager;
+    private final Context mCtx;
+    private final NotificationManager mNotificationManager;
 
     public NotificationHandler(Context ctx) {
         mCtx = ctx.getApplicationContext();

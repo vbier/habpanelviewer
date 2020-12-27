@@ -1,34 +1,27 @@
 package de.vier_bier.habpanelviewer;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.MenuItem;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import de.vier_bier.habpanelviewer.db.CredentialManager;
 
 /**
  * UI utility methods.
@@ -123,21 +116,8 @@ public class UiUtil {
 
     public static void showPasswordDialog(final Context ctx, final String host, final String realm,
                                           final CredentialsListener l) {
-        showPasswordDialog(ctx, host, realm, l, true);
-    }
-
-    private static void showPasswordDialog(final Context ctx, final String host, final String realm,
-                                           final CredentialsListener l, boolean showWarning) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(() -> {
-            // host only contains the complete URL for the SSE and REST connections using basic auth
-            if (showWarning && host.toLowerCase().startsWith("http:")) {
-                showCancelDialog(ctx, ctx.getString(R.string.credentials_required),
-                        ctx.getString(R.string.httpWithBasicAuth),
-                        (dialogInterface, i) -> showPasswordDialog(ctx, host, realm, l, false), null);
-                return;
-            }
-
             final AlertDialog alert = new AlertDialog.Builder(ctx)
                     .setCancelable(false)
                     .setTitle(R.string.credentials_required)
@@ -148,12 +128,67 @@ public class UiUtil {
                         EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
                         CheckBox storeCB = ((AlertDialog) dialog12).findViewById(R.id.checkBox);
 
-                        l.credentialsEntered(host, realm, userT.getText().toString(), passT.getText().toString(), storeCB.isChecked());
+                        l.credentialsEntered(host, realm, userT.getText().toString(), passT.getText().toString(),
+                                storeCB.isChecked() && storeCB.isEnabled());
                     })
                     .setNegativeButton(R.string.cancel, (dialogInterface, i) -> l.credentialsCancelled()).create();
 
             if (!(ctx instanceof Activity) || !((Activity) ctx).isFinishing()) {
                 alert.show();
+
+                TextView msg = alert.findViewById(R.id.message);
+                if (host.toLowerCase().startsWith("http:")) {
+                    msg.setText(R.string.httpWithBasicAuth);
+                } else {
+                    msg.setText("");
+                }
+
+                CheckBox storeCB = alert.findViewById(R.id.checkBox);
+                storeCB.setEnabled(CredentialManager.getInstance().isDatabaseUsed());
+                storeCB.setChecked(CredentialManager.getInstance().getDatabaseState(ctx) == CredentialManager.State.ENCRYPTED);
+
+                EditText passT = ((AlertDialog) alert).findViewById(R.id.password);
+                passT.setOnKeyListener((v, keyCode, event) -> {
+                    // If the event is a key-down event on the "enter" button
+                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        alert.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+
+                        return true;
+                    }
+                    return false;
+                });
+            }
+        });
+    }
+
+    public static void showMasterPasswordDialog(final Context ctx, final CredentialsListener l) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            final AlertDialog alert = new AlertDialog.Builder(ctx)
+                    .setCancelable(false)
+                    .setTitle(R.string.credentials_required)
+                    .setMessage(R.string.EnterMasterDisable)
+                    .setView(R.layout.dialog_master_password)
+                    .setPositiveButton(R.string.okay, (dialog12, id) -> {
+                        EditText passT = ((AlertDialog) dialog12).findViewById(R.id.password);
+
+                        l.credentialsEntered(null, null, null, passT.getText().toString(), false);
+                    })
+                    .setNegativeButton(R.string.cancel, (dialogInterface, i) -> l.credentialsCancelled()).create();
+
+            if (!(ctx instanceof Activity) || !((Activity) ctx).isFinishing()) {
+                alert.show();
+
+                EditText passT = ((AlertDialog) alert).findViewById(R.id.password);
+                passT.setOnKeyListener((v, keyCode, event) -> {
+                    // If the event is a key-down event on the "enter" button
+                    if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                        alert.getButton(DialogInterface.BUTTON_POSITIVE).performClick();
+
+                        return true;
+                    }
+                    return false;
+                });
             }
         });
     }

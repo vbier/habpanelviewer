@@ -9,6 +9,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +51,7 @@ class AppRestartingExceptionHandler implements Thread.UncaughtExceptionHandler {
         }
     }
 
-    public void uncaughtException(Thread thread, Throwable exception) {
+    public void uncaughtException(@NotNull Thread thread, @NotNull Throwable exception) {
         Log.e(TAG, "Uncaught exception", exception);
 
         // make sure to close the camera

@@ -26,7 +26,6 @@
     <CheckBoxPreference
         android:key="pref_allow_mixed_content"
         android:defaultValue="false"
-        android:enabled="@bool/is_post_api_21"
         android:summary="@string/pref_allowMixedContent_summ"
         android:title="@string/pref_allowMixedContent" />
     <CheckBoxPreference
@@ -52,7 +51,6 @@
     <CheckBoxPreference
         android:key="pref_allow_webrtc"
         android:defaultValue="false"
-        android:enabled="@bool/is_post_api_21"
         android:summary="@string/pref_allowWebrtc_summ"
         android:title="@string/pref_allowWebrtc" />
 

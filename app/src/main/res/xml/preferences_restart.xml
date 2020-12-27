@@ -12,7 +12,7 @@
         android:key="pref_max_restarts"
         android:dependency="pref_restart_enabled"
         android:maxLength="2"
-        android:numeric="integer"
+        android:inputType="number"
         android:summary="@string/pref_maxRestarts_summ"
         android:title="@string/pref_maxRestarts" />
 

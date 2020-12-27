@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import de.vier_bier.habpanelviewer.Constants;
 import de.vier_bier.habpanelviewer.R;
 import de.vier_bier.habpanelviewer.ScreenControllingActivity;
-import de.vier_bier.habpanelviewer.UiUtil;
 import de.vier_bier.habpanelviewer.command.Command;
 
 /**

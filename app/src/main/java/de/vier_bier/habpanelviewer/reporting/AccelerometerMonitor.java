@@ -79,6 +79,6 @@ public class AccelerometerMonitor extends AbstractDeviceMonitor {
         super.updateFromPreferences(prefs);
 
         mSensitivityStr = prefs.getString(Constants.PREF_PREFIX + mPreferenceKey + Constants.PREF_SUFFIX_SENSITIVITY, "3.0");
-        mSensitivity = Float.valueOf(mSensitivityStr);
+        mSensitivity = Float.parseFloat(mSensitivityStr);
     }
 }
