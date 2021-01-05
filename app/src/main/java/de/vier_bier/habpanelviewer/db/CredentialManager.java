@@ -228,6 +228,15 @@ public class CredentialManager extends Thread {
             }
         } else {
             mDb = db;
+
+            // insert a dummy record to make sure the database exists on subsequent starts
+            if (dbState == State.DOES_NOT_EXIST) {
+                mHandler.post(() -> {
+                    if (mDb != null) {
+                        mDb.credentialDao().insert(new Credential("nohost", "norealm", "nouser", "nopasswd"));
+                    }
+                });
+            }
         }
     }
 
