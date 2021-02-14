@@ -71,6 +71,7 @@ public final class Constants {
     public static final String PREF_CMD_ITEM = "pref_command_item";
     public static final String PREF_CMD_LOG_SIZE = "pref_command_log_size";
     public static final String PREF_SERVER_URL = "pref_server_url";
+    public static final String PREF_OH_VERSION = "pref_openhab_version";
     public static final String PREF_DEVICE_ADMIN = "pref_device_admin";
     public static final String PREF_ALLOW_WEBRTC = "pref_allow_webrtc";
     public static final String PREF_SHOW_ON_LOCK_SCREEN = "pref_show_on_lock_screen";

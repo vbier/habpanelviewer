@@ -14,6 +14,7 @@ public class OpenhabSseConnection extends SseConnection implements SseConnection
 
     private final List<String> mItemNames = new ArrayList<>();
     private String mCmdItemName;
+    private OHVersion mVersion;
 
     private final ArrayList<IStateUpdateListener> mListeners = new ArrayList<>();
 
@@ -92,28 +93,48 @@ public class OpenhabSseConnection extends SseConnection implements SseConnection
     }
 
     private String buildTopic() {
+        String prefix = "openhab";
+        if (mVersion == OHVersion.OH2) {
+            prefix = "smarthome";
+        }
+
         StringBuilder topic = new StringBuilder();
         synchronized (mItemNames) {
             for (String item : mItemNames) {
                 if (topic.length() > 0) {
                     topic.append(",");
                 }
-                topic.append("openhab/items/").append(item).append("/statechanged");
+                topic.append(prefix).append("/items/").append(item).append("/statechanged");
             }
         }
         if (mCmdItemName != null && !"".equals(mCmdItemName.trim())) {
             if (topic.length() > 0) {
                 topic.append(",");
             }
-            topic.append("openhab/items/").append(mCmdItemName).append("/command");
+            topic.append(prefix).append("/items/").append(mCmdItemName).append("/command");
         }
 
         if (topic.length() == 0) {
-            topic.append("openhab/items/dummyItemThatDoesNotExist/statechanged");
+            topic.append(prefix).append("/items/dummyItemThatDoesNotExist/statechanged");
         }
 
 
         Log.v(TAG, "new SSE topic: " + topic.toString());
         return topic.toString();
+    }
+
+    public void setServer(String serverURL, OHVersion ohVersion) {
+        if (mVersion != ohVersion) {
+            mVersion = ohVersion;
+
+            //set null url to trigger reconnect
+            setServerUrl(null);
+        }
+
+        setServerUrl(serverURL);
+    }
+
+    public enum OHVersion {
+        OH2, OH3;
     }
 }

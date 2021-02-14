@@ -24,6 +24,11 @@ No additional URL paths should be configured here.
 
 > If you are using https (ssl), your port would normally be 8443.
 
+### openHAB version
+The version of your openHAB server. 
+
+Starting with OH3, the names of the SSE topics have changed, so that HPV will no longer get item updates when the openHAB version is not correctly set.
+
 ### Start page
 This is the initial page loaded when the application is started or restarted.  While this can be any accessible URL, the intended use is for the HABPanel dashboard that you want as your starting page when the application is launched or restarted.
 

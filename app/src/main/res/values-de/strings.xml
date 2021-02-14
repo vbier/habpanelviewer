@@ -58,6 +58,8 @@
     <string name="pref_startUrl_summ">Die Webseite, die beim Start gezeigt werden soll. Falls leer, wird die openHAB URL als Startseite benutzt</string>
     <string name="pref_trackBrowserConnection">Überwache Browser Verbindung</string>
     <string name="pref_trackBrowserConnection_summ">Verbindet erneut mit openHAB, wenn der Browser die SSE Verbindung verliert</string>
+    <string name="pref_openHabVersion">openHAB Version</string>
+    <string name="pref_openHabVersion_summ">Version des openHAB Servers, 2.x oder 3.x</string>
 
     <string name="pref_ui">Benutzeroberfläche</string>
     <string name="pref_theme">Theme</string>

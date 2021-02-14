@@ -71,4 +71,8 @@
         <item>dark</item>
         <item>light</item>
     </string-array>
+    <string-array name="ohversion">
+        <item>OH2</item>
+        <item>OH3</item>
+    </string-array>
 </resources>

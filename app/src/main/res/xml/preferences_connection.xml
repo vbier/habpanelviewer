@@ -11,6 +11,13 @@
             android:summary="@string/pref_url_summ"
             android:title="@string/pref_url"
             android:inputType="textWebEmailAddress"/>
+        <ListPreference
+            android:key="pref_openhab_version"
+            android:defaultValue="OH3"
+            android:entries="@array/ohversion"
+            android:entryValues="@array/ohversion"
+            android:summary="@string/pref_openHabVersion_summ"
+            android:title="@string/pref_openHabVersion" />
     </PreferenceCategory>
 
     <PreferenceCategory

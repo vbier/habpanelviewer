@@ -24,6 +24,11 @@ Es sollte kein weiterer Pfad an die URL angehängt werden.
 
 > Wenn du https (ssl) benutzen möchtest, solltest du 8443 als Port verwenden.
 
+### openHAB Version
+Die Version deines openHAB Servers. 
+
+In OH3 wurden leider die Namen der SSE Topics geändert, so dass HPV keine Item Updates mehr bekommt wenn die Version nicht richtig gesetzt ist.
+
 ### Startseite
 Dies ist die Seite, die beim Starten der Applikation angezeigt werden soll. Dies kann eine beliebige URL sein, die vorgesehene Verwendung ist eine URL einer HABPanel Seite.    
 

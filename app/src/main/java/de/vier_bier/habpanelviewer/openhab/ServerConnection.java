@@ -28,6 +28,8 @@ public class ServerConnection implements IStatePropagator {
     private static final String TAG = "HPV-ServerConnection";
 
     private String mServerURL;
+    private String mOHVersion;
+
     private final OpenhabSseConnection mSseConnection = new OpenhabSseConnection();
     private final RestClient mRestClient = new RestClient();
 
@@ -157,13 +159,25 @@ public class ServerConnection implements IStatePropagator {
     public void updateFromPreferences(SharedPreferences prefs, Context ctx) {
         final boolean serverChanged = mServerURL == null
                 || !mServerURL.equalsIgnoreCase(prefs.getString(Constants.PREF_SERVER_URL, ""));
+        final boolean serverVersionChanged = mOHVersion == null
+                || !mOHVersion.equalsIgnoreCase(prefs.getString(Constants.PREF_OH_VERSION, "OH3"));
+
+        if (serverChanged || serverVersionChanged) {
+            close();
+        }
+
+        if (serverVersionChanged) {
+            mOHVersion = prefs.getString(Constants.PREF_OH_VERSION, "OH3");
+            Log.d(TAG, "server version changed: " + mOHVersion);
+        }
 
         if (serverChanged) {
             mServerURL = prefs.getString(Constants.PREF_SERVER_URL, "");
             Log.d(TAG, "new server URL: " + mServerURL);
-            close();
+        }
 
-            mSseConnection.setServerUrl(mServerURL);
+        if (serverChanged || serverVersionChanged) {
+            mSseConnection.setServer(mServerURL, OpenhabSseConnection.OHVersion.valueOf(mOHVersion));
         }
     }
 
@@ -332,6 +346,5 @@ public class ServerConnection implements IStatePropagator {
                 mRestClient.getItemState(mServerURL, mListener, item);
             }
         }
-
     }
 }
