@@ -18,11 +18,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.github.paolorotolo.appintro.AppIntro2;
-import com.github.paolorotolo.appintro.AppIntro2Fragment;
-import com.github.paolorotolo.appintro.AppIntroFragment;
-import com.github.paolorotolo.appintro.ISlidePolicy;
-import com.github.paolorotolo.appintro.model.SliderPage;
+import com.github.appintro.AppIntro2;
+import com.github.appintro.AppIntroFragment;
+import com.github.appintro.SlidePolicy;
+import com.github.appintro.model.SliderPage;
 
 import de.vier_bier.habpanelviewer.openhab.ServerDiscovery;
 
@@ -39,7 +38,7 @@ public class IntroActivity extends AppIntro2 {
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         boolean serverConfigured = !"".equals(prefs.getString(Constants.PREF_SERVER_URL, ""));
 
-        showSkipButton(serverConfigured || introOnly);
+        setSkipButtonEnabled(serverConfigured || introOnly);
         setTitle(R.string.intro_initialConfiguration);
 
         int bgColor = Color.parseColor("#4CAF50");
@@ -76,24 +75,24 @@ public class IntroActivity extends AppIntro2 {
                 ds.setSystemService(nsdm);
                 addSlide(ds);
             } else {
-                addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_openhabServerDetection),
+                addSlide(AppIntroFragment.newInstance(getString(R.string.intro_openhabServerDetection),
                         getString(R.string.intro_discoveryNotAvailable),
                         R.drawable.server, bgColor));
             }
         } else {
-            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_openhabServerDetection),
+            addSlide(AppIntroFragment.newInstance(getString(R.string.intro_openhabServerDetection),
                     getString(R.string.intro_serverConfigured, prefs.getString(Constants.PREF_SERVER_URL, "")),
                     R.drawable.server, bgColor));
         }
 
         if (!introOnly) {
-            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_configuration),
+            addSlide(AppIntroFragment.newInstance(getString(R.string.intro_configuration),
                     getString(R.string.intro_configuration_text), R.drawable.configuration, bgColor));
 
-            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_help),
+            addSlide(AppIntroFragment.newInstance(getString(R.string.intro_help),
                     getString(R.string.intro_help_text), R.drawable.ready, bgColor));
 
-            addSlide(AppIntro2Fragment.newInstance(getString(R.string.intro_ready),
+            addSlide(AppIntroFragment.newInstance(getString(R.string.intro_ready),
                     getString(R.string.intro_ready_text), R.drawable.ready, bgColor));
         }
     }
@@ -102,7 +101,7 @@ public class IntroActivity extends AppIntro2 {
         SliderPage sp = new SliderPage();
         sp.setTitle(title);
         sp.setDescription(text);
-        sp.setBgColor(icon);
+        sp.setBackgroundColor(bgColor);
         sp.setImageDrawable(icon);
         addSlide(AppIntroFragment.newInstance(sp));
     }
@@ -158,7 +157,7 @@ public class IntroActivity extends AppIntro2 {
         super.onSlideChanged(oldFragment, newFragment);
     }
 
-    public static class DiscoverSlide extends Fragment implements ISlidePolicy {
+    public static class DiscoverSlide extends Fragment implements SlidePolicy {
         private NsdManager mSystemService;
         private ServerDiscovery mDiscovery;
 
