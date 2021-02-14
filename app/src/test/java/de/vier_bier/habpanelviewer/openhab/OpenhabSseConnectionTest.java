@@ -15,7 +15,7 @@ public class OpenhabSseConnectionTest {
         c.setItemNames("cmdName","item1", "item2");
         assertEquals("URL/rest/events?topics=openhab/items/item1/statechanged,openhab/items/item2/statechanged,openhab/items/cmdName/command", c.buildUrl());
 
-        c.setServerVersion(OpenhabSseConnection.OHVersion.OH2);
+        c.setServer("URL", OpenhabSseConnection.OHVersion.OH2);
         assertEquals("URL/rest/events?topics=smarthome/items/item1/statechanged,smarthome/items/item2/statechanged,smarthome/items/cmdName/command", c.buildUrl());
 
         c.setItemNames("cmdName");

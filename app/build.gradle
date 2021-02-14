@@ -55,7 +55,7 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.android.material:material:1.3.0'
 
-    implementation 'com.github.heremaps:oksse:0.9.0'
+    implementation 'com.squareup.okhttp3:okhttp-sse:4.7.2'
     implementation 'com.squareup.okhttp3:okhttp:4.7.2'
     implementation 'com.burgstaller:okhttp-digest:2.5'
 
@@ -69,4 +69,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     testImplementation 'com.github.webbit:webbit:0.4.19'
     testImplementation 'io.netty:netty:3.6.5.Final'
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
 }
