@@ -209,7 +209,6 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
 
         @Override
         public void onOpen(@NotNull EventSource eventSource, @NotNull Response response) {
-            failureCount = 0;
             Log.v(TAG, "SSEHandler.onOpen: mEventSource=" + (mEventSource == null ? "null" : mEventSource.hashCode()));
 
             setStatus(Status.CONNECTED);
@@ -229,6 +228,8 @@ public class SseConnection implements NetworkTracker.INetworkListener, Credentia
         @Override
         public void onEvent(@NotNull EventSource eventSource, @Nullable String id, @Nullable String type, @NotNull String data) {
             if ("message".equals(type)) {
+                failureCount = 0;
+
                 synchronized (mListeners) {
                     for (ISseListener l : mListeners) {
                         if (l instanceof ISseDataListener) {
