@@ -49,7 +49,7 @@ dependencies {
     implementation "net.zetetic:android-database-sqlcipher:4.4.2"
     implementation "androidx.sqlite:sqlite:2.1.0"
 
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0-alpha2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0-beta01'
     implementation "androidx.legacy:legacy-support-v13:1.0.0"
 
     implementation 'androidx.multidex:multidex:2.0.1'
