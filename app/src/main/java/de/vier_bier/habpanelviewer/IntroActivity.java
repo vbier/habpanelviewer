@@ -90,7 +90,7 @@ public class IntroActivity extends AppIntro2 {
                     getString(R.string.intro_configuration_text), R.drawable.configuration, bgColor));
 
             addSlide(AppIntroFragment.newInstance(getString(R.string.intro_help),
-                    getString(R.string.intro_help_text), R.drawable.ready, bgColor));
+                    getString(R.string.intro_help_text), R.drawable.book, bgColor));
 
             addSlide(AppIntroFragment.newInstance(getString(R.string.intro_ready),
                     getString(R.string.intro_ready_text), R.drawable.ready, bgColor));
