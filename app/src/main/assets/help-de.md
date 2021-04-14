@@ -454,7 +454,7 @@ Immer wenn eine Webseite mit basic/digest authentication nach Zugangsdaten fragt
 HPV fragt dich ein mal pro Start nach dem Master Passwort, wenn erstmals ein Passwort gespeichert/gelesen werden soll.
 
 ### Ziehen verhindern
-Falls du aus Versehen Scrollst, wenn du einen Knopf drücken willst, aktiviere die Einstellung **Ziehen verhindern**. Dies deaktiviert Scrolling in der Anwendung komplett, und verhindert so auch das Öffnen des HABPanel Menüs.
+Falls du aus Versehen scrollst, wenn du einen Knopf drücken willst, aktiviere die Einstellung **Ziehen verhindern**. Dies deaktiviert Scrolling in der Anwendung komplett, und verhindert so auch das Öffnen des HABPanel Menüs.
 
 ### Starte App
 Starte eine auf dem Gerät installierte App über das Menü.
