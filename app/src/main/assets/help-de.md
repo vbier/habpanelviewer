@@ -464,7 +464,7 @@ Du kannst den Kiosk Modus über das Kontextmenü an- und auschalten. Wenn du den
 
 Eine andere Möglichkeit den Kiosk Modus zu aktivieren, ist an die URL den Parameter `?kiosk=on` anzuhängen.
 
-## <a name="configuration"/>Berechtigungen
+## <a name="permissions"/>Berechtigungen
 
 Habpanelviewer benötigt zwingend die folgenden Berechtigungen:  
 * android.permission.INTERNET - um openHAB anzuzeigen

@@ -468,7 +468,7 @@ You can toggle "Kiosk Mode" by using the context menu. If you want to apply kios
 
 Another way of activating kiosk mode is to add the URL parameter `?kiosk=on` at the end of either example listed above.
 
-## <a name="configuration"/>Permissions
+## <a name="permissions"/>Permissions
 
 HPV needs the following permissions:
 * android.permission.INTERNET - for displaying openHAB in a webview
