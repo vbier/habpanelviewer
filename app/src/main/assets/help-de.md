@@ -218,6 +218,12 @@ lädt die konfigurierte Startseite.
 
 lädt die angezeigte Seite neu.
 
+#### TO_FRONT
+
+bringt die App in den Vordergrund.
+
+Kann benutzt werden wenn man andere Apps auf dem Gerät laufen hat, die HPV überdecken.
+
 #### CAPTURE_CAMERA
 
 macht ein Foto mit der Frontkamera und sendet dieses an ein openHAB Image Item.

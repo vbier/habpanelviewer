@@ -60,6 +60,11 @@ public class InternalCommandHandler implements ICommandHandler {
         if ("RESTART".equals(cmdStr)) {
             cmd.start();
             EventBus.getDefault().post(new Constants.Restart());
+        } else if ("TO_FRONT".equals(cmdStr)) {
+            Intent intent = new Intent(mActivity, MainActivity.class);
+            intent.setAction(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_LAUNCHER);
+            mActivity.startActivity(intent);
         } else if ("UPDATE_ITEMS".equals(cmdStr)) {
             cmd.start();
             mConnection.sendCurrentValues();

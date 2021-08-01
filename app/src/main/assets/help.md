@@ -217,6 +217,12 @@ shows the configured start URL.
 
 reloads the current page.
 
+#### TO_FRONT
+
+brings the app into foreground.
+
+Can be used if you also have other apps running on the device which hide HPV.
+
 #### CAPTURE_CAMERA
 
 captures a photo with the front camera of the device and sends it to an openHAB *Image item*.
