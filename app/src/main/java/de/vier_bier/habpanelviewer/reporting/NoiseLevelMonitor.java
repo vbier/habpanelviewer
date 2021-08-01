@@ -31,7 +31,7 @@ public class NoiseLevelMonitor implements IDeviceMonitor, IStateUpdateListener {
 
     private boolean mNoiseLevelEnabled;
     private String mNoiseLevelItem;
-    private Integer mNoiseLevel;
+    private Float mNoiseLevel;
     private String mNoiseLevelState;
     private int mNoiseLevelInterval;
 
@@ -112,8 +112,8 @@ public class NoiseLevelMonitor implements IDeviceMonitor, IStateUpdateListener {
             while (isRunning.get()) {
                 try {
                     Thread.sleep(mNoiseLevelInterval * 1000);
+                    mNoiseLevel = (float) (20 * Math.log10(mRecorder.getMaxAmplitude()*0.96518));
 
-                    mNoiseLevel = mRecorder.getMaxAmplitude();
                     mServerConnection.updateState(mNoiseLevelItem, String.valueOf(mNoiseLevel));
                 } catch (InterruptedException e) {
                     e.printStackTrace();

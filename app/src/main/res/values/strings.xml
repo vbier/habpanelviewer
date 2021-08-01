@@ -277,7 +277,7 @@
     <string name="battLevel">Level: %1$d%% [%2$s=%3$s]</string>
     <string name="battTemp">Temperature: %1$.1f°C [%2$s=%3$s]</string>
     <string name="volumeIsOf">Volume: %1$d of %2$d [%3$s=%4$s]</string>
-    <string name="noiseLevel">Level: %1$d [%2$s=%3$s]</string>
+    <string name="noiseLevel">Level: %1$.1f db [%2$s=%3$s]</string>
     <string name="screenOn">Screen on: %1$b [%2$s=%3$s]</string>
     <string name="tooDark">too dark</string>
     <string name="motion">Motion</string>

@@ -274,7 +274,7 @@
     <string name="battLevel">Ladung: %1$d%% [%2$s=%3$s]</string>
     <string name="battTemp">Temperatur: %1$.1f°C [%2$s=%3$s]</string>
     <string name="volumeIsOf">Lautstärke: %1$d von %2$d [%3$s=%4$s]</string>
-    <string name="noiseLevel">Lautstärke: %1$d [%2$s=%3$s]</string>
+    <string name="noiseLevel">Lautstärke: %1$.1f db [%2$s=%3$s]</string>
     <string name="screenOn">Bildschirm an: %1$b [%2$s=%3$s]</string>
     <string name="tooDark">zu dunkel</string>
     <string name="motion">Bewegung</string>

@@ -443,6 +443,8 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Number Tablet_NoiseLevel
 
+> Dies ist kein belastbarer Messwert, sondern nur eine grobe Abschätzung. 
+
 ### <a name="url"/>URL
 Setzt den Wert eines openHAB Items auf die URL der momentan angezeigten Webseite.
 
