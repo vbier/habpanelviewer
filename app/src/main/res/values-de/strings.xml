@@ -152,6 +152,12 @@
     <string name="pref_sensorIntervall">Meldungsintervall</string>
     <string name="pref_sensorIntervall_summ">Die Anzahl der Sekunden, nach denen der Wert an openHAB gemeldet wird</string>
 
+    <string name="pref_noiseLevel">Geräuschpegel</string>
+    <string name="pref_noiseLevelEnabled">Geräuschpegel Meldung aktiviert</string>
+    <string name="pref_noiseLevelEnabled_summ">Überwacht den Geräuschpegel mit dem Mikrofon des Gerätes und meldet Änderungen an openHAB</string>
+    <string name="pref_noiseLevelItem">Geräuschpegel Item</string>
+    <string name="pref_noiseLevelItem_summ">Name des openHAB Items das den Geräuschpegel anzeigen soll</string>
+    <string name="pref_noiseLevelIntervall_summ">Die Anzahl der Sekunden, nach denen der in diesem Intervall höchste Wert an openHAB gemeldet wird</string>
     <string name="pref_battery">Batterie</string>
     <string name="pref_batteryEnabled_summ">Überwacht den Batteriezustand und meldet Änderungen an openHAB</string>
     <string name="pref_batteryEnabled">Batteriemeldung aktiviert</string>
@@ -268,6 +274,7 @@
     <string name="battLevel">Ladung: %1$d%% [%2$s=%3$s]</string>
     <string name="battTemp">Temperatur: %1$.1f°C [%2$s=%3$s]</string>
     <string name="volumeIsOf">Lautstärke: %1$d von %2$d [%3$s=%4$s]</string>
+    <string name="noiseLevel">Lautstärke: %1$d [%2$s=%3$s]</string>
     <string name="screenOn">Bildschirm an: %1$b [%2$s=%3$s]</string>
     <string name="tooDark">zu dunkel</string>
     <string name="motion">Bewegung</string>

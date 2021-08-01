@@ -142,6 +142,12 @@
     <string name="pref_sensorIntervall">Update intervall</string>
     <string name="pref_sensorIntervall_summ">The number of seconds to collect sensor readings until an averaged update is sent to openHAB</string>
 
+    <string name="pref_noiseLevel">Noise Level</string>
+    <string name="pref_noiseLevelEnabled">Monitor noise level using the device microphone and report changes to openHAB</string>
+    <string name="pref_noiseLevelEnabled_summ">Allows to set the state of an openHAB item depending on the surrounding noise level</string>
+    <string name="pref_noiseLevelItem">Noise Level Item</string>
+    <string name="pref_noiseLevelItem_summ">Name of the number item whose state shall be set when the noise level changes</string>
+    <string name="pref_noiseLevelIntervall_summ">The number of seconds to collect noise level readings until the maximum value is sent to openHAB</string>
     <string name="pref_battery">Battery</string>
     <string name="pref_batteryEnabled">Monitor device battery state and report changes to openHAB</string>
     <string name="pref_batteryEnabled_summ">Allows to set the states of openHAB items depending on the device battery status</string>
@@ -271,6 +277,7 @@
     <string name="battLevel">Level: %1$d%% [%2$s=%3$s]</string>
     <string name="battTemp">Temperature: %1$.1f°C [%2$s=%3$s]</string>
     <string name="volumeIsOf">Volume: %1$d of %2$d [%3$s=%4$s]</string>
+    <string name="noiseLevel">Level: %1$d [%2$s=%3$s]</string>
     <string name="screenOn">Screen on: %1$b [%2$s=%3$s]</string>
     <string name="tooDark">too dark</string>
     <string name="motion">Motion</string>

@@ -309,6 +309,7 @@ Allows to set the values of openHAB items depending on the device sensors or oth
 - [usage](#usage) (current app usage)
 - [connected indicators](#connectedIndicators) (app startup time, cyclic time stamp)
 - [docking state](#dockingState)
+- [noise_level](#noiseLevel)
 - [URL](#url)
 
 ### <a name="batteryReporting"/>battery reporting
@@ -439,6 +440,13 @@ The contact state will be *CLOSED* whenever the device is docked, *OPEN* otherwi
 A sample openHAB items file looks like this:
 
     Contact Tablet_Docked
+
+### <a name="noiseLevel"/>noise level
+Allows to set the value of an openHAB number item to the surrounding noise level captured with the device microphone.
+
+A sample openHAB items file looks like this:
+
+    Number Tablet_NoiseLevel
 
 ### <a name="url"/>URL
 Allows to set the URL of the currently display page as value of an openHAB string item.

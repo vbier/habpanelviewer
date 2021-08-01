@@ -72,5 +72,10 @@
             android:key="nested_pref_docking_state"
             android:persistent="false"
             android:title="@string/pref_dockingState" />
+
+        <Preference
+            android:key="nested_pref_noise_level"
+            android:persistent="false"
+            android:title="@string/pref_noiseLevel" />
     </PreferenceCategory>
 </PreferenceScreen>

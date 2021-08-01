@@ -12,6 +12,7 @@ public final class Constants {
     public static final int REQUEST_READ_EXTERNAL_STORAGE = 203;
     public static final int REQUEST_WEBRTC = 204;
     public static final int REQUEST_VALIDATE = 205;
+    public static final int REQUEST_RECORD_AUDIO = 206;
 
     /** Intent related constants **/
     public static final String INTENT_FLAG_CRASH = "crash";
@@ -79,6 +80,10 @@ public final class Constants {
     public static final String PREF_USAGE_ENABLED = "pref_usage_enabled";
     public static final String PREF_USAGE_ITEM = "pref_usage_item";
     public static final String PREF_USAGE_TIMEOUT = "pref_usage_timeout";
+
+    public static final String PREF_NOISE_LEVEL_ENABLED = "pref_noise_level_enabled";
+    public static final String PREF_NOISE_LEVEL_ITEM = "pref_noise_level_item";
+    public static final String PREF_NOISE_LEVEL_INTERVALL = "pref_noise_level_intervall";
 
     public static final String PREF_BATTERY_ENABLED = "pref_battery_enabled";
     public static final String PREF_BATTERY_ITEM = "pref_battery_item";

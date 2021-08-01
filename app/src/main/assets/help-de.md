@@ -308,6 +308,7 @@ Ermöglicht es, Werte der Geräte Sensoren oder andere Dinge an openHAB zu melde
 - [Benutzung](#usage) (momentane App Benutzung)
 - [Verbindungsindikatoren](#connectedIndicators) (App Startzeit, zyklischer Zeitstempel)
 - [Docking Status](#dockingState)
+- [Geräusch Pegel](#noiseLevel)  
 - [URL](#url)
 
 ### <a name="batteryReporting"/>Batteriesensor
@@ -434,6 +435,13 @@ Der Kontakt wird geschlossen, wenn das Gerät in der Docking Station ist.
 Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Contact Tablet_Docked
+
+### <a name="noiseLevel"/>Geräusch Pegel
+Meldet den mit dem Mikrofon des Gerätes aufgezeichneten Geräusch Pegel zyklisch an openHAB.
+
+Eine beispielhafte openHAB Items Datei könnte so aussehen:
+
+    Number Tablet_NoiseLevel
 
 ### <a name="url"/>URL
 Setzt den Wert eines openHAB Items auf die URL der momentan angezeigten Webseite.

@@ -87,6 +87,8 @@ public class PreferenceFragment extends android.preference.PreferenceFragment im
             return fragment;
         } else if ("nested_pref_ui".equals(id)) {
             return new PreferencesUi();
+        } else if ("nested_pref_noise_level".equals(id)) {
+            return new PreferencesNoiseLevel();
         }
 
         PreferenceFragment fragment = new PreferenceFragment();
