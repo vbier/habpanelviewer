@@ -16,7 +16,7 @@ public class PermissionUtil {
     private static final HashMap<String, String[]> PERMISSIONS = new HashMap<>();
 
     static {
-        PERMISSIONS.put(Manifest.permission.RECORD_AUDIO, new String[]{Constants.PREF_ALLOW_WEBRTC});
+        PERMISSIONS.put(Manifest.permission.RECORD_AUDIO, new String[]{Constants.PREF_ALLOW_WEBRTC, Constants.PREF_NOISE_LEVEL_ENABLED});
         PERMISSIONS.put(Manifest.permission.CAMERA, new String[]{Constants.PREF_ALLOW_WEBRTC,
                 Constants.PREF_MOTION_DETECTION_ENABLED, Constants.PREF_MOTION_DETECTION_PREVIEW});
     }

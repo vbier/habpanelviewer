@@ -98,62 +98,88 @@ public class NoiseLevelMonitor implements IDeviceMonitor, IStateUpdateListener {
     }
 
     private class ReportingThread extends Thread {
-        private MediaRecorder mRecorder = null;
-        private AtomicBoolean isRunning = new AtomicBoolean(true);
+        private MediaRecorder mRecorder;
+        private AtomicBoolean isRunning = new AtomicBoolean(false);
+        private AtomicBoolean isTerminated = new AtomicBoolean(false);
 
         public ReportingThread() {
-            start();
+            MediaRecorder mRecorder = new MediaRecorder();
         }
 
         @Override
         public void run() {
-            mRecorder = new MediaRecorder();
+            while (!isTerminated.get()) {
+                synchronized (isRunning) {
+                    try {
+                        if (!isRunning.get() && !isTerminated.get()) {
+                            // wait until started
+                            isRunning.wait();
+                        }
 
-            while (isRunning.get()) {
-                try {
-                    Thread.sleep(mNoiseLevelInterval * 1000);
-                    mNoiseLevel = (float) (20 * Math.log10(mRecorder.getMaxAmplitude()*0.96518));
+                        // whe we get here we are either running or have been terminated
+                        while (isRunning.get()) {
+                            try {
+                                isRunning.wait(mNoiseLevelInterval * 1000);
+                            } catch (InterruptedException e) {
+                                // okay
+                                Thread.currentThread().interrupt();
+                            }
 
-                    mServerConnection.updateState(mNoiseLevelItem, String.valueOf(mNoiseLevel));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                            mNoiseLevel = (float) (20 * Math.log10(mRecorder.getMaxAmplitude() * 0.96518));
+                            mServerConnection.updateState(mNoiseLevelItem, String.valueOf(mNoiseLevel));
+                        }
+                        // we only get here once we have been stopped
+                    } catch (InterruptedException e) {
+                        // okay
+                        Thread.currentThread().interrupt();
+                    }
                 }
             }
-
-            mRecorder.stop();
-            mRecorder.release();
-            mRecorder = null;
         }
 
         public void report() {
-            if (mRecorder != null) {
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-                mRecorder.setOutputFile("/dev/null");
+            synchronized (isRunning) {
+                if (!isRunning.getAndSet(true)) {
+                    mRecorder = new MediaRecorder();
+                    mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                    mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                    mRecorder.setOutputFile("/dev/null");
 
-                try {
-                    mRecorder.prepare();
-                } catch (IllegalStateException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    try {
+                        mRecorder.prepare();
+                        mRecorder.start();
+
+                        start();
+                        isRunning.notifyAll();
+                    } catch (IOException | RuntimeException e) {
+                        Log.e(TAG, "Failed to prepare Media Recorder", e);
+                        stopReporting();
+                    }
                 }
-                mRecorder.start();
             }
         }
 
         public void stopReporting() {
-            if (mRecorder != null) {
-                mRecorder.stop();
-                mRecorder.reset();
+            synchronized (isRunning) {
+                if (isRunning.getAndSet(false)) {
+                    try {
+                        mRecorder.stop();
+                    } catch (IllegalStateException e) {
+                        // ignore
+                    }
+                    mRecorder.reset();
+                    mRecorder.release();
+                    mRecorder = null;
+                    isRunning.set(false);
+                }
+                isRunning.notifyAll();
             }
         }
 
         public void shutdown() {
-            isRunning.set(false);
+            isTerminated.set(true);
+            stopReporting();
         }
     }
 }

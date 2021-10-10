@@ -64,11 +64,11 @@ public class PreferencesNoiseLevel extends PreferenceFragment implements Prefere
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         if (!prefs.getBoolean(Constants.PREF_NOISE_LEVEL_ENABLED, false)) {
             SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putBoolean(Constants.PREF_NOISE_LEVEL_ENABLED, true);
+            editor1.putBoolean(Constants.PREF_NOISE_LEVEL_ENABLED, allowPreview);
             editor1.apply();
 
             CheckBoxPreference allowPreference = (CheckBoxPreference) findPreference(Constants.PREF_NOISE_LEVEL_ENABLED);
-            allowPreference.setChecked(true);
+            allowPreference.setChecked(allowPreview);
         }
     }
 }
