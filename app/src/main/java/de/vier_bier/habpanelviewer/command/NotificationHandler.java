@@ -29,7 +29,15 @@ public class NotificationHandler implements ICommandHandler {
         mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             for (NotificationChannel c : mNotificationManager.getNotificationChannels()) {
-                mNotificationManager.deleteNotificationChannel(c.getId());
+                String id = c.getId();
+
+                // getNotificationChannels also returns the notification of the foreground service.
+                // so before deleting make sure it is one of the notification channels.
+                for (NotificationColor col : NotificationColor.values()) {
+                    if (id.equals(CHANNEL_ID + "." + col.name())) {
+                        mNotificationManager.deleteNotificationChannel(c.getId());
+                    }
+                }
             }
 
             for (NotificationColor c : NotificationColor.values()) {
