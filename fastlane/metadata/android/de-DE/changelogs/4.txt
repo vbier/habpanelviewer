@@ -1,7 +1,0 @@
-* aktive App Benutzung kann nun an openHAB gemeldet werden
-* SCREEN_ON: neuer optionaler Parameter, der das Gerät für die Anzahl an Sekunden wach hält
-* Neue Einstellung zum Auswählen, ob mit dem CAPTURE_SCREEN Kommando Bildschirm Fotos gemacht werden dürfen
-* Neue Einstellung zum Auswählen des Themes
-* CPU Verbrauch verringert
-* Abstürze behoben
-* Einstellungen umstrukutiert

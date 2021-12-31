@@ -1,6 +1,9 @@
-0.9.27pre
+0.9.27
 ======
 * Passwort Datenbank kann mit Master Passwort verschlüsselt werden
+* Unterstützung für openHAB 3
+* neue Wertemeldung: Geräuschpegel (experminentell)
+* neues Kommando: TO_FRONT
 * Reconnect verbessert
 * Desktop Mode verbessert
 * Zeige in der System Information ob Batterie Optimierung for HPV aktiviert ist

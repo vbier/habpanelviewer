@@ -1,7 +1,0 @@
-* allow to store web page credentials across app restarts
-  (CREDENTIALS ARE STORED UNENCRYPTED IN A PRIVATE PART OF THE FILESYSTEM THAT CAN ONLY BE READ BY ROOT WHEN THE DEVICE IS ROOTED!)
-* add toolbars to non-browser views
-* move preferences export/import to toolbar
-* add clear log action to command log toolbar
-* add goto forum action to help toolbar
-* BUG: fix crashes

@@ -1,9 +1,0 @@
-* neue Kommandos: CAPTURE_CAMERA, CAPTURE_SCREEN, ENABLE_MOTION_DETECTION, DISABLE_MOTION_DETECTION, RELOAD, SET_BRIGHTNESS, SHOW_DASHBOARD, SHOW_URL, SHOW_START_URL
-* zeige Kommando Details bei Klick auf Kommando im Kommando Log
-* Fehler behoben, durch den KEEP_SCREEN_ON und ALLOW_SCREEN_OFF nicht immer funktionierten
-* Fehler behoben, durch den die Kamera nicht gefunden wurde, wenn das Gerät keine rückwärtige Kamera hat
-* Absturz auf Kindle Geräten behoben
-* Fehler behoben, durch den die Event Bus Listener nicht richtig abgemeldet wurden
-* Beim Drehen des Gerätes wird die App jetzt nicht mehr neu gestartet
-* Kamera und Bewegungserkennung wurden getrennt
-* Logging und Kamera Initialisierung wurden verbessert

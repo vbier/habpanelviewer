@@ -1,4 +1,0 @@
-* screen state can now be reported to openHAB
-* user agent chrome version is now shown in status information
-* fixed several bugs and crashes
-

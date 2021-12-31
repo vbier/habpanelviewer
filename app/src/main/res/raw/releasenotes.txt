@@ -1,6 +1,9 @@
-0.9.27pre
+0.9.27
 ======
 * add credential storage encryption with master password
+* added support for openHAB 3
+* added experimental noise level reporting
+* added command: TO_FRONT
 * improve reconnect
 * improve desktop mode
 * show if battery optimization for HPV is enabled in system information
