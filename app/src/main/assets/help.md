@@ -448,7 +448,8 @@ A sample openHAB items file looks like this:
 
     Number Tablet_NoiseLevel
 
-> Note that this is not a scientific measurement, but rather an approximation.
+> Note that this is not a scientific measurement, but rather an approximation. It also is an experimental feature
+> that does not work with every Android version.
 
 ### <a name="url"/>URL
 Allows to set the URL of the currently display page as value of an openHAB string item.

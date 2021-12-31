@@ -308,7 +308,7 @@ Ermöglicht es, Werte der Geräte Sensoren oder andere Dinge an openHAB zu melde
 - [Benutzung](#usage) (momentane App Benutzung)
 - [Verbindungsindikatoren](#connectedIndicators) (App Startzeit, zyklischer Zeitstempel)
 - [Docking Status](#dockingState)
-- [Geräusch Pegel](#noiseLevel)  
+- [Geräuschpegel](#noiseLevel)  
 - [URL](#url)
 
 ### <a name="batteryReporting"/>Batteriesensor
@@ -436,14 +436,15 @@ Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Contact Tablet_Docked
 
-### <a name="noiseLevel"/>Geräusch Pegel
-Meldet den mit dem Mikrofon des Gerätes aufgezeichneten Geräusch Pegel zyklisch an openHAB.
+### <a name="noiseLevel"/>Geräuschpegel
+Meldet den mit dem Mikrofon des Gerätes aufgezeichneten Geräuschpegel zyklisch an openHAB.
 
 Eine beispielhafte openHAB Items Datei könnte so aussehen:
 
     Number Tablet_NoiseLevel
 
-> Dies ist kein belastbarer Messwert, sondern nur eine grobe Abschätzung. 
+> Dies ist kein belastbarer Messwert, sondern nur eine grobe Abschätzung. Es ist außerdem ein
+> experimentelles Feature, das nicht mit allen Android Versionen funktioniert.
 
 ### <a name="url"/>URL
 Setzt den Wert eines openHAB Items auf die URL der momentan angezeigten Webseite.
